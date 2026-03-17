@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字合婚 - 天机</title>
+    <link rel="stylesheet" href="../css/page.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/interactions.css">
+    <link rel="stylesheet" href="../css/bazi.css">
+    <link rel="stylesheet" href="../css/fortune.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💑</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header fade-in">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">八字合婚</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="intro-section fade-in" style="--delay: 1">
+                <p class="intro-text">根据八字五行分析婚姻配对，探寻天作之合</p>
+            </section>
+
+            <section class="input-section fade-in" style="--delay: 2">
+                <h2>合婚输入</h2>
+                <div class="match-form">
+                    <div class="form-group">
+                        <h3>男方信息</h3>
+                        <select id="maleYear" class="bazi-select">
+                            <option value="">选择年份</option>
+                        </select>
+                        <select id="maleMonth" class="bazi-select">
+                            <option value="">选择月份</option>
+                        </select>
+                        <select id="maleDay" class="bazi-select">
+                            <option value="">选择日期</option>
+                        </select>
+                        <select id="maleHour" class="bazi-select">
+                            <option value="">选择时辰</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <h3>女方信息</h3>
+                        <select id="femaleYear" class="bazi-select">
+                            <option value="">选择年份</option>
+                        </select>
+                        <select id="femaleMonth" class="bazi-select">
+                            <option value="">选择月份</option>
+                        </select>
+                        <select id="femaleDay" class="bazi-select">
+                            <option value="">选择日期</option>
+                        </select>
+                        <select id="femaleHour" class="bazi-select">
+                            <option value="">选择时辰</option>
+                        </select>
+                    </div>
+                    <button class="match-btn" id="matchBtn">开始合婚</button>
+                </div>
+            </section>
+
+            <section class="result-section fade-in" style="--delay: 3" id="matchResult" style="display: none;">
+                <h2>合婚结果</h2>
+                <div class="match-score">
+                    <div class="score-circle">
+                        <span id="matchScore">0</span>
+                        <span class="score-label">匹配度</span>
+                    </div>
+                </div>
+                <div class="match-details">
+                    <div class="detail-card">
+                        <h3>五行分析</h3>
+                        <p id="wuxingAnalysis">-</p>
+                    </div>
+                    <div class="detail-card">
+                        <h3>属相合配</h3>
+                        <p id="shengxiangResult">-</p>
+                    </div>
+                    <div class="detail-card">
+                        <h3>日主关系</h3>
+                        <p id="rizhuResult">-</p>
+                    </div>
+                    <div class="detail-card">
+                        <h3>婚姻建议</h3>
+                        <p id="adviceResult">-</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="theory-section fade-in" style="--delay: 4">
+                <h2>合婚理论</h2>
+                <div class="theory-list">
+                    <div class="theory-item">
+                        <h3>属相合婚</h3>
+                        <p>子鼠丑牛合、寅虎亥猪合、辰龙酉鸡合、巳蛇申猴合</p>
+                        <p>午马未羊合、卯兔戌狗合、申子辰三合、巳酉丑三合</p>
+                    </div>
+                    <div class="theory-item">
+                        <h3>五行相生</h3>
+                        <p>木生火、火生土、土生金、金生水、水生木</p>
+                        <p>男女五行相生为吉，相克为凶</p>
+                    </div>
+                    <div class="theory-item">
+                        <h3>日主相合</h3>
+                        <p>甲己合、乙庚合、丙辛合、丁壬合、戊癸合</p>
+                        <p>日主相合说明两人有共同语言，易相处</p>
+                    </div>
+                    <div class="theory-item">
+                        <h3>神煞合婚</h3>
+                        <p>天德合、月德合、天喜合为吉神</p>
+                        <p>阴错阳差、望门寡等为凶神，需谨慎</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class=" taboo-section fade-in" style="--delay: 5">
+                <h2>属相婚配表</h2>
+                <div class=" taboo-grid">
+                    <div class=" taboo-item">
+                        <span class="animal">鼠</span>
+                        <span class="best">牛、龙、猴</span>
+                        <span class="worst">马、兔、羊</span>
+                    </div>
+                    <div class=" taboo-item">
+                        <span class="animal">牛</span>
+                        <span class="best">鼠、蛇、鸡</span>
+                        <span class="worst">龙、羊、狗</span>
+                    </div>
+                    <div class=" taboo-item">
+                        <span class="animal">虎</span>
+                        <span class="best">马、狗、猪</span>
+                        <span class="worst">蛇、猴</span>
+                    </div>
+                    <div class=" taboo-item">
+                        <span class="animal">兔</span>
+                        <span class="best">羊、猪、狗</span>
+                        <span class="worst">鼠、鸡、龙</span>
+                    </div>
+                    <div class=" taboo-item">
+                        <span class="animal">龙</span>
+                        <span class="best">鼠、猴、鸡</span>
+                        <span class="worst">狗、兔</span>
+                    </div>
+                    <div class=" taboo-item">
+                        <span class="animal">蛇</span>
+                        <span class="best">牛、鸡、猴</span>
+                        <span class="worst">虎、猪</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
