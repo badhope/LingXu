@@ -1,0 +1,471 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-gold: #c9a227;
+    --primary-red: #8b0000;
+    --dark-bg: #0a0a0a;
+    --dark-secondary: #121212;
+    --text-light: #f5f5f5;
+    --text-muted: #888;
+    --glow-gold: rgba(201, 162, 39, 0.5);
+}
+
+body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--dark-bg);
+    color: var(--text-light);
+    min-height: 100vh;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        var(--dark-bg);
+}
+
+.page-header {
+    position: relative;
+    padding: 25px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(139, 0, 0, 0.12) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.back-btn {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 20px;
+    background: rgba(201, 162, 39, 0.05);
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+
+.page-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-decoration {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+}
+
+.page-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+.breadcrumb a {
+    color: var(--primary-gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: var(--text-muted);
+}
+
+.page-footer {
+    padding: 20px;
+    text-align: center;
+    background: var(--dark-secondary);
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.classic-book {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 40px;
+}
+
+.book-header {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px 40px;
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, transparent 50%);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    margin-bottom: 30px;
+}
+
+.book-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    font-size: 0.85rem;
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.book-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 3.5rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.book-subtitle {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.book-meta {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.book-intro, .book-contents, .book-chapters, .book-toc {
+    margin-bottom: 50px;
+}
+
+.book-intro h2, .book-contents h2, .book-chapters h2, .book-toc h2 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.book-intro p {
+    color: var(--text-light);
+    line-height: 1.9;
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+}
+
+.contents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.contents-chapter {
+    background: var(--dark-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.contents-chapter h3 {
+    color: var(--primary-gold);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.chapter-list {
+    list-style: none;
+}
+
+.chapter-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.chapter-list li:last-child {
+    border-bottom: none;
+}
+
+.chapter-list a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.chapter-list a:hover {
+    color: var(--primary-gold);
+    padding-left: 5px;
+}
+
+.book-chapters {
+    background: var(--dark-secondary);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.book-chapters h2 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 25px;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.hexagram {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(201, 162, 39, 0.05);
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.hexagram-symbol {
+    font-size: 4rem;
+    color: var(--primary-gold);
+}
+
+.hexagram-info {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.hexagram-info span {
+    padding: 5px 12px;
+    background: rgba(201, 162, 39, 0.1);
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.guaxiang, .yaoci, .danyin {
+    margin-bottom: 25px;
+}
+
+.guaxiang h3, .yaoci h3, .danyin h3 {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+}
+
+.guaxiang p, .danyin p {
+    color: var(--text-light);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.yao-item {
+    padding: 15px;
+    background: rgba(201, 162, 39, 0.05);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 3px solid var(--primary-gold);
+}
+
+.yao-name {
+    display: inline-block;
+    color: var(--primary-gold);
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.yao-text {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.yao-meaning {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.toc-item {
+    padding: 12px 15px;
+    background: var(--dark-secondary);
+    border-radius: 8px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    font-size: 0.9rem;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.toc-item:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-2px);
+}
+
+.toc-item span {
+    display: block;
+    color: var(--primary-gold);
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+}
+
+.book-sidebar {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.sidebar-widget {
+    background: var(--dark-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.sidebar-widget h3 {
+    color: var(--primary-gold);
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(201, 162, 39, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-gold), #e6c547);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.sidebar-widget p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+.related-list {
+    list-style: none;
+}
+
+.related-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.related-list li:last-child {
+    border-bottom: none;
+}
+
+.related-list a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.related-list a:hover {
+    color: var(--primary-gold);
+}
+
+@media (max-width: 1024px) {
+    .classic-book {
+        grid-template-columns: 1fr;
+    }
+    
+    .book-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 20px;
+    }
+    
+    .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+    
+    .book-header {
+        padding: 30px 20px;
+    }
+    
+    .book-title {
+        font-size: 2.5rem;
+    }
+    
+    .book-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .book-chapters {
+        padding: 25px;
+    }
+    
+    .hexagram {
+        flex-direction: column;
+        text-align: center;
+    }
+}

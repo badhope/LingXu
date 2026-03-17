@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-gold: #c9a227;
+    --primary-red: #8b0000;
+    --dark-bg: #0a0a0a;
+    --dark-secondary: #121212;
+    --text-light: #f5f5f5;
+    --text-muted: #888;
+    --glow-gold: rgba(201, 162, 39, 0.5);
+}
+
+body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--dark-bg);
+    color: var(--text-light);
+    min-height: 100vh;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        var(--dark-bg);
+}
+
+.page-header {
+    position: relative;
+    padding: 25px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(139, 0, 0, 0.12) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.back-btn {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 20px;
+    background: rgba(201, 162, 39, 0.05);
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+
+.page-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-decoration {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+}
+
+.page-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+.breadcrumb a {
+    color: var(--primary-gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    color: var(--text-muted);
+}
+
+.page-footer {
+    padding: 20px;
+    text-align: center;
+    background: var(--dark-secondary);
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.classics-intro {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.intro-visual {
+    margin-bottom: 30px;
+}
+
+.book-scroll {
+    width: 80px;
+    height: 100px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, var(--primary-gold) 0%, #8b7355 100%);
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    animation: book-float 3s ease-in-out infinite;
+}
+
+@keyframes book-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.book-scroll::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.intro-text {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.classics-catalog, .classics-featured {
+    margin-bottom: 50px;
+}
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.catalog-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.catalog-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateX(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(201, 162, 39, 0.1);
+    border-radius: 12px;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    flex-shrink: 0;
+}
+
+.card-content h3 {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.card-content p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.featured-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.featured-item {
+    display: flex;
+    gap: 25px;
+    padding: 30px;
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    transition: all 0.3s ease;
+}
+
+.featured-item:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.featured-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--primary-gold);
+    opacity: 0.3;
+    flex-shrink: 0;
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.featured-content h3 {
+    color: var(--text-light);
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+}
+
+.featured-content p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.read-more {
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+    padding-left: 5px;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 20px;
+    }
+    
+    .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+    
+    .catalog-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .featured-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .featured-number {
+        font-size: 2rem;
+    }
+}
