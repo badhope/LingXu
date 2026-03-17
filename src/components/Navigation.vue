@@ -83,8 +83,10 @@ const navItems = [
   { name: '黄历', path: '/calendar' },
   { name: '八字', path: '/bazi' },
   { name: '抽签', path: '/divination' },
-  { name: '运势', path: '/fortune' },
-  { name: '命理', path: '/analysis' }
+  { name: '解梦', path: '/dream' },
+  { name: '姓名', path: '/name' },
+  { name: '配对', path: '/match' },
+  { name: '知识', path: '/knowledge' }
 ]
 
 const handleScroll = () => {

@@ -156,26 +156,32 @@ const features = [
   {
     icon: '🎋',
     title: '抽签占卜',
-    description: '模拟传统抽签体验，三十签文详尽解读',
+    description: '模拟传统抽签体验，百支签文详尽解读',
     path: '/divination'
   },
   {
-    icon: '🌟',
-    title: '运势测算',
-    description: '今日运势、生肖运势、星座运势多维分析',
-    path: '/fortune'
+    icon: '🌙',
+    title: '周公解梦',
+    description: '梦境解析，探寻潜意识，五十种常见梦境详解',
+    path: '/dream'
   },
   {
-    icon: '🔮',
-    title: '命理分析',
-    description: '综合命理报告，性格事业感情全方位解读',
-    path: '/analysis'
+    icon: '✍️',
+    title: '姓名测试',
+    description: '五行数理分析，天地人三才配置，姓名评分',
+    path: '/name'
+  },
+  {
+    icon: '💕',
+    title: '生肖星座配对',
+    description: '生肖星座缘分测试，感情事业全方位分析',
+    path: '/match'
   },
   {
     icon: '📚',
-    title: '玄学知识',
-    description: '天干地支、五行八卦、命理术语详解',
-    path: '/calendar'
+    title: '玄学知识库',
+    description: '天干地支、五行八卦、命理术语，系统学习玄学知识',
+    path: '/knowledge'
   }
 ]
 

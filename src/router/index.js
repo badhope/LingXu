@@ -38,6 +38,30 @@ const routes = [
     meta: { title: '命理分析' }
   },
   {
+    path: '/dream',
+    name: 'Dream',
+    component: () => import('@/views/Dream.vue'),
+    meta: { title: '周公解梦' }
+  },
+  {
+    path: '/name',
+    name: 'Name',
+    component: () => import('@/views/Name.vue'),
+    meta: { title: '姓名测试' }
+  },
+  {
+    path: '/match',
+    name: 'Match',
+    component: () => import('@/views/Match.vue'),
+    meta: { title: '生肖星座配对' }
+  },
+  {
+    path: '/knowledge',
+    name: 'Knowledge',
+    component: () => import('@/views/Knowledge.vue'),
+    meta: { title: '玄学知识库' }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/NotFound.vue'),
