@@ -58,45 +58,38 @@
 
         <div class="lg:col-span-1">
           <Transition name="fade" mode="out-in">
-            <div v-if="selectedDate" class="space-y-4" :key="selectedDate.solar.toFullString()">
-              <div class="card p-6">
-                <div class="text-center mb-6">
-                  <div class="mb-2">
-                    <span class="font-number text-date text-gold">{{ selectedDate.solar.getDay() }}</span>
+            <div v-if="selectedDate" class="space-y-3" :key="selectedDate.solar.toFullString()">
+              <div class="card p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-center flex-1">
+                    <span class="font-number text-4xl sm:text-5xl text-gold">{{ selectedDate.solar.getDay() }}</span>
+                    <p class="font-serif text-text-primary text-lg sm:text-xl mt-1">{{ selectedDate.solar.getMonth() }}月</p>
                   </div>
-                  <p class="font-serif text-h3 text-text-primary">{{ selectedDate.solar.getMonth() }}月</p>
-                  <p class="text-text-muted text-body-sm">{{ selectedDate.solar.toFullString() }}</p>
+                  <div class="text-right flex-1">
+                    <p class="text-gold font-serif text-base sm:text-lg">{{ selectedDate.lunar.toString() }}</p>
+                    <p class="text-text-muted text-xs sm:text-sm mt-1">{{ selectedDate.ganZhi }}</p>
+                  </div>
                 </div>
 
-                <div class="text-center py-3 border-y border-gold/10">
-                  <p class="text-gold font-serif text-body-lg">{{ selectedDate.lunar.toString() }}</p>
-                  <p class="text-text-muted text-body-sm mt-1">{{ selectedDate.ganZhi }}</p>
-                </div>
-
-                <div class="mt-4 space-y-3">
-                  <div>
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="text-fortune-lucky font-serif">宜</span>
-                    </div>
-                    <p class="text-text-secondary text-body-sm leading-relaxed">
+                <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div class="bg-jade/10 rounded-lg p-2 sm:p-3">
+                    <span class="text-fortune-lucky font-serif text-xs sm:text-sm block mb-1">宜</span>
+                    <p class="text-text-secondary text-xs sm:text-sm leading-tight line-clamp-2">
                       {{ selectedDate.yi || '诸事皆宜' }}
                     </p>
                   </div>
-
-                  <div>
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="text-text-muted font-serif">忌</span>
-                    </div>
-                    <p class="text-text-secondary text-body-sm leading-relaxed">
+                  <div class="bg-fortune-unlucky/10 rounded-lg p-2 sm:p-3">
+                    <span class="text-text-muted font-serif text-xs sm:text-sm block mb-1">忌</span>
+                    <p class="text-text-secondary text-xs sm:text-sm leading-tight line-clamp-2">
                       {{ selectedDate.ji || '无' }}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div class="card p-6">
-                <h3 class="font-serif text-h4 text-gold mb-4">干支信息</h3>
-                <div class="space-y-2">
+              <div class="card p-4 sm:p-6">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-3">干支信息</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                   <div class="flex justify-between text-body-sm">
                     <span class="text-text-muted">年柱</span>
                     <span class="text-text-secondary">{{ selectedDate.yearGanZhi }}</span>
@@ -116,57 +109,57 @@
                 </div>
               </div>
 
-              <div class="card p-6">
-                <h3 class="font-serif text-h4 text-gold mb-4">神煞方位</h3>
-                <div class="space-y-2">
-                  <div class="flex justify-between text-body-sm">
+              <div class="card p-4 sm:p-6">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-3">神煞方位</h3>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:text-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">值神</span>
                     <span class="text-text-secondary">{{ selectedDate.zhiShen }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">冲煞</span>
                     <span class="text-text-secondary">{{ selectedDate.chongSha }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">喜神</span>
                     <span class="text-jade">{{ selectedDate.xiShen }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">财神</span>
                     <span class="text-gold">{{ selectedDate.caiShen }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">福神</span>
                     <span class="text-text-secondary">{{ selectedDate.fuShen }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">阳贵</span>
                     <span class="text-text-secondary">{{ selectedDate.yangGui }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">阴贵</span>
                     <span class="text-text-secondary">{{ selectedDate.yinGui }}</span>
                   </div>
                 </div>
               </div>
 
-              <div class="card p-6">
-                <h3 class="font-serif text-h4 text-gold mb-4">吉凶神煞</h3>
-                <div class="space-y-3">
+              <div class="card p-4 sm:p-6">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-3">吉凶神煞</h3>
+                <div class="space-y-2 text-xs sm:text-sm">
                   <div>
                     <p class="text-text-muted text-xs mb-1">吉神宜趋</p>
-                    <p class="text-jade text-body-sm">{{ selectedDate.jiShen || '无' }}</p>
+                    <p class="text-jade">{{ selectedDate.jiShen || '无' }}</p>
                   </div>
                   <div>
                     <p class="text-text-muted text-xs mb-1">凶神宜忌</p>
-                    <p class="text-fortune-unlucky text-body-sm">{{ selectedDate.xiongShen || '无' }}</p>
+                    <p class="text-fortune-unlucky">{{ selectedDate.xiongShen || '无' }}</p>
                   </div>
                 </div>
               </div>
 
-              <div class="card p-6">
-                <h3 class="font-serif text-h4 text-gold mb-4">星宿物候</h3>
-                <div class="space-y-2">
+              <div class="card p-4 sm:p-6">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-3">星宿物候</h3>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:text-sm">
                   <div class="flex justify-between text-body-sm">
                     <span class="text-text-muted">二十八宿</span>
                     <span class="text-text-secondary">{{ selectedDate.xiu }}</span>
@@ -186,31 +179,31 @@
                 </div>
               </div>
 
-              <div class="card p-6">
-                <h3 class="font-serif text-h4 text-gold mb-4">其他信息</h3>
-                <div class="space-y-2">
-                  <div class="flex justify-between text-body-sm">
+              <div class="card p-4 sm:p-6">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-3">其他信息</h3>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:text-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">建除</span>
                     <span class="text-text-secondary">{{ selectedDate.jianChu }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">五行</span>
                     <span class="text-text-secondary">{{ selectedDate.wuXing }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">星座</span>
                     <span class="text-text-secondary">{{ selectedDate.xingZuo }}</span>
                   </div>
-                  <div class="flex justify-between text-body-sm">
+                  <div class="flex justify-between">
                     <span class="text-text-muted">星期</span>
                     <span class="text-text-secondary">{{ selectedDate.weekDay }}</span>
                   </div>
                 </div>
               </div>
 
-              <div class="card p-6 bg-gold/5 border-gold/20">
-                <h3 class="font-serif text-h4 text-gold mb-3">彭祖百忌</h3>
-                <p class="text-text-secondary text-body-sm leading-relaxed">
+              <div class="card p-4 sm:p-6 bg-gold/5 border-gold/20">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-2">彭祖百忌</h3>
+                <p class="text-text-secondary text-xs sm:text-sm leading-relaxed">
                   {{ selectedDate.pengZu }}
                 </p>
               </div>

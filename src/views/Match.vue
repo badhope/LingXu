@@ -1,71 +1,71 @@
 <template>
-  <div class="match-page min-h-screen pt-24 pb-20 px-4">
+  <div class="match-page min-h-screen pt-24 pb-20 px-3 sm:px-4">
     <div class="max-w-4xl mx-auto">
-      <header class="text-center mb-12">
-        <h1 class="font-title text-h1 text-text-primary mb-4">生肖星座配对</h1>
-        <p class="text-text-secondary text-body-lg">缘分天定，姻缘可测</p>
+      <header class="text-center mb-8 sm:mb-12">
+        <h1 class="font-title text-2xl sm:text-h1 text-text-primary mb-2 sm:mb-4">生肖星座配对</h1>
+        <p class="text-text-secondary text-body sm:text-body-lg">缘分天定，姻缘可测</p>
       </header>
 
-      <div class="flex justify-center gap-4 mb-8">
+      <div class="flex justify-center gap-2 sm:gap-4 mb-6 sm:mb-8">
         <button
           @click="activeTab = 'zodiac'"
-          class="px-6 py-3 rounded-lg font-serif transition-all duration-300"
+          class="px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-serif text-sm sm:text-base transition-all duration-300"
           :class="activeTab === 'zodiac' ? 'bg-gold/20 text-gold border border-gold/30' : 'bg-abyss/50 text-text-secondary hover:text-gold'"
         >
-          🐲 生肖配对
+          🐲 生肖
         </button>
         <button
           @click="activeTab = 'constellation'"
-          class="px-6 py-3 rounded-lg font-serif transition-all duration-300"
+          class="px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-serif text-sm sm:text-base transition-all duration-300"
           :class="activeTab === 'constellation' ? 'bg-gold/20 text-gold border border-gold/30' : 'bg-abyss/50 text-text-secondary hover:text-gold'"
         >
-          ⭐ 星座配对
+          ⭐ 星座
         </button>
       </div>
 
       <Transition name="fade" mode="out-in">
         <div v-if="activeTab === 'zodiac'" key="zodiac">
-          <div class="card p-8 mb-8">
-            <h3 class="font-serif text-h4 text-text-primary mb-6 text-center">选择生肖</h3>
+          <div class="card p-4 sm:p-8 mb-6 sm:mb-8">
+            <h3 class="font-serif text-lg sm:text-h4 text-text-primary mb-4 sm:mb-6 text-center">选择生肖</h3>
             
-            <div class="grid grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
               <div>
-                <p class="text-text-muted text-sm mb-4 text-center">第一人</p>
-                <div class="grid grid-cols-4 gap-2">
+                <p class="text-text-muted text-xs sm:text-sm mb-2 sm:mb-4 text-center">第一人</p>
+                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   <button
                     v-for="zodiac in zodiacList"
                     :key="zodiac.id"
                     @click="zodiac1 = zodiac.id"
-                    class="p-3 rounded-lg text-center transition-all duration-300"
+                    class="p-2 sm:p-3 rounded-lg text-center transition-all duration-300"
                     :class="zodiac1 === zodiac.id ? 'bg-gold/20 border border-gold/30 text-gold' : 'bg-abyss/50 text-text-secondary hover:text-gold hover:bg-gold/10'"
                   >
-                    <div class="text-2xl mb-1">{{ zodiac.icon }}</div>
+                    <div class="text-lg sm:text-2xl mb-1">{{ zodiac.icon }}</div>
                     <div class="text-xs">{{ zodiac.name }}</div>
                   </button>
                 </div>
               </div>
               
               <div>
-                <p class="text-text-muted text-sm mb-4 text-center">第二人</p>
-                <div class="grid grid-cols-4 gap-2">
+                <p class="text-text-muted text-xs sm:text-sm mb-2 sm:mb-4 text-center">第二人</p>
+                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   <button
                     v-for="zodiac in zodiacList"
                     :key="zodiac.id"
                     @click="zodiac2 = zodiac.id"
-                    class="p-3 rounded-lg text-center transition-all duration-300"
+                    class="p-2 sm:p-3 rounded-lg text-center transition-all duration-300"
                     :class="zodiac2 === zodiac.id ? 'bg-gold/20 border border-gold/30 text-gold' : 'bg-abyss/50 text-text-secondary hover:text-gold hover:bg-gold/10'"
                   >
-                    <div class="text-2xl mb-1">{{ zodiac.icon }}</div>
+                    <div class="text-lg sm:text-2xl mb-1">{{ zodiac.icon }}</div>
                     <div class="text-xs">{{ zodiac.name }}</div>
                   </button>
                 </div>
               </div>
             </div>
 
-            <div class="text-center mt-8">
+            <div class="text-center mt-4 sm:mt-8">
               <button
                 @click="calculateZodiacMatch"
-                class="btn-primary"
+                class="btn-primary text-sm sm:text-base"
                 :disabled="!zodiac1 || !zodiac2"
               >
                 开始配对
@@ -74,98 +74,98 @@
           </div>
 
           <Transition name="fade" mode="out-in">
-            <div v-if="zodiacResult" key="result" class="space-y-6">
-              <div class="card p-8 text-center">
-                <div class="flex items-center justify-center gap-8 mb-6">
+            <div v-if="zodiacResult" key="result" class="space-y-4 sm:space-y-6">
+              <div class="card p-4 sm:p-8 text-center">
+                <div class="flex items-center justify-center gap-4 sm:gap-8 mb-4 sm:mb-6">
                   <div class="text-center">
-                    <div class="text-5xl mb-2">{{ getZodiacInfo(zodiac1).icon }}</div>
-                    <div class="font-serif text-text-primary">{{ getZodiacInfo(zodiac1).name }}</div>
+                    <div class="text-3xl sm:text-5xl mb-1 sm:mb-2">{{ getZodiacInfo(zodiac1).icon }}</div>
+                    <div class="font-serif text-sm sm:text-base text-text-primary">{{ getZodiacInfo(zodiac1).name }}</div>
                   </div>
-                  <div class="text-4xl text-gold">💕</div>
+                  <div class="text-2xl sm:text-4xl text-gold">💕</div>
                   <div class="text-center">
-                    <div class="text-5xl mb-2">{{ getZodiacInfo(zodiac2).icon }}</div>
-                    <div class="font-serif text-text-primary">{{ getZodiacInfo(zodiac2).name }}</div>
+                    <div class="text-3xl sm:text-5xl mb-1 sm:mb-2">{{ getZodiacInfo(zodiac2).icon }}</div>
+                    <div class="font-serif text-sm sm:text-base text-text-primary">{{ getZodiacInfo(zodiac2).name }}</div>
                   </div>
                 </div>
 
-                <div class="mb-6">
-                  <div class="text-6xl font-number" :class="getScoreColor(zodiacResult.level)">
+                <div class="mb-4 sm:mb-6">
+                  <div class="text-4xl sm:text-6xl font-number" :class="getScoreColor(zodiacResult.level)">
                     {{ zodiacResult.score }}
                   </div>
-                  <div class="text-text-muted text-sm">匹配分数</div>
+                  <div class="text-text-muted text-xs sm:text-sm">匹配分数</div>
                 </div>
 
-                <div class="inline-block px-6 py-2 rounded-full" :class="getLevelBg(zodiacResult.level)">
-                  <span class="font-serif text-lg" :class="getScoreColor(zodiacResult.level)">
+                <div class="inline-block px-4 sm:px-6 py-1 sm:py-2 rounded-full" :class="getLevelBg(zodiacResult.level)">
+                  <span class="font-serif text-sm sm:text-lg" :class="getScoreColor(zodiacResult.level)">
                     {{ zodiacResult.level }}
                   </span>
                 </div>
 
-                <p class="text-text-secondary text-body-lg mt-6">{{ zodiacResult.summary }}</p>
+                <p class="text-text-secondary text-sm sm:text-body mt-4 sm:mt-6">{{ zodiacResult.summary }}</p>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card p-6">
-                  <h3 class="font-serif text-h4 text-gold mb-4">💕 感情运势</h3>
-                  <p class="text-text-secondary text-body leading-relaxed">{{ zodiacResult.love }}</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div class="card p-4 sm:p-6">
+                  <h3 class="font-serif text-base sm:text-lg text-gold mb-2 sm:mb-4">💕 感情运势</h3>
+                  <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{{ zodiacResult.love }}</p>
                 </div>
 
-                <div class="card p-6">
-                  <h3 class="font-serif text-h4 text-gold mb-4">💼 事业合作</h3>
-                  <p class="text-text-secondary text-body leading-relaxed">{{ zodiacResult.career }}</p>
+                <div class="card p-4 sm:p-6">
+                  <h3 class="font-serif text-base sm:text-lg text-gold mb-2 sm:mb-4">💼 事业合作</h3>
+                  <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{{ zodiacResult.career }}</p>
                 </div>
               </div>
 
-              <div class="card p-6 bg-gold/5 border-gold/20">
-                <h3 class="font-serif text-h4 text-gold mb-4">💝 相处建议</h3>
-                <p class="text-text-secondary text-body leading-relaxed">{{ zodiacResult.advice }}</p>
+              <div class="card p-4 sm:p-6 bg-gold/5 border-gold/20">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-2 sm:mb-4">💝 相处建议</h3>
+                <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{{ zodiacResult.advice }}</p>
               </div>
             </div>
           </Transition>
         </div>
 
         <div v-else key="constellation">
-          <div class="card p-8 mb-8">
-            <h3 class="font-serif text-h4 text-text-primary mb-6 text-center">选择星座</h3>
+          <div class="card p-4 sm:p-8 mb-6 sm:mb-8">
+            <h3 class="font-serif text-lg sm:text-h4 text-text-primary mb-4 sm:mb-6 text-center">选择星座</h3>
             
-            <div class="grid grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
               <div>
-                <p class="text-text-muted text-sm mb-4 text-center">第一人</p>
-                <div class="grid grid-cols-4 gap-2">
+                <p class="text-text-muted text-xs sm:text-sm mb-2 sm:mb-4 text-center">第一人</p>
+                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   <button
                     v-for="constellation in constellationList"
                     :key="constellation.id"
                     @click="constellation1 = constellation.id"
-                    class="p-3 rounded-lg text-center transition-all duration-300"
+                    class="p-2 sm:p-3 rounded-lg text-center transition-all duration-300"
                     :class="constellation1 === constellation.id ? 'bg-gold/20 border border-gold/30 text-gold' : 'bg-abyss/50 text-text-secondary hover:text-gold hover:bg-gold/10'"
                   >
-                    <div class="text-2xl mb-1">{{ constellation.icon }}</div>
+                    <div class="text-lg sm:text-2xl mb-1">{{ constellation.icon }}</div>
                     <div class="text-xs">{{ constellation.name }}</div>
                   </button>
                 </div>
               </div>
               
               <div>
-                <p class="text-text-muted text-sm mb-4 text-center">第二人</p>
-                <div class="grid grid-cols-4 gap-2">
+                <p class="text-text-muted text-xs sm:text-sm mb-2 sm:mb-4 text-center">第二人</p>
+                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   <button
                     v-for="constellation in constellationList"
                     :key="constellation.id"
                     @click="constellation2 = constellation.id"
-                    class="p-3 rounded-lg text-center transition-all duration-300"
+                    class="p-2 sm:p-3 rounded-lg text-center transition-all duration-300"
                     :class="constellation2 === constellation.id ? 'bg-gold/20 border border-gold/30 text-gold' : 'bg-abyss/50 text-text-secondary hover:text-gold hover:bg-gold/10'"
                   >
-                    <div class="text-2xl mb-1">{{ constellation.icon }}</div>
+                    <div class="text-lg sm:text-2xl mb-1">{{ constellation.icon }}</div>
                     <div class="text-xs">{{ constellation.name }}</div>
                   </button>
                 </div>
               </div>
             </div>
 
-            <div class="text-center mt-8">
+            <div class="text-center mt-4 sm:mt-8">
               <button
                 @click="calculateConstellationMatch"
-                class="btn-primary"
+                class="btn-primary text-sm sm:text-base"
                 :disabled="!constellation1 || !constellation2"
               >
                 开始配对
@@ -174,51 +174,51 @@
           </div>
 
           <Transition name="fade" mode="out-in">
-            <div v-if="constellationResult" key="result" class="space-y-6">
-              <div class="card p-8 text-center">
-                <div class="flex items-center justify-center gap-8 mb-6">
+            <div v-if="constellationResult" key="result" class="space-y-4 sm:space-y-6">
+              <div class="card p-4 sm:p-8 text-center">
+                <div class="flex items-center justify-center gap-4 sm:gap-8 mb-4 sm:mb-6">
                   <div class="text-center">
-                    <div class="text-5xl mb-2">{{ getConstellationInfo(constellation1).icon }}</div>
-                    <div class="font-serif text-text-primary">{{ getConstellationInfo(constellation1).name }}</div>
+                    <div class="text-3xl sm:text-5xl mb-1 sm:mb-2">{{ getConstellationInfo(constellation1).icon }}</div>
+                    <div class="font-serif text-sm sm:text-base text-text-primary">{{ getConstellationInfo(constellation1).name }}</div>
                   </div>
-                  <div class="text-4xl text-gold">💕</div>
+                  <div class="text-2xl sm:text-4xl text-gold">💕</div>
                   <div class="text-center">
-                    <div class="text-5xl mb-2">{{ getConstellationInfo(constellation2).icon }}</div>
-                    <div class="font-serif text-text-primary">{{ getConstellationInfo(constellation2).name }}</div>
+                    <div class="text-3xl sm:text-5xl mb-1 sm:mb-2">{{ getConstellationInfo(constellation2).icon }}</div>
+                    <div class="font-serif text-sm sm:text-base text-text-primary">{{ getConstellationInfo(constellation2).name }}</div>
                   </div>
                 </div>
 
-                <div class="mb-6">
-                  <div class="text-6xl font-number" :class="getScoreColor(constellationResult.level)">
+                <div class="mb-4 sm:mb-6">
+                  <div class="text-4xl sm:text-6xl font-number" :class="getScoreColor(constellationResult.level)">
                     {{ constellationResult.score }}
                   </div>
-                  <div class="text-text-muted text-sm">匹配分数</div>
+                  <div class="text-text-muted text-xs sm:text-sm">匹配分数</div>
                 </div>
 
-                <div class="inline-block px-6 py-2 rounded-full" :class="getLevelBg(constellationResult.level)">
-                  <span class="font-serif text-lg" :class="getScoreColor(constellationResult.level)">
+                <div class="inline-block px-4 sm:px-6 py-1 sm:py-2 rounded-full" :class="getLevelBg(constellationResult.level)">
+                  <span class="font-serif text-sm sm:text-lg" :class="getScoreColor(constellationResult.level)">
                     {{ constellationResult.level }}
                   </span>
                 </div>
 
-                <p class="text-text-secondary text-body-lg mt-6">{{ constellationResult.summary }}</p>
+                <p class="text-text-secondary text-sm sm:text-body mt-4 sm:mt-6">{{ constellationResult.summary }}</p>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card p-6">
-                  <h3 class="font-serif text-h4 text-gold mb-4">💕 感情运势</h3>
-                  <p class="text-text-secondary text-body leading-relaxed">{{ constellationResult.love }}</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div class="card p-4 sm:p-6">
+                  <h3 class="font-serif text-base sm:text-lg text-gold mb-2 sm:mb-4">💕 感情运势</h3>
+                  <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{{ constellationResult.love }}</p>
                 </div>
 
-                <div class="card p-6">
-                  <h3 class="font-serif text-h4 text-gold mb-4">💼 事业合作</h3>
-                  <p class="text-text-secondary text-body leading-relaxed">{{ constellationResult.career }}</p>
+                <div class="card p-4 sm:p-6">
+                  <h3 class="font-serif text-base sm:text-lg text-gold mb-2 sm:mb-4">💼 事业合作</h3>
+                  <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{{ constellationResult.career }}</p>
                 </div>
               </div>
 
-              <div class="card p-6 bg-gold/5 border-gold/20">
-                <h3 class="font-serif text-h4 text-gold mb-4">💝 相处建议</h3>
-                <p class="text-text-secondary text-body leading-relaxed">{{ constellationResult.advice }}</p>
+              <div class="card p-4 sm:p-6 bg-gold/5 border-gold/20">
+                <h3 class="font-serif text-base sm:text-lg text-gold mb-2 sm:mb-4">💝 相处建议</h3>
+                <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{{ constellationResult.advice }}</p>
               </div>
             </div>
           </Transition>
