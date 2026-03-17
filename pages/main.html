@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天机 - 四大板块</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="main-container">
+        <nav class="top-nav">
+            <div class="nav-logo">天机</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-section="tian">天</a>
+                <a href="#" class="nav-link" data-section="di">地</a>
+                <a href="#" class="nav-link" data-section="xuan">玄</a>
+                <a href="#" class="nav-link" data-section="huang">黄</a>
+                <a href="#" class="nav-link" data-section="books">典籍</a>
+            </div>
+            <div class="nav-search">
+                <input type="text" id="searchInput" placeholder="搜索内容...">
+                <button id="searchBtn">🔍</button>
+            </div>
+        </nav>
+
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-char" data-section="tian">天</span>
+                    <span class="title-char" data-section="di">地</span>
+                    <span class="title-char" data-section="xuan">玄</span>
+                    <span class="title-char" data-section="huang">黄</span>
+                </h1>
+                <p class="hero-subtitle">宇宙玄机 · 尽在其中</p>
+            </div>
+            <div class="hero-bg">
+                <div class="bg-layer layer-1"></div>
+                <div class="bg-layer layer-2"></div>
+                <div class="bg-layer layer-3"></div>
+            </div>
+        </div>
+
+        <section class="four-elements" id="fourElements">
+            <div class="element-card" data-section="tian" style="--delay: 0">
+                <div class="element-visual">
+                    <div class="visual-circle sky">
+                        <div class="inner-glow"></div>
+                        <div class="stars"></div>
+                    </div>
+                </div>
+                <div class="element-content">
+                    <h2 class="element-title">天</h2>
+                    <p class="element-desc">运势预测 · 黄历查询 · 周易占卜</p>
+                    <div class="element-subitems">
+                        <a href="fortune.html" class="subitem">
+                            <span class="subitem-icon">☀️</span>
+                            <span class="subitem-text">每日运势</span>
+                        </a>
+                        <a href="calendar.html" class="subitem">
+                            <span class="subitem-icon">📅</span>
+                            <span class="subitem-text">黄历查询</span>
+                        </a>
+                        <a href="bazi.html" class="subitem">
+                            <span class="subitem-icon">🎯</span>
+                            <span class="subitem-text">八字命理</span>
+                        </a>
+                        <a href="yijing.html" class="subitem">
+                            <span class="subitem-icon">☯️</span>
+                            <span class="subitem-text">易经解读</span>
+                        </a>
+                        <a href="divination.html" class="subitem">
+                            <span class="subitem-icon">🔮</span>
+                            <span class="subitem-text">占卜预测</span>
+                        </a>
+                        <a href="face.html" class="subitem">
+                            <span class="subitem-icon">👤</span>
+                            <span class="subitem-text">面相手相</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="element-card" data-section="di" style="--delay: 1">
+                <div class="element-visual">
+                    <div class="visual-circle earth">
+                        <div class="mountains"></div>
+                        <div class="rivers"></div>
+                    </div>
+                </div>
+                <div class="element-content">
+                    <h2 class="element-title">地</h2>
+                    <p class="element-desc">风水堪舆 · 山海神话 · 地理风俗</p>
+                    <div class="element-subitems">
+                        <a href="fengshui.html" class="subitem">
+                            <span class="subitem-icon">🏔️</span>
+                            <span class="subitem-text">风水堪舆</span>
+                        </a>
+                        <a href="shanhai.html" class="subitem">
+                            <span class="subitem-icon">🌊</span>
+                            <span class="subitem-text">山海经</span>
+                        </a>
+                        <a href="beasts.html" class="subitem">
+                            <span class="subitem-icon">🦄</span>
+                            <span class="subitem-text">神兽异兽</span>
+                        </a>
+                        <a href="myths.html" class="subitem">
+                            <span class="subitem-icon">🏛️</span>
+                            <span class="subitem-text">神话传说</span>
+                        </a>
+                        <a href="folklore.html" class="subitem">
+                            <span class="subitem-icon">🎭</span>
+                            <span class="subitem-text">民俗文化</span>
+                        </a>
+                        <a href="longmai.html" class="subitem">
+                            <span class="subitem-icon">🐉</span>
+                            <span class="subitem-text">地理龙脉</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="element-card" data-section="xuan" style="--delay: 2">
+                <div class="element-visual">
+                    <div class="visual-circle mystery">
+                        <div class="trigrams-rotating"></div>
+                    </div>
+                </div>
+                <div class="element-content">
+                    <h2 class="element-title">玄</h2>
+                    <p class="element-desc">奇经八脉 · 内功修炼 · 道法符咒</p>
+                    <div class="element-subitems">
+                        <a href="meridians.html" class="subitem">
+                            <span class="subitem-icon">🔆</span>
+                            <span class="subitem-text">奇经八脉</span>
+                        </a>
+                        <a href="neigong.html" class="subitem">
+                            <span class="subitem-icon">🧘</span>
+                            <span class="subitem-text">内功修炼</span>
+                        </a>
+                        <a href="taoism.html" class="subitem">
+                            <span class="subitem-icon">⚡</span>
+                            <span class="subitem-text">道法符咒</span>
+                        </a>
+                        <a href="alchemy.html" class="subitem">
+                            <span class="subitem-icon">⚗️</span>
+                            <span class="subitem-text">丹道筑基</span>
+                        </a>
+                        <a href="yijing-detail.html" class="subitem">
+                            <span class="subitem-icon">📖</span>
+                            <span class="subitem-text">周易精解</span>
+                        </a>
+                        <a href="xuanxue.html" class="subitem">
+                            <span class="subitem-icon">🔮</span>
+                            <span class="subitem-text">玄学知识</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="element-card" data-section="huang" style="--delay: 3">
+                <div class="element-visual">
+                    <div class="visual-circle human">
+                        <div class="yin-yang"></div>
+                    </div>
+                </div>
+                <div class="element-content">
+                    <h2 class="element-title">黄</h2>
+                    <p class="element-desc">八字命理 · 养生指南 · 起名测算</p>
+                    <div class="element-subitems">
+                        <a href="bazi-detail.html" class="subitem">
+                            <span class="subitem-icon">📊</span>
+                            <span class="subitem-text">八字命理</span>
+                        </a>
+                        <a href="huangdi.html" class="subitem">
+                            <span class="subitem-icon">📜</span>
+                            <span class="subitem-text">黄帝内经</span>
+                        </a>
+                        <a href="wellness.html" class="subitem">
+                            <span class="subitem-icon">🌿</span>
+                            <span class="subitem-text">养生导引</span>
+                        </a>
+                        <a href="qigong.html" class="subitem">
+                            <span class="subitem-icon">🌬️</span>
+                            <span class="subitem-text">气功养生</span>
+                        </a>
+                        <a href="name.html" class="subitem">
+                            <span class="subitem-icon">✍️</span>
+                            <span class="subitem-text">姓名学</span>
+                        </a>
+                        <a href="match.html" class="subitem">
+                            <span class="subitem-icon">💑</span>
+                            <span class="subitem-text">八字合婚</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="classics-section">
+            <h2 class="section-title">典籍文献库</h2>
+            <p class="section-desc">汇聚千年智慧，传承文化经典</p>
+            <div class="classics-grid">
+                <a href="classics/zhouyi.html" class="classic-card">
+                    <div class="classic-icon">周易</div>
+                    <h3>周易</h3>
+                    <p>群经之首，大道之源</p>
+                </a>
+                <a href="classics/daodejing.html" class="classic-card">
+                    <div class="classic-icon">道德经</div>
+                    <h3>道德经</h3>
+                    <p>道法自然，无为而治</p>
+                </a>
+                <a href="classics/shanhaijing.html" class="classic-card">
+                    <div class="classic-icon">山海经</div>
+                    <h3>山海经</h3>
+                    <p>神话地理，奇异山川</p>
+                </a>
+                <a href="classics/huangdi.html" class="classic-card">
+                    <div class="classic-icon">黄帝内经</div>
+                    <h3>黄帝内经</h3>
+                    <p>医家之宗，养生之道</p>
+                </a>
+                <a href="classics/soushenji.html" class="classic-card">
+                    <div class="classic-icon">搜神记</div>
+                    <h3>搜神记</h3>
+                    <p>神怪传奇，志异小说</p>
+                </a>
+                <a href="classics/baopuzi.html" class="classic-card">
+                    <div class="classic-icon">抱朴子</div>
+                    <h3>抱朴子</h3>
+                    <p>神仙道教，炼丹养生</p>
+                </a>
+            </div>
+        </section>
+
+        <div class="user-panel" id="userPanel">
+            <div class="user-toggle" id="userToggle">
+                <span class="user-icon">👤</span>
+                <span class="user-name">我的数据</span>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-section">
+                    <h4>历史记录</h4>
+                    <div id="historyList" class="history-list">
+                        <p class="empty-tip">暂无历史记录</p>
+                    </div>
+                </div>
+                <div class="user-section">
+                    <h4>收藏夹</h4>
+                    <div id="favoritesList" class="favorites-list">
+                        <p class="empty-tip">暂无收藏</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="main-footer">
+            <p>© 2024 天机 · 探索玄妙世界</p>
+            <p class="footer-note">本页面内容仅供娱乐参考</p>
+        </footer>
+    </div>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

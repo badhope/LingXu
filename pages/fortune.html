@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日运势 - 天机</title>
+    <link rel="stylesheet" href="../../css/page.css">
+    <link rel="stylesheet" href="../../css/fortune.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">每日运势</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="fortune-intro">
+                <div class="intro-visual">
+                    <div class="zodiac-ring">
+                        <div class="zodiac-item" data-zodiac="rat">鼠</div>
+                        <div class="zodiac-item" data-zodiac="ox">牛</div>
+                        <div class="zodiac-item" data-zodiac="tiger">虎</div>
+                        <div class="zodiac-item" data-zodiac="rabbit">兔</div>
+                        <div class="zodiac-item" data-zodiac="dragon">龙</div>
+                        <div class="zodiac-item" data-zodiac="snake">蛇</div>
+                        <div class="zodiac-item" data-zodiac="horse">马</div>
+                        <div class="zodiac-item" data-zodiac="goat">羊</div>
+                        <div class="zodiac-item" data-zodiac="monkey">猴</div>
+                        <div class="zodiac-item" data-zodiac="rooster">鸡</div>
+                        <div class="zodiac-item" data-zodiac="dog">狗</div>
+                        <div class="zodiac-item" data-zodiac="pig">猪</div>
+                    </div>
+                </div>
+                <p class="intro-text">选择您的生肖，开启今日运势之旅</p>
+            </section>
+
+            <section class="zodiac-selector">
+                <h2 class="section-title">选择生肖</h2>
+                <div class="zodiac-grid" id="zodiacGrid">
+                    <button class="zodiac-btn" data-zodiac="rat">
+                        <span class="zodiac-icon">🐀</span>
+                        <span class="zodiac-name">鼠</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="ox">
+                        <span class="zodiac-icon">🐂</span>
+                        <span class="zodiac-name">牛</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="tiger">
+                        <span class="zodiac-icon">🐅</span>
+                        <span class="zodiac-name">虎</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="rabbit">
+                        <span class="zodiac-icon">🐇</span>
+                        <span class="zodiac-name">兔</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="dragon">
+                        <span class="zodiac-icon">🐉</span>
+                        <span class="zodiac-name">龙</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="snake">
+                        <span class="zodiac-icon">🐍</span>
+                        <span class="zodiac-name">蛇</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="horse">
+                        <span class="zodiac-icon">🐎</span>
+                        <span class="zodiac-name">马</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="goat">
+                        <span class="zodiac-icon">🐐</span>
+                        <span class="zodiac-name">羊</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="monkey">
+                        <span class="zodiac-icon">🐒</span>
+                        <span class="zodiac-name">猴</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="rooster">
+                        <span class="zodiac-icon">🐓</span>
+                        <span class="zodiac-name">鸡</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="dog">
+                        <span class="zodiac-icon">🐕</span>
+                        <span class="zodiac-name">狗</span>
+                    </button>
+                    <button class="zodiac-btn" data-zodiac="pig">
+                        <span class="zodiac-icon">🐖</span>
+                        <span class="zodiac-name">猪</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="fortune-result" id="fortuneResult" style="display: none;">
+                <div class="result-header">
+                    <div class="result-zodiac" id="resultZodiac"></div>
+                    <div class="result-date" id="resultDate"></div>
+                </div>
+
+                <div class="fortune-scores">
+                    <div class="score-item">
+                        <div class="score-label">综合运势</div>
+                        <div class="score-bar">
+                            <div class="score-fill" id="overallScore"></div>
+                        </div>
+                        <div class="score-value" id="overallValue">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">事业运势</div>
+                        <div class="score-bar">
+                            <div class="score-fill" id="careerScore"></div>
+                        </div>
+                        <div class="score-value" id="careerValue">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">爱情运势</div>
+                        <div class="score-bar">
+                            <div class="score-fill" id="loveScore"></div>
+                        </div>
+                        <div class="score-value" id="loveValue">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">财运运势</div>
+                        <div class="score-bar">
+                            <div class="score-fill" id="wealthScore"></div>
+                        </div>
+                        <div class="score-value" id="wealthValue">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">健康运势</div>
+                        <div class="score-bar">
+                            <div class="score-fill" id="healthScore"></div>
+                        </div>
+                        <div class="score-value" id="healthValue">0</div>
+                    </div>
+                </div>
+
+                <div class="fortune-details">
+                    <div class="detail-card lucky-color">
+                        <h4>幸运颜色</h4>
+                        <p id="luckyColor">-</p>
+                    </div>
+                    <div class="detail-card lucky-number">
+                        <h4>幸运数字</h4>
+                        <p id="luckyNumber">-</p>
+                    </div>
+                    <div class="detail-card lucky-direction">
+                        <h4>财神方位</h4>
+                        <p id="luckyDirection">-</p>
+                    </div>
+                </div>
+
+                <div class="fortune-description">
+                    <h3>运势解读</h3>
+                    <p id="fortuneDesc"></p>
+                </div>
+
+                <div class="fortune-actions">
+                    <button class="action-btn" id="saveFortuneBtn">
+                        <span>💾</span> 保存结果
+                    </button>
+                    <button class="action-btn" id="shareFortuneBtn">
+                        <span>📤</span> 分享结果
+                    </button>
+                    <button class="action-btn" id="viewDetailBtn">
+                        <span>📖</span> 详细分析
+                    </button>
+                </div>
+            </section>
+
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-container">
+                    <div class="loading-taiji">
+                        <div class="taiji"></div>
+                    </div>
+                    <p class="loading-text">推演运势中...</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2024 天机 · 运势仅供娱乐参考</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <h2 class="modal-title">详细运势分析</h2>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../../js/fortune.js"></script>
+</body>
+</html>

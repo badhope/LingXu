@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>易经解读 - 天机</title>
+    <link rel="stylesheet" href="../../css/page.css">
+    <link rel="stylesheet" href="../../css/yijing.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">易经解读</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="yijing-intro">
+                <div class="intro-visual">
+                    <div class="bagua-visual">
+                        <div class="trigram" data-trigram="☰">☰</div>
+                        <div class="trigram" data-trigram="☱">☱</div>
+                        <div class="trigram" data-trigram="☲">☲</div>
+                        <div class="trigram" data-trigram="☳">☳</div>
+                        <div class="trigram" data-trigram="☴">☴</div>
+                        <div class="trigram" data-trigram="☵">☵</div>
+                        <div class="trigram" data-trigram="☶">☶</div>
+                        <div class="trigram" data-trigram="☷">☷</div>
+                    </div>
+                </div>
+                <p class="intro-text">易者，变也。探索六十四卦，洞察天地玄机</p>
+            </section>
+
+            <section class="divination-section">
+                <h2 class="section-title">起卦占卜</h2>
+                <p class="section-desc">诚心默念所问之事，摇动铜钱起卦</p>
+                <div class="divination-tools">
+                    <div class="coins-container" id="coinsContainer">
+                        <div class="coin" data-side="1">☰</div>
+                        <div class="coin" data-side="2">☰</div>
+                        <div class="coin" data-side="3">☰</div>
+                    </div>
+                    <button class="btn btn-primary" id="divinateBtn">起卦</button>
+                </div>
+            </section>
+
+            <section class="hexagram-library">
+                <h2 class="section-title">六十四卦</h2>
+                <div class="hexagrams-grid" id="hexagramsGrid"></div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2024 天机 · 易经仅供娱乐参考</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="hexagramModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../../js/yijing.js"></script>
+</body>
+</html>

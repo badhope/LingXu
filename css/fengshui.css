@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-gold: #c9a227;
+    --primary-red: #8b0000;
+    --dark-bg: #0a0a0a;
+    --dark-secondary: #121212;
+    --text-light: #f5f5f5;
+    --text-muted: #888;
+    --glow-gold: rgba(201, 162, 39, 0.5);
+}
+
+body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--dark-bg);
+    color: var(--text-light);
+    min-height: 100vh;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: 
+        radial-gradient(ellipse at 20% 30%, rgba(46, 125, 50, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        var(--dark-bg);
+}
+
+.page-header {
+    position: relative;
+    padding: 25px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(46, 125, 50, 0.15) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.back-btn {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 20px;
+    background: rgba(201, 162, 39, 0.05);
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+
+.page-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-decoration {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+}
+
+.page-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-footer {
+    padding: 20px;
+    text-align: center;
+    background: var(--dark-secondary);
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.fengshui-intro {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.compass-visual {
+    margin-bottom: 30px;
+}
+
+.compass {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 3px solid var(--primary-gold);
+    position: relative;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.1) 0%, transparent 70%);
+}
+
+.compass-needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 60px;
+    background: linear-gradient(180deg, var(--primary-red) 50%, var(--primary-gold) 50%);
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+    animation: compass-rotate 10s ease-in-out infinite;
+}
+
+@keyframes compass-rotate {
+    0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+    25% { transform: translate(-50%, -50%) rotate(15deg); }
+    75% { transform: translate(-50%, -50%) rotate(-15deg); }
+}
+
+.compass-mark {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+.intro-text {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.fengshui-tools, .fengshui-knowledge {
+    margin-bottom: 50px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.tool-card {
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.tool-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.tool-card h3 {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.tool-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.knowledge-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.knowledge-card {
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.knowledge-card h4 {
+    color: var(--primary-gold);
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+}
+
+.knowledge-card p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 20px;
+    }
+    
+    .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+}

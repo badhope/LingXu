@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山海经 - 天机</title>
+    <link rel="stylesheet" href="../../css/page.css">
+    <link rel="stylesheet" href="../../css/shanhai.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">山海经</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="shanhai-intro">
+                <div class="intro-visual">
+                    <div class="mountain-bg"></div>
+                </div>
+                <p class="intro-text">记载古代山川地理、神兽异草的奇书</p>
+            </section>
+
+            <section class="beasts-section">
+                <h2 class="section-title">神兽异兽</h2>
+                <div class="beasts-grid" id="beastsGrid"></div>
+            </section>
+
+            <section class="mountains-section">
+                <h2 class="section-title">奇山异水</h2>
+                <div class="mountains-grid" id="mountainsGrid"></div>
+            </section>
+
+            <section class="herbs-section">
+                <h2 class="section-title">奇花异草</h2>
+                <div class="herbs-grid" id="herbsGrid"></div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2024 天机 · 山海经仅供娱乐参考</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../../js/shanhai.js"></script>
+</body>
+</html>

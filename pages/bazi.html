@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字命理 - 天机</title>
+    <link rel="stylesheet" href="../../css/page.css">
+    <link rel="stylesheet" href="../../css/bazi.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">八字命理</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="bazi-input">
+                <h2 class="section-title">输入您的出生信息</h2>
+                <div class="input-form">
+                    <div class="form-group">
+                        <label>出生年份</label>
+                        <select id="yearSelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>出生月份</label>
+                        <select id="monthSelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>出生日期</label>
+                        <select id="daySelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>出生时辰</label>
+                        <select id="hourSelect">
+                            <option value="0">子时 (23:00-01:00)</option>
+                            <option value="1">丑时 (01:00-03:00)</option>
+                            <option value="2">寅时 (03:00-05:00)</option>
+                            <option value="3">卯时 (05:00-07:00)</option>
+                            <option value="4">辰时 (07:00-09:00)</option>
+                            <option value="5">巳时 (09:00-11:00)</option>
+                            <option value="6">午时 (11:00-13:00)</option>
+                            <option value="7">未时 (13:00-15:00)</option>
+                            <option value="8">申时 (15:00-17:00)</option>
+                            <option value="9">酉时 (17:00-19:00)</option>
+                            <option value="10">戌时 (19:00-21:00)</option>
+                            <option value="11">亥时 (21:00-23:00)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>性别</label>
+                        <select id="genderSelect">
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="analyzeBtn">开始分析</button>
+                </div>
+            </section>
+
+            <section class="bazi-result" id="baziResult" style="display: none;">
+                <div class="result-header">
+                    <h3>您的八字命盘</h3>
+                    <div class="bazi-pan" id="baziPan"></div>
+                </div>
+
+                <div class="result-analysis">
+                    <div class="analysis-card">
+                        <h4>五行分布</h4>
+                        <div class="wuxing-chart" id="wuxingChart"></div>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>日主强弱</h4>
+                        <div class="day-master" id="dayMaster"></div>
+                    </div>
+                </div>
+
+                <div class="fortune-analysis">
+                    <h3>命理分析</h3>
+                    <div class="fortune-grid">
+                        <div class="fortune-item">
+                            <h4>事业运</h4>
+                            <p id="careerAnalysis"></p>
+                        </div>
+                        <div class="fortune-item">
+                            <h4>财运</h4>
+                            <p id="wealthAnalysis"></p>
+                        </div>
+                        <div class="fortune-item">
+                            <h4>爱情运</h4>
+                            <p id="loveAnalysis"></p>
+                        </div>
+                        <div class="fortune-item">
+                            <h4>健康运</h4>
+                            <p id="healthAnalysis"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="compatibility-section">
+                    <h3>八字合婚</h3>
+                    <p class="compatibility-tip">输入另一半的出生信息查看合婚结果</p>
+                    <div class="compatibility-inputs">
+                        <select id="partnerYear"></select>
+                        <select id="partnerMonth"></select>
+                        <select id="partnerDay"></select>
+                        <select id="partnerHour"></select>
+                        <button class="btn" id="matchBtn">合婚配对</button>
+                    </div>
+                    <div class="match-result" id="matchResult" style="display: none;"></div>
+                </div>
+            </section>
+
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-container">
+                    <div class="loading-symbol">🎯</div>
+                    <p class="loading-text">推演命理中...</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2024 天机 · 命理仅供娱乐参考</p>
+        </footer>
+    </div>
+
+    <script src="../../js/bazi.js"></script>
+</body>
+</html>

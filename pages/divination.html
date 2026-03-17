@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>占卜预测 - 天机</title>
+    <link rel="stylesheet" href="../../css/page.css">
+    <link rel="stylesheet" href="../../css/yijing.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">占卜预测</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="divination-types">
+                <h2 class="section-title">占卜方式</h2>
+                <div class="types-grid">
+                    <div class="type-card" data-type="yijing">
+                        <div class="type-icon">☯️</div>
+                        <h3>易经占卜</h3>
+                        <p>六十四卦，阴阳变化</p>
+                    </div>
+                    <div class="type-card" data-type="qimen">
+                        <div class="type-icon">🌀</div>
+                        <h3>奇门遁甲</h3>
+                        <p>时空数理，趋吉避凶</p>
+                    </div>
+                    <div class="type-card" data-type="liuren">
+                        <div class="type-icon">🔢</div>
+                        <h3>六壬神数</h3>
+                        <p>五行生克，预测吉凶</p>
+                    </div>
+                    <div class="type-card" data-type="ziwei">
+                        <div class="type-icon">⭐</div>
+                        <h3>紫微斗数</h3>
+                        <p>星宿命运，详批一生</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="divination-result" id="divinationResult" style="display: none;">
+                <div class="result-header">
+                    <h3 id="resultTitle">占卜结果</h3>
+                    <p id="resultTime"></p>
+                </div>
+                <div class="result-content" id="resultContent"></div>
+                <div class="result-actions">
+                    <button class="btn" id="saveResultBtn">保存结果</button>
+                    <button class="btn" id="anotherBtn">再测一次</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2024 天机 · 占卜仅供娱乐参考</p>
+        </footer>
+    </div>
+
+    <script src="../../js/divination.js"></script>
+</body>
+</html>

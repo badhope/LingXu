@@ -1,0 +1,520 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-gold: #c9a227;
+    --primary-red: #8b0000;
+    --dark-bg: #0a0a0a;
+    --dark-secondary: #121212;
+    --text-light: #f5f5f5;
+    --text-muted: #888;
+    --glow-gold: rgba(201, 162, 39, 0.5);
+}
+
+body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--dark-bg);
+    color: var(--text-light);
+    min-height: 100vh;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: 
+        radial-gradient(ellipse at 20% 30%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        var(--dark-bg);
+}
+
+.page-header {
+    position: relative;
+    padding: 25px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(139, 0, 0, 0.15) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.back-btn {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 20px;
+    background: rgba(201, 162, 39, 0.05);
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+
+.page-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-decoration {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+}
+
+.page-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-footer {
+    padding: 20px;
+    text-align: center;
+    background: var(--dark-secondary);
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.yijing-intro {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.intro-visual {
+    margin-bottom: 30px;
+}
+
+.bagua-visual {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.trigram {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: var(--dark-secondary);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    animation: trigram-float 3s ease-in-out infinite;
+}
+
+.trigram:nth-child(2n) {
+    animation-delay: -1.5s;
+}
+
+.trigram:hover {
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 20px var(--glow-gold);
+    transform: scale(1.1);
+}
+
+@keyframes trigram-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.intro-text {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.divination-types {
+    margin-bottom: 50px;
+}
+
+.types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.type-card {
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.type-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.type-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.type-card h3 {
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.type-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.divination-result {
+    background: var(--dark-secondary);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    animation: result-appear 0.5s ease;
+}
+
+@keyframes result-appear {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.result-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.result-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.result-content {
+    text-align: center;
+}
+
+.result-symbol {
+    font-size: 5rem;
+    margin-bottom: 15px;
+    color: var(--primary-gold);
+}
+
+.result-name {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.result-desc {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+.result-meaning, .result-advice {
+    background: rgba(201, 162, 39, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.result-meaning h4, .result-advice h4 {
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.result-meaning p, .result-advice p {
+    color: var(--text-light);
+    line-height: 1.7;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.section-title {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.divination-section {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 40px;
+    background: var(--dark-secondary);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+}
+
+.section-desc {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+.divination-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.coins-container {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.coin {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #d4af37, #8b6914);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--dark-bg);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.coin:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px var(--glow-gold);
+}
+
+.coin.flipping {
+    animation: flip 0.5s ease-in-out;
+}
+
+@keyframes flip {
+    0%, 100% { transform: rotateY(0); }
+    50% { transform: rotateY(180deg); }
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid var(--primary-gold);
+    border-radius: 25px;
+    background: transparent;
+    color: var(--primary-gold);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px var(--glow-gold);
+}
+
+.btn-primary {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+}
+
+.btn-primary:hover {
+    background: #d4af37;
+}
+
+.hexagram-library {
+    margin-bottom: 40px;
+}
+
+.hexagram-library .section-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hexagrams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.hexagram-card {
+    background: var(--dark-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hexagram-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hexagram-symbol {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.hexagram-name {
+    font-size: 1rem;
+    color: var(--primary-gold);
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--dark-secondary);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: var(--primary-gold);
+}
+
+.modal-body h2 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--primary-gold);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modal-body h3 {
+    color: var(--primary-gold);
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+.modal-body p {
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 20px;
+    }
+    
+    .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+    
+    .bagua-visual {
+        gap: 10px;
+    }
+    
+    .trigram {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+    
+    .coins-container {
+        gap: 15px;
+    }
+    
+    .coin {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .hexagrams-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

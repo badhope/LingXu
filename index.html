@@ -1,20 +1,56 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="天机 - 传统黄历与现代科技的完美融合，提供八字排盘、运势测算、抽签占卜等服务">
-    <meta name="keywords" content="黄历,八字,运势,抽签,占卜,命理,玄学">
-    <meta name="theme-color" content="#0A0A0F">
-    <title>天机 - 玄机暗藏，命运可测</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <title>天机 - 玄学入口</title>
+    <link rel="stylesheet" href="css/entrance.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="entrance-container">
+        <div class="particles" id="particles"></div>
+        
+        <div class="taiji-container" id="taiji">
+            <div class="taiji">
+                <div class="yin"></div>
+                <div class="yang"></div>
+                <div class="symbol-yin"></div>
+                <div class="symbol-yang"></div>
+            </div>
+            <div class="trigrams">
+                <div class="trigram" data-value="☰">☰</div>
+                <div class="trigram" data-value="☱">☱</div>
+                <div class="trigram" data-value="☲">☲</div>
+                <div class="trigram" data-value="☳">☳</div>
+                <div class="trigram" data-value="☴">☴</div>
+                <div class="trigram" data-value="☵">☵</div>
+                <div class="trigram" data-value="☶">☶</div>
+                <div class="trigram" data-value="☷">☷</div>
+            </div>
+        </div>
+        
+        <div class="title-container">
+            <h1 class="title" id="title">
+                <span class="char">天</span>
+                <span class="char">机</span>
+            </h1>
+            <p class="subtitle">探索玄妙 · 洞察天机</p>
+        </div>
+        
+        <div class="enter-hint" id="enterHint">
+            <span>点击进入</span>
+            <div class="pulse-ring"></div>
+        </div>
+        
+        <div class="corner-decorations">
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner bl"></div>
+            <div class="corner br"></div>
+        </div>
+    </div>
+
+    <script src="js/entrance.js"></script>
+</body>
 </html>

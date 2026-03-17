@@ -1,0 +1,314 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-gold: #c9a227;
+    --primary-red: #8b0000;
+    --dark-bg: #0a0a0a;
+    --dark-secondary: #121212;
+    --text-light: #f5f5f5;
+    --text-muted: #888;
+    --glow-gold: rgba(201, 162, 39, 0.5);
+}
+
+body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--dark-bg);
+    color: var(--text-light);
+    min-height: 100vh;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: 
+        radial-gradient(ellipse at 30% 20%, rgba(34, 139, 34, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        var(--dark-bg);
+}
+
+.page-header {
+    position: relative;
+    padding: 25px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(34, 139, 34, 0.15) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.back-btn {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 20px;
+    background: rgba(201, 162, 39, 0.05);
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+
+.page-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-decoration {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+}
+
+.page-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-footer {
+    padding: 20px;
+    text-align: center;
+    background: var(--dark-secondary);
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.wellness-intro {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.intro-visual {
+    margin-bottom: 30px;
+}
+
+.yin-yang-anim {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #fff 50%, #1a1a1a 50%);
+    position: relative;
+    animation: rotate-slow 15s linear infinite;
+    box-shadow: 0 0 30px var(--glow-gold);
+}
+
+.yin-yang-anim::before, .yin-yang-anim::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35%;
+    height: 35%;
+    border-radius: 50%;
+}
+
+.yin-yang-anim::before {
+    top: 15%;
+    background: #1a1a1a;
+}
+
+.yin-yang-anim::after {
+    bottom: 15%;
+    background: #fff;
+}
+
+@keyframes rotate-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.intro-text {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.wellness-methods, .seasons-care, .diet-care {
+    margin-bottom: 50px;
+}
+
+.methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.method-card {
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    transition: all 0.3s ease;
+}
+
+.method-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.method-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.method-card h3 {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.method-card p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.seasons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.season-card {
+    background: var(--dark-secondary);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    transition: all 0.3s ease;
+}
+
+.season-card:hover {
+    transform: translateY(-5px);
+}
+
+.season-card.spring { border-top: 3px solid #e91e63; }
+.season-card.summer { border-top: 3px solid #ff9800; }
+.season-card.autumn { border-top: 3px solid #795548; }
+.season-card.winter { border-top: 3px solid #2196f3; }
+
+.season-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.season-card h3 {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.season-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.view-more {
+    color: var(--primary-gold);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.view-more:hover {
+    text-decoration: underline;
+}
+
+.foods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.food-item {
+    background: var(--dark-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    transition: all 0.3s ease;
+}
+
+.food-item:hover {
+    border-color: var(--primary-gold);
+    transform: scale(1.05);
+}
+
+.food-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.food-item h4 {
+    color: var(--primary-gold);
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.food-item p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 20px;
+    }
+    
+    .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .page-content {
+        padding: 20px;
+    }
+    
+    .seasons-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .methods-grid {
+        grid-template-columns: 1fr;
+    }
+}

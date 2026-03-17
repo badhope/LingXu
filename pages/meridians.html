@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奇经八脉 - 天机</title>
+    <link rel="stylesheet" href="../../css/page.css">
+    <link rel="stylesheet" href="../../css/meridians.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☯</text></svg>">
+</head>
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="main.html" class="back-btn">← 返回</a>
+            <h1 class="page-title">奇经八脉</h1>
+            <div class="header-decoration"></div>
+        </header>
+
+        <main class="page-content">
+            <section class="meridians-intro">
+                <div class="intro-visual">
+                    <div class="body-visual" id="bodyVisual">
+                        <div class="meridian-point" data-meridian="ren" style="top: 30%">任脉</div>
+                        <div class="meridian-point" data-meridian="du" style="top: 30%">督脉</div>
+                        <div class="meridian-point" data-meridian="chong" style="top: 45%">冲脉</div>
+                        <div class="meridian-point" data-meridian="dai" style="top: 40%">带脉</div>
+                    </div>
+                </div>
+                <p class="intro-text">探索人体奇经八脉，领悟养生之道</p>
+            </section>
+
+            <section class="eight-meridians">
+                <h2 class="section-title">八大脉系</h2>
+                <div class="meridians-grid" id="meridiansGrid"></div>
+            </section>
+
+            <section class="acupoints-section">
+                <h2 class="section-title">主要穴位</h2>
+                <div class="acupoints-list" id="acupointsList"></div>
+            </section>
+
+            <section class="practice-section">
+                <h2 class="section-title">修炼方法</h2>
+                <div class="practice-cards" id="practiceCards"></div>
+            </section>
+        </main>
+
+        <footer class="page-footer">
+            <p>© 2024 天机 · 养生知识仅供了解</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="meridianModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../../js/meridians.js"></script>
+</body>
+</html>
