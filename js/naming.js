@@ -86,10 +86,20 @@
         }
     };
 
+    const tipsData = [
+        { number: '一', title: '音韵优美', content: '名字读音要朗朗上口，避免拗口或谐音不雅' },
+        { number: '二', title: '寓意深远', content: '名字要寄托美好愿望，体现文化内涵' },
+        { number: '三', title: '五行相补', content: '根据八字五行选择合适的字，补益命理' },
+        { number: '四', title: '数理吉祥', content: '笔画数要选择大吉或平顺的数理' },
+        { number: '五', title: '字形美观', content: '字形结构要匀称，书写方便' },
+        { number: '六', title: '避免重名', content: '尽量避开常见名字，彰显个性' }
+    ];
+
     function init() {
         setupTheoryCards();
         setupStrokesCategories();
         setupElementCards();
+        renderTips();
         initAnimations();
     }
 
@@ -112,6 +122,8 @@
                     
                     cards.forEach(c => c.style.borderColor = 'rgba(201, 162, 39, 0.2)');
                     card.style.borderColor = 'var(--primary-gold)';
+                    
+                    detailContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             });
         });
@@ -119,7 +131,6 @@
 
     function setupStrokesCategories() {
         const categoryBtns = document.querySelectorAll('.category-btn');
-        const strokesGrid = document.getElementById('strokesGrid');
         
         renderStrokes('ji');
         
@@ -179,21 +190,41 @@
         });
     }
 
+    function renderTips() {
+        const container = document.getElementById('tipsList');
+        if (!container) return;
+        
+        container.innerHTML = tipsData.map(tip => `
+            <div class="tip-item">
+                <div class="tip-number">${tip.number}</div>
+                <div class="tip-content">
+                    <h4>${tip.title}</h4>
+                    <p>${tip.content}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function initAnimations() {
         const fadeElements = document.querySelectorAll('.fade-in');
         
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const delay = entry.target.style.getPropertyValue('--delay') || '0';
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, parseFloat(delay) * 200);
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        fadeElements.forEach(el => observer.observe(el));
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const delay = entry.target.style.getPropertyValue('--delay') || '0';
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, parseFloat(delay) * 200);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => observer.observe(el));
+        } else {
+            fadeElements.forEach(el => el.classList.add('visible'));
+        }
     }
 
     document.addEventListener('DOMContentLoaded', init);

@@ -86,10 +86,20 @@
         }
     };
 
+    const proverbsData = [
+        { proverb: '瑞雪兆丰年', meaning: '冬天的大雪预示来年丰收' },
+        { proverb: '清明前后，种瓜点豆', meaning: '清明时节是播种的好时机' },
+        { proverb: '冬至饺子夏至面', meaning: '冬至吃饺子，夏至吃面条' },
+        { proverb: '二月二，龙抬头', meaning: '农历二月初二，春耕开始' },
+        { proverb: '腊月二十三，灶君上天', meaning: '小年送灶王爷上天述职' },
+        { proverb: '七不出门，八不归家', meaning: '逢七不出远门，逢八不回家' }
+    ];
+
     function init() {
         setupFestivalCards();
         setupTaboosCategories();
         setupCustomCards();
+        setupProverbs();
         initAnimations();
     }
 
@@ -188,21 +198,38 @@
         });
     }
 
+    function setupProverbs() {
+        const container = document.getElementById('proverbsList');
+        if (!container) return;
+        
+        container.innerHTML = proverbsData.map(item => `
+            <div class="proverb-item">
+                <div class="proverb-text">${item.proverb}</div>
+                <div class="proverb-meaning">${item.meaning}</div>
+            </div>
+        `).join('');
+    }
+
     function initAnimations() {
         const fadeElements = document.querySelectorAll('.fade-in');
         
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const delay = entry.target.style.getPropertyValue('--delay') || '0';
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, parseFloat(delay) * 200);
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        fadeElements.forEach(el => observer.observe(el));
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const delay = entry.target.style.getPropertyValue('--delay') || '0';
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, parseFloat(delay) * 200);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => observer.observe(el));
+        } else {
+            fadeElements.forEach(el => el.classList.add('visible'));
+        }
     }
 
     document.addEventListener('DOMContentLoaded', init);
