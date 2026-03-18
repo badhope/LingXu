@@ -22,37 +22,133 @@
         </header>
 
         <main class="page-content">
-            <section class="face-intro">
-                <p class="intro-text">相由心生，色随心变</p>
+            <section class="face-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">相学奥秘</div>
+                    <div class="hero-title">面相手相</div>
+                    <div class="hero-subtitle">相由心生，色随心变</div>
+                </div>
+                <div class="hero-visual">
+                    <div class="face-emblem">
+                        <div class="emblem-circle">
+                            <span class="emblem-icon">🧘</span>
+                        </div>
+                        <div class="emblem-rays">
+                            <span class="ray"></span>
+                            <span class="ray"></span>
+                            <span class="ray"></span>
+                            <span class="ray"></span>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <section class="face-analysis">
-                <h2 class="section-title">面相解读</h2>
+            <section class="face-intro fade-in" style="--delay: 2">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <div class="intro-icon">📖</div>
+                        <h2 class="intro-title">相学简介</h2>
+                    </div>
+                    <div class="intro-content">
+                        <p>相学乃中国传统命理之重要分支，通过观察人物面貌、手掌纹理，</p>
+                        <p>推断其一生命运、性格特点、健康状况。</p>
+                        <p>相由心生，一个人的内心世界往往会反映在其容貌与行为上。</p>
+                    </div>
+                    <div class="intro-features">
+                        <div class="feature-card">
+                            <span class="feature-icon">👤</span>
+                            <span class="feature-text">面相</span>
+                            <span class="feature-desc">观五官知命运</span>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">✋</span>
+                            <span class="feature-text">手相</span>
+                            <span class="feature-desc">掌纹藏玄机</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="face-analysis fade-in" style="--delay: 3">
+                <div class="analysis-header">
+                    <h2 class="analysis-title">
+                        <span class="title-icon">👤</span>
+                        面相解读
+                    </h2>
+                    <p class="analysis-desc">点击各部位了解详细含义</p>
+                </div>
+                <div class="face-diagram">
+                    <div class="face-map">
+                        <div class="face-part" data-part=" forehead">
+                            <span class="part-label">额头</span>
+                        </div>
+                        <div class="face-part" data-part="eyebrow">
+                            <span class="part-label">眉</span>
+                        </div>
+                        <div class="face-part" data-part="eyes">
+                            <span class="part-label">眼</span>
+                        </div>
+                        <div class="face-part" data-part="nose">
+                            <span class="part-label">鼻</span>
+                        </div>
+                        <div class="face-part" data-part="mouth">
+                            <span class="part-label">口</span>
+                        </div>
+                        <div class="face-part" data-part="ears">
+                            <span class="part-label">耳</span>
+                        </div>
+                        <div class="face-part" data-part="jaw">
+                            <span class="part-label">下巴</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="face-parts-grid" id="facePartsGrid"></div>
             </section>
 
-            <section class="palm-reading">
-                <h2 class="section-title">手相解析</h2>
+            <section class="palm-reading fade-in" style="--delay: 4">
+                <div class="palm-header">
+                    <h2 class="palm-title">
+                        <span class="title-icon">✋</span>
+                        手相解析
+                    </h2>
+                    <p class="palm-desc">手掌纹理揭示命运轨迹</p>
+                </div>
+                <div class="palm-diagram">
+                    <div class="palm-map">
+                        <div class="palm-line" data-line="life">
+                            <span class="line-label">生命线</span>
+                        </div>
+                        <div class="palm-line" data-line="career">
+                            <span class="line-label">事业线</span>
+                        </div>
+                        <div class="palm-line" data-line="love">
+                            <span class="line-label">感情线</span>
+                        </div>
+                        <div class="palm-line" data-line="wisdom">
+                            <span class="line-label">智慧线</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="palm-lines-grid" id="palmLinesGrid"></div>
             </section>
 
-            <button class="more-details-floating-btn" id="moreDetailsBtn" title="查看深度面相解析">
+            <button class="more-details-floating-btn" id="moreDetailsBtn" title="查看深度相学解析">
                 <span class="btn-glow"></span>
                 <span class="btn-content">
                     <span class="btn-icon">🔮</span>
-                    <span class="btn-text">更多详情</span>
+                    <span class="btn-text">深度解析</span>
                 </span>
             </button>
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 相学仅供娱乐参考</p>
+            <p>© 2026 天机龙脉文化，仅供了解</p>
         </footer>
     </div>
 
     <section class="expanded-details" id="expandedDetails" style="display: none;">
         <div class="expanded-header">
-            <h2>🔮 面相深度解析</h2>
+            <h2>🔮 相学深度解析</h2>
             <button class="close-expanded" id="closeExpanded">×</button>
         </div>
         <div class="expanded-content" id="expandedContent">

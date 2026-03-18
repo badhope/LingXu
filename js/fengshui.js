@@ -1,254 +1,184 @@
 (function() {
-    const toolsData = [
-        { icon: '🧭', name: '罗盘定向', desc: '测定方位吉凶', action: '使用罗盘测定房屋朝向' },
-        { icon: '📐', name: '八卦定位', desc: '分析八宫吉位', action: '按八卦方位分析气场分布' },
-        { icon: '🏠', name: '户型分析', desc: '评估房屋格局', action: '分析户型优劣与化解方法' },
-        { icon: '🌲', name: '环境勘察', desc: '考察周边环境', action: '勘察山水道路对住宅的影响' },
-        { icon: '🔮', name: '能量检测', desc: '测量气场强弱', action: '使用仪器或感知气场' },
-        { icon: '✨', name: '开运布局', desc: '调整吉祥摆设', action: '提供风水调整建议' }
-    ];
-
-    const knowledgeData = [
-        {
-            title: '选址原则',
-            content: '风水学讲究"藏风聚气"，选址时应选择背山面水、左青龙右白虎的格局。山环水抱之处最易聚气，是建造居所的理想之地。'
+    const toolDetails = {
+        bazi: {
+            title: '八宅风水',
+            content: '八宅风水以房屋坐向为主，分为东四宅和西四宅。根据坐向确定吉位与凶位，主张大门、卧室、厨房等重要位置应吉星方位。核心在于坐山朝向与宫位关系的配合。'
         },
-        {
-            title: '大门朝向',
-            content: '大门是住宅的气口，朝向直接影响家宅运势。坐北朝南的门向最为吉利，可吸纳阳气与财气。避免正对厕所、厨房或楼梯。'
+        xuanlong: {
+            title: '玄空飞星',
+            content: '玄空飞星风水结合时间与空间，运用三元九运盘来分析每一年的吉凶方位。以当运之星为最旺，退运之星为衰，配合山水形势判断吉凶，是目前应用最广的风水流派。'
         },
-        {
-            title: '客厅布局',
-            content: '客厅宜宽敞明亮，沙发应靠墙摆放，忌背后空旷。客厅中央忌有横梁压顶，可通过装修化解。植物摆放宜选择阔叶类。'
+        lisanshui: {
+            title: '理气风水',
+            content: '理气风水强调气的流动与聚集，研究八卦五行之气在空间中的分布。代表流派包括三元理气、八宅理气等，注重时间因素对风水的影响，强调"气"在不同时间的旺衰变化。'
         },
-        {
-            title: '卧室风水',
-            content: '床头宜靠墙，不宜正对门或窗户。床下不宜堆放杂物，以免影响气场流通。镜子不宜正对床铺，容易导致失眠。'
-        },
-        {
-            title: '厨房忌讳',
-            content: '厨房忌与卫生间相邻或相对。炉灶不宜正对水槽，水火相克。厨房门不宜正对大门或卧室门，以免油烟直冲。'
-        },
-        {
-            title: '办公室风水',
-            content: '办公桌宜背后有靠，前方开阔。座位不宜正对大门或走廊。电脑宜摆放在文昌位，有助于提升事业运势。'
+        form: {
+            title: '形家风水',
+            content: '形家风水又称峦头风水，注重观察地形地势的形状与态势。以龙、穴、砂、水为四大要素，追求"山环水抱"、藏风聚气的理想格局。是风水学的基础与根本。'
         }
-    ];
+    };
+
+    const baguaDetails = {
+        '☰': { name: '乾卦', attr: '金', meaning: '代表天、父亲、刚健、领导力。位于西北方，主贵人与运势。' },
+        '☱': { name: '兑卦', attr: '金', meaning: '代表泽、喜悦、口才、少女。位于西方，主财运与社交。' },
+        '☲': { name: '离卦', attr: '火', meaning: '代表火、中女、文化、美丽。位于南方，主事业与功名。' },
+        '☳': { name: '震卦', attr: '木', meaning: '代表雷、长男、行动、威严。位于东方，主事业与发展。' },
+        '☴': { name: '巽卦', attr: '木', meaning: '代表风、长女、柔顺、智慧。位于东南，主学业与财运。' },
+        '☵': { name: '坎卦', attr: '水', meaning: '代表水、中男、智慧、险阻。位于北方，主事业与桃花。' },
+        '☶': { name: '艮卦', attr: '土', meaning: '代表山、少男、稳重、收藏。位于东北，主财运与子女。' },
+        '☷': { name: '坤卦', attr: '土', meaning: '代表地、母亲、包容、财富。位于西南方，主家庭与健康。' }
+    };
+
+    const roomDetails = {
+        men: {
+            title: '大门风水',
+            content: '大门是住宅的气口，是进入宅院的通道，也是气流进出的主要位置。风水学认为大门朝向与开设位置直接关系到家宅的运势。理想的大门应该：1) 宽度适中，不过大或过小；2) 光线充足，明亮通透；3) 整洁有序，无杂物堆积；4) 不与厨房、卫生间门相对；5) 不宜正对电梯门或楼梯。大门的颜色宜根据住户五行选择，木命人宜绿色，水命人宜蓝色，金命人宜白色或金色。'
+        },
+        '客厅': {
+            title: '客厅风水',
+            content: '客厅是住宅的核心区域，是家人活动与接待宾客的主要场所。客厅风水要点：1) 位置宜在房屋前方，靠近大门；2) 形状宜方正，忌异形或缺角；3) 采光通风要好，避免昏暗；4) 沙发宜摆放在客厅吉位，背靠实墙；5) 客厅中央忌有横梁压顶，可通过装修化解；6) 茶几宜选用木质或石质，忌用金属或玻璃；7) 电视背景墙宜选择柔和的颜色，避免过于鲜艳。'
+        },
+        '厨房': {
+            title: '厨房风水',
+            content: '厨房主管饮食，与家人健康息息相关。厨房风水禁忌：1) 忌与卫生间相邻或相对，水火相克；2) 炉灶不宜正对水槽或冰箱；3) 厨房门不宜正对大门或卧室门；4) 炉灶背后宜有实墙依靠，忌背后空旷；5) 厨房地面宜低于客厅地面，形成高低差；6) 抽油烟机宜选择性能良好的，保持厨房清洁；7) 厨房颜色宜选择浅色系，避免过于昏暗。'
+        },
+        '卧室': {
+            title: '卧室风水',
+            content: '卧室是休息睡眠的场所，良好的卧室风水有助于提升睡眠质量与夫妻感情。卧室布局要点：1) 床头宜靠墙，不宜悬空；2) 床头不宜正对门或窗户；3) 床下不宜堆放杂物，保持整洁；4) 镜子不宜正对床铺，容易导致失眠；5) 卧室面积宜适中，过大或过小都不宜；6) 颜色宜选择柔和温暖的色调；7) 窗户宜使用厚窗帘，保证私密性；8) 空调或风扇不宜直接对着床吹。'
+        },
+        '卫生间': {
+            title: '卫生间风水',
+            content: '卫生间是排污之地，容易积聚阴湿之气。卫生间风水要点：1) 位置宜隐蔽，不宜居于住宅中央；2) 门不宜正对大门、厨房门或卧室门；3) 保持干燥通风，避免潮湿；4) 马桶盖宜随时关闭；5) 镜子不宜正对窗户；6) 颜色宜选择白色或淡蓝色等明亮色调；7) 可放置绿色植物化解阴气；8) 下水道宜保持畅通，避免堵塞。'
+        },
+        '书房': {
+            title: '书房风水',
+            content: '书房是学习工作的场所，风水影响学业与事业。书房布局要点：1) 位置宜选择文昌位，有助学业进步；2) 书桌宜背靠实墙或靠窗但有靠背；3) 座位前方宜开阔，忌背后空旷；4) 书桌不宜正对门或窗户；5) 电脑宜摆放在文昌位；6) 书架宜摆放在书桌左后方，代表青龙位；7) 灯光宜柔和均匀，避免刺眼；8) 保持书房整洁有序。'
+        }
+    };
+
+    const colorDetails = {
+        '木': {
+            title: '木属性颜色',
+            content: '木属性颜色包括青色、绿色等。木对应肝胆，主生发、生长。喜木之人宜多使用绿色系，可摆放绿植、木质家具。绿色有助于提升活力、促进事业发展。但木过旺则宜用金色白色来平衡。'
+        },
+        '火': {
+            title: '火属性颜色',
+            content: '火属性颜色包括红色、紫色、橙色等。火对应心血管，主热情、活力。喜火之人宜使用红色系，可装饰红色窗帘、沙发垫等。红色有助于提升气场、增强社交运势。但火过旺则宜用水属性颜色来平衡。'
+        },
+        '土': {
+            title: '土属性颜色',
+            content: '土属性颜色包括黄色、棕色、土色等。土对应脾胃，主稳定、承载。喜土之人宜使用黄色系，可使用黄色墙面、棕色家具。黄色有助于提升财运、增加贵人运。但土过旺则宜用木属性颜色来平衡。'
+        },
+        '金': {
+            title: '金属性颜色',
+            content: '金属性颜色包括白色、金色、银色等。金对应肺与大肠，主刚健、决断。喜金之人宜使用白色或金色系，可装饰金属装饰品、金色摆件。白色有助于提升事业运势，金色有助于招财。但金过旺则宜用火属性颜色来平衡。'
+        },
+        '水': {
+            title: '水属性颜色',
+            content: '水属性颜色包括蓝色、黑色等。水对应肾与膀胱，主智慧、流动。喜水之人宜使用蓝色或黑色系，可摆放鱼缸、水培植物。蓝色有助于提升智慧与事业运势，黑色有助于稳定情绪。但水过旺则宜用土属性颜色来平衡。'
+        }
+    };
 
     function init() {
-        renderTools();
-        renderKnowledge();
-        setupEventListeners();
-        initCompass();
+        setupToolCards();
+        setupBaguaCards();
+        setupRoomCards();
+        setupColorCards();
     }
 
-    function initCompass() {
-        if (window.Compass) {
-            window.Compass.init('compassContainer');
-        }
+    function setupToolCards() {
+        const toolCards = document.querySelectorAll('.tool-card');
+        const detailContainer = document.getElementById('toolDetail');
+        
+        toolCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const tool = card.dataset.tool;
+                const detail = toolDetails[tool];
+                
+                if (detail && detailContainer) {
+                    detailContainer.innerHTML = `
+                        <h4 style="color: var(--primary-gold); margin-bottom: 10px;">${detail.title}</h4>
+                        <p style="color: var(--text-light); line-height: 1.8;">${detail.content}</p>
+                    `;
+                    
+                    toolCards.forEach(c => c.style.borderColor = 'rgba(46, 125, 50, 0.3)');
+                    card.style.borderColor = 'var(--primary-gold)';
+                }
+            });
+        });
     }
 
-    function renderTools() {
-        const grid = document.getElementById('toolsGrid');
-        grid.innerHTML = toolsData.map(t => `
-            <div class="tool-card">
-                <div class="tool-icon">${t.icon}</div>
-                <h3>${t.name}</h3>
-                <p>${t.desc}</p>
-            </div>
-        `).join('');
+    function setupBaguaCards() {
+        const baguaItems = document.querySelectorAll('.bagua-item');
+        const infoContainer = document.getElementById('baguaInfo');
+        
+        baguaItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const element = item.dataset.element;
+                const detail = baguaDetails[element];
+                
+                if (detail && infoContainer) {
+                    infoContainer.innerHTML = `
+                        <div style="text-align: center;">
+                            <h4 style="color: var(--primary-gold); font-size: 1.4rem; margin-bottom: 8px;">${detail.name} - ${detail.attr}</h4>
+                            <p style="color: var(--text-light); line-height: 1.8;">${detail.meaning}</p>
+                        </div>
+                    `;
+                    
+                    baguaItems.forEach(i => i.style.borderColor = 'rgba(201, 162, 39, 0.2)');
+                    item.style.borderColor = 'var(--primary-gold)';
+                }
+            });
+        });
     }
 
-    function renderKnowledge() {
-        const cards = document.getElementById('knowledgeCards');
-        cards.innerHTML = knowledgeData.map(k => `
-            <div class="knowledge-card">
-                <h4>${k.title}</h4>
-                <p>${k.content}</p>
-            </div>
-        `).join('');
+    function setupRoomCards() {
+        const roomCards = document.querySelectorAll('.room-card');
+        const detailContainer = document.getElementById('roomDetail');
+        
+        roomCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const room = card.dataset.room;
+                const detail = roomDetails[room];
+                
+                if (detail && detailContainer) {
+                    detailContainer.innerHTML = `
+                        <h4 style="color: var(--primary-gold); margin-bottom: 10px;">${detail.title}</h4>
+                        <p style="color: var(--text-light); line-height: 1.8;">${detail.content}</p>
+                    `;
+                    
+                    roomCards.forEach(c => c.style.borderColor = 'rgba(201, 162, 39, 0.2)');
+                    card.style.borderColor = 'var(--primary-gold)';
+                }
+            });
+        });
+    }
+
+    function setupColorCards() {
+        const colorCards = document.querySelectorAll('.color-card');
+        const detailContainer = document.getElementById('colorDetail');
+        
+        colorCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const color = card.dataset.color;
+                const detail = colorDetails[color];
+                
+                if (detail && detailContainer) {
+                    detailContainer.innerHTML = `
+                        <h4 style="color: var(--primary-gold); margin-bottom: 10px;">${detail.title}</h4>
+                        <p style="color: var(--text-light); line-height: 1.8;">${detail.content}</p>
+                    `;
+                    
+                    colorCards.forEach(c => c.style.borderColor = 'rgba(201, 162, 39, 0.2)');
+                    card.style.borderColor = 'var(--primary-gold)';
+                }
+            });
+        });
     }
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
-    }
-
-    function setupEventListeners() {
-        const moreDetailsBtn = document.getElementById('moreDetailsBtn');
-        if (moreDetailsBtn) {
-            moreDetailsBtn.addEventListener('click', showExpandedDetails);
-        }
-
-        const closeExpanded = document.getElementById('closeExpanded');
-        if (closeExpanded) {
-            closeExpanded.addEventListener('click', hideExpandedDetails);
-        }
-    }
-
-    function showExpandedDetails() {
-        const expandedDetails = document.getElementById('expandedDetails');
-        const expandedContent = document.getElementById('expandedContent');
-        
-        if (!expandedDetails || !expandedContent) return;
-
-        const houseAnalysis = getHouseFengShuiAnalysis();
-        const directionAnalysis = getDirectionAnalysis();
-        const placementAdvice = getPlacementAdvice();
-        const seasonalTips = getSeasonalFengShuiTips();
-
-        expandedContent.innerHTML = `
-            <div class="detail-section">
-                <h3>🏠 居家风水深度解析</h3>
-                <div class="analysis-block">
-                    <p class="section-title">客厅风水</p>
-                    <p>${houseAnalysis.livingRoom}</p>
-                    <p class="section-title">卧室风水</p>
-                    <p>${houseAnalysis.bedroom}</p>
-                    <p class="section-title">厨房风水</p>
-                    <p>${houseAnalysis.kitchen}</p>
-                    <p class="section-title">卫生间风水</p>
-                    <p>${houseAnalysis.bathroom}</p>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h3>🧭 方位能量分析</h3>
-                <div class="analysis-block">
-                    ${directionAnalysis}
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h3>📍 物品摆放建议</h3>
-                <div class="analysis-block">
-                    ${placementAdvice}
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h3>🌸 季节风水调整</h3>
-                <div class="analysis-block">
-                    ${seasonalTips}
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h3>⚠️ 风水禁忌提醒</h3>
-                <div class="analysis-block">
-                    <p>1. 镜子不可对门：镜子对门会反射财气，导致漏财。</p>
-                    <p>2. 床头不可对窗：床头对窗易受风寒，影响健康。</p>
-                    <p>3. 横梁压顶：横梁压顶会影响事业运和健康运。</p>
-                    <p>4. 门对门：门对门会导致口角是非，需用屏风化解。</p>
-                    <p>5. 灶台对水槽：水火相冲，会影响家庭和睦。</p>
-                </div>
-            </div>
-        `;
-        
-        expandedDetails.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        setTimeout(() => {
-            if (expandedDetails) {
-                expandedDetails.animate([
-                    { opacity: 0, transform: 'translateY(30px)' },
-                    { opacity: 1, transform: 'translateY(0)' }
-                ], {
-                    duration: 500,
-                    easing: 'ease-out'
-                });
-            }
-        }, 10);
-    }
-
-    function hideExpandedDetails() {
-        const expandedDetails = document.getElementById('expandedDetails');
-        if (!expandedDetails) return;
-        
-        expandedDetails.animate([
-            { opacity: 1, transform: 'translateY(0)' },
-            { opacity: 0, transform: 'translateY(30px)' }
-        ], {
-            duration: 400,
-            easing: 'ease-in'
-        }).onfinish = () => {
-            expandedDetails.style.display = 'none';
-            document.body.style.overflow = '';
-        };
-    }
-
-    function getHouseFengShuiAnalysis() {
-        const month = new Date().getMonth() + 1;
-        
-        return {
-            livingRoom: month % 2 === 0 ?
-                '客厅是家庭的核心区域，代表家庭的事业运和贵人运。客厅光线充足则阳气旺盛，家人事业顺利。客厅保持整洁，家具摆放有序，能提升整体运势。沙发应靠墙摆放，象征有靠山。' :
-                '客厅是接待客人和家人聚会的场所，主导家庭的人际关系。客厅家具摆放宜左高右低，左方代表青龙位，主男主人运势。客厅如有横梁，需用吊顶或假花化解。',
-            bedroom: Math.random() > 0.5 ?
-                '卧室是休息睡眠的场所，主导感情和健康运。床头宜靠墙，不宜悬空。床头不宜对门或窗户，容易受外界气场干扰。卧室颜色宜柔和，不宜过于鲜艳或深沉。' :
-                '卧室的床位直接影响睡眠质量和运势。床头朝向宜根据主人命理选择，一般宜向东或东南。卧室镜子不宜对床，容易导致失眠。卧室内不宜放置过多电器，以免影响磁场。',
-            kitchen: month % 3 === 0 ?
-                '厨房代表家庭的财库，炉灶位置至关重要。炉灶不宜正对水槽，水火相克会导致家庭不和。厨房门不宜对大门或卧室门，以免油烟直冲。厨房保持通风，灶台干净整洁，财运自然来。' :
-                '厨房是烹饪之地，主导家人的健康和财运。灶台位置宜坐凶向吉，背靠实墙为佳。厨房颜色宜以浅色为主，避免过于燥热的红色。厨房窗户宜开在东或东南方，采光通风为佳。',
-            bathroom: Math.random() > 0.5 ?
-                '卫生间是排污之地，主导晦气和病符。卫生间门不宜对厨房门或卧室门，以免秽气扩散。卫生间宜保持干燥清洁，常开换气扇。卫生间的镜子不宜对马桶，以免影响运势。' :
-                '卫生间是家中阴气较重的地方，需注意化解。卫生间门宜常关闭，马桶盖使用后宜放下。卫生间可放置绿色植物或香薰化解异味。卫生间的灯具宜保持明亮，驱散阴暗之气。'
-        };
-    }
-
-    function getDirectionAnalysis() {
-        return `
-            <p class="section-title">正东（震位）</p>
-            <p>代表长男和事业运，宜放置木质物品或绿色植物。忌堆放杂物或金属物品。</p>
-            <p class="section-title">正南（离位）</p>
-            <p>代表中女和桃花运，宜放置红色物品或灯具。忌放置黑色或蓝色物品。</p>
-            <p class="section-title">正西（兑位）</p>
-            <p>代表少女和口才运，宜放置白色或金属物品。忌放置红色物品。</p>
-            <p class="section-title">正北（坎位）</p>
-            <p>代表中男和事业运，宜放置蓝色或黑色物品。忌放置红色或绿色物品。</p>
-            <p class="section-title">东南（巽位）</p>
-            <p>代表长女和财运，宜放置绿色植物或木质物品。忌放置金属物品。</p>
-            <p class="section-title">西南（坤位）</p>
-            <p>代表母亲和人际关系，宜放置陶瓷或石头物品。忌放置金属物品。</p>
-            <p class="section-title">西北（乾位）</p>
-            <p>代表父亲和贵人运，宜放置金属物品或圆形物品。忌放置红色物品。</p>
-            <p class="section-title">东北（艮位）</p>
-            <p>代表少男和学业运，宜放置陶瓷或石头物品。忌放置金属物品。</p>
-        `;
-    }
-
-    function getPlacementAdvice() {
-        return `
-            <p class="section-title">招财植物</p>
-            <p>${Math.random() > 0.5 ? '富贵竹：适合放置在客厅或书房，代表事业学业进步。' : '发财树：适合放置在客厅财位，提升整体财运。'}绿植需保持叶面清洁，枯叶及时剪除。</p>
-            <p class="section-title">镇宅摆件</p>
-            <p>${Math.random() > 0.5 ? '貔貅：适合放置在客厅或办公室，可招财进宝。需注意貔貅头部宜向外。' : '金蟾：适合放置在客厅或店铺，可聚财守财。需注意金蟾口宜向内。'}</p>
-            <p class="section-title">风水画</p>
-            <p>${Math.random() > 0.5 ? '山水画：适合放置在客厅或办公室，代表靠山和水主财。' : '牡丹画：适合放置在客厅或卧室，代表富贵荣华。'}画作宜选择明亮色调，避免过于阴暗的作品。</p>
-            <p class="section-title">灯光布局</p>
-            <p>家中灯光宜柔和明亮，过明过暗都不利。客厅主灯宜放在正中央，卧室宜使用暖色调灯光。走廊和楼梯处宜安装小夜灯照明。</p>
-        `;
-    }
-
-    function getSeasonalFengShuiTips() {
-        const month = new Date().getMonth() + 1;
-        
-        let season = '';
-        if (month >= 3 && month <= 5) season = '春季';
-        else if (month >= 6 && month <= 8) season = '夏季';
-        else if (month >= 9 && month <= 11) season = '秋季';
-        else season = '冬季';
-        
-        return `
-            <p>当前为<span class="highlight">${season}</span>，风水调整建议如下：</p>
-            <p class="section-title">${season}特点</p>
-            <p>${season === '春季' ? '木气旺盛，宜在东方放置绿色植物或水养植物，提升生气。' : 
-               season === '夏季' ? '火气旺盛，宜在南方放置红色物品或水晶，化解燥热。' : 
-               season === '秋季' ? '金气旺盛，宜在西方放置白色物品或金属摆件，提升财运。' : 
-               '水气旺盛，宜在北方放置蓝色物品或鱼缸，提升事业运。'}</p>
-            <p class="section-title">${season}开运方法</p>
-            <p>${Math.random() > 0.5 ? '保持室内通风换气，让新鲜空气流通。' : '适当调整家具位置，保持气场流通。'} ${Math.random() > 0.5 ? '多晒太阳，吸收天地之精华。' : '使用香薰或精油，营造和谐氛围。'}</p>
-        `;
     }
 })();

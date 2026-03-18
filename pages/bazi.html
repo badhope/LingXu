@@ -22,97 +22,203 @@
         </header>
 
         <main class="page-content">
-            <section class="bazi-input fade-in" style="--delay: 1">
-                <h2 class="section-title">输入您的出生信息</h2>
-                <div class="input-form">
-                    <div class="form-group">
-                        <label>出生年份</label>
-                        <select id="yearSelect"></select>
+            <section class="bazi-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">命理推演</div>
+                    <div class="hero-title">八字命盘</div>
+                    <div class="hero-subtitle">探索您生命中的玄机密码</div>
+                </div>
+                <div class="hero-visual">
+                    <div class="bazi-emblem">
+                        <div class="emblem-ring"></div>
+                        <div class="emblem-core">
+                            <span class="emblem-char">命</span>
+                        </div>
+                        <div class="emblem-particles">
+                            <span class="particle">✦</span>
+                            <span class="particle">✧</span>
+                            <span class="particle">✦</span>
+                            <span class="particle">✧</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>出生月份</label>
-                        <select id="monthSelect"></select>
+                </div>
+            </section>
+
+            <section class="bazi-input fade-in" style="--delay: 2">
+                <div class="input-card">
+                    <div class="input-header">
+                        <div class="input-icon">📜</div>
+                        <h2 class="input-title">输入出生信息</h2>
+                        <p class="input-desc">天干地支，演绎人生轨迹</p>
                     </div>
-                    <div class="form-group">
-                        <label>出生日期</label>
-                        <select id="daySelect"></select>
+                    <div class="input-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><span class="label-icon">📅</span>出生年份</label>
+                                <select id="yearSelect" class="form-select"></select>
+                            </div>
+                            <div class="form-group">
+                                <label><span class="label-icon">🌙</span>出生月份</label>
+                                <select id="monthSelect" class="form-select"></select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><span class="label-icon">☀️</span>出生日期</label>
+                                <select id="daySelect" class="form-select"></select>
+                            </div>
+                            <div class="form-group">
+                                <label><span class="label-icon">🕐</span>出生时辰</label>
+                                <select id="hourSelect" class="form-select">
+                                    <option value="0">子时 (23:00-01:00)</option>
+                                    <option value="1">丑时 (01:00-03:00)</option>
+                                    <option value="2">寅时 (03:00-05:00)</option>
+                                    <option value="3">卯时 (05:00-07:00)</option>
+                                    <option value="4">辰时 (07:00-09:00)</option>
+                                    <option value="5">巳时 (09:00-11:00)</option>
+                                    <option value="6">午时 (11:00-13:00)</option>
+                                    <option value="7">未时 (13:00-15:00)</option>
+                                    <option value="8">申时 (15:00-17:00)</option>
+                                    <option value="9">酉时 (17:00-19:00)</option>
+                                    <option value="10">戌时 (19:00-21:00)</option>
+                                    <option value="11">亥时 (21:00-23:00)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row single">
+                            <div class="form-group">
+                                <label><span class="label-icon">👤</span>性别</label>
+                                <select id="genderSelect" class="form-select">
+                                    <option value="male">♂ 男</option>
+                                    <option value="female">♀ 女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-analyze" id="analyzeBtn">
+                            <span class="btn-icon">🔮</span>
+                            <span class="btn-text">开始推演</span>
+                            <span class="btn-glow"></span>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>出生时辰</label>
-                        <select id="hourSelect">
-                            <option value="0">子时 (23:00-01:00)</option>
-                            <option value="1">丑时 (01:00-03:00)</option>
-                            <option value="2">寅时 (03:00-05:00)</option>
-                            <option value="3">卯时 (05:00-07:00)</option>
-                            <option value="4">辰时 (07:00-09:00)</option>
-                            <option value="5">巳时 (09:00-11:00)</option>
-                            <option value="6">午时 (11:00-13:00)</option>
-                            <option value="7">未时 (13:00-15:00)</option>
-                            <option value="8">申时 (15:00-17:00)</option>
-                            <option value="9">酉时 (17:00-19:00)</option>
-                            <option value="10">戌时 (19:00-21:00)</option>
-                            <option value="11">亥时 (21:00-23:00)</option>
-                        </select>
+                </div>
+            </section>
+
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-container">
+                    <div class="loading-runes">
+                        <span class="rune">☰</span>
+                        <span class="rune">☵</span>
+                        <span class="rune">☶</span>
+                        <span class="rune">☴</span>
                     </div>
-                    <div class="form-group">
-                        <label>性别</label>
-                        <select id="genderSelect">
-                            <option value="male">男</option>
-                            <option value="female">女</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary" id="analyzeBtn">开始分析</button>
+                    <div class="loading-symbol">🎯</div>
+                    <p class="loading-text">推演命理中...</p>
+                    <p class="loading-subtext">解读天机密码</p>
                 </div>
             </section>
 
             <section class="bazi-result" id="baziResult" style="display: none;">
-                <div class="result-header">
-                    <h3>您的八字命盘</h3>
+                <div class="result-header fade-in" style="--delay: 1">
+                    <div class="result-badge">命理分析结果</div>
                     <div class="bazi-pan" id="baziPan"></div>
+                    <div class="pan-info" id="panInfo"></div>
                 </div>
 
-                <div class="result-analysis">
-                    <div class="analysis-card">
-                        <h4>五行分布</h4>
-                        <div class="wuxing-chart" id="wuxingChart"></div>
+                <div class="result-section fade-in" style="--delay: 2">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <span class="title-icon">⚖️</span>
+                            五行分布
+                        </h3>
                     </div>
-                    <div class="analysis-card">
-                        <h4>日主强弱</h4>
-                        <div class="day-master" id="dayMaster"></div>
-                    </div>
+                    <div class="wuxing-chart" id="wuxingChart"></div>
+                    <div class="wuxing-analysis" id="wuxingAnalysis"></div>
                 </div>
 
-                <div class="fortune-analysis">
-                    <h3>命理分析</h3>
+                <div class="result-section fade-in" style="--delay: 3">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <span class="title-icon">🎯</span>
+                            日主强弱
+                        </h3>
+                    </div>
+                    <div class="day-master" id="dayMaster"></div>
+                </div>
+
+                <div class="result-section fade-in" style="--delay: 4">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <span class="title-icon">📊</span>
+                            命理分析
+                        </h3>
+                    </div>
                     <div class="fortune-grid">
-                        <div class="fortune-item">
-                            <h4>事业运</h4>
-                            <p id="careerAnalysis"></p>
+                        <div class="fortune-card">
+                            <div class="fortune-icon">💼</div>
+                            <div class="fortune-label">事业运</div>
+                            <div class="fortune-score" id="careerScore"></div>
+                            <p class="fortune-desc" id="careerAnalysis"></p>
                         </div>
-                        <div class="fortune-item">
-                            <h4>财运</h4>
-                            <p id="wealthAnalysis"></p>
+                        <div class="fortune-card">
+                            <div class="fortune-icon">💰</div>
+                            <div class="fortune-label">财运</div>
+                            <div class="fortune-score" id="wealthScore"></div>
+                            <p class="fortune-desc" id="wealthAnalysis"></p>
                         </div>
-                        <div class="fortune-item">
-                            <h4>爱情运</h4>
-                            <p id="loveAnalysis"></p>
+                        <div class="fortune-card">
+                            <div class="fortune-icon">💕</div>
+                            <div class="fortune-label">爱情运</div>
+                            <div class="fortune-score" id="loveScore"></div>
+                            <p class="fortune-desc" id="loveAnalysis"></p>
                         </div>
-                        <div class="fortune-item">
-                            <h4>健康运</h4>
-                            <p id="healthAnalysis"></p>
+                        <div class="fortune-card">
+                            <div class="fortune-icon">🏥</div>
+                            <div class="fortune-label">健康运</div>
+                            <div class="fortune-score" id="healthScore"></div>
+                            <p class="fortune-desc" id="healthAnalysis"></p>
                         </div>
                     </div>
                 </div>
 
-                <div class="compatibility-section">
-                    <h3>八字合婚</h3>
-                    <p class="compatibility-tip">输入另一半的出生信息查看合婚结果</p>
+                <div class="result-section fade-in" style="--delay: 5">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <span class="title-icon">🔑</span>
+                            性格特点
+                        </h3>
+                    </div>
+                    <div class="personality-tags" id="personalityTags"></div>
+                </div>
+
+                <div class="result-section fade-in" style="--delay: 6">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <span class="title-icon">💑</span>
+                            八字合婚
+                        </h3>
+                    </div>
+                    <p class="compatibility-tip">输入另一半的出生信息，查看你们的缘分指数</p>
                     <div class="compatibility-inputs">
-                        <select id="partnerYear"></select>
-                        <select id="partnerMonth"></select>
-                        <select id="partnerDay"></select>
-                        <select id="partnerHour"></select>
-                        <button class="btn" id="matchBtn">合婚配对</button>
+                        <div class="input-group">
+                            <select id="partnerYear" class="form-select"></select>
+                            <span class="input-sep">年</span>
+                        </div>
+                        <div class="input-group">
+                            <select id="partnerMonth" class="form-select"></select>
+                            <span class="input-sep">月</span>
+                        </div>
+                        <div class="input-group">
+                            <select id="partnerDay" class="form-select"></select>
+                            <span class="input-sep">日</span>
+                        </div>
+                        <div class="input-group">
+                            <select id="partnerHour" class="form-select"></select>
+                            <span class="input-sep">时</span>
+                        </div>
+                        <button class="btn btn-match" id="matchBtn">
+                            <span class="btn-icon">❤️</span>
+                            <span class="btn-text">合婚配对</span>
+                        </button>
                     </div>
                     <div class="match-result" id="matchResult" style="display: none;"></div>
                 </div>
@@ -121,16 +227,9 @@
                     <span class="btn-glow"></span>
                     <span class="btn-content">
                         <span class="btn-icon">🔮</span>
-                        <span class="btn-text">更多详情</span>
+                        <span class="btn-text">深度分析</span>
                     </span>
                 </button>
-            </section>
-
-            <section class="loading-section" id="loadingSection" style="display: none;">
-                <div class="loading-container">
-                    <div class="loading-symbol">🎯</div>
-                    <p class="loading-text">推演命理中...</p>
-                </div>
             </section>
 
             <section class="expanded-details" id="expandedDetails" style="display: none;">
@@ -144,7 +243,7 @@
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 命理仅供娱乐参考</p>
+            <p>© 2026 天机龙脉文化，仅供了解</p>
         </footer>
     </div>
 

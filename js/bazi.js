@@ -119,17 +119,21 @@
 
     function displayBazi(bazi, gender) {
         const baziPan = document.getElementById('baziPan');
+        const panInfo = document.getElementById('panInfo');
         const stems = [bazi.year.gan, bazi.month.gan, bazi.day.gan, bazi.hour.gan];
         const branches = [bazi.year.zhi, bazi.month.zhi, bazi.day.zhi, bazi.hour.zhi];
         
         const labels = ['年柱', '月柱', '日柱', '时柱'];
         
         baziPan.innerHTML = stems.map((stem, i) => `
-            <div class="gan-zhi-box">
-                <div class="stem">${stem}</div>
-                <div class="branch">${branches[i]}</div>
+            <div class="pan-column">
+                <span class="pan-label">${labels[i]}</span>
+                <span class="pan-gan">${stem}</span>
+                <span class="pan-zhi">${branches[i]}</span>
             </div>
         `).join('');
+        
+        panInfo.innerHTML = `<p>公历 ${new Date().getFullYear()}年 · 农历 ${bazi.year.zhi}${bazi.month.zhi}月 ${bazi.day.zhi}日</p>`;
 
         const wuxingCounts = { 木: 0, 火: 0, 土: 0, 金: 0, 水: 0 };
         [...stems, ...branches].forEach(char => {
@@ -139,14 +143,20 @@
         const wuxingChart = document.getElementById('wuxingChart');
         const maxCount = Math.max(...Object.values(wuxingCounts), 1);
         
+        const wuxingIcons = { 木: '🌲', 火: '🔥', 土: '🏔️', 金: '⚔️', 水: '🌊' };
+        
         wuxingChart.innerHTML = Object.entries(wuxingCounts).map(([wx, count]) => `
             <div class="wuxing-item">
-                <div class="wuxing-bar">
-                    <div class="wuxing-fill ${wx}" style="height: ${(count / maxCount) * 100}%"></div>
-                </div>
-                <span class="wuxing-name">${wx}</span>
+                <div class="wuxing-icon">${wuxingIcons[wx]}</div>
+                <div class="wuxing-name">${wx}</div>
+                <div class="wuxing-count">${count}个</div>
             </div>
         `).join('');
+
+        const wuxingAnalysis = document.getElementById('wuxingAnalysis');
+        const dominant = Object.entries(wuxingCounts).sort((a, b) => b[1] - a[1])[0];
+        const weak = Object.entries(wuxingCounts).sort((a, b) => a[1] - b[1])[0];
+        wuxingAnalysis.innerHTML = `<p>您的八字中${dominant[0]}气最旺(${dominant[1]}个)，${weak[0]}气较弱(${weak[1]}个)。${getWuxingBalanceAdvice(dominant[0], weak[0])}</p>`;
 
         const dayMasterEl = document.getElementById('dayMaster');
         const totalCount = Object.values(wuxingCounts).reduce((a, b) => a + b, 0);
@@ -155,22 +165,86 @@
         const strength = Math.round((dayCount / totalCount) * 100);
         
         let strengthText = '偏弱';
-        if (strength >= 35) strengthText = '身强';
-        else if (strength >= 25) strengthText = '中和';
+        let strengthClass = 'weak';
+        if (strength >= 35) { strengthText = '身强'; strengthClass = 'strong'; }
+        else if (strength >= 25) { strengthText = '中和'; strengthClass = 'balanced'; }
         
         dayMasterEl.innerHTML = `
-            <div class="master-indicator">
-                <div class="master-position" style="left: ${strength - 10}%"></div>
-            </div>
-            <div class="master-text">${bazi.dayZhu}${dayWx}日主 · ${strengthText}</div>
+            <div class="day-master-strength ${strengthClass}">${bazi.dayZhu}${dayWx}日主 · ${strengthText}</div>
+            <p class="day-master-desc">${getDayMasterDetail(bazi.dayZhu, dayWx, strength)}</p>
         `;
 
         const hash = hashCode(`${bazi.year.gan}${bazi.month.gan}${bazi.day.gan}${bazi.hour.gan}`);
+        
+        const careerScore = 60 + (hash % 35);
+        const wealthScore = 55 + ((hash * 2) % 40);
+        const loveScore = 50 + ((hash * 3) % 45);
+        const healthScore = 65 + ((hash * 4) % 30);
+        
+        document.getElementById('careerScore').innerHTML = `<span class="score-value">${careerScore}</span><span class="score-unit">分</span>`;
+        document.getElementById('wealthScore').innerHTML = `<span class="score-value">${wealthScore}</span><span class="score-unit">分</span>`;
+        document.getElementById('loveScore').innerHTML = `<span class="score-value">${loveScore}</span><span class="score-unit">分</span>`;
+        document.getElementById('healthScore').innerHTML = `<span class="score-value">${healthScore}</span><span class="score-unit">分</span>`;
         
         document.getElementById('careerAnalysis').textContent = generateCareer(hash, wuxingCounts);
         document.getElementById('wealthAnalysis').textContent = generateWealth(hash, wuxingCounts);
         document.getElementById('loveAnalysis').textContent = generateLove(hash, wuxingCounts, gender);
         document.getElementById('healthAnalysis').textContent = generateHealth(hash, wuxingCounts);
+        
+        const personalityTags = document.getElementById('personalityTags');
+        personalityTags.innerHTML = generatePersonalityTags(bazi, hash).map(tag => 
+            `<span class="personality-tag">${tag}</span>`
+        ).join('');
+    }
+
+    function getWuxingBalanceAdvice(dominant, weak) {
+        const advice = {
+            '木': '木旺之人性格仁慈，但需注意肝胆健康。宜从事与木相关的行业。',
+            '火': '火旺之人热情开朗，但需注意心脏健康。宜从事与火相关的行业。',
+            '土': '土旺之人稳重踏实，但需注意脾胃健康。宜从事与土相关的行业。',
+            '金': '金旺之人果断刚毅，但需注意肺部健康。宜从事与金相关的行业。',
+            '水': '水旺之人聪慧灵活，但需注意肾脏健康。宜从事与水相关的行业。'
+        };
+        return advice[dominant] || '';
+    }
+
+    function getDayMasterDetail(gan, wx, strength) {
+        const details = {
+            '甲': '甲木为阳木，如参天大树。您性格正直，有领导才能，适合发展事业。',
+            '乙': '乙木为阴木，如花草藤蔓。您性格温和，富有艺术气质，适合创意行业。',
+            '丙': '丙火为阳火，如太阳之光。您性格热情开朗，适合需要表达的工作。',
+            '丁': '丁火为阴火，如灯烛之光。您性格细腻，善于洞察人心，适合分析类工作。',
+            '戊': '戊土为阳土，如高山厚土。您性格稳重踏实，适合管理类工作。',
+            '己': '己土为阴土，如田园沃土。您性格包容，适合协调类工作。',
+            '庚': '庚金为阳金，如刀剑锋金。您性格刚毅果断，适合金融或法律工作。',
+            '辛': '辛金为阴金，如珠玉首饰。您性格细腻，适合艺术或设计工作。',
+            '壬': '壬水为阳水，如江河奔流。您性格豁达，适合需要创新思维的工作。',
+            '癸': '癸水为阴水，如雨露温泉。您性格柔和，适合服务类工作。'
+        };
+        return details[gan] || '八字命理，奥妙无穷。';
+    }
+
+    function generatePersonalityTags(bazi, hash) {
+        const tags = [];
+        const personalities = [
+            '稳重踏实', '热情开朗', '聪慧机敏', '温柔细腻', '果断坚毅',
+            '乐观积极', '内向含蓄', '艺术气质', '领导才能', '分析能力',
+            '创意丰富', '执行力强', '善于沟通', '独立自主', '责任感强'
+        ];
+        
+        const tagCount = 5 + (hash % 4);
+        const usedIndices = new Set();
+        
+        for (let i = 0; i < tagCount; i++) {
+            let idx = (hash + i * 7) % personalities.length;
+            while (usedIndices.has(idx)) {
+                idx = (idx + 1) % personalities.length;
+            }
+            usedIndices.add(idx);
+            tags.push(personalities[idx]);
+        }
+        
+        return tags;
     }
 
     function hashCode(str) {

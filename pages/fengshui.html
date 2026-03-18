@@ -17,51 +17,302 @@
     <script src="../js/effects/particles.js"></script>
     <script src="../js/utils/datetime.js"></script>
     <div class="page-container">
-        <header class="page-header fade-in">
+        <header class="page-header">
             <a href="main.html" class="back-btn">← 返回</a>
             <h1 class="page-title">风水堪舆</h1>
             <div class="header-decoration"></div>
         </header>
 
         <main class="page-content">
-            <section class="fengshui-intro">
-                <div class="compass-visual" id="compassContainer">
+            <section class="fengshui-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">阴阳之道</div>
+                    <div class="hero-title">风水堪舆</div>
+                    <div class="hero-subtitle">藏风聚气，得水为上</div>
                 </div>
-                <p class="intro-text">藏风聚气，得水为上</p>
+                <div class="hero-visual">
+                    <div class="compass-emblem">
+                        <div class="compass-ring">
+                            <div class="compass-needle-main">
+                                <span class="needle-n">北</span>
+                                <span class="needle-s">南</span>
+                            </div>
+                            <div class="compass-marks">
+                                <span class="mark" style="--i:0">壬</span>
+                                <span class="mark" style="--i:1">子</span>
+                                <span class="mark" style="--i:2">癸</span>
+                                <span class="mark" style="--i:3">丑</span>
+                                <span class="mark" style="--i:4">艮</span>
+                                <span class="mark" style="--i:5">寅</span>
+                                <span class="mark" style="--i:6">甲</span>
+                                <span class="mark" style="--i:7">卯</span>
+                                <span class="mark" style="--i:8">乙</span>
+                                <span class="mark" style="--i:9">辰</span>
+                                <span class="mark" style="--i:10">巽</span>
+                                <span class="mark" style="--i:11">巳</span>
+                            </div>
+                        </div>
+                        <div class="compass-glow"></div>
+                    </div>
+                </div>
             </section>
 
-            <section class="fengshui-tools">
-                <h2 class="section-title">风水工具</h2>
-                <div class="tools-grid" id="toolsGrid"></div>
+            <section class="fengshui-intro fade-in" style="--delay: 2">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <div class="intro-icon">📖</div>
+                        <h2 class="intro-title">风水概述</h2>
+                    </div>
+                    <div class="intro-content">
+                        <p>风水学源于中国古代，是人与自然环境和谐相处的智慧结晶。</p>
+                        <p>风水强调"气"的流动与聚集，认为好的环境能够带来好运与福气。</p>
+                        <p>堪舆即相地之术，观察地形地势，以选择适宜居住或埋葬的吉地。</p>
+                    </div>
+                </div>
             </section>
 
-            <section class="fengshui-knowledge">
-                <h2 class="section-title">风水知识</h2>
-                <div class="knowledge-cards" id="knowledgeCards"></div>
+            <section class="fengshui-tools fade-in" style="--delay: 3">
+                <div class="tools-header">
+                    <h2 class="tools-title">
+                        <span class="title-icon">🧭</span>
+                        风水工具
+                    </h2>
+                    <p class="tools-desc">点击了解各流派风水工具</p>
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card" data-tool="bazi">
+                        <div class="tool-icon">🏠</div>
+                        <div class="tool-name">八宅风水</div>
+                        <div class="tool-desc">以坐向论吉凶</div>
+                    </div>
+                    <div class="tool-card" data-tool="xuanlong">
+                        <div class="tool-icon">⭐</div>
+                        <div class="tool-name">玄空飞星</div>
+                        <div class="tool-desc">三元九运时空学</div>
+                    </div>
+                    <div class="tool-card" data-tool="lisanshui">
+                        <div class="tool-icon">💧</div>
+                        <div class="tool-name">理气风水</div>
+                        <div class="tool-desc">纳气方位论断</div>
+                    </div>
+                    <div class="tool-card" data-tool="form">
+                        <div class="tool-icon">🏔️</div>
+                        <div class="tool-name">形家风水</div>
+                        <div class="tool-desc">峦头形势论断</div>
+                    </div>
+                </div>
+                <div class="tool-detail" id="toolDetail"></div>
             </section>
 
-            <button class="more-details-floating-btn" id="moreDetailsBtn" title="查看深度风水解析">
-                <span class="btn-glow"></span>
-                <span class="btn-content">
-                    <span class="btn-icon">🏠</span>
-                    <span class="btn-text">更多详情</span>
-                </span>
-            </button>
+            <section class="fengshui-elements fade-in" style="--delay: 4">
+                <div class="elements-header">
+                    <h2 class="elements-title">
+                        <span class="title-icon">☯️</span>
+                        五行八卦
+                    </h2>
+                </div>
+                <div class="elements-wheel">
+                    <div class="bagua-grid">
+                        <div class="bagua-item" data-element="☰" data-name="乾" data-attr="金">
+                            <span class="bagua-symbol">☰</span>
+                            <span class="bagua-name">乾</span>
+                            <span class="bagua-attr">金</span>
+                        </div>
+                        <div class="bagua-item" data-element="☱" data-name="兑" data-attr="金">
+                            <span class="bagua-symbol">☱</span>
+                            <span class="bagua-name">兑</span>
+                            <span class="bagua-attr">金</span>
+                        </div>
+                        <div class="bagua-item" data-element="☲" data-name="离" data-attr="火">
+                            <span class="bagua-symbol">☲</span>
+                            <span class="bagua-name">离</span>
+                            <span class="bagua-attr">火</span>
+                        </div>
+                        <div class="bagua-item" data-element="☳" data-name="震" data-attr="木">
+                            <span class="bagua-symbol">☳</span>
+                            <span class="bagua-name">震</span>
+                            <span class="bagua-attr">木</span>
+                        </div>
+                        <div class="bagua-item" data-element="☴" data-name="巽" data-attr="木">
+                            <span class="bagua-symbol">☴</span>
+                            <span class="bagua-name">巽</span>
+                            <span class="bagua-attr">木</span>
+                        </div>
+                        <div class="bagua-item" data-element="☵" data-name="坎" data-attr="水">
+                            <span class="bagua-symbol">☵</span>
+                            <span class="bagua-name">坎</span>
+                            <span class="bagua-attr">水</span>
+                        </div>
+                        <div class="bagua-item" data-element="☶" data-name="艮" data-attr="土">
+                            <span class="bagua-symbol">☶</span>
+                            <span class="bagua-name">艮</span>
+                            <span class="bagua-attr">土</span>
+                        </div>
+                        <div class="bagua-item" data-element="☷" data-name="坤" data-attr="土">
+                            <span class="bagua-symbol">☷</span>
+                            <span class="bagua-name">坤</span>
+                            <span class="bagua-attr">土</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bagua-info" id="baguaInfo">
+                    <p>点击上方八卦了解五行属性与象征意义</p>
+                </div>
+            </section>
+
+            <section class="fengshui-rooms fade-in" style="--delay: 5">
+                <div class="rooms-header">
+                    <h2 class="rooms-title">
+                        <span class="title-icon">🏡</span>
+                        阳宅风水
+                    </h2>
+                    <p class="rooms-desc">各房间布局宜忌</p>
+                </div>
+                <div class="rooms-grid">
+                    <div class="room-card" data-room="men">
+                        <div class="room-icon">🚪</div>
+                        <div class="room-name">大门</div>
+                        <div class="room-tips">
+                            <span class="tip-good">宜：宽敞明亮</span>
+                            <span class="tip-bad">忌：对冲尖角</span>
+                        </div>
+                    </div>
+                    <div class="room-card" data-room="客厅">
+                        <div class="room-icon">🛋️</div>
+                        <div class="room-name">客厅</div>
+                        <div class="room-tips">
+                            <span class="tip-good">宜：方正明亮</span>
+                            <span class="tip-bad">忌：横梁压顶</span>
+                        </div>
+                    </div>
+                    <div class="room-card" data-room="厨房">
+                        <div class="room-icon">🍳</div>
+                        <div class="room-name">厨房</div>
+                        <div class="room-tips">
+                            <span class="tip-good">宜：通风采光</span>
+                            <span class="tip-bad">忌：对正大门</span>
+                        </div>
+                    </div>
+                    <div class="room-card" data-room="卧室">
+                        <div class="room-icon">🛏️</div>
+                        <div class="room-name">卧室</div>
+                        <div class="room-tips">
+                            <span class="tip-good">宜：安静舒适</span>
+                            <span class="tip-bad">忌：镜子对床</span>
+                        </div>
+                    </div>
+                    <div class="room-card" data-room="卫生间">
+                        <div class="room-icon">🚿</div>
+                        <div class="room-name">卫生间</div>
+                        <div class="room-tips">
+                            <span class="tip-good">宜：保持干燥</span>
+                            <span class="tip-bad">忌：居中位置</span>
+                        </div>
+                    </div>
+                    <div class="room-card" data-room="书房">
+                        <div class="room-icon">📚</div>
+                        <div class="room-name">书房</div>
+                        <div class="room-tips">
+                            <span class="tip-good">宜：文昌方位</span>
+                            <span class="tip-bad">忌：嘈杂环境</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="room-detail" id="roomDetail"></div>
+            </section>
+
+            <section class="fengshui-colors fade-in" style="--delay: 6">
+                <div class="colors-header">
+                    <h2 class="colors-title">
+                        <span class="title-icon">🎨</span>
+                        五行颜色
+                    </h2>
+                    <p class="colors-desc">根据五行喜忌选择适合的颜色</p>
+                </div>
+                <div class="colors-grid">
+                    <div class="color-card" data-color="木" style="--color: #2e7d32">
+                        <div class="color-circle"></div>
+                        <div class="color-info">
+                            <span class="color-name">木</span>
+                            <span class="color-element">青、绿</span>
+                        </div>
+                    </div>
+                    <div class="color-card" data-color="火" style="--color: #c62828">
+                        <div class="color-circle"></div>
+                        <div class="color-info">
+                            <span class="color-name">火</span>
+                            <span class="color-element">红、紫</span>
+                        </div>
+                    </div>
+                    <div class="color-card" data-color="土" style="--color: #8d6e63">
+                        <div class="color-circle"></div>
+                        <div class="color-info">
+                            <span class="color-name">土</span>
+                            <span class="color-element">黄、棕</span>
+                        </div>
+                    </div>
+                    <div class="color-card" data-color="金" style="--color: #ffd700">
+                        <div class="color-circle"></div>
+                        <div class="color-info">
+                            <span class="color-name">金</span>
+                            <span class="color-element">白、金</span>
+                        </div>
+                    </div>
+                    <div class="color-card" data-color="水" style="--color: #1565c0">
+                        <div class="color-circle"></div>
+                        <div class="color-info">
+                            <span class="color-name">水</span>
+                            <span class="color-element">蓝、黑</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="color-detail" id="colorDetail"></div>
+            </section>
+
+            <section class="fengshui-advice fade-in" style="--delay: 7">
+                <div class="advice-card">
+                    <div class="advice-header">
+                        <div class="advice-icon">💡</div>
+                        <h2 class="advice-title">风水建议</h2>
+                    </div>
+                    <div class="advice-list">
+                        <div class="advice-item">
+                            <span class="advice-number">01</span>
+                            <div class="advice-content">
+                                <h3>保持气流流通</h3>
+                                <p>室内空气应该保持流通，新鲜空气能够带来活力与正气。</p>
+                            </div>
+                        </div>
+                        <div class="advice-item">
+                            <span class="advice-number">02</span>
+                            <div class="advice-content">
+                                <h3>光线充足柔和</h3>
+                                <p>充足的自然采光能够提升阳气，避免过于昏暗导致阴气过重。</p>
+                            </div>
+                        </div>
+                        <div class="advice-item">
+                            <span class="advice-number">03</span>
+                            <div class="advice-content">
+                                <h3>整洁有序</h3>
+                                <p>保持居住环境整洁，杂乱的环境会阻碍气的流动与聚集。</p>
+                            </div>
+                        </div>
+                        <div class="advice-item">
+                            <span class="advice-number">04</span>
+                            <div class="advice-content">
+                                <h3>避免形煞</h3>
+                                <p>注意避免各种形煞，如路冲、尖角、反弓水等对住宅的不利影响。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 风水知识仅供了解</p>
+            <p>© 2026 天机龙脉文化，仅供了解</p>
         </footer>
     </div>
-
-    <section class="expanded-details" id="expandedDetails" style="display: none;">
-        <div class="expanded-header">
-            <h2>🏠 风水深度解析</h2>
-            <button class="close-expanded" id="closeExpanded">×</button>
-        </div>
-        <div class="expanded-content" id="expandedContent">
-        </div>
-    </section>
 
     <script src="../js/fengshui.js"></script>
 </body>

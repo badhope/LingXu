@@ -28,7 +28,7 @@ body {
     display: flex;
     flex-direction: column;
     background: 
-        radial-gradient(ellipse at 20% 30%, rgba(46, 125, 50, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 30%, rgba(46, 125, 50, 0.12) 0%, transparent 50%),
         radial-gradient(ellipse at 80% 70%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
         var(--dark-bg);
 }
@@ -89,6 +89,576 @@ body {
     width: 100%;
 }
 
+.fengshui-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.15) 0%, rgba(201, 162, 39, 0.1) 100%);
+    border-radius: 25px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(46, 125, 50, 0.3);
+    border: 1px solid rgba(46, 125, 50, 0.5);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(46, 125, 50, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(46, 125, 50, 0.5); }
+}
+
+.hero-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 3rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-family: 'ZCOOL XiaoWei', serif;
+}
+
+.hero-visual {
+    position: relative;
+    z-index: 1;
+}
+
+.compass-emblem {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.compass-ring {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid var(--primary-gold);
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.15) 0%, transparent 70%);
+    position: relative;
+    animation: compass-spin 20s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes compass-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.compass-needle-main {
+    position: absolute;
+    width: 6px;
+    height: 50px;
+    background: linear-gradient(180deg, var(--primary-red) 50%, var(--primary-gold) 50%);
+    border-radius: 3px;
+}
+
+.needle-n, .needle-s {
+    position: absolute;
+    font-size: 0.7rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+.needle-n {
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.needle-s {
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.compass-marks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.mark {
+    position: absolute;
+    font-size: 0.65rem;
+    color: var(--primary-gold);
+    animation: compass-spin 20s linear infinite reverse;
+}
+
+.mark:nth-child(1) { top: 5px; left: 50%; transform: translateX(-50%); }
+.mark:nth-child(2) { top: 15px; right: 10px; }
+.mark:nth-child(3) { top: 35px; right: 3px; }
+.mark:nth-child(4) { top: 50%; right: 3px; transform: translateY(-50%); }
+.mark:nth-child(5) { bottom: 35px; right: 3px; }
+.mark:nth-child(6) { bottom: 15px; right: 10px; }
+.mark:nth-child(7) { bottom: 5px; left: 50%; transform: translateX(-50%); }
+.mark:nth-child(8) { bottom: 15px; left: 10px; }
+.mark:nth-child(9) { bottom: 35px; left: 3px; }
+.mark:nth-child(10) { top: 50%; left: 3px; transform: translateY(-50%); }
+.mark:nth-child(11) { top: 35px; left: 3px; }
+.mark:nth-child(12) { top: 15px; left: 10px; }
+
+.compass-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46, 125, 50, 0.3) 0%, transparent 70%);
+    animation: glow-pulse 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.fengshui-intro {
+    margin-bottom: 30px;
+}
+
+.intro-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.intro-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.intro-icon {
+    font-size: 2rem;
+}
+
+.intro-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+}
+
+.intro-content p {
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.intro-content p:last-child {
+    margin-bottom: 0;
+}
+
+.fengshui-tools {
+    margin-bottom: 30px;
+}
+
+.tools-header, .elements-header, .rooms-header, .colors-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.tools-title, .elements-title, .rooms-title, .colors-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.title-icon {
+    font-size: 1.5rem;
+}
+
+.tools-desc, .rooms-desc, .colors-desc {
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.tool-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(46, 125, 50, 0.3);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-gold), var(--primary-red));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+    border-color: rgba(46, 125, 50, 0.5);
+}
+
+.tool-card:hover::before {
+    transform: scaleX(1);
+}
+
+.tool-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    animation: icon-float 3s ease-in-out infinite;
+}
+
+@keyframes icon-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.tool-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.tool-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.tool-detail {
+    background: rgba(20, 20, 25, 0.8);
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 80px;
+}
+
+.fengshui-elements {
+    margin-bottom: 30px;
+}
+
+.elements-wheel {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.bagua-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    max-width: 500px;
+}
+
+.bagua-item {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.bagua-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(201, 162, 39, 0.3);
+    border-color: var(--primary-gold);
+}
+
+.bagua-symbol {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+    animation: bagua-rotate 4s ease-in-out infinite;
+}
+
+@keyframes bagua-rotate {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+.bagua-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-gold);
+    display: block;
+}
+
+.bagua-attr {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.bagua-info {
+    text-align: center;
+    padding: 20px;
+    background: rgba(20, 20, 25, 0.6);
+    border-radius: 15px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bagua-info p {
+    color: var(--text-muted);
+}
+
+.fengshui-rooms {
+    margin-bottom: 30px;
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.room-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.2);
+    border-color: var(--primary-gold);
+}
+
+.room-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    animation: room-bounce 2s ease-in-out infinite;
+}
+
+@keyframes room-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.room-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    margin-bottom: 12px;
+}
+
+.room-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.tip-good {
+    color: #4caf50;
+}
+
+.tip-bad {
+    color: #f44336;
+}
+
+.room-detail {
+    background: rgba(20, 20, 25, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 80px;
+}
+
+.fengshui-colors {
+    margin-bottom: 30px;
+}
+
+.colors-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.color-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.color-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.2);
+}
+
+.color-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--color);
+    margin: 0 auto 15px;
+    box-shadow: 0 0 20px var(--color);
+    animation: color-glow 2s ease-in-out infinite;
+}
+
+@keyframes color-glow {
+    0%, 100% { box-shadow: 0 0 15px var(--color); }
+    50% { box-shadow: 0 0 30px var(--color); }
+}
+
+.color-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.color-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-gold);
+}
+
+.color-element {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.color-detail {
+    background: rgba(20, 20, 25, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 80px;
+}
+
+.fengshui-advice {
+    margin-bottom: 30px;
+}
+
+.advice-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.advice-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.advice-icon {
+    font-size: 2rem;
+}
+
+.advice-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+}
+
+.advice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.advice-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(20, 20, 25, 0.5);
+    border-radius: 15px;
+    border-left: 3px solid var(--primary-gold);
+    transition: all 0.3s ease;
+}
+
+.advice-item:hover {
+    background: rgba(20, 20, 25, 0.8);
+    transform: translateX(5px);
+}
+
+.advice-number {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--primary-gold);
+    opacity: 0.6;
+    min-width: 50px;
+}
+
+.advice-content h3 {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.advice-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
 .page-footer {
     padding: 20px;
     text-align: center;
@@ -101,144 +671,61 @@ body {
     font-size: 0.8rem;
 }
 
-.fengshui-intro {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.compass-visual {
-    margin-bottom: 30px;
-}
-
-.compass {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto;
-    border-radius: 50%;
-    border: 3px solid var(--primary-gold);
-    position: relative;
-    background: radial-gradient(circle, rgba(201, 162, 39, 0.1) 0%, transparent 70%);
-}
-
-.compass-needle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 4px;
-    height: 60px;
-    background: linear-gradient(180deg, var(--primary-red) 50%, var(--primary-gold) 50%);
-    transform: translate(-50%, -50%);
-    transform-origin: center center;
-    animation: compass-rotate 10s ease-in-out infinite;
-}
-
-@keyframes compass-rotate {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-    25% { transform: translate(-50%, -50%) rotate(15deg); }
-    75% { transform: translate(-50%, -50%) rotate(-15deg); }
-}
-
-.compass-mark {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--primary-gold);
-    font-weight: bold;
-}
-
-.intro-text {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-}
-
-.section-title {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 1.8rem;
-    color: var(--primary-gold);
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.fengshui-tools, .fengshui-knowledge {
-    margin-bottom: 50px;
-}
-
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.tool-card {
-    background: var(--dark-secondary);
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    border: 1px solid rgba(201, 162, 39, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.tool-card:hover {
-    border-color: var(--primary-gold);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-}
-
-.tool-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-}
-
-.tool-card h3 {
-    color: var(--primary-gold);
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-.tool-card p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.knowledge-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.knowledge-card {
-    background: var(--dark-secondary);
-    border-radius: 15px;
-    padding: 25px;
-    border: 1px solid rgba(201, 162, 39, 0.1);
-}
-
-.knowledge-card h4 {
-    color: var(--primary-gold);
-    font-size: 1.1rem;
-    margin-bottom: 12px;
-}
-
-.knowledge-card p {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-    .page-header {
-        padding: 20px;
+@media (max-width: 900px) {
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
-    .back-btn {
-        position: static;
-        display: inline-block;
-        margin-bottom: 10px;
+    .rooms-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
+    .colors-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .bagua-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
     .page-content {
         padding: 20px;
+    }
+    
+    .fengshui-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .compass-emblem {
+        margin-top: 20px;
+    }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .rooms-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .colors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .bagua-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .advice-item {
+        flex-direction: column;
+        gap: 10px;
     }
 }

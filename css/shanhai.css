@@ -28,7 +28,7 @@ body {
     display: flex;
     flex-direction: column;
     background: 
-        radial-gradient(ellipse at 30% 20%, rgba(34, 139, 34, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 30% 20%, rgba(34, 139, 34, 0.12) 0%, transparent 50%),
         radial-gradient(ellipse at 70% 80%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
         var(--dark-bg);
 }
@@ -89,6 +89,470 @@ body {
     width: 100%;
 }
 
+.shanhai-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(34, 139, 34, 0.15) 0%, rgba(139, 0, 0, 0.1) 100%);
+    border-radius: 25px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(34, 139, 34, 0.3);
+    border: 1px solid rgba(34, 139, 34, 0.5);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(34, 139, 34, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(34, 139, 34, 0.5); }
+}
+
+.hero-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 3rem;
+    background: linear-gradient(180deg, var(--primary-gold) 0%, #a08020 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-family: 'ZCOOL XiaoWei', serif;
+}
+
+.hero-visual {
+    position: relative;
+    z-index: 1;
+}
+
+.mountain-visual {
+    position: relative;
+    width: 150px;
+    height: 120px;
+}
+
+.mountain-layer {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50% 50% 0 0;
+    opacity: 0.7;
+}
+
+.layer-1 {
+    width: 150px;
+    height: 80px;
+    background: linear-gradient(180deg, rgba(34, 139, 34, 0.4) 0%, rgba(34, 139, 34, 0.1) 100%);
+    left: 0;
+    animation: mountain-float 4s ease-in-out infinite;
+}
+
+.layer-2 {
+    width: 120px;
+    height: 60px;
+    background: linear-gradient(180deg, rgba(139, 0, 0, 0.3) 0%, rgba(139, 0, 0, 0.1) 100%);
+    left: 15px;
+    animation: mountain-float 4s ease-in-out infinite 0.5s;
+}
+
+.layer-3 {
+    width: 90px;
+    height: 40px;
+    background: linear-gradient(180deg, rgba(201, 162, 39, 0.3) 0%, rgba(201, 162, 39, 0.1) 100%);
+    left: 30px;
+    animation: mountain-float 4s ease-in-out infinite 1s;
+}
+
+@keyframes mountain-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.beast-silhouette {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2rem;
+    animation: beast-pulse 2s ease-in-out infinite;
+}
+
+@keyframes beast-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+.shanhai-intro {
+    margin-bottom: 30px;
+}
+
+.intro-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.intro-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.intro-icon {
+    font-size: 2rem;
+}
+
+.intro-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+}
+
+.intro-content p {
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.intro-content p:last-child {
+    margin-bottom: 0;
+}
+
+.intro-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+    background: rgba(34, 139, 34, 0.1);
+    border: 1px solid rgba(34, 139, 34, 0.2);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(34, 139, 34, 0.3);
+}
+
+.stat-number {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--primary-gold);
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.title-icon {
+    font-size: 1.5rem;
+}
+
+.section-desc {
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+.beasts-section, .mountains-section, .herbs-section, .legends-section {
+    margin-bottom: 30px;
+}
+
+.beasts-categories {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    padding: 8px 20px;
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Noto Serif SC', serif;
+}
+
+.category-btn:hover, .category-btn.active {
+    background: rgba(34, 139, 34, 0.3);
+    border-color: var(--primary-gold);
+    color: var(--primary-gold);
+}
+
+.beasts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.beast-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.beast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(34, 139, 34, 0.3);
+    border-color: var(--primary-gold);
+}
+
+.beast-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    animation: beast-icon-float 3s ease-in-out infinite;
+}
+
+@keyframes beast-icon-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.beast-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.beast-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.beast-detail, .mountain-detail, .herb-detail {
+    background: rgba(20, 20, 25, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 80px;
+}
+
+.mountains-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.mountain-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(139, 0, 0, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mountain-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(139, 0, 0, 0.3);
+    border-color: var(--primary-red);
+}
+
+.mountain-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    animation: mountain-bounce 2s ease-in-out infinite;
+}
+
+@keyframes mountain-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.mountain-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.mountain-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.mountain-features {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    padding: 4px 12px;
+    background: rgba(139, 0, 0, 0.2);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--primary-gold);
+}
+
+.herbs-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+}
+
+.herb-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.herb-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.2);
+    border-color: var(--primary-gold);
+}
+
+.herb-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    animation: herb-sway 2s ease-in-out infinite;
+}
+
+@keyframes herb-sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+.herb-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.herb-effect {
+    font-size: 0.8rem;
+    color: var(--primary-gold);
+}
+
+.legend-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.legend-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.legend-icon {
+    font-size: 2rem;
+}
+
+.legend-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+}
+
+.legends-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+}
+
+.legend-item {
+    background: rgba(20, 20, 25, 0.5);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.legend-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.2);
+    border-color: var(--primary-gold);
+}
+
+.legend-item .legend-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.legend-name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.legend-role {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
 .page-footer {
     padding: 20px;
     text-align: center;
@@ -101,193 +565,69 @@ body {
     font-size: 0.8rem;
 }
 
-.shanhai-intro {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.intro-visual {
-    margin-bottom: 30px;
-    height: 200px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 20px;
-}
-
-.mountain-bg {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        linear-gradient(180deg, transparent 50%, #1a3a1a 50%),
-        repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(34, 139, 34, 0.3) 50px, rgba(34, 139, 34, 0.3) 51px);
-    animation: mountain-drift 20s linear infinite;
-}
-
-@keyframes mountain-drift {
-    from { background-position: 0 0; }
-    to { background-position: 100px 0; }
-}
-
-.intro-text {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-}
-
-.section-title {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 1.8rem;
-    color: var(--primary-gold);
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.beasts-section, .mountains-section, .herbs-section {
-    margin-bottom: 50px;
-}
-
-.beasts-grid, .mountains-grid, .herbs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
-}
-
-.beast-card, .mountain-card, .herb-card {
-    background: var(--dark-secondary);
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    border: 1px solid rgba(201, 162, 39, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.beast-card:hover, .mountain-card:hover, .herb-card:hover {
-    border-color: var(--primary-gold);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-}
-
-.beast-icon, .mountain-icon, .herb-icon {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    display: block;
-}
-
-.beast-name, .mountain-name, .herb-name {
-    font-size: 1.1rem;
-    color: var(--primary-gold);
-    margin-bottom: 8px;
-}
-
-.beast-desc, .mountain-desc, .herb-desc {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-}
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal.active {
-    display: flex;
-    opacity: 1;
-}
-
-.modal-content {
-    background: var(--dark-secondary);
-    border-radius: 20px;
-    padding: 40px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-    border: 1px solid rgba(201, 162, 39, 0.3);
-}
-
-.modal-close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 2rem;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.modal-close:hover {
-    color: var(--primary-gold);
-}
-
-.modal-body h2 {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 1.8rem;
-    color: var(--primary-gold);
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.modal-body .detail-icon {
-    font-size: 4rem;
-    text-align: center;
-    display: block;
-    margin-bottom: 20px;
-}
-
-.modal-body h3 {
-    color: var(--primary-gold);
-    margin: 20px 0 10px;
-    font-size: 1.1rem;
-}
-
-.modal-body p {
-    color: var(--text-light);
-    line-height: 1.8;
-    margin-bottom: 12px;
-}
-
-.modal-body .source {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(201, 162, 39, 0.1);
-    border-radius: 10px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-@media (max-width: 768px) {
-    .page-header {
-        padding: 20px;
+@media (max-width: 900px) {
+    .beasts-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
     
-    .back-btn {
-        position: static;
-        display: inline-block;
-        margin-bottom: 10px;
+    .mountains-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
+    .herbs-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .legends-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .intro-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
     .page-content {
         padding: 20px;
     }
     
-    .beasts-grid, .mountains-grid, .herbs-grid {
+    .shanhai-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .mountain-visual {
+        margin-top: 20px;
+    }
+    
+    .beasts-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .mountains-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .herbs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .legends-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .beasts-categories {
+        gap: 8px;
+    }
+    
+    .category-btn {
+        padding: 6px 14px;
+        font-size: 0.8rem;
     }
 }

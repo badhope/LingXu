@@ -766,3 +766,1160 @@ body {
         justify-content: center;
     }
 }
+
+.fortune-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.15) 0%, rgba(201, 162, 39, 0.1) 100%);
+    border-radius: 25px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    min-height: 200px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(201, 162, 39, 0.5); }
+    50% { box-shadow: 0 0 25px rgba(201, 162, 39, 0.8); }
+}
+
+.hero-date {
+    font-size: 1.8rem;
+    color: var(--text-light);
+    font-family: 'Ma Shan Zheng', cursive;
+    margin-bottom: 8px;
+}
+
+.hero-lunar {
+    font-size: 1.2rem;
+    color: var(--primary-gold);
+}
+
+.hero-visual {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.taiji-rotate {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    animation: taiji-spin 20s linear infinite;
+}
+
+@keyframes taiji-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.taiji-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #fff 0%, #fff 50%, #1a1a1a 50%, #1a1a1a 100%);
+    box-shadow: 0 0 30px rgba(201, 162, 39, 0.3);
+}
+
+.taiji-circle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -25%);
+    width: 20px;
+    height: 20px;
+    background: #1a1a1a;
+    border-radius: 50%;
+}
+
+.taiji-circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -75%);
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.taiji-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed rgba(201, 162, 39, 0.3);
+    border-radius: 50%;
+    animation: ring-spin 10s linear infinite reverse;
+}
+
+@keyframes ring-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.zodiac-selector {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.title-deco {
+    color: var(--primary-gold);
+    opacity: 0.6;
+}
+
+.section-desc {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.zodiac-wheel {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.wheel-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+}
+
+.center-text {
+    color: var(--dark-bg);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.center-sub {
+    color: var(--dark-bg);
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.zodiac-items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.zodiac-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 15px 10px;
+    background: rgba(30, 30, 35, 0.8);
+    border: 2px solid rgba(201, 162, 39, 0.15);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    animation: zodiac-float 3s ease-in-out infinite;
+}
+
+.zodiac-item:nth-child(odd) {
+    animation-delay: -1.5s;
+}
+
+.zodiac-item:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.3);
+}
+
+.zodiac-item.active {
+    border-color: var(--primary-gold);
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(139, 0, 0, 0.15) 100%);
+    box-shadow: 0 0 25px rgba(201, 162, 39, 0.4);
+}
+
+@keyframes zodiac-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.z-icon {
+    font-size: 2rem;
+}
+
+.z-name {
+    color: var(--text-light);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.z-year {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    text-align: center;
+}
+
+.loading-section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.loading-animation {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.loading-orbs {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    animation: orb-orbit 3s linear infinite;
+}
+
+.orb-1 {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.8), transparent);
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.orb-2 {
+    width: 25px;
+    height: 25px;
+    background: radial-gradient(circle, rgba(139, 0, 0, 0.8), transparent);
+    bottom: 10px;
+    right: 10px;
+    animation-delay: -1s;
+}
+
+.orb-3 {
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.8), transparent);
+    bottom: 10px;
+    left: 10px;
+    animation-delay: -2s;
+}
+
+@keyframes orb-orbit {
+    from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+
+.loading-runes {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    animation: runes-spin 10s linear infinite;
+}
+
+.loading-runes span {
+    display: inline-block;
+    margin: 0 3px;
+    animation: rune-pulse 1.5s ease-in-out infinite;
+}
+
+.loading-runes span:nth-child(2) { animation-delay: -0.2s; }
+.loading-runes span:nth-child(3) { animation-delay: -0.4s; }
+.loading-runes span:nth-child(4) { animation-delay: -0.6s; }
+.loading-runes span:nth-child(5) { animation-delay: -0.8s; }
+.loading-runes span:nth-child(6) { animation-delay: -1s; }
+
+@keyframes runes-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rune-pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+.loading-text {
+    font-size: 1.3rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loading-star {
+    color: var(--primary-gold);
+    animation: star-twinkle 1s ease-in-out infinite;
+}
+
+.loading-star:last-child {
+    animation-delay: -0.5s;
+}
+
+@keyframes star-twinkle {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.loading-subtext {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.result-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.2) 0%, rgba(201, 162, 39, 0.15) 100%);
+    border-radius: 20px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.result-zodiac-badge {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.zodiac-large {
+    font-size: 4rem;
+    animation: zodiac-bounce 2s ease-in-out infinite;
+}
+
+@keyframes zodiac-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.zodiac-name-large {
+    font-size: 2rem;
+    color: var(--primary-gold);
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.result-date-info {
+    text-align: center;
+}
+
+.date-gregorian {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.date-lunar {
+    font-size: 1rem;
+    color: var(--primary-gold);
+}
+
+.result-rank {
+    text-align: center;
+    padding: 15px 25px;
+    background: rgba(201, 162, 39, 0.1);
+    border-radius: 15px;
+    border: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.rank-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.rank-value {
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+.fortune-overview {
+    margin-bottom: 30px;
+}
+
+.overview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.overview-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+}
+
+.overview-stars {
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    letter-spacing: 5px;
+}
+
+.fortune-scores {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.score-card {
+    flex: 1;
+    min-width: 200px;
+    padding: 25px;
+    background: rgba(30, 30, 35, 0.8);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.score-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.score-icon {
+    font-size: 1.5rem;
+}
+
+.score-label {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.score-circle {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.score-circle svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.score-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+}
+
+.score-progress {
+    fill: none;
+    stroke: url(#gold-gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.score-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+.score-level {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    font-weight: bold;
+}
+
+.score-details {
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 280px;
+}
+
+.score-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.score-item-horizontal {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: rgba(30, 30, 35, 0.6);
+    border-radius: 10px;
+}
+
+.item-icon {
+    font-size: 1.2rem;
+}
+
+.item-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    min-width: 70px;
+}
+
+.item-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.item-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-gold), #FFD700);
+    border-radius: 4px;
+    width: 0;
+    transition: width 1s ease;
+}
+
+.item-value {
+    min-width: 30px;
+    text-align: right;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+.fortune-wuxing {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: rgba(30, 30, 35, 0.6);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.wuxing-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    margin-bottom: 20px;
+}
+
+.wuxing-elements {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.wuxing-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 25px;
+    background: rgba(201, 162, 39, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.wuxing-item:hover {
+    border-color: var(--primary-gold);
+    background: rgba(201, 162, 39, 0.1);
+    transform: translateY(-3px);
+}
+
+.element-icon {
+    font-size: 2rem;
+}
+
+.element-name {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.element-status {
+    font-size: 0.9rem;
+    padding: 3px 12px;
+    border-radius: 10px;
+}
+
+.element-status[data-status="旺盛"] {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.element-status[data-status="平和"] {
+    background: rgba(33, 150, 243, 0.2);
+    color: #2196f3;
+}
+
+.element-status[data-status="偏弱"] {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ff9800;
+}
+
+.element-status[data-status="亏损"] {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.fortune-lucky {
+    margin-bottom: 30px;
+}
+
+.lucky-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    margin-bottom: 20px;
+}
+
+.lucky-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.lucky-card {
+    padding: 25px 20px;
+    background: linear-gradient(135deg, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 25, 0.8) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.lucky-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.lucky-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.lucky-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.lucky-value {
+    color: var(--primary-gold);
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.fortune-description {
+    margin-bottom: 30px;
+    padding: 30px;
+    background: rgba(30, 30, 35, 0.6);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.desc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.desc-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+}
+
+.desc-badge {
+    padding: 5px 15px;
+    background: rgba(201, 162, 39, 0.15);
+    border-radius: 15px;
+    color: var(--primary-gold);
+    font-size: 0.9rem;
+}
+
+.desc-content {
+    color: var(--text-light);
+    line-height: 2;
+    font-size: 1.05rem;
+    text-align: justify;
+}
+
+.fortune-guidance {
+    margin-bottom: 30px;
+}
+
+.guidance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.guidance-card {
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 25, 0.8) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+    transition: all 0.3s ease;
+}
+
+.guidance-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-3px);
+}
+
+.guidance-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.guidance-card h4 {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+}
+
+.guidance-card p {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.fortune-compat {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: rgba(30, 30, 35, 0.6);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.compat-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    margin-bottom: 20px;
+}
+
+.compat-content {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.compat-section {
+    flex: 1;
+    min-width: 200px;
+}
+
+.compat-section h4 {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.compat-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.match-item {
+    padding: 10px 15px;
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 10px;
+    color: #4caf50;
+    font-size: 1rem;
+}
+
+.match-item.avoid {
+    background: rgba(244, 67, 54, 0.15);
+    border-color: rgba(244, 67, 54, 0.3);
+    color: #f44336;
+}
+
+.fortune-monthly {
+    margin-bottom: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(139, 0, 0, 0.1) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.monthly-header h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+}
+
+.monthly-content p {
+    color: var(--text-light);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.fortune-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: transparent;
+    border: 2px solid var(--primary-gold);
+    border-radius: 30px;
+    color: var(--primary-gold);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(201, 162, 39, 0.3);
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+}
+
+.action-btn.primary:hover {
+    background: linear-gradient(135deg, #FFD700, var(--primary-gold));
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+.more-details-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(139, 0, 0, 0.2) 100%);
+    border: 2px solid var(--primary-gold);
+    border-radius: 50px;
+    color: var(--primary-gold);
+    font-size: 1rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    z-index: 100;
+}
+
+.more-details-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+}
+
+.btn-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.4s ease;
+}
+
+.more-details-btn:hover .btn-glow {
+    width: 200px;
+    height: 200px;
+}
+
+.btn-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--dark-secondary);
+    border-radius: 25px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    animation: modal-appear 0.3s ease;
+}
+
+@keyframes modal-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    color: var(--primary-gold);
+    background: rgba(201, 162, 39, 0.1);
+}
+
+.modal-fortune-detail {
+    padding: 20px 0;
+}
+
+.modal-zodiac {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.large-icon {
+    font-size: 4rem;
+}
+
+.modal-zodiac span:last-child {
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.modal-scores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.modal-score-item {
+    text-align: center;
+    padding: 15px;
+    background: rgba(201, 162, 39, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.modal-score-item span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.modal-score-item strong {
+    color: var(--primary-gold);
+    font-size: 1.3rem;
+}
+
+.modal-desc h4 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.3rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+}
+
+.modal-desc p {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.expanded-section {
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(30, 30, 35, 0.9) 0%, rgba(20, 20, 25, 0.9) 100%);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.expanded-section h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.4rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+}
+
+.expanded-section p {
+    color: var(--text-light);
+    line-height: 1.9;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .fortune-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .hero-visual {
+        margin-top: 20px;
+    }
+
+    .zodiac-items {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .result-hero {
+        flex-direction: column;
+    }
+
+    .fortune-scores {
+        flex-direction: column;
+    }
+
+    .score-card {
+        min-width: 100%;
+    }
+
+    .guidance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .compat-content {
+        flex-direction: column;
+    }
+
+    .more-details-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    .fortune-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -22,37 +22,106 @@
         </header>
 
         <main class="page-content">
-            <section class="yijing-intro">
-                <div class="intro-visual">
-                    <div class="bagua-visual">
-                        <div class="trigram" data-trigram="☰">☰</div>
-                        <div class="trigram" data-trigram="☱">☱</div>
-                        <div class="trigram" data-trigram="☲">☲</div>
-                        <div class="trigram" data-trigram="☳">☳</div>
-                        <div class="trigram" data-trigram="☴">☴</div>
-                        <div class="trigram" data-trigram="☵">☵</div>
-                        <div class="trigram" data-trigram="☶">☶</div>
-                        <div class="trigram" data-trigram="☷">☷</div>
+            <section class="yijing-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">周易文化</div>
+                    <div class="hero-title">易经六十四卦</div>
+                    <div class="hero-subtitle">探索天地玄机，洞察人生奥秘</div>
+                </div>
+                <div class="hero-visual">
+                    <div class="bagua-rotate">
+                        <div class="bagua-circle">
+                            <div class="bagua-inner">
+                                <span class="bagua-char">☯</span>
+                            </div>
+                        </div>
+                        <div class="bagua-trigrams">
+                            <span class="trigram-item">☰</span>
+                            <span class="trigram-item">☱</span>
+                            <span class="trigram-item">☲</span>
+                            <span class="trigram-item">☳</span>
+                            <span class="trigram-item">☴</span>
+                            <span class="trigram-item">☵</span>
+                            <span class="trigram-item">☶</span>
+                            <span class="trigram-item">☷</span>
+                        </div>
                     </div>
                 </div>
-                <p class="intro-text">易者，变也。探索六十四卦，洞察天地玄机</p>
             </section>
 
-            <section class="divination-section fade-in" style="--delay: 1">
-                <h2 class="section-title">起卦占卜</h2>
-                <p class="section-desc">诚心默念所问之事，摇动铜钱起卦</p>
-                <div class="divination-tools">
-                    <div class="coins-container" id="coinsContainer">
-                        <div class="coin" data-side="1">☰</div>
-                        <div class="coin" data-side="2">☰</div>
-                        <div class="coin" data-side="3">☰</div>
+            <section class="yijing-intro fade-in" style="--delay: 2">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <div class="intro-icon">📜</div>
+                        <h2 class="intro-title">关于易经</h2>
                     </div>
-                    <button class="btn btn-primary" id="divinateBtn">起卦</button>
+                    <div class="intro-content">
+                        <p>《易经》乃群经之首，大道之源。涵盖天文、地理、人事、哲学之大成，</p>
+                        <p>以阴阳二元论阐述天地万物变化之理。六十四卦，三百八十四爻，</p>
+                        <p>每一卦象皆蕴含深刻哲理，指引人生方向。</p>
+                    </div>
+                    <div class="intro-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">☰</span>
+                            <span class="feature-text">乾为天</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">☷</span>
+                            <span class="feature-text">坤为地</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">☵</span>
+                            <span class="feature-text">坎为水</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">☲</span>
+                            <span class="feature-text">离为火</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section class="hexagram-library">
-                <h2 class="section-title">六十四卦</h2>
+            <section class="divination-section fade-in" style="--delay: 3">
+                <div class="divination-card">
+                    <div class="divination-header">
+                        <div class="divination-icon">🔮</div>
+                        <h2 class="divination-title">起卦占卜</h2>
+                        <p class="divination-desc">诚心默念所问之事，摇动铜钱起卦</p>
+                    </div>
+                    <div class="divination-tools">
+                        <div class="coins-container" id="coinsContainer">
+                            <div class="coin-wrapper">
+                                <div class="coin" data-side="1">☰</div>
+                            </div>
+                            <div class="coin-wrapper">
+                                <div class="coin" data-side="2">☰</div>
+                            </div>
+                            <div class="coin-wrapper">
+                                <div class="coin" data-side="3">☰</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-divinate" id="divinateBtn">
+                            <span class="btn-icon">🎯</span>
+                            <span class="btn-text">开始起卦</span>
+                            <span class="btn-glow"></span>
+                        </button>
+                    </div>
+                    <div class="divination-result" id="divinationResult" style="display: none;">
+                        <div class="result-hexagram" id="resultHexagram"></div>
+                        <div class="result-name" id="resultName"></div>
+                        <div class="result-judgement" id="resultJudgement"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hexagram-library fade-in" style="--delay: 4">
+                <div class="library-header">
+                    <h2 class="library-title">
+                        <span class="title-icon">📚</span>
+                        六十四卦详解
+                    </h2>
+                    <p class="library-desc">点击卦象查看详细解读</p>
+                </div>
                 <div class="hexagrams-grid" id="hexagramsGrid"></div>
             </section>
 
@@ -60,13 +129,13 @@
                 <span class="btn-glow"></span>
                 <span class="btn-content">
                     <span class="btn-icon">☯</span>
-                    <span class="btn-text">更多详情</span>
+                    <span class="btn-text">深度解读</span>
                 </span>
             </button>
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 易经仅供娱乐参考</p>
+            <p>© 2026 天机龙脉文化，仅供了解</p>
         </footer>
     </div>
 

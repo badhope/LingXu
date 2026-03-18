@@ -15,63 +15,302 @@
 <body>
     <script src="../js/effects/particles.js"></script>
     <div class="page-container">
-        <header class="page-header fade-in">
+        <header class="page-header">
             <a href="main.html" class="back-btn">← 返回</a>
             <h1 class="page-title">山海经</h1>
             <div class="header-decoration"></div>
         </header>
 
         <main class="page-content">
-            <section class="shanhai-intro">
-                <div class="intro-visual">
-                    <div class="mountain-bg"></div>
+            <section class="shanhai-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">上古奇书</div>
+                    <div class="hero-title">山海经</div>
+                    <div class="hero-subtitle">记载古代山川地理、神兽异草的奇书</div>
                 </div>
-                <p class="intro-text">记载古代山川地理、神兽异草的奇书</p>
+                <div class="hero-visual">
+                    <div class="mountain-visual">
+                        <div class="mountain-layer layer-1"></div>
+                        <div class="mountain-layer layer-2"></div>
+                        <div class="mountain-layer layer-3"></div>
+                        <div class="beast-silhouette">🦁</div>
+                    </div>
+                </div>
             </section>
 
-            <section class="beasts-section fade-in" style="--delay: 1">
-                <h2 class="section-title">神兽异兽</h2>
-                <div class="beasts-grid" id="beastsGrid"></div>
+            <section class="shanhai-intro fade-in" style="--delay: 2">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <div class="intro-icon">📜</div>
+                        <h2 class="intro-title">山海经概述</h2>
+                    </div>
+                    <div class="intro-content">
+                        <p>《山海经》是中国古代一部著名的神话地理著作，成书于战国至西汉时期。</p>
+                        <p>全书分为《山经》和《海经》两部分，记载了古代山川地理、神话传说、神兽异草等丰富内容。</p>
+                        <p>书中描绘了众多神兽异兽、奇山异水、神话人物，是研究上古文化的重要典籍。</p>
+                    </div>
+                    <div class="intro-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">26</span>
+                            <span class="stat-label">卷</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">550</span>
+                            <span class="stat-label">山</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">300</span>
+                            <span class="stat-label">神兽</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">100</span>
+                            <span class="stat-label">异草</span>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <section class="mountains-section">
-                <h2 class="section-title">奇山异水</h2>
-                <div class="mountains-grid" id="mountainsGrid"></div>
+            <section class="beasts-section fade-in" style="--delay: 3">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="title-icon">🐲</span>
+                        神兽异兽
+                    </h2>
+                    <p class="section-desc">点击查看神兽详情</p>
+                </div>
+                <div class="beasts-categories">
+                    <button class="category-btn active" data-category="all">全部</button>
+                    <button class="category-btn" data-category="ruishou">瑞兽</button>
+                    <button class="category-btn" data-category="xiongshou">凶兽</button>
+                    <button class="category-btn" data-category="shenniao">神鸟</button>
+                    <button class="category-btn" data-category="lingshou">灵兽</button>
+                </div>
+                <div class="beasts-grid" id="beastsGrid">
+                    <div class="beast-card" data-beast="qingniao">
+                        <div class="beast-icon">🦅</div>
+                        <div class="beast-name">青鸟</div>
+                        <div class="beast-desc">西王母使者</div>
+                    </div>
+                    <div class="beast-card" data-beast="qilin">
+                        <div class="beast-icon">🦄</div>
+                        <div class="beast-name">麒麟</div>
+                        <div class="beast-desc">仁兽吉祥</div>
+                    </div>
+                    <div class="beast-card" data-beast="fenghuang">
+                        <div class="beast-icon">🦚</div>
+                        <div class="beast-name">凤凰</div>
+                        <div class="beast-desc">百鸟之王</div>
+                    </div>
+                    <div class="beast-card" data-beast="zhuque">
+                        <div class="beast-icon">🐦‍🔥</div>
+                        <div class="beast-name">朱雀</div>
+                        <div class="beast-desc">南方神兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="xuanwu">
+                        <div class="beast-icon">🐢</div>
+                        <div class="beast-name">玄武</div>
+                        <div class="beast-desc">北方神兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="baihu">
+                        <div class="beast-icon">🐅</div>
+                        <div class="beast-name">白虎</div>
+                        <div class="beast-desc">西方神兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="qinglong">
+                        <div class="beast-icon">🐉</div>
+                        <div class="beast-name">青龙</div>
+                        <div class="beast-desc">东方神兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="taotie">
+                        <div class="beast-icon">👺</div>
+                        <div class="beast-name">饕餮</div>
+                        <div class="beast-desc">贪吃凶兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="qiongqi">
+                        <div class="beast-icon">👾</div>
+                        <div class="beast-name">穷奇</div>
+                        <div class="beast-desc">凶兽恶兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="taowu">
+                        <div class="beast-icon">🦇</div>
+                        <div class="beast-name">梼杌</div>
+                        <div class="beast-desc">顽固凶兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="hundun">
+                        <div class="beast-icon">🌑</div>
+                        <div class="beast-name">混沌</div>
+                        <div class="beast-desc">混沌凶兽</div>
+                    </div>
+                    <div class="beast-card" data-beast="bazhi">
+                        <div class="beast-icon">🦎</div>
+                        <div class="beast-name">巴蛇</div>
+                        <div class="beast-desc">吞象大蛇</div>
+                    </div>
+                </div>
+                <div class="beast-detail" id="beastDetail"></div>
             </section>
 
-            <section class="herbs-section">
-                <h2 class="section-title">奇花异草</h2>
-                <div class="herbs-grid" id="herbsGrid"></div>
+            <section class="mountains-section fade-in" style="--delay: 4">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="title-icon">🏔️</span>
+                        奇山异水
+                    </h2>
+                    <p class="section-desc">探寻上古神山与神秘水域</p>
+                </div>
+                <div class="mountains-grid">
+                    <div class="mountain-card" data-mountain="kunlun">
+                        <div class="mountain-icon">⛰️</div>
+                        <div class="mountain-name">昆仑山</div>
+                        <div class="mountain-desc">帝之下都，西王母居所</div>
+                        <div class="mountain-features">
+                            <span class="feature">神泉</span>
+                            <span class="feature">瑶池</span>
+                            <span class="feature">建木</span>
+                        </div>
+                    </div>
+                    <div class="mountain-card" data-mountain="penglai">
+                        <div class="mountain-icon">🏝️</div>
+                        <div class="mountain-name">蓬莱山</div>
+                        <div class="mountain-desc">东海神山，仙人居所</div>
+                        <div class="mountain-features">
+                            <span class="feature">仙岛</span>
+                            <span class="feature">灵药</span>
+                            <span class="feature">云海</span>
+                        </div>
+                    </div>
+                    <div class="mountain-card" data-mountain="fanghu">
+                        <div class="mountain-icon">🏹</div>
+                        <div class="mountain-name">方壶山</div>
+                        <div class="mountain-desc">海上五神山之一</div>
+                        <div class="mountain-features">
+                            <span class="feature">仙丹</span>
+                            <span class="feature">玉石</span>
+                            <span class="feature">甘露</span>
+                        </div>
+                    </div>
+                    <div class="mountain-card" data-mountain="yingzhou">
+                        <div class="mountain-icon">🏊</div>
+                        <div class="mountain-name">瀛洲山</div>
+                        <div class="mountain-desc">东海神山，景致优美</div>
+                        <div class="mountain-features">
+                            <span class="feature">瑞草</span>
+                            <span class="feature">醴泉</span>
+                            <span class="feature">青莲</span>
+                        </div>
+                    </div>
+                    <div class="mountain-card" data-mountain="yaogong">
+                        <div class="mountain-icon">🗻</div>
+                        <div class="mountain-name">尧光山</div>
+                        <div class="mountain-desc">南斗星君居所</div>
+                        <div class="mountain-features">
+                            <span class="feature">玉石</span>
+                            <span class="feature">金精</span>
+                            <span class="feature">星辉</span>
+                        </div>
+                    </div>
+                    <div class="mountain-card" data-mountain="songting">
+                        <div class="mountain-icon">🎋</div>
+                        <div class="mountain-name">松果山</div>
+                        <div class="mountain-desc">奇石遍布，林木葱郁</div>
+                        <div class="mountain-features">
+                            <span class="feature">赤水</span>
+                            <span class="feature">怪石</span>
+                            <span class="feature">古松</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mountain-detail" id="mountainDetail"></div>
             </section>
 
-            <button class="more-details-floating-btn" id="moreDetailsBtn" title="查看深度山海经解读">
-                <span class="btn-glow"></span>
-                <span class="btn-content">
-                    <span class="btn-icon">📖</span>
-                    <span class="btn-text">更多详情</span>
-                </span>
-            </button>
+            <section class="herbs-section fade-in" style="--delay: 5">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="title-icon">🌿</span>
+                        奇花异草
+                    </h2>
+                    <p class="section-desc">具有神奇效用的上古植物</p>
+                </div>
+                <div class="herbs-grid">
+                    <div class="herb-card" data-herb="feicang">
+                        <div class="herb-icon">🌸</div>
+                        <div class="herb-name">非肠草</div>
+                        <div class="herb-effect">食之不忘</div>
+                    </div>
+                    <div class="herb-card" data-herb="lingzhi">
+                        <div class="herb-icon">🍄</div>
+                        <div class="herb-name">灵芝</div>
+                        <div class="herb-effect">起死回生</div>
+                    </div>
+                    <div class="herb-card" data-herb="taohua">
+                        <div class="herb-icon">🌺</div>
+                        <div class="herb-name">桃花</div>
+                        <div class="herb-effect">姻缘之花</div>
+                    </div>
+                    <div class="herb-card" data-herb="zhongzhi">
+                        <div class="herb-icon">🌱</div>
+                        <div class="herb-name">众志草</div>
+                        <div class="herb-effect">金创良药</div>
+                    </div>
+                    <div class="herb-card" data-herb="yuzhou">
+                        <div class="herb-icon">🌾</div>
+                        <div class="herb-name">禹余粮</div>
+                        <div class="herb-effect">充饥止渴</div>
+                    </div>
+                    <div class="herb-card" data-herb="qixing">
+                        <div class="herb-icon">✨</div>
+                        <div class="herb-name">七星草</div>
+                        <div class="herb-effect">北斗神草</div>
+                    </div>
+                </div>
+                <div class="herb-detail" id="herbDetail"></div>
+            </section>
+
+            <section class="legends-section fade-in" style="--delay: 6">
+                <div class="legend-card">
+                    <div class="legend-header">
+                        <div class="legend-icon">👑</div>
+                        <h2 class="legend-title">神话人物</h2>
+                    </div>
+                    <div class="legends-grid">
+                        <div class="legend-item" data-legend="wangmu">
+                            <span class="legend-icon">👸</span>
+                            <span class="legend-name">西王母</span>
+                            <span class="legend-role">昆仑之主</span>
+                        </div>
+                        <div class="legend-item" data-legend="dijun">
+                            <span class="legend-icon">👹</span>
+                            <span class="legend-name">帝俊</span>
+                            <span class="legend-role">天帝</span>
+                        </div>
+                        <div class="legend-item" data-legend="gonggong">
+                            <span class="legend-icon">💪</span>
+                            <span class="legend-name">共工</span>
+                            <span class="legend-role">水神</span>
+                        </div>
+                        <div class="legend-item" data-legend="zhurong">
+                            <span class="legend-icon">🔥</span>
+                            <span class="legend-name">祝融</span>
+                            <span class="legend-role">火神</span>
+                        </div>
+                        <div class="legend-item" data-legend="huangdi">
+                            <span class="legend-icon">🐲</span>
+                            <span class="legend-name">黄帝</span>
+                            <span class="legend-role">人文初祖</span>
+                        </div>
+                        <div class="legend-item" data-legend="chiyou">
+                            <span class="legend-icon">⚔️</span>
+                            <span class="legend-name">蚩尤</span>
+                            <span class="legend-role">九黎之君</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 山海经仅供娱乐参考</p>
+            <p>© 2026 天机龙脉文化，仅供了解</p>
         </footer>
-    </div>
-
-    <section class="expanded-details" id="expandedDetails" style="display: none;">
-        <div class="expanded-header">
-            <h2>📖 山海经深度解读</h2>
-            <button class="close-expanded" id="closeExpanded">×</button>
-        </div>
-        <div class="expanded-content" id="expandedContent">
-        </div>
-    </section>
-
-    <div class="modal" id="detailModal">
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">×</button>
-            <div class="modal-body" id="modalBody"></div>
-        </div>
     </div>
 
     <script src="../js/shanhai.js"></script>

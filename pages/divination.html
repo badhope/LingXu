@@ -22,41 +22,102 @@
         </header>
 
         <main class="page-content">
-            <section class="divination-types">
-                <h2 class="section-title">占卜方式</h2>
+            <section class="divination-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">趋吉避凶</div>
+                    <div class="hero-title">占卜预测</div>
+                    <div class="hero-subtitle">探索未来，预知命运</div>
+                </div>
+                <div class="hero-visual">
+                    <div class="divination-emblems">
+                        <span class="emblem-item">☯</span>
+                        <span class="emblem-item">✦</span>
+                        <span class="emblem-item">★</span>
+                        <span class="emblem-item">✧</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="divination-intro fade-in" style="--delay: 2">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <div class="intro-icon">🔮</div>
+                        <h2 class="intro-title">古老预测术</h2>
+                    </div>
+                    <div class="intro-content">
+                        <p>占卜术数，源远流长。自伏羲画卦，文王演易，</p>
+                        <p>历经数千年发展，形成完整体系。</p>
+                        <p>趋吉避凶，预知未来，此乃中华传统文化之瑰宝。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="divination-types fade-in" style="--delay: 3">
+                <div class="types-header">
+                    <h2 class="types-title">
+                        <span class="title-icon">🎯</span>
+                        选择占卜方式
+                    </h2>
+                    <p class="types-desc">点击下方您感兴趣的占卜方法开始预测</p>
+                </div>
                 <div class="types-grid">
                     <div class="type-card" data-type="yijing">
                         <div class="type-icon">☯️</div>
                         <h3>易经占卜</h3>
                         <p>六十四卦，阴阳变化</p>
+                        <div class="type-bg">乾坤震巽</div>
                     </div>
                     <div class="type-card" data-type="qimen">
                         <div class="type-icon">🌀</div>
                         <h3>奇门遁甲</h3>
                         <p>时空数理，趋吉避凶</p>
+                        <div class="type-bg">天地人神</div>
                     </div>
                     <div class="type-card" data-type="liuren">
                         <div class="type-icon">🔢</div>
                         <h3>六壬神数</h3>
                         <p>五行生克，预测吉凶</p>
+                        <div class="type-bg">壬申壬午</div>
                     </div>
                     <div class="type-card" data-type="ziwei">
                         <div class="type-icon">⭐</div>
                         <h3>紫微斗数</h3>
                         <p>星宿命运，详批一生</p>
+                        <div class="type-bg">紫微天府</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="question-input fade-in" style="--delay: 4">
+                <div class="input-card">
+                    <div class="input-header">
+                        <div class="input-icon">❓</div>
+                        <h2 class="input-title">输入您的问题</h2>
+                        <p class="input-desc">心中默念所问之事，诚心则灵</p>
+                    </div>
+                    <div class="input-form">
+                        <textarea id="questionInput" class="question-textarea" placeholder="请输入您想占卜的问题...&#10;例如：我的事业发展前景如何？&#10;我的姻缘何时到来？"></textarea>
                     </div>
                 </div>
             </section>
 
             <section class="divination-result" id="divinationResult" style="display: none;">
-                <div class="result-header">
-                    <h3 id="resultTitle">占卜结果</h3>
+                <div class="result-header fade-in">
+                    <div class="result-badge">占卜结果</div>
+                    <h3 id="resultTitle"></h3>
                     <p id="resultTime"></p>
                 </div>
-                <div class="result-content" id="resultContent"></div>
-                <div class="result-actions">
-                    <button class="btn" id="saveResultBtn">保存结果</button>
-                    <button class="btn" id="anotherBtn">再测一次</button>
+                <div class="result-content fade-in" style="--delay: 1" id="resultContent"></div>
+                <div class="result-analysis fade-in" style="--delay: 2" id="resultAnalysis"></div>
+                <div class="result-actions fade-in" style="--delay: 3">
+                    <button class="btn btn-save" id="saveResultBtn">
+                        <span class="btn-icon">💾</span>
+                        <span class="btn-text">保存结果</span>
+                    </button>
+                    <button class="btn btn-another" id="anotherBtn">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">再测一次</span>
+                    </button>
                 </div>
             </section>
 
@@ -64,13 +125,13 @@
                 <span class="btn-glow"></span>
                 <span class="btn-content">
                     <span class="btn-icon">🔮</span>
-                    <span class="btn-text">更多详情</span>
+                    <span class="btn-text">深度解析</span>
                 </span>
             </button>
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 占卜仅供娱乐参考</p>
+            <p>© 2026 天机龙脉文化，仅供了解</p>
         </footer>
     </div>
 

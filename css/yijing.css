@@ -89,116 +89,349 @@ body {
     width: 100%;
 }
 
-.page-footer {
-    padding: 20px;
-    text-align: center;
-    background: var(--dark-secondary);
-    border-top: 1px solid rgba(201, 162, 39, 0.1);
+.yijing-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.15) 0%, rgba(201, 162, 39, 0.1) 100%);
+    border-radius: 25px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
 }
 
-.page-footer p {
+.yijing-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.03) 0%, transparent 70%);
+    animation: hero-rotate 30s linear infinite;
+}
+
+@keyframes hero-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(201, 162, 39, 0.5); }
+    50% { box-shadow: 0 0 25px rgba(201, 162, 39, 0.8); }
+}
+
+.hero-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.5rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+}
+
+.hero-subtitle {
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 1rem;
 }
 
-.yijing-intro {
-    text-align: center;
-    margin-bottom: 50px;
+.hero-visual {
+    position: relative;
+    width: 150px;
+    height: 150px;
 }
 
-.intro-visual {
+.bagua-rotate {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    animation: bagua-spin 20s linear infinite;
+}
+
+@keyframes bagua-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.bagua-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+    animation: core-pulse 2s ease-in-out infinite;
+}
+
+@keyframes core-pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(201, 162, 39, 0.5); }
+    50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 50px rgba(201, 162, 39, 0.8); }
+}
+
+.bagua-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bagua-char {
+    font-size: 2rem;
+    color: var(--dark-bg);
+}
+
+.bagua-trigrams {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.trigram-item {
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    animation: trigram-float 3s ease-in-out infinite;
+}
+
+.trigram-item:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); }
+.trigram-item:nth-child(2) { top: 15%; right: 5%; }
+.trigram-item:nth-child(3) { top: 50%; right: 0; transform: translateY(-50%); }
+.trigram-item:nth-child(4) { bottom: 15%; right: 5%; }
+.trigram-item:nth-child(5) { bottom: 0; left: 50%; transform: translateX(-50%); }
+.trigram-item:nth-child(6) { bottom: 15%; left: 5%; }
+.trigram-item:nth-child(7) { top: 50%; left: 0; transform: translateY(-50%); }
+.trigram-item:nth-child(8) { top: 15%; left: 5%; }
+
+@keyframes trigram-float {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.intro-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
     margin-bottom: 30px;
 }
 
-.bagua-visual {
+.intro-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.intro-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: icon-bounce 2s ease-in-out infinite;
+}
+
+@keyframes icon-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.intro-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.intro-content {
+    text-align: center;
+    color: var(--text-muted);
+    line-height: 2;
+    margin-bottom: 25px;
+}
+
+.intro-content p {
+    margin-bottom: 10px;
+}
+
+.intro-features {
     display: flex;
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
 }
 
-.trigram {
-    width: 60px;
-    height: 60px;
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 20px;
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.3);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--primary-gold);
+}
+
+.feature-text {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.divination-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.divination-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.divination-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: icon-bounce 2s ease-in-out infinite;
+}
+
+.divination-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.divination-desc {
+    color: var(--text-muted);
+}
+
+.divination-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.coins-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.coin-wrapper {
+    perspective: 1000px;
+}
+
+.coin {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    background: var(--dark-secondary);
-    border: 1px solid rgba(201, 162, 39, 0.2);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    animation: trigram-float 3s ease-in-out infinite;
-}
-
-.trigram:nth-child(2n) {
-    animation-delay: -1.5s;
-}
-
-.trigram:hover {
-    border-color: var(--primary-gold);
-    box-shadow: 0 0 20px var(--glow-gold);
-    transform: scale(1.1);
-}
-
-@keyframes trigram-float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-}
-
-.intro-text {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-}
-
-.divination-types {
-    margin-bottom: 50px;
-}
-
-.types-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.type-card {
-    background: var(--dark-secondary);
-    border-radius: 15px;
-    padding: 30px;
-    text-align: center;
-    border: 1px solid rgba(201, 162, 39, 0.1);
+    color: var(--dark-bg);
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(201, 162, 39, 0.4);
+    animation: coin-float 2s ease-in-out infinite;
 }
 
-.type-card:hover {
-    border-color: var(--primary-gold);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+.coin:nth-child(2) {
+    animation-delay: 0.3s;
 }
 
-.type-icon {
-    font-size: 3rem;
-    margin-bottom: 15px;
+.coin:nth-child(3) {
+    animation-delay: 0.6s;
 }
 
-.type-card h3 {
-    color: var(--primary-gold);
-    margin-bottom: 10px;
-    font-size: 1.2rem;
+@keyframes coin-float {
+    0%, 100% { transform: translateY(0) rotateY(0deg); }
+    50% { transform: translateY(-10px) rotateY(180deg); }
 }
 
-.type-card p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
+.coin:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 40px rgba(201, 162, 39, 0.6);
+}
+
+.btn-divinate {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-divinate:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4);
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: btn-shine 3s ease-in-out infinite;
+}
+
+@keyframes btn-shine {
+    0% { left: -100%; }
+    50%, 100% { left: 100%; }
+}
+
+.btn-icon {
+    font-size: 1.3rem;
 }
 
 .divination-result {
-    background: var(--dark-secondary);
-    border-radius: 20px;
-    padding: 40px;
+    margin-top: 30px;
+    text-align: center;
+    padding: 25px;
+    background: rgba(20, 20, 25, 0.8);
+    border-radius: 15px;
     border: 1px solid rgba(201, 162, 39, 0.2);
-    animation: result-appear 0.5s ease;
+    animation: result-appear 0.5s ease-out;
 }
 
 @keyframes result-appear {
@@ -206,9 +439,564 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.result-header {
+.result-hexagram {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: hexagram-appear 1s ease-out;
+}
+
+@keyframes hexagram-appear {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.result-name {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+}
+
+.result-judgement {
+    color: var(--text-muted);
+    line-height: 1.8;
+}
+
+.library-header {
     text-align: center;
     margin-bottom: 30px;
+}
+
+.library-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.title-icon {
+    font-size: 1.5rem;
+}
+
+.library-desc {
+    color: var(--text-muted);
+}
+
+.hexagrams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+}
+
+.hexagram-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: hexagram-float 3s ease-in-out infinite;
+}
+
+.hexagram-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.3);
+    border-color: var(--primary-gold);
+}
+
+@keyframes hexagram-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.hexagram-item:nth-child(2n) {
+    animation-delay: 0.5s;
+}
+
+.hexagram-item:nth-child(3n) {
+    animation-delay: 1s;
+}
+
+.hexagram-symbol {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: var(--primary-gold);
+}
+
+.hexagram-name {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--dark-bg);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 50%;
+    color: var(--primary-gold);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+}
+
+.modal-body {
+    padding: 10px;
+}
+
+.more-details-floating-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(201, 162, 39, 0.4);
+    transition: all 0.3s ease;
+}
+
+.more-details-floating-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(201, 162, 39, 0.6);
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.expanded-details {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark-bg);
+    z-index: 300;
+    overflow-y: auto;
+    padding: 40px;
+}
+
+.expanded-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.expanded-header h2 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--primary-gold);
+}
+
+.close-expanded {
+    width: 40px;
+    height: 40px;
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 50%;
+    color: var(--primary-gold);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-expanded:hover {
+    background: var(--primary-gold);
+    color: var(--dark-bg);
+}
+
+.page-footer {
+    padding: 20px;
+    text-align: center;
+    background: var(--dark-secondary);
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .page-content {
+        padding: 20px;
+    }
+    
+    .yijing-hero, .divination-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .hero-visual {
+        margin-top: 20px;
+    }
+    
+    .intro-features {
+        gap: 10px;
+    }
+    
+    .feature-item {
+        padding: 10px 15px;
+    }
+    
+    .hexagrams-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+    
+    .types-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.divination-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.15) 0%, rgba(201, 162, 39, 0.1) 100%);
+    border-radius: 25px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+.divination-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.03) 0%, transparent 70%);
+    animation: hero-rotate 30s linear infinite;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+.hero-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.5rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+}
+
+.hero-subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.hero-visual {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.divination-emblems {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    animation: emblems-spin 10s linear infinite;
+}
+
+@keyframes emblems-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.emblem-item {
+    font-size: 1.5rem;
+    color: var(--primary-gold);
+    animation: emblem-glow 2s ease-in-out infinite;
+}
+
+.emblem-item:nth-child(1) { animation-delay: 0s; }
+.emblem-item:nth-child(2) { animation-delay: 0.5s; }
+.emblem-item:nth-child(3) { animation-delay: 1s; }
+.emblem-item:nth-child(4) { animation-delay: 1.5s; }
+
+@keyframes emblem-glow {
+    0%, 100% { opacity: 0.5; text-shadow: none; }
+    50% { opacity: 1; text-shadow: 0 0 20px var(--primary-gold); }
+}
+
+.divination-intro {
+    margin-bottom: 30px;
+}
+
+.intro-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.intro-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.intro-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: icon-bounce 2s ease-in-out infinite;
+}
+
+@keyframes icon-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.intro-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.intro-content {
+    text-align: center;
+    color: var(--text-muted);
+    line-height: 2;
+}
+
+.intro-content p {
+    margin-bottom: 10px;
+}
+
+.types-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.types-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.title-icon {
+    font-size: 1.5rem;
+}
+
+.types-desc {
+    color: var(--text-muted);
+}
+
+.types-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.type-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    animation: type-float 3s ease-in-out infinite;
+}
+
+.type-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(201, 162, 39, 0.4);
+    border-color: var(--primary-gold);
+}
+
+@keyframes type-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.type-card:nth-child(2) { animation-delay: 0.5s; }
+.type-card:nth-child(3) { animation-delay: 1s; }
+.type-card:nth-child(4) { animation-delay: 1.5s; }
+
+.type-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: icon-bounce 2s ease-in-out infinite;
+}
+
+.type-card h3 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.3rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.type-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.type-bg {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    font-size: 4rem;
+    color: rgba(201, 162, 39, 0.05);
+    font-family: 'Ma Shan Zheng', cursive;
+    pointer-events: none;
+}
+
+.question-input {
+    margin-bottom: 30px;
+}
+
+.input-card {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.input-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.input-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: icon-bounce 2s ease-in-out infinite;
+}
+
+.input-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.input-desc {
+    color: var(--text-muted);
+}
+
+.input-form {
+    margin-top: 20px;
+}
+
+.question-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    background: rgba(20, 20, 25, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 15px;
+    color: var(--text-light);
+    font-size: 1rem;
+    font-family: 'Noto Serif SC', serif;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.question-textarea:focus {
+    outline: none;
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 15px rgba(201, 162, 39, 0.3);
+}
+
+.question-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.result-header {
+    text-align: center;
+    padding: 30px;
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    margin-bottom: 25px;
+}
+
+.result-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    animation: badge-pulse 2s ease-in-out infinite;
 }
 
 .result-header h3 {
@@ -220,301 +1008,68 @@ body {
 
 .result-header p {
     color: var(--text-muted);
-    font-size: 0.9rem;
 }
 
 .result-content {
-    text-align: center;
-}
-
-.result-symbol {
-    font-size: 5rem;
-    margin-bottom: 15px;
-    color: var(--primary-gold);
-}
-
-.result-name {
-    font-size: 1.5rem;
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    line-height: 1.8;
     color: var(--text-light);
-    margin-bottom: 10px;
 }
 
-.result-desc {
-    color: var(--text-muted);
-    margin-bottom: 25px;
+.result-analysis {
+    background: rgba(30, 30, 35, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
 }
 
-.result-meaning, .result-advice {
-    background: rgba(201, 162, 39, 0.1);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-.result-meaning h4, .result-advice h4 {
+.result-analysis h4 {
     color: var(--primary-gold);
-    margin-bottom: 10px;
-    font-size: 1rem;
-}
-
-.result-meaning p, .result-advice p {
-    color: var(--text-light);
-    line-height: 1.7;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
 }
 
 .result-actions {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-top: 30px;
+    flex-wrap: wrap;
 }
 
-.section-title {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-}
-
-.divination-section {
-    text-align: center;
-    margin-bottom: 50px;
-    padding: 40px;
-    background: var(--dark-secondary);
-    border-radius: 20px;
-    border: 1px solid rgba(201, 162, 39, 0.1);
-}
-
-.section-title {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 1.8rem;
-    color: var(--primary-gold);
-    margin-bottom: 15px;
-}
-
-.section-desc {
-    color: var(--text-muted);
-    margin-bottom: 30px;
-}
-
-.divination-tools {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-}
-
-.coins-container {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-}
-
-.coin {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(145deg, #d4af37, #8b6914);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: var(--dark-bg);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.coin:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 30px var(--glow-gold);
-}
-
-.coin.flipping {
-    animation: flip 0.5s ease-in-out;
-}
-
-@keyframes flip {
-    0%, 100% { transform: rotateY(0); }
-    50% { transform: rotateY(180deg); }
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border: 1px solid var(--primary-gold);
+.btn-save, .btn-another {
+    padding: 12px 25px;
     border-radius: 25px;
-    background: transparent;
-    color: var(--primary-gold);
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.btn:hover {
-    background: var(--primary-gold);
-    color: var(--dark-bg);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px var(--glow-gold);
-}
-
-.btn-primary {
-    background: var(--primary-gold);
-    color: var(--dark-bg);
-}
-
-.btn-primary:hover {
-    background: #d4af37;
-}
-
-.hexagram-library {
-    margin-bottom: 40px;
-}
-
-.hexagram-library .section-title {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.hexagrams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
-}
-
-.hexagram-card {
-    background: var(--dark-secondary);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid rgba(201, 162, 39, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.hexagram-card:hover {
-    border-color: var(--primary-gold);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.hexagram-symbol {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.hexagram-name {
-    font-size: 1rem;
-    color: var(--primary-gold);
-}
-
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal.active {
-    display: flex;
-    opacity: 1;
-}
-
-.modal-content {
-    background: var(--dark-secondary);
-    border-radius: 20px;
-    padding: 40px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-    border: 1px solid rgba(201, 162, 39, 0.3);
-}
-
-.modal-close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: none;
     border: none;
-    color: var(--text-muted);
-    font-size: 2rem;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
 }
 
-.modal-close:hover {
+.btn-save {
+    background: linear-gradient(135deg, var(--primary-gold), #8b6914);
+    color: var(--dark-bg);
+}
+
+.btn-save:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4);
+}
+
+.btn-another {
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.3);
     color: var(--primary-gold);
 }
 
-.modal-body h2 {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 2rem;
-    color: var(--primary-gold);
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.modal-body h3 {
-    color: var(--primary-gold);
-    margin: 20px 0 10px;
-    font-size: 1.2rem;
-}
-
-.modal-body p {
-    color: var(--text-light);
-    line-height: 1.8;
-    margin-bottom: 15px;
-}
-
-@media (max-width: 768px) {
-    .page-header {
-        padding: 20px;
-    }
-    
-    .back-btn {
-        position: static;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-    
-    .page-content {
-        padding: 20px;
-    }
-    
-    .bagua-visual {
-        gap: 10px;
-    }
-    
-    .trigram {
-        width: 45px;
-        height: 45px;
-        font-size: 1.5rem;
-    }
-    
-    .coins-container {
-        gap: 15px;
-    }
-    
-    .coin {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-    }
-    
-    .hexagrams-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
+.btn-another:hover {
+    background: rgba(201, 162, 39, 0.2);
+    transform: translateY(-3px);
 }

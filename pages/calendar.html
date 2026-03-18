@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="天机黄历查询 - 探索每日吉凶宜忌">
     <title>黄历查询 - 天机</title>
     <link rel="stylesheet" href="../css/page.css">
     <link rel="stylesheet" href="../css/layout.css">
@@ -16,133 +17,211 @@
     <script src="../js/effects/particles.js"></script>
     <div class="page-container">
         <header class="page-header fade-in">
-            <a href="main.html" class="back-btn">← 返回</a>
-            <h1 class="page-title">黄历查询</h1>
-            <div class="header-decoration"></div>
+            <a href="main.html" class="back-btn">
+                <span class="back-icon">←</span>
+                <span class="back-text">返回首页</span>
+            </a>
+            <h1 class="page-title">
+                <span class="title-icon">📅</span>
+                黄历查询
+            </h1>
+            <div class="header-decoration">
+                <div class="deco-line"></div>
+                <div class="deco-star"></div>
+                <div class="deco-line"></div>
+            </div>
         </header>
 
         <main class="page-content">
-            <section class="date-selector">
-                <div class="selector-card">
-                    <div class="date-input-group">
-                        <label>选择日期</label>
-                        <input type="date" id="dateInput">
-                    </div>
-                    <button class="btn btn-primary" id="queryBtn">查询吉凶</button>
+            <section class="calendar-hero fade-in" style="--delay: 1">
+                <div class="hero-content">
+                    <div class="hero-badge">今日黄历</div>
+                    <div class="hero-date" id="heroDate"></div>
+                    <div class="hero-ganzhi" id="heroGanzhi"></div>
                 </div>
-                <div class="today-quick">
-                    <button class="btn" id="todayBtn">查看今日</button>
+                <div class="hero-visual">
+                    <div class="calendar-emblems">
+                        <span class="emblem">☯</span>
+                        <span class="emblem">☰</span>
+                        <span class="emblem">☵</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="date-selector fade-in" style="--delay: 2">
+                <div class="selector-wrapper">
+                    <div class="selector-card">
+                        <div class="date-input-group">
+                            <label>选择日期</label>
+                            <input type="date" id="dateInput">
+                        </div>
+                        <button class="btn btn-primary" id="queryBtn">
+                            <span class="btn-icon">🔮</span>
+                            <span class="btn-text">查询吉凶</span>
+                        </button>
+                    </div>
+                    <div class="today-quick">
+                        <button class="btn" id="todayBtn">
+                            <span class="btn-icon">📌</span>
+                            <span class="btn-text">查看今日</span>
+                        </button>
+                    </div>
                 </div>
             </section>
 
             <section class="loading-section" id="loadingSection" style="display: none;">
                 <div class="loading-container">
-                    <div class="loading-icon">📜</div>
-                    <p class="loading-text">正在推算黄历...</p>
+                    <div class="loading-animation">
+                        <div class="loading-spiral">
+                            <div class="spiral-ring"></div>
+                            <div class="spiral-ring"></div>
+                            <div class="spiral-ring"></div>
+                        </div>
+                        <div class="loading-runes">
+                            <span>☰</span><span>☵</span><span>☳</span><span>☴</span>
+                        </div>
+                    </div>
+                    <p class="loading-text">
+                        <span class="loading-star">✦</span>
+                        正在推算黄历...
+                        <span class="loading-star">✦</span>
+                    </p>
+                    <p class="loading-subtext">结合五行八卦，解读天机玄妙</p>
                 </div>
             </section>
 
             <section class="calendar-result" id="calendarResult">
-                <div class="result-header">
-                    <div class="result-date" id="resultDate"></div>
-                    <div class="result-lunar" id="resultLunar"></div>
+                <div class="result-header fade-in" style="--delay: 1">
+                    <div class="result-date-display">
+                        <div class="result-date" id="resultDate"></div>
+                        <div class="result-lunar" id="resultLunar"></div>
+                    </div>
+                    <div class="result-ganzhi-badge">
+                        <span class="ganzhi-label">干支</span>
+                        <span class="ganzhi-value" id="resultGanzhi"></span>
+                    </div>
                 </div>
 
-                <div class="yi-ji-list">
-                    <div class="yi-ji-item suitable">
+                <div class="yi-ji-showcase fade-in" style="--delay: 2">
+                    <div class="yi-ji-card suitable">
                         <div class="yi-ji-header">
                             <span class="yi-ji-icon">✅</span>
                             <h3>宜</h3>
+                            <span class="yi-ji-count" id="yiCount"></span>
                         </div>
                         <div class="yi-ji-content" id="yiList"></div>
                     </div>
-                    <div class="yi-ji-item avoid">
+                    <div class="yi-ji-card avoid">
                         <div class="yi-ji-header">
                             <span class="yi-ji-icon">❌</span>
                             <h3>忌</h3>
+                            <span class="yi-ji-count" id="jiCount"></span>
                         </div>
                         <div class="yi-ji-content" id="jiList"></div>
                     </div>
                 </div>
 
-                <div class="detailed-info">
+                <div class="detailed-info-grid fade-in" style="--delay: 3">
                     <div class="info-card">
+                        <div class="info-icon">📿</div>
                         <h4>彭祖百忌</h4>
                         <p id="pengzu"></p>
                     </div>
                     <div class="info-card">
+                        <div class="info-icon">🧭</div>
                         <h4>神煞方位</h4>
                         <p id="shensha"></p>
                     </div>
                     <div class="info-card">
+                        <div class="info-icon">✨</div>
                         <h4>吉神方位</h4>
                         <p id="jishen"></p>
                     </div>
                     <div class="info-card">
+                        <div class="info-icon">⚠️</div>
                         <h4>凶神方位</h4>
                         <p id="xiongshen"></p>
                     </div>
                 </div>
 
-                <div class="hour-table">
-                    <h3>时辰吉凶</h3>
+                <div class="hour-table-section fade-in" style="--delay: 4">
+                    <div class="section-header">
+                        <h3>⏰ 时辰吉凶</h3>
+                    </div>
                     <div class="hours-grid" id="hoursGrid"></div>
                 </div>
 
-                <div class="zodiac-match">
-                    <h3>今日生肖运势</h3>
+                <div class="zodiac-section fade-in" style="--delay: 5">
+                    <div class="section-header">
+                        <h3>�十二生肖运势</h3>
+                    </div>
                     <div class="zodiac-row" id="zodiacRow"></div>
                 </div>
 
-                <button class="more-details-btn" id="moreDetailsBtn">
-                    <span class="btn-text">更多详情</span>
-                    <span class="btn-icon">📖</span>
-                </button>
+                <div class="wuxing-summary fade-in" style="--delay: 6">
+                    <div class="section-header">
+                        <h3>🔰 今日五行</h3>
+                    </div>
+                    <div class="wuxing-display" id="wuxingDisplay"></div>
+                </div>
+
+                <div class="action-buttons fade-in" style="--delay: 7">
+                    <button class="action-btn primary" id="saveBtn">
+                        <span class="btn-icon">💾</span>
+                        <span class="btn-text">保存结果</span>
+                    </button>
+                    <button class="action-btn" id="moreDetailsBtn">
+                        <span class="btn-icon">📖</span>
+                        <span class="btn-text">深度解析</span>
+                    </button>
+                </div>
             </section>
 
             <section class="expanded-details" id="expandedDetails" style="display: none;">
-                <div class="expanded-header">
-                    <h2>黄历深度解析</h2>
-                    <button class="close-expanded" id="closeExpanded">×</button>
+                <div class="expanded-header fade-in">
+                    <h2>📜 黄历深度解析</h2>
+                    <button class="close-expanded" id="closeExpanded">
+                        <span>×</span>
+                    </button>
                 </div>
                 
                 <div class="expanded-content">
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 1">
                         <h3>📅 五行八字分析</h3>
                         <div class="analysis-block" id="wuxingAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 2">
                         <h3>🏠 今日宜忌详解</h3>
                         <div class="analysis-block" id="yiJiAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 3">
                         <h3>⏰ 时辰深度解读</h3>
                         <div class="analysis-block" id="hourAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 4">
                         <h3>🧭 方位运势分析</h3>
                         <div class="analysis-block" id="directionAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 5">
                         <h3>💪 今日养生建议</h3>
                         <div class="analysis-block" id="healthAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 6">
                         <h3>💼 事业财运指导</h3>
                         <div class="analysis-block" id="careerAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 7">
                         <h3>❤️ 情感人际提示</h3>
                         <div class="analysis-block" id="loveAnalysis"></div>
                     </div>
                     
-                    <div class="detail-section">
+                    <div class="detail-section fade-in" style="--delay: 8">
                         <h3>🔮 今日吉凶总结</h3>
                         <div class="analysis-block" id="summaryAnalysis"></div>
                     </div>
@@ -151,7 +230,10 @@
         </main>
 
         <footer class="page-footer">
-            <p>© 2026 天机 · 黄历仅供娱乐参考</p>
+            <div class="footer-content">
+                <p class="copyright">© 2026 天机龙脉文化</p>
+                <p class="disclaimer">黄历仅供娱乐参考，人生掌握在自己手中</p>
+            </div>
         </footer>
     </div>
 
