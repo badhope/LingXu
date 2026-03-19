@@ -7,6 +7,6 @@ export default defineConfig({
     mdx(),
     tailwind()
   ],
-  site: 'https://lingxu.example.com',
-  base: '/',
+  site: 'https://badhope.github.io/LingXu',
+  base: '/LingXu',
 });
