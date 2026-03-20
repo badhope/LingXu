@@ -1,0 +1,31 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+const basePath = import.meta.env.BASE_URL || '';
+---
+
+<nav class="flex items-center gap-2 text-sm" aria-label="面包屑导航">
+  <a href={basePath || '/'} class="text-[#666666] hover:text-[#c9a227] transition-colors">
+    首页
+  </a>
+  {items.map((item, index) => (
+    <>
+      <span class="text-[#444444]">/</span>
+      {index === items.length - 1 ? (
+        <span class="text-[#888888]">{item.label}</span>
+      ) : (
+        <a href={item.href} class="text-[#666666] hover:text-[#c9a227] transition-colors">
+          {item.label}
+        </a>
+      )}
+    </>
+  ))}
+</nav>

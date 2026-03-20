@@ -13,6 +13,12 @@ const baseSchema = z.object({
   updatedAt: z.string().optional(),
   quote: z.string().optional(),
   quoteSource: z.string().optional(),
+  status: z.enum(['planned', 'draft', 'ready', 'published']).default('draft'),
+  related: z.array(z.object({
+    title: z.string(),
+    href: z.string(),
+    description: z.string(),
+  })).optional(),
 });
 
 const archiveCollection = defineCollection({

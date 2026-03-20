@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '@lib/constants';
+---
+
+<BaseLayout title="页面未找到" description="您访问的页面不存在">
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#080808] to-[#080808]"></div>
+
+    <div class="absolute inset-0">
+      <div class="sacred-geometry -top-20 -left-20 animate-twinkle opacity-20"></div>
+      <div class="sacred-geometry -bottom-40 -right-20 animate-twinkle opacity-20" style="animation-delay: 1.5s;"></div>
+    </div>
+
+    <div class="relative z-10 text-center max-w-2xl mx-auto px-6">
+      <div class="mb-8">
+        <span class="text-8xl font-display text-[#c9a227]/30">404</span>
+      </div>
+
+      <div class="gold-line max-w-xs mx-auto mb-8 opacity-50"></div>
+
+      <h1 class="text-3xl font-display text-[#e8d48b] mb-6 tracking-wide">
+        页面未找到
+      </h1>
+
+      <div class="space-y-4 text-[#888888] mb-12">
+        <p>您进入的领域尚未被探索。</p>
+        <p>这片废墟中，或许还有其他遗迹等待发现。</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a
+          href={SITE_CONFIG.base || '/'}
+          class="group relative px-8 py-3 rounded-lg overflow-hidden transition-all duration-500 hover:scale-105"
+        >
+          <div class="absolute inset-0 bg-gradient-to-r from-[#c9a227]/20 via-[#d4af37]/10 to-[#c9a227]/20 border border-[#c9a227]/40 rounded-lg"></div>
+          <span class="relative text-[#d4af37] tracking-wider group-hover:text-shadow-gold transition-all">
+            返回首页
+          </span>
+        </a>
+
+        <a
+          href={`${SITE_CONFIG.base}/archive`}
+          class="group px-8 py-3 rounded-lg border border-[#333333]/60 text-[#666666] hover:text-[#c9a227] hover:border-[#444444] transition-all duration-500"
+        >
+          <span class="tracking-wider">探索档案馆</span>
+        </a>
+      </div>
+
+      <div class="mt-16 pt-8 border-t border-[#222222]">
+        <p class="text-sm text-[#555555] mb-4">或者选择一个板块：</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href={`${SITE_CONFIG.base}/archive`} class="text-[#c9a227]/60 hover:text-[#d4af37] transition-colors text-sm">档案馆</a>
+          <span class="text-[#333333]">·</span>
+          <a href={`${SITE_CONFIG.base}/medicine`} class="text-[#2d8a8a]/60 hover:text-[#5ababa] transition-colors text-sm">典籍</a>
+          <span class="text-[#333333]">·</span>
+          <a href={`${SITE_CONFIG.base}/myth`} class="text-[#6b4a8a]/60 hover:text-[#a878b8] transition-colors text-sm">神话</a>
+          <span class="text-[#333333]">·</span>
+          <a href={`${SITE_CONFIG.base}/dharma`} class="text-[#2d4a6b]/60 hover:text-[#6b9ad4] transition-colors text-sm">法门</a>
+          <span class="text-[#333333]">·</span>
+          <a href={`${SITE_CONFIG.base}/realms`} class="text-[#8a4a2d]/60 hover:text-[#ba7a5a] transition-colors text-sm">境界</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#080808] to-transparent pointer-events-none"></div>
+  </section>
+</BaseLayout>

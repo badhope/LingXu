@@ -1,281 +1,395 @@
-# 灵墟
+# LingXu (灵墟)
 
-**末法时代 · 失落修行文明档案馆**
+**The Age of Declining Dharma · Archive of a Lost Cultivation Civilization**
 
-> 天地灵气衰竭，法脉传承断绝。唯有典籍文字，传其余绪。
-
----
-
-## 项目概述
-
-灵墟（LingXu），取"灵炁墟烬"之意，是一个专注于中国修行文明的沉浸式数字档案馆。我们致力于在典籍、宗教、民俗、传说与小说之间，勾勒出一个曾经真实存在过的修行世界。
-
-这**不是**游戏攻略，也不是玄幻小说设定集。这是一个严肃的、关于真实历史与文化中被遗忘之物的档案项目。
-
-### 核心定位
-
-- **世界观框架**：以"末法纪"为核心概念，解释为何修行文明在现代只剩残痕
-- **内容范围**：涵盖中医经典、宗教哲学、神话传说、民俗信仰、仙侠文学
-- **叙事立场**：承认不确定性，但坚持认为这些文化残痕具有深层意义
-- **语言规则**：界面全中文，代码/路由可英文
-
-### 技术栈
-
-| 技术 | 用途 |
-|-----|------|
-| Astro | 静态网站框架 |
-| TypeScript | 类型安全 |
-| Tailwind CSS | 样式系统 |
-| MDX | 内容编写 |
-| GitHub Pages | 部署托管 |
+> "The spiritual energy has decayed, and the transmission of dharma has been severed. Only the ancient texts remain, carrying the remnants."
 
 ---
 
-## 世界观摘要
+## Project Overview
 
-### 核心理念
+LingXu is an immersive digital archive dedicated to China's historical cultivation civilization (修行文明). Rather than treating these as fantasy or superstition, this project approaches them as genuine cultural phenomena that shaped Chinese history, religion, medicine, and literature.
 
-灵墟将现代时代定义为**末法纪的深化期**：
+### Core Positioning
 
-> 一个持续了数千年的文明衰退进程，其特征是修行文明的系统性瓦解，以及真实历史被重新诠释为神话、宗教与文学。
+- **Worldbuilding Framework**: The "Age of Declining Dharma" (末法纪) as the central concept
+- **Content Scope**: Classical texts, religious philosophy, mythology, folklore, and xianxia literature
+- **Narrative Stance**: Acknowledges uncertainty but maintains that these cultural remnants hold profound meaning
+- **Language Rules**: Chinese-first public UI; English for code/routing
 
-末法纪的核心命题是：**真实存在过的修行文明，何以在现代只剩残痕？**
+### Tech Stack
 
-### 六纪时代
-
-灵墟将修行文明历史分为六个时代：
-
-| 时代 | 特征 |
-|-----|------|
-| 太初纪 | 宇宙肇始，万气肇基 |
-| 神人纪 | 上古真人，乘天地之正 |
-| 人皇纪 | 三皇五帝，圣王垂范 |
-| 法脉纪 | 佛教东渐，道教成型 |
-| 隐退纪 | 灵气日衰，真法渐失 |
-| 末法纪 | 灵炁衰竭，唯余典籍 |
-
-### 残痕理论
-
-修行文明的余绪以以下形式残留于现实：
-
-- **典籍残痕**：《黄帝内经》《山海经》等
-- **宗教残痕**：佛教、道教的修行实践
-- **民俗残痕**：风水、算命、祭祀等
-- **文学残痕**：仙侠小说中的修行想象
+| Technology | Purpose |
+|------------|---------|
+| Astro | Static site framework |
+| TypeScript | Type safety |
+| Tailwind CSS | Styling system |
+| MDX | Content authoring |
+| GitHub Pages | Deployment |
 
 ---
 
-## V1.0.0 当前范围
+## Handoff Readiness Checklist
 
-### 已实现功能
+This checklist verifies the project is ready for contributor handoff.
 
-- ✅ 五大板块完整内容结构
-- ✅ 统一的文章页面模板
-- ✅ 响应式移动端设计
-- ✅ 中文排版优化
-- ✅ 粒子/雾气氛围效果
-- ✅ 滚动渐显动画
-- ✅ 自动生成目录
-- ✅ 相关阅读推荐
-- ✅ GitHub Actions 自动部署
+### Architecture Readiness
 
-### 页面清单
+- [x] Framework architecture defined (Astro + Tailwind + MDX)
+- [x] Base path configured in two locations (sync required)
+- [x] Content collections schema defined
+- [x] Component structure established
+- [x] Build system configured
+- [x] Deployment automated (GitHub Actions)
 
-| 路由 | 标题 | 类型 |
-|-----|------|------|
-| `/` | 首页 | 落地页 |
-| `/archive` | 末法档案 | 板块页 |
-| `/archive/end-of-dharma-age` | 末法纪总论 | 文章页 |
-| `/medicine` | 性命医道 | 板块页 |
-| `/medicine/huangdi-neijing` | 黄帝内经与修行身体 | 文章页 |
-| `/myth` | 山海奇谭 | 板块页 |
-| `/myth/shanhai-overview` | 山海经概述 | 文章页 |
-| `/dharma` | 佛道法门 | 板块页 |
-| `/dharma/buddhism-and-daoism` | 佛教与道教 | 文章页 |
-| `/realms` | 修行境界 | 板块页 |
-| `/realms/cultivation-realm-system` | 境界体系 | 文章页 |
-| `/about` | 关于 | 信息页 |
+### Route Readiness
+
+- [x] All top-level routes implemented (7 routes)
+- [x] All section index routes implemented (5 routes)
+- [x] All content entry routes implemented (20 entries)
+- [x] 404 page created
+- [x] Route naming conventions documented
+
+### Template Readiness
+
+- [x] BaseLayout for root HTML structure
+- [x] PageLayout for section index pages
+- [x] ArticleLayout for long-form content
+- [x] 404 page template
+- [x] Template extension guidelines documented
+
+### Documentation Readiness
+
+- [x] README.md (this file) - executive overview
+- [x] docs/handoff.md - continuation guide
+- [x] docs/architecture.md - technical architecture
+- [x] docs/information-architecture.md - content organization
+- [x] docs/content-model.md - content schema
+- [x] docs/ui-principles.md - design decisions
+- [x] docs/motion-principles.md - animation guidelines
+- [x] docs/roadmap.md - future plans
+- [x] docs/worldbuilding.md - lore and setting
+
+### UI/Design System Readiness
+
+- [x] Design tokens defined (colors, typography, spacing)
+- [x] Section color palettes established (5 sections)
+- [x] Typography system configured (Chinese fonts)
+- [x] Component library documented
+- [x] Mobile-first responsive structure
+
+### Mobile Readiness
+
+- [x] Responsive breakpoints defined
+- [x] Mobile navigation implemented
+- [x] Touch targets minimum 44px
+- [x] No hover-dependent information
+- [x] Fluid typography implemented
+
+### Motion Foundation Readiness
+
+- [x] CSS animation system defined
+- [x] Ambient animations (twinkle, float, pulse)
+- [x] Scroll-reveal component
+- [x] ParticleField component
+- [x] MistEffect component
+- [x] Reduced motion support
+
+### Content Model Readiness
+
+- [x] Base schema defined (14 fields)
+- [x] Collection-specific schemas (5 collections)
+- [x] Status field (planned/draft/ready/published)
+- [x] Related articles field
+- [x] Content authoring conventions
+
+### Deployment Readiness
+
+- [x] GitHub Actions workflow configured
+- [x] GitHub Pages deployment configured
+- [x] Build verification passes (28 pages)
+- [x] Base path configured for /LingXu
 
 ---
 
-## 设计系统
+## Frozen Decisions (DO NOT CHANGE)
 
-### 色彩系统
+These are locked architectural decisions:
 
-采用五色体系对应五大板块：
+| Category | Decision | Why |
+|----------|----------|-----|
+| Project Identity | 灵墟 (LingXu) | Brand consistency |
+| Sections | 5 fixed sections | Navigation hardcoded |
+| Chronology | Six-era model | Worldbuilding foundation |
+| Public UI | Chinese-first | Design direction |
+| Code/Routing | English-first | Development consistency |
+| Content Hierarchy | Section → Topic → Entry | Schema dependency |
+| Base Path | /LingXu (two locations) | Deployment coupling |
 
-| 板块 | 颜色 | 色值 |
-|-----|------|------|
-| 档案馆 | 金色 | `#c9a227` / `#d4af37` |
-| 典籍 | 翡翠 | `#2d8a8a` / `#5ababa` |
-| 神话 | 紫晶 | `#6b4a8a` / `#a878b8` |
-| 法门 | 藏青 | `#2d4a6b` / `#6b9ad4` |
-| 境界 | 赭石 | `#8a4a2d` / `#ba7a5a` |
-
-### 字体系统
-
-| 用途 | 字体 |
-|-----|------|
-| 标题 | ZCOOL XiaoWei / Ma Shan Zheng |
-| 正文 | Noto Serif SC |
-| 装饰 | Ma Shan Zheng |
-
-### 动效原则
-
-- 优雅克制，不喧宾夺主
-- 粒子飘浮、神雾漂移等氛围元素
-- 滚动渐入、悬停反馈等交互反馈
-- 支持 `prefers-reduced-motion`
+**See `docs/handoff.md` Section 3 for full frozen decisions list.**
 
 ---
 
-## 内容架构
+## Flexible Areas
 
-### Frontmatter 字段
+These can be extended freely:
 
-```yaml
+- Content depth (expand articles)
+- Article volume (add entries within sections)
+- Visual ornamentation (add images, illustrations)
+- Motion modules (add subtle animations)
+- Atlas/glossary (add discovery features)
+- Future i18n (infrastructure reserved)
+
+**See `docs/handoff.md` Section 4 for full flexible areas list.**
+
 ---
-title: 文章标题
-subtitle: 副标题
-description: 文章描述
-section: 所属板块
-category: 分类 (era/cultivation/theory等)
-order: 排序数字
-featured: 是否精选
-tags: [标签列表]
-era: 时代标签
-quote: 引言
-quoteSource: 引言来源
-updatedAt: 更新时间
----
+
+## Current Architecture (V1.0.0)
+
+### Repository Structure
+
+```
+LingXu/
+├── public/
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   ├── interactive/     # ParticleField, MistEffect, ScrollReveal
+│   │   ├── layout/         # Header, Footer
+│   │   ├── ui/             # Badge, Card, Timeline, Breadcrumbs
+│   │   └── widgets/        # ArchiveCard, SectionNav
+│   ├── content/
+│   │   └── config.ts       # Collection schemas
+│   ├── data/
+│   │   └── navigation.ts   # Navigation structure
+│   ├── layouts/
+│   │   ├── BaseLayout.astro
+│   │   ├── PageLayout.astro
+│   │   └── ArticleLayout.astro
+│   ├── lib/
+│   │   ├── constants.ts    # Site configuration
+│   │   └── utils.ts
+│   ├── pages/
+│   │   ├── archive/        # 4 entries
+│   │   ├── medicine/       # 4 entries
+│   │   ├── myth/           # 4 entries
+│   │   ├── dharma/         # 4 entries
+│   │   ├── realms/         # 4 entries
+│   │   ├── about.astro
+│   │   ├── index.astro
+│   │   └── 404.astro
+│   └── styles/
+│       └── global.css
+├── docs/                   # Architecture documentation
+├── astro.config.mjs
+├── tailwind.config.mjs
+└── package.json
 ```
 
-### 文章模板特性
+---
 
-- 面包屑导航
-- 时代/板块徽章
-- 引言区块
-- 自动目录生成（桌面端侧边栏 / 移动端可折叠）
-- 相关阅读推荐
-- 返回板块导航
+## Routes
+
+### Route Inventory
+
+| Route | Title | Status |
+|-------|-------|--------|
+| `/` | Homepage | ✅ |
+| `/archive` | Archive | ✅ |
+| `/archive/end-of-dharma-age` | End of Dharma Age | Published |
+| `/archive/six-eras` | Six Eras | Draft |
+| `/archive/decline-of-lineages` | Decline of Lineages | Draft |
+| `/archive/remnants-in-the-modern-world` | Remnants | Draft |
+| `/medicine` | Medicine | ✅ |
+| `/medicine/huangdi-neijing` | Huangdi Neijing | Published |
+| `/medicine/essence-qi-spirit` | Essence-Qi-Spirit | Draft |
+| `/medicine/meridians-and-body` | Meridians | Draft |
+| `/medicine/five-phases-and-organs` | Five Phases | Draft |
+| `/myth` | Mythology | ✅ |
+| `/myth/shanhai-overview` | Classic of Mountains and Seas | Published |
+| `/myth/strange-beasts` | Strange Beasts | Draft |
+| `/myth/lost-geography` | Lost Geography | Draft |
+| `/myth/sacred-mountains-and-sites` | Sacred Mountains | Draft |
+| `/dharma` | Dharma | ✅ |
+| `/dharma/buddhism-and-daoism` | Buddhism and Daoism | Published |
+| `/dharma/end-of-dharma-in-buddhism` | End of Dharma | Draft |
+| `/dharma/daoist-lineages` | Daoist Lineages | Draft |
+| `/dharma/transmission-and-sects` | Transmission | Draft |
+| `/realms` | Realms | ✅ |
+| `/realms/cultivation-realm-system` | Cultivation Realm System | Published |
+| `/realms/qi-refinement-to-nascent-soul` | Qi to Nascent Soul | Draft |
+| `/realms/cultivation-paths` | Cultivation Paths | Draft |
+| `/realms/literary-reconstruction-of-cultivation` | Literary Reconstruction | Draft |
+| `/about` | About | ✅ |
+| `/404` | Not Found | ✅ |
+
+### Content Status
+
+| Section | Entries | Published |
+|---------|---------|-----------|
+| Archive | 4 | 1 |
+| Medicine | 4 | 1 |
+| Myth | 4 | 1 |
+| Dharma | 4 | 1 |
+| Realms | 4 | 1 |
+| **Total** | **20** | **5** (25%) |
 
 ---
 
-## 当前进度
+## Template System
 
-### 已完成 (V1.0.0)
+### Available Templates
 
-- [x] 项目架构搭建
-- [x] 五大板块内容结构
-- [x] 统一的模板系统
-- [x] 中文排版优化
-- [x] 响应式设计
-- [x] 氛围动效
-- [x] 自动部署流程
-- [x] 核心文章内容
-- [x] 板块深度页面（末法档案）
-- [x] 长文内容（末法纪总论）
+| Template | File | Purpose |
+|----------|------|---------|
+| BaseLayout | `layouts/BaseLayout.astro` | Root HTML, global styles, Header/Footer |
+| PageLayout | `layouts/PageLayout.astro` | Section indexes with hero headers |
+| ArticleLayout | `layouts/ArticleLayout.astro` | Long-form content with quote, related |
+| 404 | `pages/404.astro` | Branded not-found page |
 
-### 下一步计划
+### Component Library
 
-- [ ] 补充缺失的文章内容（如六纪时代划分、灵气衰退等）
-- [ ] 增强搜索功能
-- [ ] 添加书签/收藏功能
-- [ ] 深色/浅色主题切换
-- [ ] 更多文章内插图/图表
-- [ ] 国际化准备（结构预留）
+| Component | Purpose |
+|-----------|---------|
+| Badge | Status/category labels |
+| Card | Content preview cards |
+| SectionHeader | Section titles with decoration |
+| Timeline | Historical timeline display |
+| Breadcrumbs | Navigation breadcrumb trail |
+| ArchiveCard | Archive entry cards |
+| SectionNav | Section navigation sidebar |
+| ParticleField | Background particle effect |
+| MistEffect | Atmospheric mist overlay |
+| ScrollReveal | Scroll-triggered reveals |
 
 ---
 
-## 开发说明
+## Content Model
 
-### 本地运行
+### Base Schema Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | Yes | Entry title |
+| `description` | string | Yes | Brief summary |
+| `section` | string | Yes | Top-level section |
+| `status` | enum | Yes | planned/draft/ready/published |
+| `tags` | string[] | No | Content tags |
+| `era` | string | No | Historical era |
+| `featured` | boolean | No | Featured content flag |
+| `order` | number | No | Sort order |
+| `related` | Related[] | No | Related articles |
+
+### Status Values
+
+- `planned`: Concept approved, not started
+- `draft`: Initial content created
+- `ready`: Content complete, needs review
+- `published`: Live and visible
+
+---
+
+## Governance Rules
+
+### MUST NOT DO (Without Full Review)
+
+1. Rename or reorder the 5 top-level sections
+2. Change the six-era chronology names
+3. Modify base path in only one location
+4. Add content outside defined hierarchy without updating docs
+5. Create page-specific patterns instead of extending templates
+6. Add heavy animations without graceful degradation
+7. Change public UI language without i18n strategy
+
+### SHOULD DO (Every Contribution)
+
+1. Update docs when changing architecture
+2. Update roadmap when adding features
+3. Run `npm run build` before committing
+4. Use existing color palettes for new sections
+5. Maintain Chinese punctuation in content
+6. Follow frontmatter template for new entries
+
+---
+
+## Next Steps for Contributors
+
+### Phase 1: Stabilization (Do First)
+
+1. Run `npm run build` to verify build passes
+2. Read `docs/handoff.md` for frozen/flexible decisions
+3. Read `docs/architecture.md` for technical overview
+4. Read `docs/worldbuilding.md` for lore consistency
+
+### Phase 2: Content Expansion (V1.1.0)
+
+1. Complete all 15 draft entries
+2. Add featured images (requires schema update)
+3. Implement search functionality (Pagefind)
+4. Create topic index pages
+
+### Phase 3: Enhanced Navigation (V1.2.0)
+
+1. Interactive timeline component
+2. Cross-linking system
+3. Era-based filtering
+4. Reading path recommendations
+
+### Phase 4: Interactive Features (V1.3.0)
+
+1. Realm comparison tool
+2. Visual maps
+3. Interactive diagrams
+4. Progress tracking
+
+---
+
+## Quick Reference
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/lib/constants.ts` | Site configuration (base path here too) |
+| `src/data/navigation.ts` | Navigation structure |
+| `src/content/config.ts` | Content schema |
+| `src/styles/global.css` | Global styles, animations |
+| `astro.config.mjs` | Astro configuration (base path here too) |
+
+### Emergency Rollback
 
 ```bash
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-
-# 构建生产版本
-npm run build
-
-# 预览构建结果
-npm run preview
-```
-
-### 部署
-
-项目通过 GitHub Actions 自动部署到 GitHub Pages。
-
-推送到 `main` 分支将触发自动构建和部署。
-
-### 项目结构
-
-```
-src/
-├── components/
-│   ├── interactive/    # 交互组件（粒子、雾气、滚动）
-│   ├── layout/          # 布局组件（头部、底部）
-│   ├── ui/              # UI组件（卡片、时间轴等）
-│   └── widgets/         # 区块组件（导航、档案卡）
-├── content/
-│   └── config.ts        # 内容集合配置
-├── data/
-│   ├── navigation.ts    # 导航数据
-│   └── timeline.ts      # 时代轴数据
-├── layouts/
-│   ├── BaseLayout.astro # 基础布局
-│   ├── PageLayout.astro # 页面布局（板块页）
-│   └── ArticleLayout.astro # 文章布局
-├── pages/               # 路由页面
-│   ├── archive/         # 档案馆板块
-│   ├── medicine/        # 医药板块
-│   ├── myth/            # 神话板块
-│   ├── dharma/          # 法门板块
-│   └── realms/          # 境界板块
-└── styles/
-    └── global.css       # 全局样式
+git log --oneline -10  # Find recent changes
+git checkout -- .      # Discard all changes
+npm run build          # Rebuild
 ```
 
 ---
 
-## 技术细节
+## Documentation Index
 
-### Tailwind CSS 配置
-
-项目扩展了 Tailwind 的颜色系统，定义了：
-
-- `ink`: 墨色系（深色背景）
-- `gold`: 金色系
-- `jade`: 翡翠色系
-- `ochre`: 赭石色系
-- `amethyst`: 紫晶色系
-- `sapphire`: 藏青色系
-
-### Base Path
-
-站点部署在 GitHub Pages 的子路径 `/LingXu` 下。
-
-如需修改部署路径，编辑 `astro.config.mjs` 中的 `base` 字段。
+| Document | Purpose |
+|----------|---------|
+| README.md (this) | Executive overview, checklist |
+| docs/handoff.md | Practical continuation guide |
+| docs/architecture.md | Technical architecture |
+| docs/information-architecture.md | Content organization |
+| docs/content-model.md | Content schema details |
+| docs/ui-principles.md | Design decisions |
+| docs/motion-principles.md | Animation guidelines |
+| docs/roadmap.md | Future plans |
+| docs/worldbuilding.md | Lore and setting |
 
 ---
 
-## 致谢
+## License
 
-- [Noto Serif SC](https://github.com/googlefonts/noto-cjk) - 开源中文字体
-- [Tailwind CSS](https://tailwindcss.com/) - 样式框架
-- [Astro](https://astro.build/) - 网站框架
-- [ZCOOL XiaoWei](https://www.fontke.com/font/20309429.html) - 站酷字体
-- [Ma Shan Zheng](https://github.com/googlefonts/mashanzheng) - 马山正楷
+This project is dedicated to the public domain for educational and cultural preservation purposes.
 
 ---
 
-## 版权声明
-
-灵墟项目内容仅供文化交流与学术研究之用。我们尊重所有相关宗教传统、文化遗产和知识产权。
-
----
-
-> 愿见者得度，闻者觉悟
+**Last Updated**: 2026-03-21
+**Version**: 1.0.0
+**Status**: Framework Complete, Handoff Ready
+**Build**: 28 pages, passing
