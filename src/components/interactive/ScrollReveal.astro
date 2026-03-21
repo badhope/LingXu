@@ -1,11 +1,24 @@
 ---
+interface Props {
+  delay?: number;
+  threshold?: number;
+  class?: string;
+}
+
+const { delay = 0, threshold = 0.1, class: className = '' } = Astro.props;
 ---
 
-<div class="scroll-reveal" data-reveal>
+<div
+  class:list={['scroll-reveal-init', className]}
+  data-delay={delay}
+  data-threshold={threshold}
+>
   <slot />
 </div>
 
 <script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const observerOptions = {
     root: null,
     rootMargin: '0px 0px -50px 0px',
@@ -15,26 +28,46 @@
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('revealed');
+        const delay = Number(entry.target.getAttribute('data-delay')) || 0;
+
+        if (prefersReducedMotion) {
+          (entry.target as HTMLElement).style.opacity = '1';
+          (entry.target as HTMLElement).style.transform = 'translateY(0)';
+        } else {
+          setTimeout(() => {
+            entry.target.classList.add('revealed');
+          }, delay);
+        }
+
         observer.unobserve(entry.target);
       }
     });
   }, observerOptions);
 
-  document.querySelectorAll('[data-reveal]').forEach((el) => {
+  document.querySelectorAll('.scroll-reveal-init').forEach((el) => {
     observer.observe(el);
   });
 </script>
 
 <style>
-  .scroll-reveal {
+  .scroll-reveal-init {
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transition:
+      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .scroll-reveal.revealed {
+  .scroll-reveal-init.revealed {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal-init {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 </style>

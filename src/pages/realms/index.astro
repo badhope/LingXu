@@ -1,41 +1,301 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
-import ArchiveCard from '@components/widgets/ArchiveCard.astro';
+import ArticleCard from '@components/widgets/ArticleCard.astro';
+import ScrollReveal from '@components/interactive/ScrollReveal.astro';
 
-const entries = [
+const basePath = import.meta.env.BASE_URL || '';
+
+const featuredArticles = [
   {
-    title: '修行境界体系',
-    description: '从炼气到化神：修行境界的演化历程',
-    href: '/realms/cultivation-realm-system',
-    category: '境界体系',
+    title: '炼精化神与元神养成',
+    subtitle: '从后天精气到先天元神的转化之路',
+    description: '深入探讨丹道修炼中炼精化神的关键阶段，分析元神的本质、养成方法及其在修行中的核心地位。',
+    href: `${basePath}/realms/essence-to-spirit`,
+    category: '核心卷宗',
+    era: '鸿蒙纪-末法纪',
+    tags: ['炼精化神', '元神', '丹道', '先天'],
+    readTime: '18分钟',
+    color: 'ochre' as const,
+    featured: true,
   },
+  {
+    title: '修行境界总论',
+    subtitle: '从炼气到化神的完整境界体系梳理',
+    description: '系统梳理道教、佛教及其他修行传统的境界划分，对比分析不同体系的异同，建立修行境界的整体框架。',
+    href: `${basePath}/realms/cultivation-realm-system`,
+    category: '核心卷宗',
+    era: '太初纪-末法纪',
+    tags: ['境界', '炼气', '化神', '丹道'],
+    readTime: '20分钟',
+    color: 'ochre' as const,
+  },
+  {
+    title: '炼气到元婴',
+    subtitle: '从后天炼气到元婴育成的完整路径',
+    description: '详细阐述从炼气到元婴的修习过程，分析其中的关键转折点、常见偏差及纠正方法。',
+    href: `${basePath}/realms/qi-refinement-to-nascent-soul`,
+    category: '核心卷宗',
+    era: '太初纪-末法纪',
+    tags: ['炼气', '元婴', '丹道', '筑基'],
+    readTime: '15分钟',
+    color: 'ochre' as const,
+  },
+  {
+    title: '文学中的修行文明',
+    subtitle: '仙侠小说中的修行体系与真实丹道的对比研究',
+    description: '分析仙侠小说中修行体系的文学建构，探讨其与真实修行传统的异同，以及文学化对修行知识的 影响。',
+    href: `${basePath}/realms/literary-reconstruction-of-cultivation`,
+    category: '比较研究',
+    era: '现代',
+    tags: ['仙侠', '文学', '丹道', '比较'],
+    readTime: '12分钟',
+    color: 'ochre' as const,
+  },
+];
+
+const realmSystems = [
+  {
+    system: '丹道境界',
+    description: '道教内丹术的境界划分体系',
+    levels: [
+      { name: '炼精化气', desc: '后天返先天', status: '基础' },
+      { name: '炼气化神', desc: '元气化为元神', status: '进阶' },
+      { name: '炼神还虚', desc: '元神返虚合道', status: '高级' },
+      { name: '炼虚合道', desc: '与道合真', status: '圆满' },
+    ],
+  },
+  {
+    system: '佛教境界',
+    description: '佛教修行的果位体系',
+    levels: [
+      { name: '阿罗汉', desc: '断尽三界见思烦恼', status: '小乘圆满' },
+      { name: '菩萨', desc: '自觉觉他，悲智双运', status: '大乘' },
+      { name: '佛', desc: '圆满觉悟，涅槃寂静', status: '圆满' },
+    ],
+  },
+  {
+    system: '仙侠小说境界',
+    description: '网络文学中的修行设定体系',
+    levels: [
+      { name: '练气期', desc: '入门基础', status: '入门' },
+      { name: '筑基期', desc: '稳固根基', status: '基础' },
+      { name: '金丹期', desc: '凝结金丹', status: '进阶' },
+      { name: '元婴期', desc: '神魂凝聚', status: '高级' },
+    ],
+  },
+];
+
+const cultivationPrinciples = [
+  { principle: '循序渐进', description: '修行不可躁进，需按部就班，根基稳固后方可更进一步' },
+  { principle: '动静结合', description: '静坐修炼与动功导引相结合，方能阴阳调和、气血通畅' },
+  { principle: '性命双修', description: '性者心性，命者身体；二者不可偏废，须齐头并进' },
+  { principle: '天人合一', description: '人体小宇宙与天地大宇宙相应，顺应自然方能得道' },
 ];
 ---
 
 <PageLayout
   title="境界"
-  description="从炼气到化神的阶梯，修行者的进阶之路"
+  description="修行文明的境界体系与文学重构"
   section="境界"
   sectionColor="ochre"
-  entries={entries}
 >
-  <div class="mt-8 prose-lingxu">
-    <p>
-      修行境界体系是中国修行文化的核心组成部分。从最早的"炼精化气"到后来的"金丹大道"，
-      从"筑基"到"飞升"，这套体系经历了漫长的演化过程。
-    </p>
+  <article class="pt-20 pb-16">
+    <header class="relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-[#8a4a2d]/[0.03] via-transparent to-transparent"></div>
+      <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[#8a4a2d]/[0.06] to-transparent blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-gradient-to-tr from-[#ba7a5a]/[0.04] to-transparent blur-2xl"></div>
 
-    <h2>境界的起源</h2>
-    <p>
-      早期道教典籍中，修行被描述为与天地合一的过程。《庄子》中描述的"神人"、
-      "真人"，是早期对高境界修行者的想象。后来，这些想象逐渐系统化，
-      形成了今天我们所见到的境界体系。
-    </p>
+      <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+        <nav class="flex items-center gap-2 text-sm mb-8" aria-label="面包屑导航">
+          <a href={basePath} class="text-[#666666] hover:text-[#ba7a5a] transition-colors">首页</a>
+          <span class="text-[#444444]">/</span>
+          <span class="text-[#888888]">境界</span>
+        </nav>
 
-    <h2>体系的多样性</h2>
-    <p>
-      不同的流派对境界的划分各有不同。道教有道家的境界，佛门有佛门的果位，
-      民间信仰有民间的一套说法。这些体系既有共通之处，也有各自的侧重点。
-    </p>
-  </div>
+        <div class="flex items-center gap-3 mb-6">
+          <span class="px-3 py-1 text-xs font-medium tracking-[0.15em] uppercase border border-[#ba7a5a]/40 text-[#ba7a5a] rounded-full">
+            境界
+          </span>
+          <span class="px-3 py-1 text-xs text-[#888888] border border-[#333333]/50 rounded-full">
+            仙途体系
+          </span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-display text-[#ba7a5a] mb-6 tracking-wide leading-tight">
+          仙途境界
+        </h1>
+
+        <p class="text-xl sm:text-2xl text-[#ba7a5a]/80 font-light mb-6 leading-relaxed">
+          从凡人到仙圣的修行阶梯
+        </p>
+
+        <blockquote class="border-l-2 border-[#8a4a2d] pl-6 py-3 my-6 max-w-3xl">
+          <p class="text-lg text-[#888888] italic leading-relaxed">
+            道法自然，顺其自然。
+          </p>
+        </blockquote>
+
+        <p class="text-[#888888] leading-relaxed mb-8 max-w-3xl">
+          修行境界，是修行者在追求超越凡俗过程中的不同层次与阶段。从最早的炼气期到最终的与道合真，每一个境界都有其独特的身心特征与修炼要点。理解境界体系，是理解修行文明的一把钥匙。
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <a
+            href={`${basePath}/realms/essence-to-spirit`}
+            class="group inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#8a4a2d]/[0.08] border border-[#8a4a2d]/30 text-[#ba7a5a] hover:bg-[#8a4a2d]/[0.12] hover:border-[#ba7a5a]/50 transition-all"
+          >
+            <span>探索境界</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7V17" />
+            </svg>
+          </a>
+          <a
+            href={`${basePath}/realms/cultivation-realm-system`}
+            class="group inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#333333] text-[#888888] hover:text-[#ba7a5a] hover:border-[#8a4a2d]/30 transition-all"
+          >
+            <span>境界总论</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </a>
+        </div>
+
+        <div class="mt-12 max-w-[240px] h-[1px] bg-gradient-to-r from-transparent via-[#ba7a5a]/50 to-transparent"></div>
+      </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal>
+        <section class="py-16 border-b border-[#2a2a2a]/50">
+          <h2 class="text-2xl sm:text-3xl font-display text-[#ba7a5a] mb-8 tracking-wide">核心典籍</h2>
+          <div class="grid gap-4">
+            {featuredArticles.slice(0, 1).map((article) => (
+              <ArticleCard
+                title={article.title}
+                subtitle={article.subtitle}
+                description={article.description}
+                href={article.href}
+                category={article.category}
+                era={article.era}
+                tags={article.tags}
+                readTime={article.readTime}
+                featured={article.featured}
+                color={article.color}
+              />
+            ))}
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4 mt-4">
+            {featuredArticles.slice(1).map((article) => (
+              <ArticleCard
+                title={article.title}
+                subtitle={article.subtitle}
+                description={article.description}
+                href={article.href}
+                category={article.category}
+                era={article.era}
+                tags={article.tags}
+                readTime={article.readTime}
+                color={article.color}
+              />
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <section class="py-16 border-b border-[#2a2a2a]/50">
+          <h2 class="text-2xl sm:text-3xl font-display text-[#ba7a5a] mb-8 tracking-wide">境界体系对比</h2>
+          <p class="text-[#888888] mb-8 max-w-3xl">
+            不同修行传统对境界的划分各有不同，以下是三大体系的对比：
+          </p>
+          <div class="grid md:grid-cols-3 gap-4">
+            {realmSystems.map((system, index) => (
+              <ScrollReveal delay={index * 100}>
+                <div class="rounded-lg bg-[#0d0d0d]/50 border border-[#2a2a2a]/50 overflow-hidden">
+                  <div class="p-4 border-b border-[#2a2a2a]/50 bg-[#8a4a2d]/[0.05]">
+                    <h3 class="text-lg font-display text-[#ba7a5a]">{system.system}</h3>
+                    <p class="text-xs text-[#666666]">{system.description}</p>
+                  </div>
+                  <div class="p-4 space-y-3">
+                    {system.levels.map((level) => (
+                      <div class="p-3 rounded bg-[#1a1a1a]/50 border border-[#2a2a2a]/30">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="font-medium text-[#ba7a5a]">{level.name}</span>
+                          <span class="text-xs px-2 py-0.5 rounded bg-[#8a4a2d]/20 text-[#ba7a5a]/70">
+                            {level.status}
+                          </span>
+                        </div>
+                        <p class="text-xs text-[#666666]">{level.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <section class="py-16 border-b border-[#2a2a2a]/50">
+          <h2 class="text-2xl sm:text-3xl font-display text-[#ba7a5a] mb-8 tracking-wide">修行要义</h2>
+          <p class="text-[#888888] mb-8 max-w-3xl">
+            古往今来的修行者，总结出以下核心原则：
+          </p>
+          <div class="grid sm:grid-cols-2 gap-4">
+            {cultivationPrinciples.map((item, index) => (
+              <ScrollReveal delay={index * 100}>
+                <div class="p-5 rounded-lg bg-[#8a4a2d]/[0.03] border border-[#8a4a2d]/20">
+                  <h3 class="text-lg font-display text-[#ba7a5a] mb-2">{item.principle}</h3>
+                  <p class="text-sm text-[#888888] leading-relaxed">{item.description}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <section class="py-16">
+          <h2 class="text-2xl sm:text-3xl font-display text-[#ba7a5a] mb-8 tracking-wide">关联路径</h2>
+          <p class="text-[#888888] mb-8 max-w-3xl">
+            从境界体系出发，可沿以下路径深入探索修行文明的各个面向。
+          </p>
+          <div class="space-y-4">
+            <a
+              href={`${basePath}/archive`}
+              class="group block p-5 rounded-lg bg-[#c9a227]/[0.04] border border-[#c9a227]/20 hover:border-[#d4af37]/40 transition-all"
+            >
+              <h3 class="text-lg font-display text-[#d4af37] mb-1">末法档案</h3>
+              <p class="text-sm text-[#888888]">探索末法纪的形成与修行文明衰退的进程 → 档案馆</p>
+            </a>
+            <a
+              href={`${basePath}/dharma`}
+              class="group block p-5 rounded-lg bg-[#2d4a6b]/[0.04] border border-[#2d4a6b]/20 hover:border-[#6b9ad4]/40 transition-all"
+            >
+              <h3 class="text-lg font-display text-[#6b9ad4] mb-1">佛道思想</h3>
+              <p class="text-sm text-[#888888]">梳理佛教东渐与道教兴起的修行传承 → 法门</p>
+            </a>
+            <a
+              href={`${basePath}/medicine`}
+              class="group block p-5 rounded-lg bg-[#2d8a8a]/[0.04] border border-[#2d8a8a]/20 hover:border-[#5ababa]/40 transition-all"
+            >
+              <h3 class="text-lg font-display text-[#5ababa] mb-1">身体修持</h3>
+              <p class="text-sm text-[#888888]">从《黄帝内经》探索身体与能量的奥秘 → 典籍</p>
+            </a>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      <footer class="py-12 text-center">
+        <div class="max-w-[200px] mx-auto mb-8 h-[1px] bg-gradient-to-r from-transparent via-[#ba7a5a]/30 to-transparent"></div>
+        <p class="text-[#666666] text-sm">
+          仙途境界 · 灵墟 · 末法时代修行文明档案馆
+        </p>
+        <p class="text-[#555555] text-xs mt-2">
+          道法自然，返璞归真
+        </p>
+      </footer>
+    </div>
+  </article>
 </PageLayout>
