@@ -119,6 +119,60 @@
     to { stroke-dashoffset: 0; }
   }
 
+  @keyframes typewriterBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes shimmerGold {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  @keyframes fadeInChar {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulseRing {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  @keyframes revealText {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes floatParticle {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.6;
+    }
+    25% {
+      transform: translate(10px, -20px) scale(1.1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translate(-5px, -40px) scale(0.9);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translate(-15px, -20px) scale(1.05);
+      opacity: 0.7;
+    }
+  }
+
   .motion-fade-in {
     animation: fadeIn var(--motion-duration-slow) var(--motion-ease-out) forwards;
     will-change: opacity;
@@ -217,6 +271,77 @@
   .reveal-on-scroll-delay-3 { transition-delay: 300ms; }
   .reveal-on-scroll-delay-4 { transition-delay: 400ms; }
   .reveal-on-scroll-delay-5 { transition-delay: 500ms; }
+
+  .motion-char-by-char {
+    overflow: hidden;
+  }
+
+  .motion-char-by-char span {
+    display: inline-block;
+    opacity: 0;
+    animation: fadeInChar 300ms var(--motion-ease-out) forwards;
+  }
+
+  .motion-shimmer-gold {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(201, 162, 39, 0.15) 25%,
+      rgba(212, 175, 55, 0.25) 50%,
+      rgba(201, 162, 39, 0.15) 75%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmerGold 3s linear infinite;
+    will-change: background-position;
+  }
+
+  .motion-pulse-ring {
+    position: relative;
+  }
+
+  .motion-pulse-ring::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(201, 162, 39, 0.4);
+    animation: pulseRing 2s ease-out infinite;
+    will-change: transform, opacity;
+  }
+
+  .motion-reveal-text {
+    animation: revealText 800ms var(--motion-ease-out) forwards;
+    will-change: clip-path;
+  }
+
+  .motion-float-particle {
+    animation: floatParticle 6s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motion-float,
+    .motion-breathe,
+    .motion-glow-pulse,
+    .motion-glow-pulse-intense,
+    .motion-border-glow,
+    .motion-shimmer,
+    .motion-shimmer-gold,
+    .motion-pulse-ring::after,
+    .motion-float-particle {
+      animation: none !important;
+    }
+  }
+
+  @media (max-width: 639px) {
+    :root {
+      --motion-duration-fast: 100ms;
+      --motion-duration-normal: 200ms;
+      --motion-duration-slow: 300ms;
+      --motion-duration-reveal: 400ms;
+    }
+  }
 
   .drawer-enter {
     animation: slideInUp var(--motion-duration-slow) var(--motion-ease-out) forwards;

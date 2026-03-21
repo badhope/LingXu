@@ -1,0 +1,154 @@
+---
+
+export interface Props {
+  text: string;
+  speed?: number;
+  delay?: number;
+  cursor?: boolean;
+  class?: string;
+  element?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'div';
+}
+
+const {
+  text,
+  speed = 50,
+  delay = 0,
+  cursor = true,
+  class: className = '',
+  element = 'span'
+} = Astro.props;
+
+const Tag = element;
+---
+
+<Tag
+  class:list={['typewriter', className]}
+  data-text={text}
+  data-speed={speed}
+  data-delay={delay}
+  data-cursor={cursor ? 'true' : 'false'}
+>
+</Tag>
+
+<script>
+  class TypewriterElement {
+    private el: HTMLElement;
+    private text: string;
+    private speed: number;
+    private delay: number;
+    private showCursor: boolean;
+    private cursorVisible: boolean = true;
+    private animationFrame: number;
+    private isMobile: boolean;
+
+    constructor(el: HTMLElement) {
+      this.el = el;
+      this.text = el.dataset.text || '';
+      this.speed = parseInt(el.dataset.speed || '50', 10);
+      this.delay = parseInt(el.dataset.delay || '0', 10);
+      this.showCursor = el.dataset.cursor === 'true';
+      this.animationFrame = 0;
+      this.isMobile = window.innerWidth < 640;
+
+      if (this.isMobile) {
+        this.speed = Math.max(30, this.speed * 0.7);
+      }
+
+      this.init();
+    }
+
+    private init() {
+      this.el.style.visibility = 'hidden';
+      const span = document.createElement('span');
+      span.className = 'typewriter-text';
+      this.el.appendChild(span);
+
+      if (this.showCursor) {
+        const cursorSpan = document.createElement('span');
+        cursorSpan.className = 'typewriter-cursor';
+        cursorSpan.textContent = '|';
+        this.el.appendChild(cursorSpan);
+      }
+
+      setTimeout(() => this.start(), this.delay);
+    }
+
+    private start() {
+      this.el.style.visibility = 'visible';
+      let index = 0;
+
+      const type = () => {
+        if (index < this.text.length) {
+          const textSpan = this.el.querySelector('.typewriter-text') as HTMLElement;
+          if (textSpan) {
+            textSpan.textContent = this.text.slice(0, index + 1);
+          }
+          index++;
+          this.animationFrame = setTimeout(type, this.speed) as unknown as number;
+        } else {
+          this.onComplete();
+        }
+      };
+
+      type();
+    }
+
+    private onComplete() {
+      if (this.showCursor) {
+        this.blinkCursor();
+      }
+      this.el.dispatchEvent(new CustomEvent('typewriter:complete'));
+    }
+
+    private blinkCursor() {
+      const cursor = this.el.querySelector('.typewriter-cursor') as HTMLElement;
+      if (!cursor) return;
+
+      this.cursorVisible = true;
+      const blink = () => {
+        if (!this.el.isConnected) return;
+        this.cursorVisible = !this.cursorVisible;
+        cursor.style.opacity = this.cursorVisible ? '1' : '0';
+        this.animationFrame = setTimeout(blink, 530) as unknown as number;
+      };
+      blink();
+    }
+
+    public destroy() {
+      clearTimeout(this.animationFrame);
+    }
+  }
+
+  function initTypewriters() {
+    const typewriters = document.querySelectorAll('.typewriter');
+
+    typewriters.forEach((el) => {
+      const existing = (el as HTMLElement).dataset.processed;
+      if (existing) return;
+
+      (el as HTMLElement).dataset.processed = 'true';
+      new TypewriterElement(el as HTMLElement);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initTypewriters);
+  initTypewriters();
+</script>
+
+<style>
+  .typewriter {
+    visibility: hidden;
+    display: inline-block;
+  }
+
+  .typewriter-text {
+    display: inline;
+  }
+
+  .typewriter-cursor {
+    display: inline-block;
+    color: #c9a227;
+    margin-left: 1px;
+    font-weight: 100;
+  }
+</style>
