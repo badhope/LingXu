@@ -4,6 +4,7 @@ import { NAV_ITEMS } from '@data/navigation';
 import { SITE_CONFIG } from '@lib/constants';
 import Timeline from '@components/ui/Timeline.astro';
 import SectionHeader from '@components/ui/SectionHeader.astro';
+import Portal from '@components/portal/Portal.astro';
 import ParticleField from '@components/interactive/ParticleField.astro';
 import MistEffect from '@components/interactive/MistEffect.astro';
 
@@ -15,6 +16,7 @@ const NAV_ITEMS_WITH_BASE = NAV_ITEMS.map((item) => ({
 ---
 
 <BaseLayout title="灵墟 - 末法时代·失落修行文明档案馆">
+  <Portal />
   <ParticleField />
   <MistEffect />
 
