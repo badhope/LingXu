@@ -1,0 +1,378 @@
+---
+import { MODULES, getModuleById } from '@data/modules';
+
+interface Props {
+  moduleId: string;
+  title?: string;
+  description?: string;
+}
+
+const { moduleId, title, description } = Astro.props;
+const module = getModuleById(moduleId);
+
+if (!module) {
+  return Astro.redirect('/home');
+}
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-module={moduleId}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title ? `${title} - ` : ''}{module.char} {module.name} - 灵墟</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="module-body" style={`--module-color: ${module.color}; --module-bg: ${module.bgGradient};`}>
+    <div class="module-container">
+      <nav class="module-nav">
+        <a href="/home" class="back-btn">
+          <span class="back-icon">←</span>
+          <span class="back-text">返回</span>
+        </a>
+        <div class="module-tabs">
+          {MODULES.map((m) => (
+            <a
+              href={m.href}
+              class={`module-tab ${m.id === moduleId ? 'active' : ''}`}
+              style={`--tab-color: ${m.color}`}
+            >
+              <span class="tab-char">{m.char}</span>
+              <span class="tab-name">{m.name}</span>
+            </a>
+          ))}
+        </div>
+        <div class="nav-actions">
+          <a href="/search" class="action-btn">🔍</a>
+          <a href="/bookmarks" class="action-btn">📖</a>
+          <a href="/profile" class="action-btn">👤</a>
+        </div>
+      </nav>
+
+      <header class="module-header">
+        <div class="header-bg"></div>
+        <div class="header-content">
+          <h1 class="module-title">
+            <span class="title-char">{module.char}</span>
+            <span class="title-name">{module.name}</span>
+          </h1>
+          <p class="module-desc">{module.description}</p>
+        </div>
+        <div class="header-decoration">
+          <div class="deco-line"></div>
+          <div class="deco-dot"></div>
+          <div class="deco-line"></div>
+        </div>
+      </header>
+
+      <main class="module-main">
+        <slot />
+      </main>
+
+      <aside class="module-sidebar">
+        <div class="submodule-list">
+          <h3 class="sidebar-title">功能</h3>
+          {module.subModules.map((sub) => (
+            <a href={sub.href} class="submodule-item">
+              <span class="sub-icon">{sub.icon}</span>
+              <span class="sub-name">{sub.name}</span>
+            </a>
+          ))}
+        </div>
+      </aside>
+
+      <footer class="module-footer">
+        <div class="footer-content">
+          <span class="footer-text">天地玄黄 · 宇宙洪荒</span>
+        </div>
+      </footer>
+    </div>
+
+    <style define:vars={{ moduleColor: module.color }}>
+      :root {
+        --module-color: #c9a227;
+        --module-bg: radial-gradient(ellipse at center, #0a0a0a 0%, #050505 100%);
+      }
+
+      .module-body {
+        margin: 0;
+        padding: 0;
+        background: var(--module-bg);
+        color: #e8d48b;
+        min-height: 100vh;
+        font-family: 'Noto Serif SC', 'Songti SC', serif;
+      }
+
+      .module-container {
+        display: grid;
+        grid-template-columns: 220px 1fr 280px;
+        grid-template-rows: auto 1fr auto;
+        min-height: 100vh;
+        gap: 0;
+      }
+
+      .module-nav {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: rgba(10, 10, 15, 0.95);
+        border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #c9a227;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(201, 162, 39, 0.1);
+      }
+
+      .module-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: 2rem;
+      }
+
+      .module-tab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #888;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .module-tab:hover,
+      .module-tab.active {
+        color: var(--tab-color);
+        background: rgba(var(--tab-color), 0.1);
+      }
+
+      .module-tab.active {
+        background: rgba(201, 162, 39, 0.1);
+        color: #c9a227;
+      }
+
+      .tab-char {
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+
+      .tab-name {
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+      }
+
+      .nav-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .action-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(201, 162, 39, 0.2);
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      .action-btn:hover {
+        background: rgba(201, 162, 39, 0.1);
+        border-color: #c9a227;
+      }
+
+      .module-header {
+        padding: 3rem 2rem;
+        text-align: center;
+        position: relative;
+        grid-column: 1 / -1;
+      }
+
+      .header-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at center top, var(--module-color) 0%, transparent 60%);
+        opacity: 0.1;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .module-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin: 0;
+      }
+
+      .title-char {
+        font-size: 4rem;
+        color: var(--module-color);
+        text-shadow: 0 0 30px var(--module-color);
+      }
+
+      .title-name {
+        font-size: 2rem;
+        letter-spacing: 0.3em;
+        color: #e8d48b;
+      }
+
+      .module-desc {
+        margin-top: 1rem;
+        font-size: 1rem;
+        color: #888;
+        letter-spacing: 0.1em;
+      }
+
+      .header-decoration {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .deco-line {
+        width: 100px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--module-color), transparent);
+      }
+
+      .deco-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--module-color);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--module-color);
+      }
+
+      .module-sidebar {
+        padding: 2rem;
+        border-right: 1px solid rgba(201, 162, 39, 0.1);
+        background: rgba(5, 5, 8, 0.5);
+      }
+
+      .sidebar-title {
+        font-size: 0.8rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin: 0 0 1rem 0;
+      }
+
+      .submodule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .submodule-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: rgba(10, 10, 15, 0.6);
+        border: 1px solid rgba(201, 162, 39, 0.1);
+        border-radius: 4px;
+        text-decoration: none;
+        color: #aaa;
+        transition: all 0.3s ease;
+      }
+
+      .submodule-item:hover {
+        background: rgba(201, 162, 39, 0.1);
+        border-color: var(--module-color);
+        color: var(--module-color);
+        transform: translateX(4px);
+      }
+
+      .sub-icon {
+        font-size: 1.25rem;
+      }
+
+      .sub-name {
+        font-size: 0.95rem;
+      }
+
+      .module-main {
+        padding: 2rem;
+        min-height: 60vh;
+      }
+
+      .module-footer {
+        grid-column: 1 / -1;
+        padding: 1.5rem;
+        text-align: center;
+        border-top: 1px solid rgba(201, 162, 39, 0.1);
+        background: rgba(5, 5, 8, 0.8);
+      }
+
+      .footer-text {
+        font-size: 0.8rem;
+        color: #666;
+        letter-spacing: 0.3em;
+      }
+
+      @media (max-width: 1200px) {
+        .module-container {
+          grid-template-columns: 200px 1fr;
+        }
+
+        .module-sidebar {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .module-container {
+          grid-template-columns: 1fr;
+        }
+
+        .module-tabs {
+          display: none;
+        }
+
+        .title-char {
+          font-size: 3rem;
+        }
+
+        .title-name {
+          font-size: 1.5rem;
+        }
+
+        .nav-actions {
+          gap: 0.25rem;
+        }
+
+        .action-btn {
+          width: 36px;
+          height: 36px;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,162 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+---
+
+<ModuleLayout moduleId="tian" title="天时">
+  <div class="tian-overview">
+    <section class="intro-section">
+      <h2>天道运行之理</h2>
+      <p>天者，万物之始也。日月星辰，循轨而行；春夏秋冬，周而复始。修行者观天象以知灵气潮汐，察节气以调身心之息。</p>
+    </section>
+
+    <section class="features-grid">
+      <a href="/tian/calendar" class="feature-card">
+        <div class="card-icon">📅</div>
+        <h3>黄历吉凶</h3>
+        <p>每日宜忌查询</p>
+      </a>
+      <a href="/tian/bazi" class="feature-card">
+        <div class="card-icon">🎴</div>
+        <h3>八字排盘</h3>
+        <p>生辰四柱推演</p>
+      </a>
+      <a href="/tian/stars" class="feature-card">
+        <div class="card-icon">⭐</div>
+        <h3>星辰运行</h3>
+        <p>二十八宿星象</p>
+      </a>
+      <a href="/tian/solar-terms" class="feature-card">
+        <div class="card-icon">🌿</div>
+        <h3>节气养生</h3>
+        <p>节气与养生</p>
+      </a>
+      <a href="/tian/daily-quote" class="feature-card">
+        <div class="card-icon">💫</div>
+        <h3>每日吉言</h3>
+        <p>每日箴言运势</p>
+      </a>
+    </section>
+
+    <section class="knowledge-section">
+      <h2>天时知识</h2>
+      <div class="knowledge-grid">
+        <article class="knowledge-card">
+          <h3>天干地支</h3>
+          <p>天干十：甲乙丙丁戊己庚辛壬癸<br>地支十二：子丑寅卯辰巳午未申酉戌亥</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>五行与天象</h3>
+          <p>金木水火土五行，对应五星：太白、岁星、辰星、荧惑、镇星。五星运行主四方吉凶。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>灵气潮汐</h3>
+          <p>月圆之夜灵气最盛，修行者多于此时吸收月华。日出时分阳气升腾，宜行吐纳之术。</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .tian-overview {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .intro-section {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: rgba(240, 192, 64, 0.05);
+      border: 1px solid rgba(240, 192, 64, 0.2);
+      border-radius: 8px;
+    }
+
+    .intro-section h2 {
+      color: #f0c040;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .intro-section p {
+      color: #888;
+      line-height: 1.8;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .feature-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(240, 192, 64, 0.2);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: #f0c040;
+      box-shadow: 0 8px 24px rgba(240, 192, 64, 0.15);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      color: #f0e6c8;
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+    }
+
+    .feature-card p {
+      color: #888;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+
+    .knowledge-section h2 {
+      color: #f0c040;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .knowledge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .knowledge-card {
+      padding: 1.5rem;
+      background: rgba(10, 10, 15, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.1);
+      border-radius: 6px;
+    }
+
+    .knowledge-card h3 {
+      color: #c9a227;
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+    }
+
+    .knowledge-card p {
+      color: #aaa;
+      line-height: 1.7;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</ModuleLayout>

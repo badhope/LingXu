@@ -1,0 +1,76 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+---
+
+<ModuleLayout moduleId="di" title="地理">
+  <div class="di-overview">
+    <section class="intro-section">
+      <h2>地理风水之道</h2>
+      <p>地者承载万物，山川地理蕴天地灵气。风水之道，在于寻龙脉、察地气、辨吉凶。洞天福地乃仙人所居，修行者择地而居，方能事半功倍。</p>
+    </section>
+
+    <section class="features-grid">
+      <a href="/di/compass" class="feature-card">
+        <div class="card-icon">🧭</div>
+        <h3>罗盘定向</h3>
+        <p>八卦方位分析</p>
+      </a>
+      <a href="/di/caves" class="feature-card">
+        <div class="card-icon">🏔️</div>
+        <h3>洞天福地</h3>
+        <p>仙山福地查询</p>
+      </a>
+      <a href="/di/fengshui" class="feature-card">
+        <div class="card-icon">🌊</div>
+        <h3>风水堪舆</h3>
+        <p>龙脉风水分析</p>
+      </a>
+      <a href="/di/geography" class="feature-card">
+        <div class="card-icon">🗺️</div>
+        <h3>地理志</h3>
+        <p>山川地理知识</p>
+      </a>
+      <a href="/di/directions" class="feature-card">
+        <div class="card-icon">⬆️</div>
+        <h3>方位吉凶</h3>
+        <p>方位时辰宜忌</p>
+      </a>
+    </section>
+
+    <section class="knowledge-section">
+      <h2>地理知识</h2>
+      <div class="knowledge-grid">
+        <article class="knowledge-card">
+          <h3>龙脉走向</h3>
+          <p>龙脉起于昆仑，绵延万里，入首结穴。山势起伏如龙腾，方位吉凶由此定。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>四大灵穴</h3>
+          <p>东岳泰山、西岳华山、南岳衡山、北岳恒山、中岳嵩山，五岳为天下灵穴之首。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>风水宝地</h3>
+          <p>背山面水、山环水抱、左青龙右白虎、前朱雀后玄武，乃风水宝地的基本格局。</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .di-overview { max-width: 1200px; margin: 0 auto; }
+    .intro-section { text-align: center; margin-bottom: 3rem; padding: 2rem; background: rgba(64, 176, 64, 0.05); border: 1px solid rgba(64, 176, 64, 0.2); border-radius: 8px; }
+    .intro-section h2 { color: #40b040; margin-bottom: 1rem; }
+    .intro-section p { color: #888; line-height: 1.8; max-width: 600px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .feature-card { display: flex; flex-direction: column; align-items: center; padding: 2rem 1.5rem; background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(64, 176, 64, 0.2); border-radius: 8px; text-decoration: none; transition: all 0.3s ease; }
+    .feature-card:hover { transform: translateY(-4px); border-color: #40b040; box-shadow: 0 8px 24px rgba(64, 176, 64, 0.15); }
+    .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .feature-card h3 { color: #d4f0d4; margin: 0 0 0.5rem 0; }
+    .feature-card p { color: #888; margin: 0; font-size: 0.85rem; }
+    .knowledge-section h2 { color: #40b040; font-size: 1.25rem; margin-bottom: 1.5rem; text-align: center; }
+    .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .knowledge-card { padding: 1.5rem; background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(64, 176, 64, 0.1); border-radius: 6px; }
+    .knowledge-card h3 { color: #40b040; margin: 0 0 1rem 0; }
+    .knowledge-card p { color: #aaa; line-height: 1.7; margin: 0; }
+  </style>
+</ModuleLayout>

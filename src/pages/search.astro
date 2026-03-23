@@ -1,0 +1,294 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="搜索 - 灵墟">
+  <div class="search-page">
+    <header class="search-header">
+      <a href="/home" class="back-link">← 返回</a>
+      <h1>搜索</h1>
+    </header>
+
+    <div class="search-container">
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="输入关键词搜索..."
+          autofocus
+        />
+        <button class="search-btn">🔍</button>
+      </div>
+
+      <div class="search-modules">
+        <button class="module-filter active" data-module="all">全部</button>
+        <button class="module-filter" data-module="tian">天</button>
+        <button class="module-filter" data-module="di">地</button>
+        <button class="module-filter" data-module="xuan">玄</button>
+        <button class="module-filter" data-module="huang">黄</button>
+        <button class="module-filter" data-module="yu">宇</button>
+        <button class="module-filter" data-module="zhou">宙</button>
+        <button class="module-filter" data-module="hong">洪</button>
+        <button class="module-filter" data-module="huang-lost">荒</button>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <div class="results-placeholder">
+          <p>输入关键词开始搜索</p>
+          <p class="hints">尝试搜索：龙、凤凰、八卦、黄历、修炼、功法、神话...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .search-page {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at center, #0a0a0f 0%, #050508 100%);
+      padding: 2rem;
+    }
+
+    .search-header {
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-link {
+      color: #c9a227;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(201, 162, 39, 0.1);
+    }
+
+    .search-header h1 {
+      color: #e8d48b;
+      font-size: 1.5rem;
+      margin: 0;
+      letter-spacing: 0.2em;
+    }
+
+    .search-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: 8px;
+      color: #e8d48b;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      border-color: #c9a227;
+      box-shadow: 0 0 20px rgba(201, 162, 39, 0.2);
+    }
+
+    .search-box input::placeholder {
+      color: #666;
+    }
+
+    .search-btn {
+      padding: 1rem 1.5rem;
+      background: rgba(201, 162, 39, 0.2);
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: 8px;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+      background: rgba(201, 162, 39, 0.3);
+    }
+
+    .search-modules {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .module-filter {
+      padding: 0.5rem 1rem;
+      background: rgba(10, 10, 15, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 20px;
+      color: #888;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .module-filter:hover,
+    .module-filter.active {
+      background: rgba(201, 162, 39, 0.2);
+      border-color: #c9a227;
+      color: #c9a227;
+    }
+
+    .search-results {
+      min-height: 300px;
+    }
+
+    .results-placeholder {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #666;
+    }
+
+    .results-placeholder p {
+      margin: 0 0 1rem 0;
+    }
+
+    .results-placeholder .hints {
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .result-item {
+      padding: 1.5rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .result-item:hover {
+      border-color: #c9a227;
+      transform: translateX(4px);
+    }
+
+    .result-module {
+      font-size: 0.75rem;
+      color: #c9a227;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-title {
+      color: #e8d48b;
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .result-excerpt {
+      color: #888;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .result-tags {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .result-tag {
+      padding: 0.25rem 0.5rem;
+      background: rgba(201, 162, 39, 0.1);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #c9a227;
+    }
+  </style>
+
+  <script>
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const searchResults = document.getElementById('searchResults');
+    const moduleFilters = document.querySelectorAll('.module-filter');
+
+    const allContent = [
+      { module: 'tian', moduleName: '天时', title: '黄历吉凶', excerpt: '每日宜忌查询，今日运势解读，包含吉凶方位、时辰吉凶等信息', tags: ['黄历', '吉凶', '宜忌'] },
+      { module: 'tian', moduleName: '天时', title: '八字排盘', excerpt: '生辰八字四柱推演，分析命理格局、大运流年', tags: ['八字', '命理', '四柱'] },
+      { module: 'tian', moduleName: '天时', title: '星辰运行', excerpt: '二十八宿分布，灵气潮汐变化，星象与修行', tags: ['星辰', '二十八宿', '灵气'] },
+      { module: 'di', moduleName: '地理', title: '罗盘定向', excerpt: '八卦方位分析，风水吉凶判断，环境气场探查', tags: ['罗盘', '八卦', '风水'] },
+      { module: 'di', moduleName: '地理', title: '洞天福地', excerpt: '三十六洞天、七十二福地分布，修行圣地介绍', tags: ['洞天', '福地', '仙山'] },
+      { module: 'xuan', moduleName: '玄学', title: '易经占卜', excerpt: '六十四卦详解，铜钱卦、蓍草卦占卜方法', tags: ['易经', '八卦', '占卜'] },
+      { module: 'xuan', moduleName: '玄学', title: '符箓识别', excerpt: '各类符箓图鉴，符咒制作方法，使用禁忌', tags: ['符箓', '符咒', '制作'] },
+      { module: 'huang', moduleName: '历史', title: '历史卷轴', excerpt: '朝代更迭浏览，历史事件查阅，卷轴式阅读体验', tags: ['历史', '卷轴', '朝代'] },
+      { module: 'zhou', moduleName: '时间', title: '轮回查询', excerpt: '前世今生因果，轮回原理，因果报应', tags: ['轮回', '因果', '前世'] },
+      { module: 'yu', moduleName: '空间', title: '世界地图', excerpt: '各界地域分布图，势力范围标注', tags: ['地图', '各界', '地域'] },
+      { module: 'hong', moduleName: '洪荒', title: '神兽录', excerpt: '龙、凤、麒麟、白泽等神兽详解', tags: ['神兽', '龙', '凤凰'] },
+      { module: 'hong', moduleName: '洪荒', title: '出生匹配', excerpt: '根据出生日期匹配神兽守护灵，缘分测试', tags: ['匹配', '守护灵', '缘分'] },
+      { module: 'huang-lost', moduleName: '失落', title: '失传功法', excerpt: '远古功法秘籍，修炼秘诀，失传秘术', tags: ['功法', '修炼', '秘术'] },
+      { module: 'huang-lost', moduleName: '失落', title: '炼器之道', excerpt: '神器法宝图纸，炼器知识，神兵谱', tags: ['炼器', '神器', '法宝'] },
+    ];
+
+    let currentModule = 'all';
+    let currentQuery = '';
+
+    function performSearch() {
+      const query = currentQuery.toLowerCase();
+      const filtered = allContent.filter(item => {
+        const matchesModule = currentModule === 'all' || item.module === currentModule;
+        const matchesQuery = !query ||
+          item.title.toLowerCase().includes(query) ||
+          item.excerpt.toLowerCase().includes(query) ||
+          item.tags.some(tag => tag.toLowerCase().includes(query));
+        return matchesModule && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        searchResults.innerHTML = `
+          <div class="results-placeholder">
+            <p>未找到相关结果</p>
+            <p class="hints">尝试其他关键词或切换板块</p>
+          </div>
+        `;
+        return;
+      }
+
+      searchResults.innerHTML = filtered.map(item => `
+        <a href="/${item.module}" class="result-item">
+          <div class="result-module">${item.moduleName}</div>
+          <h3 class="result-title">${item.title}</h3>
+          <p class="result-excerpt">${item.excerpt}</p>
+          <div class="result-tags">
+            ${item.tags.map(tag => `<span class="result-tag">${tag}</span>`).join('')}
+          </div>
+        </a>
+      `).join('');
+    }
+
+    searchInput?.addEventListener('input', (e) => {
+      currentQuery = (e.target as HTMLInputElement).value;
+      performSearch();
+    });
+
+    moduleFilters.forEach(filter => {
+      filter.addEventListener('click', () => {
+        moduleFilters.forEach(f => f.classList.remove('active'));
+        filter.classList.add('active');
+        currentModule = filter.getAttribute('data-module') || 'all';
+        performSearch();
+      });
+    });
+  </script>
+</BaseLayout>

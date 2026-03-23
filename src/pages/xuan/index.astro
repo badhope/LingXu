@@ -1,0 +1,76 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+---
+
+<ModuleLayout moduleId="xuan" title="玄学">
+  <div class="xuan-overview">
+    <section class="intro-section">
+      <h2>易道玄微之机</h2>
+      <p>玄之又玄，众妙之门。《易经》为群经之首，八卦演天地之变，符箓通鬼神之机。修行者以玄学通达天地之理，以符咒驱邪避害。</p>
+    </section>
+
+    <section class="features-grid">
+      <a href="/xuan/yijing" class="feature-card">
+        <div class="card-icon">☯️</div>
+        <h3>易经占卜</h3>
+        <p>六十四卦解读</p>
+      </a>
+      <a href="/xuan/destiny" class="feature-card">
+        <div class="card-icon">🎲</div>
+        <h3>命理推演</h3>
+        <p>八字紫微斗数</p>
+      </a>
+      <a href="/xuan/talismans" class="feature-card">
+        <div class="card-icon">📜</div>
+        <h3>符箓识别</h3>
+        <p>符咒图鉴大全</p>
+      </a>
+      <a href="/xuan/formations" class="feature-card">
+        <div class="card-icon">🔮</div>
+        <h3>阵法布局</h3>
+        <p>阵法图鉴布置</p>
+      </a>
+      <a href="/xuan/classics" class="feature-card">
+        <div class="card-icon">📚</div>
+        <h3>玄学典籍</h3>
+        <p>经典文献阅读</p>
+      </a>
+    </section>
+
+    <section class="knowledge-section">
+      <h2>玄学知识</h2>
+      <div class="knowledge-grid">
+        <article class="knowledge-card">
+          <h3>八卦基础</h3>
+          <p>乾兑离震巽坎艮坤，分别代表天地泽雷风火山川。八卦相叠，成六十四卦，变化无穷。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>符箓之道</h3>
+          <p>符者，合天地之炁也。以朱砂书于纸上，可召神劾鬼，镇邪驱魔。符箓需配合特定咒语方可灵验。</p>
+        </article>
+        <article class="knowledge-card">
+          <h3>阵法之理</h3>
+          <p>阵者，以物之炁，引天地之力。布阵需依五行八卦，顺天时而动，方能发挥威力。</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .xuan-overview { max-width: 1200px; margin: 0 auto; }
+    .intro-section { text-align: center; margin-bottom: 3rem; padding: 2rem; background: rgba(128, 64, 240, 0.05); border: 1px solid rgba(128, 64, 240, 0.2); border-radius: 8px; }
+    .intro-section h2 { color: #8040f0; margin-bottom: 1rem; }
+    .intro-section p { color: #888; line-height: 1.8; max-width: 600px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .feature-card { display: flex; flex-direction: column; align-items: center; padding: 2rem 1.5rem; background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(128, 64, 240, 0.2); border-radius: 8px; text-decoration: none; transition: all 0.3s ease; }
+    .feature-card:hover { transform: translateY(-4px); border-color: #8040f0; box-shadow: 0 8px 24px rgba(128, 64, 240, 0.15); }
+    .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .feature-card h3 { color: #e8d8f0; margin: 0 0 0.5rem 0; }
+    .feature-card p { color: #888; margin: 0; font-size: 0.85rem; }
+    .knowledge-section h2 { color: #8040f0; font-size: 1.25rem; margin-bottom: 1.5rem; text-align: center; }
+    .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .knowledge-card { padding: 1.5rem; background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(128, 64, 240, 0.1); border-radius: 6px; }
+    .knowledge-card h3 { color: #8040f0; margin: 0 0 1rem 0; }
+    .knowledge-card p { color: #aaa; line-height: 1.7; margin: 0; }
+  </style>
+</ModuleLayout>

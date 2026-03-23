@@ -1,0 +1,281 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '../lib/constants';
+---
+
+<BaseLayout title="灵墟 - 入口">
+  <div class="intro-container">
+    <div class="stars"></div>
+    <div class="mist"></div>
+
+    <button class="taiji-entry" id="taijiEntry" aria-label="进入灵墟">
+      <div class="taiji">
+        <div class="taiji-inner">
+          <div class="yin-yang">
+            <div class="dot yang"></div>
+            <div class="dot yin"></div>
+          </div>
+          <svg class="bagua" viewBox="0 0 200 200">
+            <g class="trigrams">
+              <text x="100" y="25" text-anchor="middle" class="trigram">☰</text>
+              <text x="175" y="100" text-anchor="middle" class="trigram">☱</text>
+              <text x="100" y="175" text-anchor="middle" class="trigram">☲</text>
+              <text x="25" y="100" text-anchor="middle" class="trigram">☴</text>
+            </g>
+          </svg>
+        </div>
+        <div class="orbit-ring ring-1"></div>
+        <div class="orbit-ring ring-2"></div>
+        <div class="orbit-ring ring-3"></div>
+      </div>
+      <div class="entry-hint">
+        <span>点击进入</span>
+      </div>
+    </button>
+  </div>
+
+  <style>
+    .intro-container {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #0a0a0a 0%, #050505 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, #c9a227, transparent),
+        radial-gradient(2px 2px at 40px 70px, #d4af37, transparent),
+        radial-gradient(1px 1px at 90px 40px, #e8d48b, transparent),
+        radial-gradient(2px 2px at 130px 80px, #c9a227, transparent),
+        radial-gradient(1px 1px at 160px 120px, #d4af37, transparent);
+      background-size: 200px 200px;
+      animation: twinkle 4s ease-in-out infinite;
+    }
+
+    .mist {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(5, 5, 5, 0.8) 100%);
+      pointer-events: none;
+    }
+
+    .taiji-entry {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .taiji {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      animation: rotate 20s linear infinite;
+    }
+
+    .taiji-entry:hover .taiji {
+      animation: rotate 8s linear infinite;
+    }
+
+    .taiji-entry:hover .yang {
+      transform: scale(1.1);
+    }
+
+    .taiji-entry:hover .yin {
+      transform: scale(1.1);
+    }
+
+    .taiji-entry:hover .orbit-ring {
+      animation-duration: 3s;
+    }
+
+    .taiji-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #c9a227 0deg, #e8d48b 90deg, #c9a227 180deg, #1a1a1a 270deg, #c9a227 360deg);
+      box-shadow:
+        0 0 60px rgba(201, 162, 39, 0.4),
+        0 0 120px rgba(201, 162, 39, 0.2),
+        inset 0 0 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .yin-yang {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(to right, #c9a227 50%, #1a1a1a 50%);
+      animation: counter-rotate 20s linear infinite;
+    }
+
+    .taiji-entry:hover .yin-yang {
+      animation-duration: 8s;
+    }
+
+    .dot {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .dot.yang {
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle at 30% 30%, #f0e6c8, #c9a227);
+    }
+
+    .dot.yin {
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle at 30% 30%, #3a3a3a, #1a1a1a);
+    }
+
+    .bagua {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 240px;
+      height: 240px;
+      opacity: 0.6;
+      animation: counter-rotate 30s linear infinite;
+    }
+
+    .trigram {
+      font-size: 24px;
+      fill: #c9a227;
+      font-family: serif;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: 50%;
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+
+    .ring-1 {
+      width: 220px;
+      height: 220px;
+      animation-delay: 0s;
+    }
+
+    .ring-2 {
+      width: 260px;
+      height: 260px;
+      animation-delay: 0.5s;
+    }
+
+    .ring-3 {
+      width: 300px;
+      height: 300px;
+      animation-delay: 1s;
+    }
+
+    .entry-hint {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #c9a227;
+      font-size: 14px;
+      letter-spacing: 4px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      text-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+    }
+
+    .taiji-entry:hover .entry-hint {
+      opacity: 1;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes counter-rotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(-360deg); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    .intro-container.transitioning {
+      animation: fadeOut 1s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+  </style>
+
+  <script>
+    const taijiEntry = document.getElementById('taijiEntry');
+    const container = document.querySelector('.intro-container');
+
+    taijiEntry?.addEventListener('click', () => {
+      container?.classList.add('transitioning');
+
+      setTimeout(() => {
+        window.location.href = '/home';
+      }, 800);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        container?.classList.add('transitioning');
+        setTimeout(() => {
+          window.location.href = '/home';
+        }, 800);
+      }
+    });
+  </script>
+</BaseLayout>

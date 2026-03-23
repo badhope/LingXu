@@ -1,0 +1,89 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+---
+
+<ModuleLayout moduleId="yu" title="空间">
+  <div class="yu-overview">
+    <section class="intro-section">
+      <h2>万界苍茫之景</h2>
+      <p>宇者，上下四方之谓也。天地宇宙浩瀚无垠，多维空间错综复杂。人间、仙界、冥界，界界不同；天上、地下、人间，层层相叠。</p>
+    </section>
+
+    <section class="features-grid">
+      <a href="/yu/world-map" class="feature-card">
+        <div class="card-icon">🗺️</div>
+        <h3>世界地图</h3>
+        <p>各界地域浏览</p>
+      </a>
+      <a href="/yu/layers" class="feature-card">
+        <div class="card-icon">🏯</div>
+        <h3>空间层级</h3>
+        <p>万界结构层次</p>
+      </a>
+      <a href="/yu/realms" class="feature-card">
+        <div class="card-icon">🌍</div>
+        <h3>界域详情</h3>
+        <p>各界特色资源</p>
+      </a>
+      <a href="/yu/directions-world" class="feature-card">
+        <div class="card-icon">⬆️</div>
+        <h3>方位世界</h3>
+        <p>五方世界体系</p>
+      </a>
+    </section>
+
+    <section class="layers-section">
+      <h2>各界简介</h2>
+      <div class="layers-grid">
+        <div class="layer-card">
+          <div class="layer-header">
+            <span class="layer-icon">☁️</span>
+            <h3>仙界</h3>
+          </div>
+          <p>灵气充沛，仙人所居。有三十六重天，一重一天。最高处为太清境大赤天，乃道德天尊道场。</p>
+        </div>
+        <div class="layer-card">
+          <div class="layer-header">
+            <span class="layer-icon">🏠</span>
+            <h3>人间界</h3>
+          </div>
+          <p>凡人所居，灵气稀薄。虽如此，亦有洞天福地散落其间。末法时代，修行者艰难求存。</p>
+        </div>
+        <div class="layer-card">
+          <div class="layer-header">
+            <span class="layer-icon">🌑</span>
+            <h3>冥界</h3>
+          </div>
+          <p>亡魂所归，阴气极盛。十殿阎罗各司其职，生死轮回皆从此过。冥界之主为后土皇地祇。</p>
+        </div>
+        <div class="layer-card">
+          <div class="layer-header">
+            <span class="layer-icon">🔥</span>
+            <h3>魔域</h3>
+          </div>
+          <p>域外天魔所居，灵气驳杂。魔族好战，觊觎人间。人魔大战，屡见不鲜。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .yu-overview { max-width: 1200px; margin: 0 auto; }
+    .intro-section { text-align: center; margin-bottom: 3rem; padding: 2rem; background: rgba(64, 128, 240, 0.05); border: 1px solid rgba(64, 128, 240, 0.2); border-radius: 8px; }
+    .intro-section h2 { color: #4080f0; margin-bottom: 1rem; }
+    .intro-section p { color: #888; line-height: 1.8; max-width: 600px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .feature-card { display: flex; flex-direction: column; align-items: center; padding: 2rem 1.5rem; background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(64, 128, 240, 0.2); border-radius: 8px; text-decoration: none; transition: all 0.3s ease; }
+    .feature-card:hover { transform: translateY(-4px); border-color: #4080f0; box-shadow: 0 8px 24px rgba(64, 128, 240, 0.15); }
+    .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .feature-card h3 { color: #d8e8f0; margin: 0 0 0.5rem 0; }
+    .feature-card p { color: #888; margin: 0; font-size: 0.85rem; }
+    .layers-section h2 { color: #4080f0; font-size: 1.25rem; margin-bottom: 1.5rem; text-align: center; }
+    .layers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .layer-card { padding: 1.5rem; background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(64, 128, 240, 0.2); border-radius: 8px; }
+    .layer-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .layer-icon { font-size: 1.5rem; }
+    .layer-header h3 { color: #4080f0; margin: 0; }
+    .layer-card p { color: #aaa; line-height: 1.7; margin: 0; }
+  </style>
+</ModuleLayout>

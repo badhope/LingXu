@@ -1,0 +1,402 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="收藏 - 灵墟">
+  <div class="bookmarks-page">
+    <header class="page-header">
+      <a href="/home" class="back-link">← 返回</a>
+      <h1>我的收藏</h1>
+    </header>
+
+    <div class="bookmarks-container">
+      <div class="bookmarks-empty" id="emptyState">
+        <div class="empty-icon">📖</div>
+        <h2>暂无收藏</h2>
+        <p>浏览各模块内容，点击收藏按钮添加到这里</p>
+        <a href="/home" class="explore-btn">开始探索</a>
+      </div>
+
+      <div class="bookmarks-list" id="bookmarksList" style="display: none;">
+        <div class="bookmarks-stats">
+          <span id="bookmarkCount">0</span> 个收藏
+        </div>
+        <div class="bookmark-items" id="bookmarkItems"></div>
+      </div>
+
+      <div class="storage-section">
+        <h3>数据管理</h3>
+        <div class="storage-actions">
+          <button class="storage-btn" id="exportBtn">
+            <span class="btn-icon">📤</span>
+            <span>导出收藏</span>
+          </button>
+          <button class="storage-btn" id="importBtn">
+            <span class="btn-icon">📥</span>
+            <span>导入收藏</span>
+          </button>
+          <button class="storage-btn danger" id="clearBtn">
+            <span class="btn-icon">🗑️</span>
+            <span>清空收藏</span>
+          </button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display: none;" />
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .bookmarks-page {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at center, #0a0a0f 0%, #050508 100%);
+      padding: 2rem;
+    }
+
+    .page-header {
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-link {
+      color: #c9a227;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(201, 162, 39, 0.3);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(201, 162, 39, 0.1);
+    }
+
+    .page-header h1 {
+      color: #e8d48b;
+      font-size: 1.5rem;
+      margin: 0;
+      letter-spacing: 0.2em;
+    }
+
+    .bookmarks-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .bookmarks-empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: rgba(10, 10, 15, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 12px;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .bookmarks-empty h2 {
+      color: #e8d48b;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .bookmarks-empty p {
+      color: #666;
+      margin: 0 0 2rem 0;
+    }
+
+    .explore-btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: rgba(201, 162, 39, 0.2);
+      border: 1px solid #c9a227;
+      border-radius: 8px;
+      color: #c9a227;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .explore-btn:hover {
+      background: rgba(201, 162, 39, 0.3);
+    }
+
+    .bookmarks-list {
+      background: rgba(10, 10, 15, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .bookmarks-stats {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+    }
+
+    #bookmarkCount {
+      color: #c9a227;
+      font-weight: bold;
+    }
+
+    .bookmark-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1rem;
+      background: rgba(5, 5, 8, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.1);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .bookmark-item:hover {
+      border-color: rgba(201, 162, 39, 0.3);
+    }
+
+    .bookmark-content {
+      flex: 1;
+    }
+
+    .bookmark-module {
+      font-size: 0.7rem;
+      color: #c9a227;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .bookmark-title {
+      color: #e8d48b;
+      margin: 0.25rem 0;
+      font-size: 1rem;
+    }
+
+    .bookmark-excerpt {
+      color: #666;
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .bookmark-date {
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    .bookmark-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .bookmark-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .bookmark-btn:hover {
+      background: rgba(201, 162, 39, 0.1);
+      border-color: #c9a227;
+    }
+
+    .bookmark-btn.delete:hover {
+      border-color: #f04040;
+      color: #f04040;
+    }
+
+    .storage-section {
+      background: rgba(10, 10, 15, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .storage-section h3 {
+      color: #888;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 1rem 0;
+    }
+
+    .storage-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .storage-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 6px;
+      color: #c9a227;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .storage-btn:hover {
+      background: rgba(201, 162, 39, 0.1);
+      border-color: #c9a227;
+    }
+
+    .storage-btn.danger {
+      border-color: rgba(240, 64, 64, 0.3);
+      color: #f04040;
+    }
+
+    .storage-btn.danger:hover {
+      background: rgba(240, 64, 64, 0.1);
+      border-color: #f04040;
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+    }
+  </style>
+
+  <script>
+    interface Bookmark {
+      id: string;
+      module: string;
+      moduleName: string;
+      title: string;
+      excerpt: string;
+      href: string;
+      createdAt: number;
+    }
+
+    const emptyState = document.getElementById('emptyState');
+    const bookmarksList = document.getElementById('bookmarksList');
+    const bookmarkItems = document.getElementById('bookmarkItems');
+    const bookmarkCount = document.getElementById('bookmarkCount');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const importFile = document.getElementById('importFile') as HTMLInputElement;
+    const clearBtn = document.getElementById('clearBtn');
+
+    function getBookmarks(): Bookmark[] {
+      const stored = localStorage.getItem('lingxu-user-store');
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          return data.state?.bookmarks || [];
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    }
+
+    function renderBookmarks() {
+      const bookmarks = getBookmarks();
+
+      if (bookmarks.length === 0) {
+        emptyState.style.display = 'block';
+        bookmarksList.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      bookmarksList.style.display = 'block';
+
+      if (bookmarkCount) bookmarkCount.textContent = String(bookmarks.length);
+
+      if (bookmarkItems) {
+        bookmarkItems.innerHTML = bookmarks.map(b => `
+          <div class="bookmark-item" data-id="${b.id}">
+            <div class="bookmark-content">
+              <div class="bookmark-module">${b.moduleName}</div>
+              <h4 class="bookmark-title">${b.title}</h4>
+              <p class="bookmark-excerpt">${b.excerpt}</p>
+              <div class="bookmark-date">收藏于 ${new Date(b.createdAt).toLocaleDateString('zh-CN')}</div>
+            </div>
+            <div class="bookmark-actions">
+              <a href="${b.href}" class="bookmark-btn" title="查看">→</a>
+              <button class="bookmark-btn delete" title="删除" onclick="deleteBookmark('${b.id}')">×</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    (window as any).deleteBookmark = function(id: string) {
+      const bookmarks = getBookmarks().filter(b => b.id !== id);
+      localStorage.setItem('lingxu-user-store', JSON.stringify({
+        state: { bookmarks, preferences: { theme: 'dark', fontSize: 'medium', readingProgress: true } }
+      }));
+      renderBookmarks();
+    };
+
+    exportBtn?.addEventListener('click', () => {
+      const bookmarks = getBookmarks();
+      const dataStr = JSON.stringify(bookmarks, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lingxu-bookmarks-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    importBtn?.addEventListener('click', () => {
+      importFile.click();
+    });
+
+    importFile?.addEventListener('change', (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target?.result as string);
+          if (Array.isArray(imported)) {
+            const existing = getBookmarks();
+            const merged = [...imported, ...existing];
+            localStorage.setItem('lingxu-user-store', JSON.stringify({
+              state: { bookmarks: merged, preferences: { theme: 'dark', fontSize: 'medium', readingProgress: true } }
+            }));
+            renderBookmarks();
+            alert('导入成功！');
+          }
+        } catch {
+          alert('文件格式错误');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      if (confirm('确定要清空所有收藏吗？此操作不可恢复。')) {
+        localStorage.setItem('lingxu-user-store', JSON.stringify({
+          state: { bookmarks: [], preferences: { theme: 'dark', fontSize: 'medium', readingProgress: true } }
+        }));
+        renderBookmarks();
+      }
+    });
+
+    renderBookmarks();
+  </script>
+</BaseLayout>
