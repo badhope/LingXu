@@ -1,5 +1,6 @@
 ---
 import { MODULES, getModuleById } from '@data/modules';
+import { withBase } from '../lib/utils';
 
 interface Props {
   moduleId: string;
@@ -11,7 +12,7 @@ const { moduleId, title, description } = Astro.props;
 const module = getModuleById(moduleId);
 
 if (!module) {
-  return Astro.redirect('/home');
+  return Astro.redirect(withBase('/home'));
 }
 ---
 
@@ -22,12 +23,12 @@ if (!module) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title ? `${title} - ` : ''}{module.char} {module.name} - 灵墟</title>
     {description && <meta name="description" content={description} />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
   </head>
   <body class="module-body" style={`--module-color: ${module.color}; --module-bg: ${module.bgGradient};`}>
     <div class="module-container">
       <nav class="module-nav">
-        <a href="/home" class="back-btn">
+        <a href={withBase('/home')} class="back-btn">
           <span class="back-icon">←</span>
           <span class="back-text">返回</span>
         </a>
@@ -44,9 +45,9 @@ if (!module) {
           ))}
         </div>
         <div class="nav-actions">
-          <a href="/search" class="action-btn">🔍</a>
-          <a href="/bookmarks" class="action-btn">📖</a>
-          <a href="/profile" class="action-btn">👤</a>
+          <a href={withBase('/search')} class="action-btn">🔍</a>
+          <a href={withBase('/bookmarks')} class="action-btn">📖</a>
+          <a href={withBase('/profile')} class="action-btn">👤</a>
         </div>
       </nav>
 

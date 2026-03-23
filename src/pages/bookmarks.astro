@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/utils';
 ---
 
 <BaseLayout title="收藏 - 灵墟">
   <div class="bookmarks-page">
     <header class="page-header">
-      <a href="/home" class="back-link">← 返回</a>
+      <a href={withBase('/home')} class="back-link">← 返回</a>
       <h1>我的收藏</h1>
     </header>
 
@@ -14,7 +15,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="empty-icon">📖</div>
         <h2>暂无收藏</h2>
         <p>浏览各模块内容，点击收藏按钮添加到这里</p>
-        <a href="/home" class="explore-btn">开始探索</a>
+        <a href={withBase('/home')} class="explore-btn">开始探索</a>
       </div>
 
       <div class="bookmarks-list" id="bookmarksList" style="display: none;">

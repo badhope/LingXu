@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/utils';
 ---
 
 <BaseLayout title="个人中心 - 灵墟">
   <div class="profile-page">
     <header class="page-header">
-      <a href="/home" class="back-link">← 返回</a>
+      <a href={withBase('/home')} class="back-link">← 返回</a>
       <h1>个人中心</h1>
     </header>
 

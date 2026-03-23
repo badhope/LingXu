@@ -1,16 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_CONFIG } from '../lib/constants';
+import { withBase } from '../lib/utils';
 
 const MODULES = [
-  { char: '天', name: '天时', pinyin: 'Tiān', description: '天道运行，星辰变化', href: '/tian', color: '#f0c040' },
-  { char: '地', name: '地理', pinyin: 'Dì', description: '山川地理，风水堪舆', href: '/di', color: '#40b040' },
-  { char: '玄', name: '玄学', pinyin: 'Xuán', description: '易经八卦，符箓命理', href: '/xuan', color: '#8040f0' },
-  { char: '黄', name: '历史', pinyin: 'Huáng', description: '千古兴亡，秘辛档案', href: '/huang', color: '#c08040' },
-  { char: '宇', name: '空间', pinyin: 'Yǔ', description: '万界苍茫，空间层次', href: '/yu', color: '#4080f0' },
-  { char: '宙', name: '时间', pinyin: 'Zhòu', description: '时间长河，轮回因果', href: '/zhou', color: '#f04080' },
-  { char: '洪', name: '洪荒', pinyin: 'Hóng', description: '神怪异兽，洪荒神话', href: '/hong', color: '#f06040' },
-  { char: '荒', name: '失落', pinyin: 'Huāng', description: '失传秘术，失落文明', href: '/huang-lost', color: '#806040' },
+  { char: '天', name: '天时', pinyin: 'Tiān', description: '天道运行，星辰变化', href: withBase('/tian'), color: '#f0c040' },
+  { char: '地', name: '地理', pinyin: 'Dì', description: '山川地理，风水堪舆', href: withBase('/di'), color: '#40b040' },
+  { char: '玄', name: '玄学', pinyin: 'Xuán', description: '易经八卦，符箓命理', href: withBase('/xuan'), color: '#8040f0' },
+  { char: '黄', name: '历史', pinyin: 'Huáng', description: '千古兴亡，秘辛档案', href: withBase('/huang'), color: '#c08040' },
+  { char: '宇', name: '空间', pinyin: 'Yǔ', description: '万界苍茫，空间层次', href: withBase('/yu'), color: '#4080f0' },
+  { char: '宙', name: '时间', pinyin: 'Zhòu', description: '时间长河，轮回因果', href: withBase('/zhou'), color: '#f04080' },
+  { char: '洪', name: '洪荒', pinyin: 'Hóng', description: '神怪异兽，洪荒神话', href: withBase('/hong'), color: '#f06040' },
+  { char: '荒', name: '失落', pinyin: 'Huāng', description: '失传秘术，失落文明', href: withBase('/huang-lost'), color: '#806040' },
 ];
 ---
 
@@ -50,20 +51,20 @@ const MODULES = [
     </div>
 
     <nav class="quick-nav">
-      <a href="/search" class="nav-btn search-btn">
+      <a href={withBase('/search')} class="nav-btn search-btn">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
         <span>搜索</span>
       </a>
-      <a href="/bookmarks" class="nav-btn bookmark-btn">
+      <a href={withBase('/bookmarks')} class="nav-btn bookmark-btn">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
         </svg>
         <span>收藏</span>
       </a>
-      <a href="/profile" class="nav-btn profile-btn">
+      <a href={withBase('/profile')} class="nav-btn profile-btn">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="8" r="5"></circle>
           <path d="M20 21a8 8 0 0 0-16 0"></path>

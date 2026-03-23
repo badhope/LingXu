@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/utils';
 ---
 
 <BaseLayout title="搜索 - 灵墟">
   <div class="search-page">
     <header class="search-header">
-      <a href="/home" class="back-link">← 返回</a>
+      <a href={withBase('/home')} class="back-link">← 返回</a>
       <h1>搜索</h1>
     </header>
 
