@@ -133,9 +133,9 @@ const colors = colorMap[color] || colorMap.gold;
   ></div>
 </a>
 
-<script lang="ts">
+<script>
   document.querySelectorAll('[data-card]').forEach((card) => {
-    const element = card as HTMLElement;
+    const element = card;
     let isPressed = false;
 
     element.addEventListener('mousedown', () => {

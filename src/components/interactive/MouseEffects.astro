@@ -1,5 +1,4 @@
 ---
-
 export interface Props {
   enableParticles?: boolean;
   particleCount?: number;
@@ -14,31 +13,26 @@ const {
 <div id="cursor-glow" class="cursor-glow"></div>
 <div id="cursor-trail" class="pointer-events-none fixed inset-0 z-[9998]"></div>
 
-<script lang="ts" define:vars={{ enableParticles, particleCount }}>
+<script define:vars={{ enableParticles, particleCount }}>
   class MouseTrail {
-    private container: HTMLElement;
-    private particles: HTMLElement[] = [];
-    private maxParticles: number;
-    private isMobile: boolean;
-    private performanceMode: 'high' | 'medium' | 'low';
-    private hue: number = 38;
-
     constructor() {
-      this.container = document.getElementById('cursor-trail')!;
+      this.container = document.getElementById('cursor-trail');
+      this.particles = [];
       this.maxParticles = enableParticles ? Math.min(particleCount, 15) : 0;
       this.isMobile = window.innerWidth < 768;
-      this.performanceMode = this.detectPerformance();
+      this.hue = 38;
+      this.positions = [];
       this.init();
     }
 
-    private detectPerformance(): 'high' | 'medium' | 'low' {
+    detectPerformance() {
       if (this.isMobile) return 'low';
       const dpr = window.devicePixelRatio || 1;
       if (dpr >= 2) return 'high';
       return 'medium';
     }
 
-    private init() {
+    init() {
       if (this.isMobile || !this.maxParticles) return;
 
       for (let i = 0; i < this.maxParticles; i++) {
@@ -63,9 +57,7 @@ const {
       document.addEventListener('mousemove', this.handleMouseMove.bind(this), { passive: true });
     }
 
-    private positions: { x: number; y: number; active: boolean }[] = [];
-
-    private handleMouseMove(e: MouseEvent) {
+    handleMouseMove(e) {
       const { clientX, clientY } = e;
 
       this.positions.unshift({ x: clientX, y: clientY, active: true });
@@ -94,12 +86,8 @@ const {
   }
 
   class CursorGlow {
-    private el: HTMLElement;
-    private glow: HTMLElement;
-    private isMobile: boolean;
-
     constructor() {
-      this.el = document.getElementById('cursor-glow')!;
+      this.el = document.getElementById('cursor-glow');
       this.glow = document.createElement('div');
       this.glow.className = 'cursor-glow-inner';
       this.glow.style.cssText = `
@@ -121,7 +109,7 @@ const {
       }
     }
 
-    private handleMouseMove(e: MouseEvent) {
+    handleMouseMove(e) {
       requestAnimationFrame(() => {
         this.glow.style.left = `${e.clientX}px`;
         this.glow.style.top = `${e.clientY}px`;

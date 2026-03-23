@@ -100,7 +100,7 @@ const aboutHref = `${basePath}/about`;
   </nav>
 </header>
 
-<script lang="ts">
+<script>
   const menuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
 
@@ -109,7 +109,7 @@ const aboutHref = `${basePath}/about`;
   });
 
   document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
+    const target = e.target;
     if (!target.closest('#mobile-menu-btn') && !target.closest('#mobile-menu')) {
       mobileMenu?.classList.add('hidden');
     }

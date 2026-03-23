@@ -1,149 +1,14 @@
----
-interface Props {
-  class?: string;
-}
-
-const { class: className = '' } = Astro.props;
----
-
-<div id="settings-panel" class:list={['settings-container', className]}>
-  <button
-    id="settings-toggle"
-    class="settings-trigger"
-    aria-label="设置"
-    aria-expanded="false"
-  >
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  </button>
-
-  <div id="settings-dropdown" class="settings-dropdown hidden" role="menu">
-    <div class="settings-header">
-      <h3 class="settings-title">个人设置</h3>
-      <p class="settings-subtitle">Preferences</p>
-    </div>
-
-    <div class="settings-section">
-      <label class="settings-label">语言 / Language</label>
-      <div class="settings-toggle-group">
-        <button
-          class="toggle-btn active"
-          data-setting="lang"
-          data-value="zh"
-          aria-pressed="true"
-        >
-          中文
-        </button>
-        <button
-          class="toggle-btn"
-          data-setting="lang"
-          data-value="en"
-          aria-pressed="false"
-        >
-          EN
-        </button>
-      </div>
-    </div>
-
-    <div class="settings-divider"></div>
-
-    <div class="settings-section">
-      <label class="settings-label">字体大小 / Font Size</label>
-      <div class="settings-toggle-group font-size-group">
-        <button
-          class="toggle-btn font-btn"
-          data-setting="fontSize"
-          data-value="sm"
-          aria-pressed="false"
-          title="小"
-        >
-          <span class="font-preview" style="font-size: 12px">A</span>
-        </button>
-        <button
-          class="toggle-btn font-btn active"
-          data-setting="fontSize"
-          data-value="md"
-          aria-pressed="true"
-          title="中"
-        >
-          <span class="font-preview" style="font-size: 14px">A</span>
-        </button>
-        <button
-          class="toggle-btn font-btn"
-          data-setting="fontSize"
-          data-value="lg"
-          aria-pressed="false"
-          title="大"
-        >
-          <span class="font-preview" style="font-size: 16px">A</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="settings-divider"></div>
-
-    <div class="settings-section">
-      <label class="settings-label">动画效果 / Animations</label>
-      <div class="settings-switch-row">
-        <span class="switch-label">启用动画</span>
-        <button
-          id="animation-toggle"
-          class="settings-switch active"
-          data-setting="animations"
-          role="switch"
-          aria-checked="true"
-        >
-          <span class="switch-thumb"></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="settings-divider"></div>
-
-    <div class="settings-section">
-      <label class="settings-label">滚动效果 / Scroll Effects</label>
-      <div class="settings-switch-row">
-        <span class="switch-label">滚动渐显</span>
-        <button
-          id="scroll-effects-toggle"
-          class="settings-switch active"
-          data-setting="scrollEffects"
-          role="switch"
-          aria-checked="true"
-        >
-          <span class="switch-thumb"></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="settings-footer">
-      <button id="reset-settings" class="reset-btn">
-        重置默认 / Reset
-      </button>
-    </div>
-  </div>
-</div>
-
-<script lang="ts">
+<script>
   const STORAGE_KEY = 'lingxu-preferences';
 
-  interface UserPreferences {
-    lang: 'zh' | 'en';
-    fontSize: 'sm' | 'md' | 'lg';
-    animations: boolean;
-    scrollEffects: boolean;
-  }
-
-  const defaultPreferences: UserPreferences = {
+  const defaultPreferences = {
     lang: 'zh',
     fontSize: 'md',
     animations: true,
     scrollEffects: true,
   };
 
-  function getPreferences(): UserPreferences {
+  function getPreferences() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -155,7 +20,7 @@ const { class: className = '' } = Astro.props;
     return defaultPreferences;
   }
 
-  function savePreferences(prefs: UserPreferences): void {
+  function savePreferences(prefs) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
     } catch (e) {
@@ -164,7 +29,7 @@ const { class: className = '' } = Astro.props;
     applyPreferences(prefs);
   }
 
-  function applyPreferences(prefs: UserPreferences): void {
+  function applyPreferences(prefs) {
     const root = document.documentElement;
 
     root.style.setProperty('--user-font-scale', prefs.fontSize === 'sm' ? '0.875' : prefs.fontSize === 'lg' ? '1.125' : '1');
@@ -175,7 +40,7 @@ const { class: className = '' } = Astro.props;
     document.documentElement.lang = prefs.lang;
   }
 
-  function updateUI(prefs: UserPreferences): void {
+  function updateUI(prefs) {
     document.querySelectorAll('[data-setting="lang"]').forEach(btn => {
       const isActive = btn.getAttribute('data-value') === prefs.lang;
       btn.classList.toggle('active', isActive);
@@ -214,7 +79,7 @@ const { class: className = '' } = Astro.props;
   });
 
   document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
+    const target = e.target;
     if (!target.closest('#settings-panel')) {
       dropdown?.classList.add('hidden');
       toggle?.setAttribute('aria-expanded', 'false');
@@ -229,9 +94,9 @@ const { class: className = '' } = Astro.props;
       const prefs = getPreferences();
 
       if (setting === 'lang' && value) {
-        prefs.lang = value as 'zh' | 'en';
+        prefs.lang = value;
       } else if (setting === 'fontSize' && value) {
-        prefs.fontSize = value as 'sm' | 'md' | 'lg';
+        prefs.fontSize = value;
       } else if (setting === 'animations') {
         prefs.animations = !prefs.animations;
       } else if (setting === 'scrollEffects') {
@@ -252,214 +117,3 @@ const { class: className = '' } = Astro.props;
   applyPreferences(initialPrefs);
   updateUI(initialPrefs);
 </script>
-
-<style>
-  .settings-container {
-    position: relative;
-  }
-
-  .settings-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    border: 1px solid rgba(201, 162, 39, 0.3);
-    background: rgba(201, 162, 39, 0.05);
-    color: rgba(201, 162, 39, 0.7);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .settings-trigger:hover {
-    border-color: rgba(201, 162, 39, 0.6);
-    color: #d4af37;
-    background: rgba(201, 162, 39, 0.1);
-  }
-
-  .settings-dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    width: 280px;
-    background: rgba(10, 10, 10, 0.98);
-    border: 1px solid rgba(201, 162, 39, 0.2);
-    border-radius: 12px;
-    padding: 0;
-    z-index: 1000;
-    backdrop-filter: blur(20px);
-    box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(201, 162, 39, 0.1) inset;
-    overflow: hidden;
-  }
-
-  .settings-header {
-    padding: 16px 20px;
-    background: linear-gradient(to bottom, rgba(201, 162, 39, 0.08), transparent);
-    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
-  }
-
-  .settings-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: #d4af37;
-    margin: 0;
-  }
-
-  .settings-subtitle {
-    font-size: 11px;
-    color: rgba(201, 162, 39, 0.5);
-    margin: 2px 0 0;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .settings-section {
-    padding: 14px 20px;
-  }
-
-  .settings-label {
-    display: block;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .settings-toggle-group {
-    display: flex;
-    gap: 8px;
-  }
-
-  .toggle-btn {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid rgba(201, 162, 39, 0.2);
-    border-radius: 6px;
-    background: rgba(201, 162, 39, 0.03);
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .toggle-btn:hover {
-    border-color: rgba(201, 162, 39, 0.4);
-    color: #d4af37;
-  }
-
-  .toggle-btn.active {
-    border-color: rgba(201, 162, 39, 0.6);
-    background: rgba(201, 162, 39, 0.15);
-    color: #d4af37;
-    box-shadow: 0 0 10px rgba(201, 162, 39, 0.1);
-  }
-
-  .font-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .font-preview {
-    color: inherit;
-    font-family: 'Noto Serif SC', serif;
-    line-height: 1;
-  }
-
-  .settings-divider {
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(201, 162, 39, 0.15),
-      transparent
-    );
-  }
-
-  .settings-switch-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .switch-label {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .settings-switch {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    border: 1px solid rgba(201, 162, 39, 0.3);
-    border-radius: 12px;
-    background: rgba(201, 162, 39, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .settings-switch.active {
-    border-color: rgba(201, 162, 39, 0.6);
-    background: rgba(201, 162, 39, 0.2);
-  }
-
-  .switch-thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: rgba(201, 162, 39, 0.5);
-    transition: all 0.3s ease;
-  }
-
-  .settings-switch.active .switch-thumb {
-    left: calc(100% - 20px);
-    background: #d4af37;
-    box-shadow: 0 0 8px rgba(201, 162, 39, 0.5);
-  }
-
-  .settings-footer {
-    padding: 12px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(201, 162, 39, 0.1);
-  }
-
-  .reset-btn {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid rgba(201, 162, 39, 0.2);
-    border-radius: 6px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .reset-btn:hover {
-    border-color: rgba(201, 162, 39, 0.4);
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  :global(.animations-disabled) .motion-fade-in,
-  :global(.animations-disabled) .motion-fade-up,
-  :global(.animations-disabled) .reveal-on-scroll,
-  :global(.animations-disabled) .scroll-reveal-init {
-    animation: none !important;
-    transition: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  :global(.scroll-effects-disabled) .scroll-reveal-init {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-</style>

@@ -16,7 +16,7 @@ const { delay = 0, threshold = 0.1, class: className = '' } = Astro.props;
   <slot />
 </div>
 
-<script lang="ts">
+<script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const observerOptions = {
@@ -31,8 +31,8 @@ const { delay = 0, threshold = 0.1, class: className = '' } = Astro.props;
         const delay = Number(entry.target.getAttribute('data-delay')) || 0;
 
         if (prefersReducedMotion) {
-          (entry.target as HTMLElement).style.opacity = '1';
-          (entry.target as HTMLElement).style.transform = 'translateY(0)';
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
         } else {
           setTimeout(() => {
             entry.target.classList.add('revealed');

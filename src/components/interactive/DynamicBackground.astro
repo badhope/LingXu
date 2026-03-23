@@ -34,18 +34,16 @@ const {
   </div>
 </div>
 
-<script lang="ts" define:vars={{ mode, particleDensity, enableParallax }}>
+<script define:vars={{ mode, particleDensity, enableParallax }}>
   class GradientFlow {
-    private el: HTMLElement;
-    private hue: number = 38;
-    private animationId: number = 0;
-
-    constructor(el: HTMLElement) {
+    constructor(el) {
       this.el = el;
+      this.hue = 38;
+      this.animationId = 0;
       this.init();
     }
 
-    private init() {
+    init() {
       if (mode !== 'gradient' && mode !== 'all') return;
 
       this.el.style.cssText = `
@@ -80,24 +78,19 @@ const {
   }
 
   class CanvasBackground {
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private particles: Particle[] = [];
-    private maxParticles: number;
-    private animationId: number = 0;
-    private isMobile: boolean;
-    private mouseX: number = 0;
-    private mouseY: number = 0;
-
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas) {
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = 0;
+      this.animationId = 0;
       this.isMobile = window.innerWidth < 768;
-      this.maxParticles = this.isMobile ? Math.floor(particleDensity * 0.5) : particleDensity;
+      this.mouseX = 0;
+      this.mouseY = 0;
       this.init();
     }
 
-    private init() {
+    init() {
       if (mode !== 'particles' && mode !== 'all') return;
 
       this.resize();
@@ -106,19 +99,20 @@ const {
       this.animate();
     }
 
-    private resize() {
+    resize() {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
     }
 
-    private createParticles() {
+    createParticles() {
       this.particles = [];
+      this.maxParticles = this.isMobile ? Math.floor(particleDensity * 0.5) : particleDensity;
       for (let i = 0; i < this.maxParticles; i++) {
         this.particles.push(this.createParticle());
       }
     }
 
-    private createParticle(): Particle {
+    createParticle() {
       return {
         x: Math.random() * this.canvas.width,
         y: Math.random() * this.canvas.height,
@@ -130,7 +124,7 @@ const {
       };
     }
 
-    private bindEvents() {
+    bindEvents() {
       let resizeTimeout;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
@@ -146,7 +140,7 @@ const {
       }, { passive: true });
     }
 
-    private animate = () => {
+    animate = () => {
       if (mode !== 'particles' && mode !== 'all') return;
 
       this.animationId = requestAnimationFrame(this.animate);
@@ -195,26 +189,15 @@ const {
       }
     };
 
-    public destroy() {
+    destroy() {
       cancelAnimationFrame(this.animationId);
     }
   }
 
-  interface Particle {
-    x: number;
-    y: number;
-    size: number;
-    speedX: number;
-    speedY: number;
-    opacity: number;
-    hue: number;
-  }
-
   class ParallaxBackground {
-    private layers: NodeListOf<Element>;
-    private animationId: number = 0;
-
     constructor() {
+      this.layers = null;
+      this.animationId = 0;
       if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
 
       this.layers = document.querySelectorAll('.parallax-layer');
@@ -224,7 +207,7 @@ const {
       this.animate();
     }
 
-    private bindEvents() {
+    bindEvents() {
       let lastY = 0;
       window.addEventListener('scroll', () => {
         lastY = window.scrollY;
@@ -232,9 +215,9 @@ const {
       }, { passive: true });
     }
 
-    private update(scrollY: number) {
+    update(scrollY) {
       this.layers.forEach((layer) => {
-        const el = layer as HTMLElement;
+        const el = layer;
         const depth = parseFloat(el.dataset.depth || '0.1');
         const speed = parseFloat(el.dataset.speed || '1');
         const movement = scrollY * depth * speed * 0.1;
@@ -242,19 +225,19 @@ const {
       });
     }
 
-    private animate = () => {
+    animate = () => {
       if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
       this.animationId = requestAnimationFrame(this.animate);
     };
 
-    public destroy() {
+    destroy() {
       cancelAnimationFrame(this.animationId);
     }
   }
 
   document.addEventListener('astro:page-load', () => {
     const gradientLayer = document.getElementById('gradient-layer');
-    const canvas = document.getElementById('bg-particle-canvas') as HTMLCanvasElement;
+    const canvas = document.getElementById('bg-particle-canvas');
     const container = document.getElementById('parallax-container');
 
     if (gradientLayer) new GradientFlow(gradientLayer);

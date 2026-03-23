@@ -9,4 +9,9 @@ export default defineConfig({
   ],
   site: 'https://badhope.github.io/LingXu',
   base: '/LingXu',
+  vite: {
+    esbuild: {
+      target: 'es2020'
+    }
+  }
 });

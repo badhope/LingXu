@@ -1,11 +1,7 @@
----
-
----
-
 <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-<script lang="ts">
-  const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
+<script>
+  const canvas = document.getElementById('particle-canvas');
   const ctx = canvas.getContext('2d');
 
   let width = window.innerWidth;
@@ -16,18 +12,7 @@
   const isMobile = width < 640;
   const particleCount = Math.floor((width * height) / (isMobile ? 20000 : 15000));
 
-  interface Particle {
-    x: number;
-    y: number;
-    size: number;
-    speedX: number;
-    speedY: number;
-    opacity: number;
-    twinkleSpeed: number;
-    twinklePhase: number;
-  }
-
-  const particles: Particle[] = [];
+  const particles = [];
   const maxParticles = Math.min(particleCount, isMobile ? 40 : 80);
 
   for (let i = 0; i < maxParticles; i++) {
@@ -47,7 +32,7 @@
   const targetFPS = 60;
   const frameInterval = 1000 / targetFPS;
 
-  function animate(currentTime: number = 0) {
+  function animate(currentTime) {
     requestAnimationFrame(animate);
 
     const elapsed = currentTime - lastTime;
@@ -78,7 +63,7 @@
 
   animate();
 
-  let resizeTimeout: ReturnType<typeof setTimeout>;
+  let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
