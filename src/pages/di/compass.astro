@@ -1,0 +1,390 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const directions = [
+  { name: '东方', element: '木', color: '#40b040', desc: '青龙所居，青色属木，主生发' },
+  { name: '南方', element: '火', color: '#f04040', desc: '朱雀所居，赤色属火，主长养' },
+  { name: '西方', element: '金', color: '#e0e0e0', desc: '白虎所居，白色属金，主收肃' },
+  { name: '北方', element: '水', color: '#4080f0', desc: '玄武所居，黑色属水，主闭藏' },
+  { name: '东南', element: '木+土', color: '#60b060', desc: '巽位，主利市利交易' },
+  { name: '西南', element: '土', color: '#c08040', desc: '坤位，主丧病惊恐' },
+  { name: '东北', element: '土', color: '#b08040', desc: '艮位，主少男姻亲' },
+  { name: '西北', element: '金+水', color: '#a0a0c0', desc: '乾位，主老年姻亲' },
+];
+
+const compassPoints = [
+  { degree: '0°', name: '正北', symbol: '坎', meaning: '水位，壬子癸三山' },
+  { degree: '45°', name: '东北', symbol: '艮', meaning: '土位，丑艮寅三山' },
+  { degree: '90°', name: '正东', symbol: '震', meaning: '木位，甲卯乙三山' },
+  { degree: '135°', name: '东南', symbol: '巽', meaning: '木位，辰巽巳三山' },
+  { degree: '180°', name: '正南', symbol: '离', meaning: '火位，丙午丁三山' },
+  { degree: '225°', name: '西南', symbol: '坤', meaning: '土位，未坤申三山' },
+  { degree: '270°', name: '正西', symbol: '兑', meaning: '金位，庚酉辛三山' },
+  { degree: '315°', name: '西北', symbol: '乾', meaning: '金位，戌乾亥三山' },
+];
+---
+
+<ModuleLayout moduleId="di" title="罗盘方位" description="八卦五行方位，罗盘二十四山">
+  <div class="compass-page">
+    <section class="compass-display">
+      <div class="compass-outer">
+        <div class="compass-ring heaven-ring">
+          <span class="ring-label">天干</span>
+          <div class="ring-items">
+            <span>甲</span><span>乙</span><span>丙</span><span>丁</span><span>戊</span>
+            <span>己</span><span>庚</span><span>辛</span><span>壬</span><span>癸</span>
+          </div>
+        </div>
+        <div class="compass-ring earthly-branch-ring">
+          <span class="ring-label">地支</span>
+          <div class="ring-items">
+            <span>子</span><span>丑</span><span>寅</span><span>卯</span><span>辰</span>
+            <span>巳</span><span>午</span><span>未</span><span>申</span><span>酉</span>
+            <span>戌</span><span>亥</span>
+          </div>
+        </div>
+        <div class="compass-ring eight-trigrams-ring">
+          <span class="ring-label">八卦</span>
+          <div class="trigram-grid">
+            <span class="trigram">☰ 乾</span>
+            <span class="trigram">☱ 兑</span>
+            <span class="trigram">☲ 离</span>
+            <span class="trigram">☳ 震</span>
+            <span class="trigram">☴ 巽</span>
+            <span class="trigram">☵ 坎</span>
+            <span class="trigram">☶ 艮</span>
+            <span class="trigram">☷ 坤</span>
+          </div>
+        </div>
+        <div class="compass-center">
+          <div class="needle"></div>
+          <span class="center-text">灵墟</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="directions-section">
+      <h2>四方神灵</h2>
+      <div class="directions-grid">
+        {directions.map(dir => (
+          <div class="direction-card" style={`--dir-color: ${dir.color}`}>
+            <div class="dir-header">
+              <span class="dir-name">{dir.name}</span>
+              <span class="dir-element">{dir.element}</span>
+            </div>
+            <p class="dir-desc">{dir.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="compass-points-section">
+      <h2>二十四山</h2>
+      <div class="compass-points-table">
+        {compassPoints.map(point => (
+          <div class="point-row">
+            <span class="point-degree">{point.degree}</span>
+            <span class="point-name">{point.name}</span>
+            <span class="point-symbol">{point.symbol}</span>
+            <span class="point-meaning">{point.meaning}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="luopan-knowledge">
+      <h2>罗盘要义</h2>
+      <div class="knowledge-cards">
+        <div class="knowledge-card">
+          <h3>立向</h3>
+          <p>阳宅以大门向为向，阴宅以拜台为向。罗盘对准目标，自然可立正向。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>分金</h3>
+          <p>分金者，二十四山各配以百分数也。五行相生相克，细分吉凶。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>消砂</h3>
+          <p>砂者，高山之谓也。来龙宜高耸，砂宜环抱吉。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>纳水</h3>
+          <p>水者，水流之谓也。来水宜清澈，去水宜弯曲。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .compass-page {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .compass-display {
+      display: flex;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .compass-outer {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      border: 3px solid #c9a227;
+      background: radial-gradient(circle, #1a1500 0%, #050505 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 30px rgba(201, 162, 39, 0.3),
+        inset 0 0 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .compass-ring {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .heaven-ring {
+      width: 280px;
+      height: 280px;
+      border: 1px dashed rgba(201, 162, 39, 0.3);
+    }
+
+    .earthly-branch-ring {
+      width: 240px;
+      height: 240px;
+      border: 1px solid rgba(201, 162, 39, 0.4);
+    }
+
+    .eight-trigrams-ring {
+      width: 200px;
+      height: 200px;
+      border: 1px dashed rgba(201, 162, 39, 0.3);
+    }
+
+    .ring-label {
+      position: absolute;
+      top: -20px;
+      font-size: 0.75rem;
+      color: #c9a227;
+      background: #0a0a0a;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .ring-items {
+      display: flex;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: #e8d48b;
+    }
+
+    .trigram-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-size: 0.75rem;
+    }
+
+    .trigram {
+      color: #c9a227;
+    }
+
+    .compass-center {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2a2010 0%, #0a0800 100%);
+      border: 2px solid #c9a227;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+    }
+
+    .needle {
+      width: 2px;
+      height: 30px;
+      background: linear-gradient(to bottom, #f04040 50%, #e0e0e0 50%);
+      transform: rotate(-15deg);
+    }
+
+    .center-text {
+      font-size: 0.7rem;
+      color: #c9a227;
+      margin-top: 4px;
+    }
+
+    .directions-section h2,
+    .compass-points-section h2,
+    .luopan-knowledge h2 {
+      color: #40b040;
+      font-size: 1.25rem;
+      margin: 2rem 0 1rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(64, 176, 64, 0.3);
+    }
+
+    .directions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .direction-card {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(64, 176, 64, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .direction-card:hover {
+      border-color: var(--dir-color);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--dir-color) 30%, transparent);
+    }
+
+    .dir-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .dir-name {
+      font-size: 1.25rem;
+      color: var(--dir-color);
+    }
+
+    .dir-element {
+      font-size: 0.8rem;
+      color: #888;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .dir-desc {
+      font-size: 0.85rem;
+      color: #aaa;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .compass-points-table {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(64, 176, 64, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .point-row {
+      display: grid;
+      grid-template-columns: 60px 80px 60px 1fr;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.2s ease;
+    }
+
+    .point-row:last-child {
+      border-bottom: none;
+    }
+
+    .point-row:hover {
+      background: rgba(64, 176, 64, 0.1);
+    }
+
+    .point-degree {
+      color: #c9a227;
+      font-family: monospace;
+    }
+
+    .point-name {
+      color: #e8d48b;
+    }
+
+    .point-symbol {
+      color: #40b040;
+      font-size: 1.1rem;
+    }
+
+    .point-meaning {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .knowledge-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .knowledge-card {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(64, 176, 64, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .knowledge-card h3 {
+      color: #40b040;
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .knowledge-card p {
+      color: #aaa;
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .compass-outer {
+        width: 260px;
+        height: 260px;
+      }
+
+      .heaven-ring {
+        width: 220px;
+        height: 220px;
+      }
+
+      .earthly-branch-ring {
+        width: 180px;
+        height: 180px;
+      }
+
+      .eight-trigrams-ring {
+        width: 140px;
+        height: 140px;
+      }
+
+      .ring-items {
+        font-size: 0.65rem;
+        gap: 2px;
+      }
+
+      .trigram-grid {
+        font-size: 0.6rem;
+        gap: 4px;
+      }
+
+      .point-row {
+        grid-template-columns: 50px 70px 50px 1fr;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</ModuleLayout>

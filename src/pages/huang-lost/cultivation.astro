@@ -1,0 +1,402 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const cultivationRealms = [
+  { name: '炼气期', description: '吸纳天地灵气，凝聚丹田', difficulty: '★☆☆☆☆', duration: '1-3年' },
+  { name: '筑基期', description: '筑就道基，脱胎换骨', difficulty: '★★☆☆☆', duration: '3-10年' },
+  { name: '金丹期', description: '结成金丹，圆润无瑕', difficulty: '★★★☆☆', duration: '10-30年' },
+  { name: '元婴期', description: '化婴出窍，神游太虚', difficulty: '★★★★☆', duration: '30-100年' },
+  { name: '化神期', description: '化凡为神，掌控天地', difficulty: '★★★★★', duration: '百年以上' },
+  { name: '大乘期', description: '功德圆满，飞升在即', difficulty: '★★★★★', duration: '不定' },
+];
+
+const techniques = [
+  { name: '引气诀', type: '入门功法', effect: '帮助初学者感应灵气', suitable: '炼气期以下' },
+  { name: '五行炼气法', type: '基础功法', effect: '五行俱全，根基稳固', suitable: '炼气期' },
+  { name: '九转玄功', type: '进阶功法', effect: '九转功成，力可搬山', suitable: '筑基期' },
+  { name: '太上心经', type: '核心功法', effect: '太上忘情，道法自然', suitable: '金丹期' },
+  { name: '天地决', type: '高级功法', effect: '与天地同寿，日月同辉', suitable: '元婴期' },
+  { name: '鸿蒙紫气诀', type: '顶级功法', effect: '开天辟地，再造乾坤', suitable: '化神期以上' },
+];
+
+const meridianPoints = [
+  { name: '丹田', location: '脐下三寸', function: '储存灵气，发动周天' },
+  { name: '气海', location: '丹田别名', function: '聚气之所' },
+  { name: '命门', location: '后腰第二腰椎下', function: '生命之门，根基所在' },
+  { name: '神阙', location: '肚脐', function: '中丹田所在' },
+  { name: '膻中', location: '两乳之间', function: '上丹田，藏神之所' },
+  { name: '百会', location: '头顶正中', function: '诸阳之会，最高穴位' },
+];
+---
+
+<ModuleLayout moduleId="huang-lost" title="功法典籍" description="失传修行功法，秘境修炼秘典">
+  <div class="cultivation-page">
+    <section class="realm-section">
+      <h2>修行境界</h2>
+      <div class="realms-timeline">
+        {cultivationRealms.map((realm, index) => (
+          <div class="realm-card" style={`--delay: ${index * 0.1}s`}>
+            <div class="realm-header">
+              <span class="realm-name">{realm.name}</span>
+              <span class="realm-difficulty">{realm.difficulty}</span>
+            </div>
+            <p class="realm-desc">{realm.description}</p>
+            <div class="realm-footer">
+              <span class="realm-duration">⏱ {realm.duration}</span>
+            </div>
+            {index < cultivationRealms.length - 1 && <div class="realm-arrow">↓</div>}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="techniques-section">
+      <h2>功法一览</h2>
+      <div class="techniques-grid">
+        {techniques.map(tech => (
+          <div class="technique-card">
+            <div class="technique-header">
+              <span class="technique-name">{tech.name}</span>
+              <span class="technique-type">{tech.type}</span>
+            </div>
+            <div class="technique-effect">{tech.effect}</div>
+            <div class="technique-suitable">
+              <span class="suitable-label}>适用</span>
+              <span class="suitable-value}>{tech.suitable}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="meridian-section">
+      <h2>经脉穴位</h2>
+      <div class="meridian-diagram">
+        <div class="body-outline">
+          <div class="meridian-point" style="top: 5%;">百会</div>
+          <div class="meridian-point" style="top: 30%;">膻中</div>
+          <div class="meridian-point" style="top: 45%;">神阙</div>
+          <div class="meridian-point" style="top: 55%;">丹田</div>
+          <div class="meridian-point" style="top: 70%;">命门</div>
+        </div>
+      </div>
+      <div class="meridian-list">
+        {meridianPoints.map(point => (
+          <div class="meridian-item">
+            <span class="point-name">{point.name}</span>
+            <span class="point-location">{point.location}</span>
+            <span class="point-function">{point.function}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="tips-section">
+      <h2>修炼要诀</h2>
+      <div class="tips-cards">
+        <div class="tip-card">
+          <span class="tip-icon>💫</span>
+          <h3>心法为上</h3>
+          <p>功法易得，心法难求。修心养性，方能驾驭强大力量</p>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon>🌙</span>
+          <h3>时辰讲究</h3>
+          <p>子时一阳初生，午时阴阳交替，此时修炼事半功倍</p>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon>🏔️</span>
+          <h3>宝地难得</h3>
+          <p>灵气充沛之地可加速修炼，劣地不仅无功反受其害</p>
+        </div>
+        <div class="tip-card">
+          <span class="tip-icon">⚠️</span>
+          <h3>量力而行</h3>
+          <p>切忌贪功冒进，根基不稳强行突破恐有走火入魔之险</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .cultivation-page {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      color: #c08040;
+      font-size: 1.25rem;
+      margin: 2rem 0 1rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(192, 128, 64, 0.3);
+    }
+
+    .realm-section h2 {
+      margin-top: 0;
+    }
+
+    .realms-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .realm-card {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(192, 128, 64, 0.3);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      position: relative;
+      animation: fadeSlideIn 0.5s ease backwards;
+      animation-delay: var(--delay);
+    }
+
+    .realm-card:hover {
+      border-color: #c08040;
+      box-shadow: 0 0 15px rgba(192, 128, 64, 0.2);
+    }
+
+    .realm-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .realm-name {
+      font-size: 1.1rem;
+      color: #e8d48b;
+    }
+
+    .realm-difficulty {
+      color: #c08040;
+      font-size: 0.9rem;
+    }
+
+    .realm-desc {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .realm-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .realm-duration {
+      font-size: 0.8rem;
+      color: #888;
+      background: rgba(192, 128, 64, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .realm-arrow {
+      position: absolute;
+      bottom: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #c08040;
+      font-size: 1rem;
+    }
+
+    .techniques-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .technique-card {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(192, 128, 64, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .technique-card:hover {
+      border-color: #c08040;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .technique-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .technique-name {
+      font-size: 1.1rem;
+      color: #e8d48b;
+    }
+
+    .technique-type {
+      font-size: 0.75rem;
+      color: #c08040;
+      background: rgba(192, 128, 64, 0.15);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .technique-effect {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .technique-suitable {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .suitable-label {
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    .suitable-value {
+      font-size: 0.85rem;
+      color: #c08040;
+    }
+
+    .meridian-section {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 2rem;
+    }
+
+    .meridian-diagram {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(192, 128, 64, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .body-outline {
+      position: relative;
+      height: 300px;
+      border: 1px dashed rgba(192, 128, 64, 0.3);
+      border-radius: 100px 100px 50px 50px;
+    }
+
+    .meridian-point {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(192, 128, 64, 0.2);
+      border: 1px solid #c08040;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #e8d48b;
+      white-space: nowrap;
+    }
+
+    .meridian-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .meridian-item {
+      display: grid;
+      grid-template-columns: 80px 100px 1fr;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: rgba(10, 10, 15, 0.6);
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .point-name {
+      color: #c08040;
+      font-weight: 500;
+    }
+
+    .point-location {
+      color: #888;
+    }
+
+    .point-function {
+      color: #aaa;
+    }
+
+    .tips-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .tip-card {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(192, 128, 64, 0.3);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .tip-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-card h3 {
+      color: #e8d48b;
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .tip-card p {
+      color: #888;
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .meridian-section {
+        grid-template-columns: 1fr;
+      }
+
+      .meridian-diagram {
+        display: none;
+      }
+
+      .meridian-item {
+        grid-template-columns: 60px 1fr;
+        grid-template-rows: auto auto;
+      }
+
+      .point-location {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .point-function {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+    }
+  </style>
+</ModuleLayout>

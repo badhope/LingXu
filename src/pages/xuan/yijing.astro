@@ -1,0 +1,372 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const hexagrams = [
+  { number: 1, name: '乾', pinyin: 'Qián', meaning: '天', description: '元亨利贞', symbol: '☰☰', judgment: '大业光明，唯君子能兴' },
+  { number: 2, name: '坤', pinyin: 'Kūn', meaning: '地', description: '元亨利牝马之贞', symbol: '☷☷', judgment: '厚德载物，顺天应人' },
+  { number: 3, name: '屯', pinyin: 'Zhūn', meaning: '水雷', description: '元亨利贞，勿用有攸往', symbol: '☵☳', judgment: '创业艰难，屯而后通' },
+  { number: 4, name: '蒙', pinyin: 'Méng', meaning: '山水', description: '亨，匪我求童蒙，童蒙求我', symbol: '☶☵', judgment: '蒙昧初开，宜启发教育' },
+  { number: 5, name: '需', pinyin: 'Xū', meaning: '水天', description: '有孚，光亨，贞吉', symbol: '☵☰', judgment: '等待时机，不宜轻进' },
+  { number: 6, name: '讼', pinyin: 'Sòng', meaning: '天水', description: '有孚，窒惕，中吉', symbol: '☰☵', judgment: '争讼之事，宜和解为上' },
+  { number: 7, name: '师', pinyin: 'Shī', meaning: '地水', description: '贞，丈人吉，无咎', symbol: '☷☵', judgment: '兵戎之事，宜用贤将' },
+  { number: 8, name: '比', pinyin: 'Bǐ', meaning: '水地', description: '吉，原筮，元永贞', symbol: '☵☷', judgment: '亲附比和，宜选贤与能' },
+  { number: 9, name: '小畜', pinyin: 'Xiǎoxù', meaning: '风天', description: '亨，密云不雨，自我西郊', symbol: '☴☰', judgment: '小有积蓄，宜积小成大' },
+  { number: 10, name: '履', pinyin: 'Lǚ', meaning: '天泽', description: '履虎尾，不咥人，亨', symbol: '☰☱', judgment: '谨慎行事，虽险亦亨' },
+];
+
+const trigrams = [
+  { symbol: '☰', name: '乾', element: '金', meaning: '天', nature: '健', direction: '西北' },
+  { symbol: '☱', name: '兑', element: '金', meaning: '泽', nature: '悦', direction: '西' },
+  { symbol: '☲', name: '离', element: '火', meaning: '火', nature: '丽', direction: '南' },
+  { symbol: '☳', name: '震', element: '木', meaning: '雷', nature: '动', direction: '东' },
+  { symbol: '☴', name: '巽', element: '木', meaning: '风', nature: '入', direction: '东南' },
+  { symbol: '☵', name: '坎', element: '水', meaning: '水', nature: '陷', direction: '北' },
+  { symbol: '☶', name: '艮', element: '土', meaning: '山', nature: '止', direction: '东北' },
+  { symbol: '☷', name: '坤', element: '土', meaning: '地', nature: '顺', direction: '西南' },
+];
+---
+
+<ModuleLayout moduleId="xuan" title="易经六十四卦" description="伏羲先天八卦，文王后天推演">
+  <div class="yijing-page">
+    <section class="trigrams-section">
+      <h2>八卦</h2>
+      <div class="trigrams-grid">
+        {trigrams.map(t => (
+          <div class="trigram-card">
+            <span class="trigram-symbol">{t.symbol}</span>
+            <div class="trigram-info">
+              <span class="trigram-name">{t.name}</span>
+              <span class="trigram-detail">{t.element} · {t.nature} · {t.direction}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="hexagrams-section">
+      <h2>六十四卦（节选）</h2>
+      <div class="hexagrams-grid">
+        {hexagrams.map(h => (
+          <div class="hexagram-card">
+            <div class="hexagram-header">
+              <span class="hexagram-number">{h.number}</span>
+              <span class="hexagram-symbol">{h.symbol}</span>
+              <span class="hexagram-name">{h.name}</span>
+            </div>
+            <div class="hexagram-meaning">{h.meaning}</div>
+            <div class="hexagram-judgment">
+              <span class="judgment-label}>断曰</span>
+              <span class="judgment-text">{h.judgment}</span>
+            </div>
+            <div class="hexagram-desc">{h.description}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="reading-method">
+      <h2>占卜要义</h2>
+      <div class="method-steps">
+        <div class="method-step">
+          <span class="step-number>一</span>
+          <h3>静心</h3>
+          <p>焚香沐浴，正襟危坐，摒除杂念，专心一意</p>
+        </div>
+        <div class="method-step">
+          <span class="step-number>二</span>
+          <h3>祈念</h3>
+          <p>心中默念所问之事，诚心祈求天地指引</p>
+        </div>
+        <div class="method-step">
+          <span class="step-number>三</span>
+          <h3>投掷</h3>
+          <p>双手捧三枚铜钱，心中默念，轻轻掷于桌上</p>
+        </div>
+        <div class="method-step">
+          <span class="step-number>四</span>
+          <h3>记录</h3>
+          <p>记录阴阳面组合，共掷六次，从下而上记录</p>
+        </div>
+        <div class="method-step">
+          <span class="step-number>五</span>
+          <h3>成卦</h3>
+          <p>六次结果合成一卦，查解卦辞，得其吉凶</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="book-recommendations">
+      <h2>典籍推荐</h2>
+      <div class="books-grid">
+        <div class="book-card">
+          <span class="book-icon>📜</span>
+          <div class="book-info">
+            <h3>《周易》</h3>
+            <p>群经之祖，大道之源</p>
+          </div>
+        </div>
+        <div class="book-card">
+          <span class="book-icon>📖</span>
+          <div class="book-info">
+            <h3>《易传》</h3>
+            <p>十翼注解，义理发挥</p>
+          </div>
+        </div>
+        <div class="book-card">
+          <span class="book-icon>📚</span>
+          <div class="book-info">
+            <h3>《梅花易数》</h3>
+            <p>邵雍所创，随时可占</p>
+          </div>
+        </div>
+        <div class="book-card">
+          <span class="book-icon>🔮</span>
+          <div class="book-info">
+            <h3>《火珠林》</h3>
+            <p>六爻之术，卦象精微</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .yijing-page {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      color: #8040f0;
+      font-size: 1.25rem;
+      margin: 2rem 0 1rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(128, 64, 240, 0.3);
+    }
+
+    .trigrams-section h2 {
+      margin-top: 0;
+    }
+
+    .trigrams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .trigram-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(128, 64, 240, 0.3);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .trigram-card:hover {
+      border-color: #8040f0;
+      box-shadow: 0 0 20px rgba(128, 64, 240, 0.2);
+    }
+
+    .trigram-symbol {
+      font-size: 2.5rem;
+      color: #8040f0;
+      text-shadow: 0 0 10px rgba(128, 64, 240, 0.5);
+    }
+
+    .trigram-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .trigram-name {
+      font-size: 1.1rem;
+      color: #e8d48b;
+    }
+
+    .trigram-detail {
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    .hexagrams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .hexagram-card {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(128, 64, 240, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .hexagram-card:hover {
+      border-color: #8040f0;
+      box-shadow: 0 0 20px rgba(128, 64, 240, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .hexagram-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hexagram-number {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(128, 64, 240, 0.2);
+      border-radius: 50%;
+      font-size: 0.85rem;
+      color: #8040f0;
+    }
+
+    .hexagram-symbol {
+      font-size: 1.5rem;
+      color: #8040f0;
+      letter-spacing: 4px;
+    }
+
+    .hexagram-name {
+      font-size: 1.5rem;
+      color: #e8d48b;
+    }
+
+    .hexagram-meaning {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 0.75rem;
+    }
+
+    .hexagram-judgment {
+      background: rgba(128, 64, 240, 0.1);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .judgment-label {
+      color: #8040f0;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+    }
+
+    .judgment-text {
+      color: #e8d48b;
+      font-size: 0.9rem;
+    }
+
+    .hexagram-desc {
+      font-size: 0.85rem;
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    .method-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .method-step {
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(128, 64, 240, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .step-number {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      background: #8040f0;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .method-step h3 {
+      color: #e8d48b;
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .method-step p {
+      color: #888;
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .book-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(10, 10, 15, 0.8);
+      border: 1px solid rgba(128, 64, 240, 0.3);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .book-card:hover {
+      border-color: #8040f0;
+      box-shadow: 0 0 15px rgba(128, 64, 240, 0.2);
+    }
+
+    .book-icon {
+      font-size: 2rem;
+    }
+
+    .book-info h3 {
+      color: #e8d48b;
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+    }
+
+    .book-info p {
+      color: #888;
+      margin: 0;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .trigrams-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .trigram-symbol {
+        font-size: 2rem;
+      }
+
+      .hexagrams-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .method-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</ModuleLayout>
