@@ -16,7 +16,7 @@ const { delay = 0, threshold = 0.1, class: className = '' } = Astro.props;
   <slot />
 </div>
 
-<script>
+<script lang="ts">
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const observerOptions = {

@@ -14,7 +14,7 @@ const {
 <div id="cursor-glow" class="cursor-glow"></div>
 <div id="cursor-trail" class="pointer-events-none fixed inset-0 z-[9998]"></div>
 
-<script define:vars={{ enableParticles, particleCount }}>
+<script lang="ts" define:vars={{ enableParticles, particleCount }}>
   class MouseTrail {
     private container: HTMLElement;
     private particles: HTMLElement[] = [];
@@ -24,7 +24,7 @@ const {
     private hue: number = 38;
 
     constructor() {
-      this.container = document.getElementById('cursor-trail');
+      this.container = document.getElementById('cursor-trail')!;
       this.maxParticles = enableParticles ? Math.min(particleCount, 15) : 0;
       this.isMobile = window.innerWidth < 768;
       this.performanceMode = this.detectPerformance();
@@ -99,7 +99,7 @@ const {
     private isMobile: boolean;
 
     constructor() {
-      this.el = document.getElementById('cursor-glow');
+      this.el = document.getElementById('cursor-glow')!;
       this.glow = document.createElement('div');
       this.glow.className = 'cursor-glow-inner';
       this.glow.style.cssText = `
