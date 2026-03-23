@@ -1,0 +1,443 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import FlipCard from '../../components/ui/FlipCard.astro';
+
+const destinyElements = ['木', '火', '土', '金', '水'];
+const zodiacAnimals = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+
+const destinyTypes = [
+  { type: '乾', element: '金', nature: '刚健', traits: ['领导力强', '意志坚定', '决策果断'], advice: '宜发挥领导才能，忌固执己见' },
+  { type: '坤', element: '土', nature: '柔顺', traits: ['包容心强', '稳重踏实', '善于协调'], advice: '宜团队合作，忌优柔寡断' },
+  { type: '震', element: '木', nature: '震动', traits: ['行动力强', '勇于开拓', '热情洋溢'], advice: '宜创新突破，忌冲动行事' },
+  { type: '巽', element: '木', nature: '进入', traits: ['智慧敏捷', '善于沟通', '适应力强'], advice: '宜学术研究，忌朝三暮四' },
+  { type: '坎', element: '水', nature: '危险', traits: ['深沉内敛', '意志坚强', '洞察力强'], advice: '宜深入研究，忌陷入困境' },
+  { type: '离', element: '火', nature: '光明', traits: ['热情开朗', '才华横溢', '追求理想'], advice: '宜施展才华，忌骄傲自满' },
+  { type: '艮', element: '土', nature: '停止', traits: ['稳重可靠', '意志坚定', '注重细节'], advice: '宜稳扎稳打，忌急于求成' },
+  { type: '兑', element: '金', nature: '喜悦', traits: ['善于表达', '人际和谐', '富有魅力'], advice: '宜社交活动，忌口舌是非' },
+];
+
+const lifeAspects = [
+  { aspect: '事业', score: 78, trend: '上升', desc: '贵人相助，运势亨通' },
+  { aspect: '财运', score: 65, trend: '平稳', desc: '正财稳定，横财需谨慎' },
+  { aspect: '感情', score: 72, trend: '上升', desc: '姻缘有望，单身者有桃花' },
+  { aspect: '健康', score: 85, trend: '稳定', desc: '身心和谐，注意休息' },
+  { aspect: '人际关系', score: 88, trend: '上升', desc: '社交运佳，朋友相助' },
+];
+---
+
+<ModuleLayout moduleId="xuan" title="命理推演" description="命理分析，八字合盘，流年运势">
+  <div class="destiny-page">
+    <section class="destiny-type">
+      <h2>命格分析</h2>
+      <div class="type-display">
+        <div class="type-main">
+          <span class="type-gua">乾</span>
+          <span class="type-name">乾为天卦</span>
+        </div>
+        <div class="type-info">
+          <div class="info-row">
+            <span class="info-label">五行</span>
+            <span class="info-value element-metal">金</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">性质</span>
+            <span class="info-value">刚健</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">日元</span>
+            <span class="info-value">壬水</span>
+          </div>
+        </div>
+      </div>
+      <div class="type-traits">
+        <h3>性格特点</h3>
+        <div class="traits-list">
+          <span class="trait-tag">领导力强</span>
+          <span class="trait-tag">意志坚定</span>
+          <span class="trait-tag">决策果断</span>
+          <span class="trait-tag">积极进取</span>
+        </div>
+      </div>
+      <div class="type-advice">
+        <h3>运势建议</h3>
+        <p>乾卦之人天生意志坚定，有领导之才。今年运势上扬，宜抓住机遇，勇猛精进。注意调理脾胃，金旺则水滞。</p>
+      </div>
+    </section>
+
+    <section class="life-aspects">
+      <h2>人生各方面运势</h2>
+      <div class="aspects-grid">
+        {lifeAspects.map((item) => (
+          <div class="aspect-card">
+            <div class="aspect-header">
+              <span class="aspect-name">{item.aspect}</span>
+              <span class={`aspect-trend ${item.trend}`}>{item.trend}</span>
+            </div>
+            <div class="aspect-score">
+              <div class="score-bar" style={`--score: ${item.score}%`}></div>
+              <span class="score-value">{item.score}</span>
+            </div>
+            <p class="aspect-desc">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="five-elements-destiny">
+      <h2>五行分析</h2>
+      <div class="elements-balance">
+        <div class="balance-chart">
+          <div class="balance-item">
+            <span class="element-icon">🌳</span>
+            <span class="element-name">木</span>
+            <div class="element-bar">
+              <div class="bar-fill low"></div>
+            </div>
+            <span class="element-status">偏弱</span>
+          </div>
+          <div class="balance-item">
+            <span class="element-icon">🔥</span>
+            <span class="element-name">火</span>
+            <div class="element-bar">
+              <div class="bar-fill normal"></div>
+            </div>
+            <span class="element-status">平衡</span>
+          </div>
+          <div class="balance-item">
+            <span class="element-icon">🪨</span>
+            <span class="element-name">土</span>
+            <div class="element-bar">
+              <div class="bar-fill high"></div>
+            </div>
+            <span class="element-status">过旺</span>
+          </div>
+          <div class="balance-item">
+            <span class="element-icon">⚔️</span>
+            <span class="element-name">金</span>
+            <div class="element-bar">
+              <div class="bar-fill normal"></div>
+            </div>
+            <span class="element-status">平衡</span>
+          </div>
+          <div class="balance-item">
+            <span class="element-icon">💧</span>
+            <span class="element-name">水</span>
+            <div class="element-bar">
+              <div class="bar-fill normal"></div>
+            </div>
+            <span class="element-status">平衡</span>
+          </div>
+        </div>
+        <div class="balance-summary">
+          <p>日元壬水生于土旺之月，水被土克，需要金来生水。需要加强水、金气场，可多接触金属器物，或在西方发展。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="trigrams-destiny">
+      <h2>八卦命格</h2>
+      <p class="section-hint">点击卡片查看详细性格分析</p>
+      <div class="trigrams-grid">
+        {destinyTypes.map((trigram, index) => (
+          <FlipCard
+            id={`trigram-${index}`}
+            title={trigram.type}
+            description={trigram.nature}
+            icon={trigram.type}
+            backTitle={`${trigram.type}卦详解`}
+            backDescription={`${trigram.advice}\n\n五行属性：${trigram.element}\n性格特点：${trigram.traits.join('、')}`}
+            backIcon="🧘"
+            type="click"
+            color="amethyst"
+            class="flip-card-item"
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="yearly-guidance">
+      <h2>流年运势</h2>
+      <div class="year-grid">
+        <div class="year-item current">
+          <span class="year-label">今年</span>
+          <span class="year-stem">丙寅</span>
+          <span class="year-element">木火</span>
+          <p class="year-desc">木火相生，运势上扬，宜积极进取</p>
+        </div>
+        <div class="year-item">
+          <span class="year-label">明年</span>
+          <span class="year-stem">丁卯</span>
+          <span class="year-element">木火</span>
+          <p class="year-desc">木火依然旺盛，延续今年好运</p>
+        </div>
+        <div class="year-item">
+          <span class="year-label">后年</span>
+          <span class="year-stem">戊辰</span>
+          <span class="year-element">土</span>
+          <p class="year-desc">土气加重，宜守成待机</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .destiny-page { max-width: 1000px; margin: 0 auto; }
+
+    .destiny-type, .life-aspects, .five-elements-destiny, .trigrams-destiny, .yearly-guidance {
+      background: rgba(128, 64, 240, 0.05);
+      border: 1px solid rgba(128, 64, 240, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: #a78bfa;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(128, 64, 240, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .section-hint {
+      color: #888;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .type-display {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .type-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      background: rgba(128, 64, 240, 0.15);
+      border-radius: 12px;
+    }
+
+    .type-gua {
+      font-size: 3rem;
+      color: #c4b5fd;
+      font-weight: 700;
+    }
+
+    .type-name { color: #a78bfa; margin-top: 0.5rem; }
+
+    .type-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .info-label { color: #888; min-width: 50px; }
+    .info-value { color: #c4b5fd; font-weight: 600; }
+    .info-value.element-metal { color: #c0c0c0; }
+
+    .type-traits h3, .type-advice h3 {
+      color: #a78bfa;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .traits-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+    .trait-tag {
+      padding: 0.25rem 0.75rem;
+      background: rgba(128, 64, 240, 0.2);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: #c4b5fd;
+    }
+
+    .type-advice p { color: #aaa; font-size: 0.9rem; line-height: 1.6; }
+
+    .aspects-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+    }
+
+    .aspect-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .aspect-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .aspect-name { color: #c4b5fd; font-size: 0.9rem; }
+    .aspect-trend { font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 4px; }
+    .aspect-trend.上升 { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+    .aspect-trend.平稳, .aspect-trend.稳定 { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+
+    .aspect-score { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+
+    .score-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .score-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: var(--score);
+      background: linear-gradient(90deg, #a78bfa, #c4b5fd);
+      border-radius: 3px;
+    }
+
+    .score-value { color: #c4b5fd; font-size: 0.9rem; font-weight: 600; }
+
+    .aspect-desc { color: #888; font-size: 0.7rem; line-height: 1.4; }
+
+    .elements-balance { }
+
+    .balance-chart { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+
+    .balance-item {
+      display: grid;
+      grid-template-columns: 40px 50px 1fr 60px;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .element-icon { font-size: 1.25rem; text-align: center; }
+    .element-name { color: #c4b5fd; font-weight: 600; }
+
+    .element-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .bar-fill { height: 100%; border-radius: 4px; }
+    .bar-fill.low { width: 30%; background: #60a5fa; }
+    .bar-fill.normal { width: 60%; background: #a78bfa; }
+    .bar-fill.high { width: 90%; background: #f87171; }
+
+    .element-status { font-size: 0.8rem; }
+    .element-status:contains('偏弱') { color: #60a5fa; }
+    .element-status:contains('平衡') { color: #a78bfa; }
+    .element-status:contains('过旺') { color: #f87171; }
+
+    .balance-summary {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      border-radius: 6px;
+    }
+
+    .balance-summary p { color: #aaa; font-size: 0.85rem; line-height: 1.6; }
+
+    .trigrams-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .flip-card-item {
+      height: 140px;
+    }
+
+    .trigram-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      opacity: 0.6;
+    }
+
+    .trigram-card.active {
+      opacity: 1;
+      border: 1px solid rgba(128, 64, 240, 0.5);
+    }
+
+    .trigram-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .trigram-name { color: #c4b5fd; font-size: 1.1rem; font-weight: 600; }
+
+    .trigram-element {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .trigram-element.木 { background: rgba(34, 139, 34, 0.3); color: #4ade80; }
+    .trigram-element.火 { background: rgba(255, 69, 0, 0.3); color: #f87171; }
+    .trigram-element.土 { background: rgba(139, 69, 19, 0.3); color: #fbbf24; }
+    .trigram-element.金 { background: rgba(192, 192, 192, 0.3); color: #c0c0c0; }
+    .trigram-element.水 { background: rgba(30, 144, 255, 0.3); color: #60a5fa; }
+
+    .trigram-nature { color: #888; font-size: 0.8rem; margin-bottom: 0.5rem; }
+
+    .trigram-traits { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+
+    .trait {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.4rem;
+      background: rgba(128, 64, 240, 0.15);
+      border-radius: 3px;
+      color: #a78bfa;
+    }
+
+    .year-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .year-item {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .year-item.current {
+      border: 1px solid rgba(128, 64, 240, 0.5);
+    }
+
+    .year-label { color: #888; font-size: 0.8rem; display: block; margin-bottom: 0.5rem; }
+    .year-stem { color: #c4b5fd; font-size: 1.2rem; font-weight: 600; display: block; }
+    .year-element { color: #a78bfa; font-size: 0.8rem; display: block; margin: 0.25rem 0; }
+    .year-desc { color: #888; font-size: 0.75rem; margin-top: 0.5rem; }
+
+    @media (max-width: 768px) {
+      .aspects-grid { grid-template-columns: repeat(2, 1fr); }
+      .trigrams-grid { grid-template-columns: repeat(2, 1fr); }
+      .year-grid { grid-template-columns: 1fr; }
+      .balance-item { grid-template-columns: 30px 40px 1fr 50px; gap: 0.5rem; }
+    }
+  </style>
+</ModuleLayout>

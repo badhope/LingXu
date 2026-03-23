@@ -1,11 +1,12 @@
-const BASE_PATH = '/';
+import { SITE_CONFIG } from './constants';
 
 export function withBase(path: string): string {
-  if (path.startsWith(BASE_PATH)) {
+  const base = SITE_CONFIG.base || '/';
+  if (path.startsWith(base)) {
     return path;
   }
   if (path.startsWith('http') || path.startsWith('mailto:') || path.startsWith('tel:') || path.startsWith('#')) {
     return path;
   }
-  return `${BASE_PATH}${path}`;
+  return `${base}${path}`;
 }

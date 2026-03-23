@@ -1,0 +1,318 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const caveRegions = [
+  { name: '王屋山', region: '河南', rank: '第一', element: '金', feature: '洞天正中，万山之祖', practice: '内丹修炼', atmosphere: '清幽' },
+  { name: '少室山', region: '河南', rank: '第二', element: '土', feature: '少林禅宗，武术圣地', practice: '禅武双修', atmosphere: '庄严' },
+  { name: '太华山', region: '陕西', rank: '第三', element: '金', feature: '莲花奇峰，道教名山', practice: '剑仙道术', atmosphere: '险峻' },
+  { name: '武夷山', region: '福建', rank: '第四', element: '木', feature: '丹霞地貌，茶道渊源', practice: '制茶炼丹', atmosphere: '灵秀' },
+  { name: '峨眉山', region: '四川', rank: '第五', element: '金', feature: '普贤道场，佛道合一', practice: '峨眉剑法', atmosphere: '神秘' },
+  { name: '庐山', region: '江西', rank: '第六', element: '水', feature: '云海奇松，仙人旧迹', practice: '隐居清修', atmosphere: '飘渺' },
+];
+
+const blessedLands = [
+  { name: '终南山', type: '福地', region: '陕西', desc: '道教圣地，隐士云集', level: '甲' },
+  { name: '罗浮山', type: '福地', region: '广东', desc: '葛洪炼丹处', level: '甲' },
+  { name: '青城山', type: '福地', region: '四川', desc: '天师道祖庭', level: '乙' },
+  { name: '龙虎山', type: '福地', region: '江西', desc: '张天师传承', level: '乙' },
+  { name: '三清山', type: '福地', region: '江西', desc: '道教名山', level: '乙' },
+  { name: '武当山', type: '福地', region: '湖北', desc: '太极张三丰', level: '甲' },
+];
+---
+
+<ModuleLayout moduleId="di" title="洞天福地" description="三十六洞天，七十二福地，仙山位置">
+  <div class="caves-page">
+    <section class="intro-section">
+      <h2>洞天福地概述</h2>
+      <p>洞天者，通天之穴也。福地者，仙人所居之处。自古以来，修仙之人多寻访名山大川，以求灵气充沛之所修行。三十六洞天，七十二福地，分布于九州各地，皆为天地灵气汇聚之地。</p>
+    </section>
+
+    <section class="cave-regions">
+      <h2>十大洞天</h2>
+      <div class="caves-grid">
+        {caveRegions.map((cave) => (
+          <div class={`cave-card ${cave.element}`}>
+            <div class="cave-header">
+              <span class="cave-rank">{cave.rank}</span>
+              <span class="cave-name">{cave.name}</span>
+              <span class="cave-region">{cave.region}</span>
+            </div>
+            <div class="cave-body">
+              <div class="cave-detail">
+                <span class="detail-icon">⚗️</span>
+                <span class="detail-text">{cave.feature}</span>
+              </div>
+              <div class="cave-detail">
+                <span class="detail-icon">🧘</span>
+                <span class="detail-text">{cave.practice}</span>
+              </div>
+              <div class="cave-meta">
+                <span class={`element-badge ${cave.element}`}>{cave.element}</span>
+                <span class="atmosphere">{cave.atmosphere}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="blessed-lands">
+      <h2>福地精选</h2>
+      <div class="lands-table">
+        <div class="table-header">
+          <span>名称</span>
+          <span>类型</span>
+          <span>地区</span>
+          <span>简介</span>
+          <span>等级</span>
+        </div>
+        {blessedLands.map((land) => (
+          <div class="table-row">
+            <span class="land-name">{land.name}</span>
+            <span class="land-type">{land.type}</span>
+            <span class="land-region">{land.region}</span>
+            <span class="land-desc">{land.desc}</span>
+            <span class={`land-level ${land.level}`}>{land.level}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="cave-selection">
+      <h2>洞天选择指南</h2>
+      <div class="selection-cards">
+        <div class="selection-card">
+          <h3>按五行选择</h3>
+          <div class="element-guide">
+            <div class="guide-item">
+              <span class="element-icon">🪨</span>
+              <span class="guide-label">土属洞天</span>
+              <span class="guide-desc">稳定性强，适合打基础</span>
+            </div>
+            <div class="guide-item">
+              <span class="element-icon">⚔️</span>
+              <span class="guide-label">金属洞天</span>
+              <span class="guide-desc">锋锐之气，适合精进突破</span>
+            </div>
+            <div class="guide-item">
+              <span class="element-icon">🌳</span>
+              <span class="guide-label">木属洞天</span>
+              <span class="guide-desc">生发之气，适合养气修炼</span>
+            </div>
+            <div class="guide-item">
+              <span class="element-icon">💧</span>
+              <span class="guide-label">水属洞天</span>
+              <span class="guide-desc">流动之气，适合悟道参玄</span>
+            </div>
+            <div class="guide-item">
+              <span class="element-icon">🔥</span>
+              <span class="guide-label">火属洞天</span>
+              <span class="guide-desc">刚烈之气，适合淬体炼形</span>
+            </div>
+          </div>
+        </div>
+        <div class="selection-card">
+          <h3>按修行阶段</h3>
+          <div class="stage-guide">
+            <div class="stage-item">
+              <span class="stage-level">炼气期</span>
+              <span class="stage-desc">宜选灵气温和之地，如罗浮山、武夷山</span>
+            </div>
+            <div class="stage-item">
+              <span class="stage-level">筑基期</span>
+              <span class="stage-desc">宜选灵气浓郁之地，如王屋山、终南山</span>
+            </div>
+            <div class="stage-item">
+              <span class="stage-level">金丹期</span>
+              <span class="stage-desc">宜选天地交汇之地，如华山、峨眉山</span>
+            </div>
+            <div class="stage-item">
+              <span class="stage-level">元婴期</span>
+              <span class="stage-desc">宜选洞天核心之地，如昆仑山、青城山</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="spiritual-map">
+      <h2>灵气分布</h2>
+      <div class="map-legend">
+        <div class="legend-item">
+          <span class="legend-color high"></span>
+          <span class="legend-text">灵气充沛区</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color medium"></span>
+          <span class="legend-text">灵气一般区</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color low"></span>
+          <span class="legend-text">灵气匮乏区</span>
+        </div>
+      </div>
+      <p class="map-note">九州之内，灵气以昆仑山为源头，沿龙脉流向四方。名山大川多为灵气汇聚之所，城市平原则灵气稀薄。</p>
+    </section>
+  </div>
+
+  <style>
+    .caves-page { max-width: 1000px; margin: 0 auto; }
+
+    .intro-section, .cave-regions, .blessed-lands, .cave-selection, .spiritual-map {
+      background: rgba(64, 176, 64, 0.05);
+      border: 1px solid rgba(64, 176, 64, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: #40b040;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(64, 176, 64, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .caves-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .cave-card {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .cave-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: rgba(64, 176, 64, 0.15);
+    }
+
+    .cave-rank {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    .cave-name { color: #66d066; font-weight: 600; flex: 1; }
+    .cave-region { color: #888; font-size: 0.8rem; }
+
+    .cave-body { padding: 1rem; }
+
+    .cave-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .detail-icon { font-size: 1rem; }
+    .detail-text { color: #ccc; font-size: 0.85rem; }
+
+    .cave-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .element-badge {
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .element-badge.金 { background: rgba(192, 192, 192, 0.2); color: #c0c0c0; }
+    .element-badge.木 { background: rgba(34, 139, 34, 0.2); color: #4ade80; }
+    .element-badge.水 { background: rgba(30, 144, 255, 0.2); color: #60a5fa; }
+    .element-badge.火 { background: rgba(255, 69, 0, 0.2); color: #f87171; }
+    .element-badge.土 { background: rgba(139, 69, 19, 0.2); color: #fbbf24; }
+
+    .atmosphere { color: #888; font-size: 0.8rem; }
+
+    .lands-table { width: 100%; }
+
+    .table-header, .table-row {
+      display: grid;
+      grid-template-columns: 1fr 0.8fr 0.8fr 2fr 0.5fr;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .table-header { background: rgba(64, 176, 64, 0.2); border-radius: 4px; color: #40b040; }
+
+    .land-name { color: #66d066; font-weight: 600; }
+    .land-type { color: #888; }
+    .land-region { color: #aaa; }
+    .land-desc { color: #888; font-size: 0.8rem; text-align: left; }
+    .land-level { font-weight: 600; }
+    .land-level.甲 { color: #f0c040; }
+    .land-level.乙 { color: #888; }
+
+    .selection-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+    .selection-card h3 { color: #40b040; margin-bottom: 1rem; font-size: 1rem; }
+
+    .element-guide { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .guide-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+
+    .element-icon { font-size: 1.25rem; }
+    .guide-label { color: #66d066; min-width: 80px; }
+    .guide-desc { color: #888; font-size: 0.8rem; }
+
+    .stage-guide { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .stage-item {
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+
+    .stage-level { color: #66d066; display: block; margin-bottom: 0.25rem; font-size: 0.9rem; }
+    .stage-desc { color: #888; font-size: 0.8rem; }
+
+    .map-legend { display: flex; gap: 2rem; margin-bottom: 1rem; }
+
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+
+    .legend-color {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 4px;
+    }
+
+    .legend-color.high { background: rgba(74, 222, 128, 0.5); }
+    .legend-color.medium { background: rgba(251, 191, 36, 0.5); }
+    .legend-color.low { background: rgba(107, 114, 128, 0.5); }
+
+    .legend-text { color: #888; font-size: 0.85rem; }
+
+    .map-note { color: #888; font-size: 0.9rem; line-height: 1.6; }
+
+    @media (max-width: 768px) {
+      .caves-grid { grid-template-columns: repeat(2, 1fr); }
+      .selection-cards { grid-template-columns: 1fr; }
+      .table-header, .table-row { grid-template-columns: 1fr 0.6fr 0.6fr; }
+      .land-desc, .land-level { display: none; }
+    }
+  </style>
+</ModuleLayout>

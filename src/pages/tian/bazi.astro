@@ -1,0 +1,410 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const birthYear = 1990;
+const birthMonth = 3;
+const birthDay = 15;
+
+const celestialStems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+const terrestrialBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+const zodiacAnimals = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+
+const fiveElements = {
+  '甲': { element: '木', nature: '阳', position: '东方' },
+  '乙': { element: '木', nature: '阴', position: '东方' },
+  '丙': { element: '火', nature: '阳', position: '南方' },
+  '丁': { element: '火', nature: '阴', position: '南方' },
+  '戊': { element: '土', nature: '阳', position: '中央' },
+  '己': { element: '土', nature: '阴', position: '中央' },
+  '庚': { element: '金', nature: '阳', position: '西方' },
+  '辛': { element: '金', nature: '阴', position: '西方' },
+  '壬': { element: '水', nature: '阳', position: '北方' },
+  '癸': { element: '水', nature: '阴', position: '北方' },
+};
+
+const heavenlyStems = celestialStems.map((stem, i) => ({
+  stem,
+  element: fiveElements[stem].element,
+  nature: fiveElements[stem].nature,
+}));
+
+const earthlyBranches = terrestrialBranches.map((branch, i) => ({
+  branch,
+  animal: zodiacAnimals[i],
+  element: ['水', '土', '木', '木', '土', '火', '火', '土', '金', '金', '土', '水'][i],
+}));
+---
+
+<ModuleLayout moduleId="tian" title="八字排盘" description="生辰八字，四柱推演，命盘分析">
+  <div class="bazi-page">
+    <section class="birth-info">
+      <h2>命主信息</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">出生年月</span>
+          <span class="info-value">{birthYear}年{birthMonth}月{birthDay}日</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">年柱</span>
+          <span class="info-value">庚午</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">月柱</span>
+          <span class="info-value">己卯</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">日柱</span>
+          <span class="info-value">戊子</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">时柱</span>
+          <span class="info-value">壬子</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="four-pillars">
+      <h2>四柱八字</h2>
+      <div class="pillars-display">
+        <div class="pillar-column">
+          <div class="pillar-header">年柱</div>
+          <div class="pillar-content">
+            <div class="stem">庚</div>
+            <div class="branch">午</div>
+          </div>
+          <div class="pillar-meta">
+            <span class="element">金</span>
+            <span class="animal">马</span>
+          </div>
+        </div>
+        <div class="pillar-column">
+          <div class="pillar-header">月柱</div>
+          <div class="pillar-content">
+            <div class="stem">己</div>
+            <div class="branch">卯</div>
+          </div>
+          <div class="pillar-meta">
+            <span class="element">土</span>
+            <span class="animal">兔</span>
+          </div>
+        </div>
+        <div class="pillar-column">
+          <div class="pillar-header">日柱</div>
+          <div class="pillar-content">
+            <div class="stem">戊</div>
+            <div class="branch">子</div>
+          </div>
+          <div class="pillar-meta">
+            <span class="element">土</span>
+            <span class="animal">鼠</span>
+          </div>
+        </div>
+        <div class="pillar-column">
+          <div class="pillar-header">时柱</div>
+          <div class="pillar-content">
+            <div class="stem">壬</div>
+            <div class="branch">子</div>
+          </div>
+          <div class="pillar-meta">
+            <span class="element">水</span>
+            <span class="animal">鼠</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="five-elements">
+      <h2>五行分析</h2>
+      <div class="elements-chart">
+        <div class="element-item wood">
+          <span class="element-icon">🌳</span>
+          <span class="element-name">木</span>
+          <span class="element-count">1</span>
+        </div>
+        <div class="element-item fire">
+          <span class="element-icon">🔥</span>
+          <span class="element-name">火</span>
+          <span class="element-count">1</span>
+        </div>
+        <div class="element-item earth">
+          <span class="element-icon">🪨</span>
+          <span class="element-name">土</span>
+          <span class="element-count">2</span>
+        </div>
+        <div class="element-item metal">
+          <span class="element-icon">⚔️</span>
+          <span class="element-name">金</span>
+          <span class="element-count">1</span>
+        </div>
+        <div class="element-item water">
+          <span class="element-icon">💧</span>
+          <span class="element-name">水</span>
+          <span class="element-count">2</span>
+        </div>
+      </div>
+      <div class="element-summary">
+        <p>五行统计：木1 火1 土2 金1 水2</p>
+        <p>日主戊土，生于卯月，木旺土虚，需火生扶</p>
+      </div>
+    </section>
+
+    <section class="ten-gods">
+      <h2>十神分析</h2>
+      <div class="gods-grid">
+        <div class="god-item">
+          <span class="god-name">比肩</span>
+          <span class="god-stem">戊</span>
+          <span class="god-desc">兄弟朋友</span>
+        </div>
+        <div class="god-item">
+          <span class="god-name">劫财</span>
+          <span class="god-stem">己</span>
+          <span class="god-desc">异性竞争</span>
+        </div>
+        <div class="god-item">
+          <span class="god-name">食神</span>
+          <span class="god-stem">庚</span>
+          <span class="god-desc">才华福禄</span>
+        </div>
+        <div class="god-item">
+          <span class="god-name">伤官</span>
+          <span class="god-stem">辛</span>
+          <span class="god-desc">才华表现</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="destiny-analysis">
+      <h2>命理分析</h2>
+      <div class="analysis-card">
+        <h3>性格特点</h3>
+        <p>戊土日主之人，性格稳重厚重，诚实守信，有包容心。做事踏实，不喜虚华，重视实际利益。</p>
+      </div>
+      <div class="analysis-card">
+        <h3>事业运势</h3>
+        <p>土型人适宜从事地产、建筑、农业、财务等稳定行业。早年运势平平，中年后渐入佳境。</p>
+      </div>
+      <div class="analysis-card">
+        <h3>健康注意</h3>
+        <p>注意脾胃调理，土型人消化系统较弱，不宜过度思虑。</p>
+      </div>
+    </section>
+
+    <section class="reference-section">
+      <h2>天干地支参考表</h2>
+      <div class="reference-tables">
+        <div class="ref-table">
+          <h3>十天干</h3>
+          <div class="stem-list">
+            {heavenlyStems.map((h, i) => (
+              <span class={`stem-cell ${h.element}`}>{h.stem}</span>
+            ))}
+          </div>
+        </div>
+        <div class="ref-table">
+          <h3>十二地支</h3>
+          <div class="branch-list">
+            {earthlyBranches.map((e, i) => (
+              <span class={`branch-cell ${e.element}`}>{e.branch}<small>{e.animal}</small></span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .bazi-page {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .birth-info, .four-pillars, .five-elements, .ten-gods, .destiny-analysis, .reference-section {
+      background: rgba(240, 192, 64, 0.05);
+      border: 1px solid rgba(240, 192, 64, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: #f0c040;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(240, 192, 64, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      color: #f0c040;
+      font-size: 1.1rem;
+    }
+
+    .pillars-display {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .pillar-column {
+      text-align: center;
+    }
+
+    .pillar-header {
+      background: rgba(240, 192, 64, 0.2);
+      color: #f0c040;
+      padding: 0.5rem;
+      border-radius: 4px 4px 0 0;
+      font-size: 0.875rem;
+    }
+
+    .pillar-content {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .stem, .branch {
+      font-size: 1.75rem;
+      color: #ffe066;
+      font-weight: 600;
+    }
+
+    .pillar-meta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.5rem;
+      background: rgba(240, 192, 64, 0.1);
+      border-radius: 0 0 4px 4px;
+      font-size: 0.875rem;
+    }
+
+    .element { color: #f0c040; }
+    .animal { color: #888; }
+
+    .elements-chart {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1rem;
+    }
+
+    .element-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 8px;
+      min-width: 80px;
+    }
+
+    .element-item.wood { background: rgba(34, 139, 34, 0.2); }
+    .element-item.fire { background: rgba(255, 69, 0, 0.2); }
+    .element-item.earth { background: rgba(139, 69, 19, 0.2); }
+    .element-item.metal { background: rgba(192, 192, 192, 0.2); }
+    .element-item.water { background: rgba(30, 144, 255, 0.2); }
+
+    .element-icon { font-size: 1.5rem; }
+    .element-name { color: #ffe066; font-size: 1rem; margin: 0.25rem 0; }
+    .element-count { color: #888; font-size: 0.875rem; }
+
+    .gods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .god-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+
+    .god-name { color: #f0c040; font-size: 0.875rem; }
+    .god-stem { color: #ffe066; font-size: 1.5rem; font-weight: 600; margin: 0.25rem 0; }
+    .god-desc { color: #888; font-size: 0.75rem; }
+
+    .analysis-card {
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .analysis-card h3 {
+      color: #f0c040;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .analysis-card p { color: #ccc; font-size: 0.875rem; line-height: 1.6; }
+
+    .reference-tables {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .ref-table h3 {
+      color: #f0c040;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stem-list, .branch-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .stem-cell, .branch-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: #ffe066;
+    }
+
+    .stem-cell.木, .branch-cell.木 { background: rgba(34, 139, 34, 0.3); }
+    .stem-cell.火, .branch-cell.火 { background: rgba(255, 69, 0, 0.3); }
+    .stem-cell.土, .branch-cell.土 { background: rgba(139, 69, 19, 0.3); }
+    .stem-cell.金, .branch-cell.金 { background: rgba(192, 192, 192, 0.3); }
+    .stem-cell.水, .branch-cell.水 { background: rgba(30, 144, 255, 0.3); }
+
+    .branch-cell small { font-size: 0.5rem; color: #888; }
+
+    @media (max-width: 768px) {
+      .pillars-display { grid-template-columns: repeat(2, 1fr); }
+      .elements-chart { flex-wrap: wrap; }
+    }
+  </style>
+</ModuleLayout>

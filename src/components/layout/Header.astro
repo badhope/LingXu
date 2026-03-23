@@ -1,12 +1,12 @@
 ---
-import { NAV_ITEMS } from '@data/navigation';
+import { NAV_ITEMS_V2 } from '@data/navigation';
 import { SITE_CONFIG } from '@lib/constants';
 import SettingsPanel from '@components/ui/SettingsPanel.astro';
 
 const pathname = Astro.url.pathname;
 const basePath = import.meta.env.BASE_URL || SITE_CONFIG.base;
 
-const NAV_ITEMS_WITH_BASE = NAV_ITEMS.map((item) => ({
+const NAV_ITEMS_WITH_BASE = NAV_ITEMS_V2.map((item) => ({
   ...item,
   href: `${basePath}${item.href}`,
 }));

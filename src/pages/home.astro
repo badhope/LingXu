@@ -17,11 +17,17 @@ const MODULES = [
 
 <BaseLayout title="灵墟 - 天地玄黄宇宙洪荒">
   <div class="home-container">
-    <div class="stars-layer"></div>
+    <div class="stars-container">
+      <canvas id="stars-canvas"></canvas>
+    </div>
+    <div class="nebula-layer"></div>
     <div class="mist-layer"></div>
 
     <header class="home-header">
-      <h1 class="site-title">灵墟</h1>
+      <h1 class="site-title">
+        <span class="title-word">灵</span>
+        <span class="title-word">墟</span>
+      </h1>
       <p class="site-subtitle">末法时代 · 失落修行文明档案馆</p>
     </header>
 
@@ -40,6 +46,7 @@ const MODULES = [
           </span>
           <span class="char-desc">{module.description}</span>
           <div class="char-glow"></div>
+          <div class="char-particles"></div>
         </a>
       ))}
     </main>
@@ -77,6 +84,7 @@ const MODULES = [
       <div class="orbit orbit-1"></div>
       <div class="orbit orbit-2"></div>
       <div class="orbit orbit-3"></div>
+      <div class="orbit orbit-4"></div>
     </div>
   </div>
 
@@ -93,28 +101,41 @@ const MODULES = [
       overflow: hidden;
     }
 
-    .stars-layer {
+    .stars-container {
       position: absolute;
       inset: 0;
-      background-image:
-        radial-gradient(2px 2px at 100px 50px, rgba(201, 162, 39, 0.8), transparent),
-        radial-gradient(2px 2px at 200px 150px, rgba(212, 175, 55, 0.6), transparent),
-        radial-gradient(1px 1px at 300px 80px, rgba(232, 212, 139, 0.7), transparent),
-        radial-gradient(2px 2px at 400px 200px, rgba(201, 162, 39, 0.5), transparent),
-        radial-gradient(1px 1px at 500px 120px, rgba(212, 175, 55, 0.6), transparent),
-        radial-gradient(2px 2px at 150px 250px, rgba(232, 212, 139, 0.7), transparent),
-        radial-gradient(1px 1px at 350px 300px, rgba(201, 162, 39, 0.5), transparent),
-        radial-gradient(2px 2px at 50px 180px, rgba(212, 175, 55, 0.6), transparent);
-      background-size: 550px 400px;
-      animation: drift 60s linear infinite;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    #stars-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .nebula-layer {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(201, 162, 39, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(107, 74, 138, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(45, 138, 138, 0.02) 0%, transparent 60%);
+      animation: nebulaPulse 20s ease-in-out infinite;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    @keyframes nebulaPulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
     }
 
     .mist-layer {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse at 20% 30%, rgba(45, 138, 138, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(107, 74, 138, 0.1) 0%, transparent 50%);
+        radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(5, 5, 8, 0.6) 100%);
+      z-index: 3;
       pointer-events: none;
     }
 
@@ -122,18 +143,56 @@ const MODULES = [
       text-align: center;
       margin-bottom: 3rem;
       z-index: 10;
+      position: relative;
     }
 
     .site-title {
       font-size: 4rem;
       font-weight: 400;
-      color: #e8d48b;
       letter-spacing: 0.5em;
       margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 0.3em;
+    }
+
+    .title-word {
+      color: #e8d48b;
       text-shadow:
         0 0 20px rgba(201, 162, 39, 0.5),
-        0 0 40px rgba(201, 162, 39, 0.3);
-      animation: titleGlow 4s ease-in-out infinite;
+        0 0 40px rgba(201, 162, 39, 0.3),
+        0 0 60px rgba(201, 162, 39, 0.2);
+      animation: titleGlow 4s ease-in-out infinite, fadeSlideDown 1s ease backwards;
+      will-change: transform, text-shadow;
+    }
+
+    .title-word:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        text-shadow:
+          0 0 20px rgba(201, 162, 39, 0.5),
+          0 0 40px rgba(201, 162, 39, 0.3);
+      }
+      50% {
+        text-shadow:
+          0 0 30px rgba(201, 162, 39, 0.7),
+          0 0 60px rgba(201, 162, 39, 0.4),
+          0 0 80px rgba(201, 162, 39, 0.2);
+      }
+    }
+
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .site-subtitle {
@@ -141,6 +200,7 @@ const MODULES = [
       color: #888;
       letter-spacing: 0.3em;
       margin-top: 1rem;
+      animation: fadeIn 1s ease 0.3s backwards;
     }
 
     .modules-grid {
@@ -159,12 +219,13 @@ const MODULES = [
       padding: 2rem 1.5rem;
       background: rgba(10, 10, 15, 0.8);
       border: 1px solid rgba(201, 162, 39, 0.2);
-      border-radius: 8px;
+      border-radius: 12px;
       text-decoration: none;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden;
       animation: fadeSlideIn 0.8s ease backwards;
       animation-delay: var(--delay);
+      will-change: transform, box-shadow;
     }
 
     .module-char::before {
@@ -176,16 +237,32 @@ const MODULES = [
       transition: opacity 0.4s ease;
     }
 
+    .module-char::after {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: radial-gradient(circle, var(--char-color) 0%, transparent 70%);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.6s ease;
+      pointer-events: none;
+    }
+
     .module-char:hover {
       transform: translateY(-8px) scale(1.05);
       border-color: var(--char-color);
       box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.5),
-        0 0 30px color-mix(in srgb, var(--char-color) 30%, transparent);
+        0 0 40px color-mix(in srgb, var(--char-color) 30%, transparent);
     }
 
     .module-char:hover::before {
       opacity: 0.15;
+    }
+
+    .module-char:hover::after {
+      opacity: 0.1;
+      transform: scale(1.5);
     }
 
     .module-char:hover .char {
@@ -197,13 +274,18 @@ const MODULES = [
 
     .module-char:hover .char-glow {
       opacity: 0.6;
+      transform: translateX(-50%) scale(1.2);
+    }
+
+    .module-char:hover .char-particles {
+      opacity: 1;
     }
 
     .char {
       font-size: 3.5rem;
       color: var(--char-color);
       line-height: 1;
-      transition: all 0.4s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       z-index: 2;
     }
@@ -238,6 +320,11 @@ const MODULES = [
       line-height: 1.4;
       position: relative;
       z-index: 2;
+      transition: color 0.3s ease;
+    }
+
+    .module-char:hover .char-desc {
+      color: #888;
     }
 
     .char-glow {
@@ -249,8 +336,46 @@ const MODULES = [
       height: 100px;
       background: radial-gradient(circle, var(--char-color), transparent 70%);
       opacity: 0;
+      transition: all 0.4s ease;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .char-particles {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
       transition: opacity 0.4s ease;
       pointer-events: none;
+      overflow: hidden;
+    }
+
+    .char-particles::before,
+    .char-particles::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--char-color);
+      border-radius: 50%;
+      animation: particleFloat 2s ease-in-out infinite;
+    }
+
+    .char-particles::before {
+      top: 20%;
+      left: 20%;
+      animation-delay: 0s;
+    }
+
+    .char-particles::after {
+      bottom: 30%;
+      right: 25%;
+      animation-delay: 0.5s;
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+      50% { transform: translate(10px, -15px) scale(1.2); opacity: 1; }
     }
 
     .poem-line {
@@ -262,6 +387,7 @@ const MODULES = [
       color: #c9a227;
       letter-spacing: 0.3em;
       animation: fadeIn 1s ease 0.8s backwards;
+      z-index: 10;
     }
 
     .poem-line .separator {
@@ -283,36 +409,49 @@ const MODULES = [
       padding: 0.75rem 1.5rem;
       background: rgba(10, 10, 15, 0.6);
       border: 1px solid rgba(201, 162, 39, 0.3);
-      border-radius: 4px;
+      border-radius: 6px;
       color: #c9a227;
       text-decoration: none;
       font-size: 0.9rem;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(8px);
+      will-change: transform, background, border-color;
     }
 
     .nav-btn:hover {
-      background: rgba(201, 162, 39, 0.1);
+      background: rgba(201, 162, 39, 0.15);
       border-color: #c9a227;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(201, 162, 39, 0.2);
+    }
+
+    .nav-btn:active {
+      transform: translateY(-1px);
     }
 
     .nav-btn .icon {
       width: 1.25rem;
       height: 1.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-btn:hover .icon {
+      transform: scale(1.1);
     }
 
     .cosmic-bg {
       position: absolute;
       inset: 0;
       pointer-events: none;
+      z-index: 4;
       overflow: hidden;
     }
 
     .orbit {
       position: absolute;
-      border: 1px solid rgba(201, 162, 39, 0.1);
+      border: 1px solid rgba(201, 162, 39, 0.08);
       border-radius: 50%;
-      animation: orbitFloat 20s ease-in-out infinite;
+      will-change: transform;
     }
 
     .orbit-1 {
@@ -321,35 +460,41 @@ const MODULES = [
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      animation-delay: 0s;
+      animation: orbitRotate 30s linear infinite;
     }
 
     .orbit-2 {
-      width: 600px;
-      height: 600px;
+      width: 550px;
+      height: 550px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      animation-delay: -5s;
+      animation: orbitRotate 40s linear infinite reverse;
     }
 
     .orbit-3 {
-      width: 800px;
-      height: 800px;
+      width: 700px;
+      height: 700px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      animation: orbitRotate 50s linear infinite;
       animation-delay: -10s;
     }
 
-    @keyframes drift {
-      from { transform: translateX(0); }
-      to { transform: translateX(-550px); }
+    .orbit-4 {
+      width: 850px;
+      height: 850px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbitRotate 60s linear infinite reverse;
+      animation-delay: -20s;
     }
 
-    @keyframes titleGlow {
-      0%, 100% { text-shadow: 0 0 20px rgba(201, 162, 39, 0.5), 0 0 40px rgba(201, 162, 39, 0.3); }
-      50% { text-shadow: 0 0 30px rgba(201, 162, 39, 0.7), 0 0 60px rgba(201, 162, 39, 0.4); }
+    @keyframes orbitRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     @keyframes fadeSlideIn {
@@ -379,70 +524,140 @@ const MODULES = [
       }
     }
 
-    @keyframes orbitFloat {
-      0%, 100% {
-        transform: translate(-50%, -50%) rotate(0deg);
+    @media (prefers-reduced-motion: reduce) {
+      .title-word,
+      .module-char,
+      .poem-line,
+      .quick-nav,
+      .nebula-layer,
+      .orbit,
+      .char-particles::before,
+      .char-particles::after {
+        animation: none;
       }
-      50% {
-        transform: translate(-50%, -50%) rotate(180deg);
+      .module-char:hover {
+        transform: none;
+      }
+      .module-char:hover .char {
+        transform: none;
+      }
+      .nav-btn:hover {
+        transform: none;
       }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       .modules-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-      }
-
-      .char {
-        font-size: 2.5rem;
-      }
-
-      .site-title {
-        font-size: 2.5rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .modules-grid {
-        grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
-
-      .char {
-        font-size: 2rem;
+      .site-title {
+        font-size: 3rem;
       }
-
-      .char-desc {
-        display: none;
+      .poem-line {
+        font-size: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
       }
-
       .quick-nav {
         gap: 1rem;
       }
-
-      .nav-btn span {
+      .nav-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+      }
+      .orbit {
         display: none;
       }
     }
   </style>
 
   <script>
+    class StarsCanvas {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.stars = [];
+        this.maxStars = 120;
+        this.animationId = 0;
+        this.isMobile = window.innerWidth < 768;
+        this.init();
+      }
+
+      init() {
+        this.resize();
+        this.createStars();
+        this.bindEvents();
+        this.animate();
+      }
+
+      resize() {
+        const dpr = window.devicePixelRatio || 1;
+        this.canvas.width = window.innerWidth * dpr;
+        this.canvas.height = window.innerHeight * dpr;
+        this.ctx.scale(dpr, dpr);
+        this.stars = [];
+        this.createStars();
+      }
+
+      createStars() {
+        const count = this.isMobile ? 60 : this.maxStars;
+        for (let i = 0; i < count; i++) {
+          this.stars.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            radius: Math.random() * 1.5 + 0.3,
+            alpha: Math.random() * 0.5 + 0.3,
+            alphaChange: (Math.random() - 0.5) * 0.01,
+            twinkleSpeed: Math.random() * 0.015 + 0.005
+          });
+        }
+      }
+
+      bindEvents() {
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            this.isMobile = window.innerWidth < 768;
+            this.resize();
+          }, 200);
+        });
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        this.stars.forEach(star => {
+          star.alpha += star.alphaChange;
+          if (star.alpha <= 0.2 || star.alpha >= 0.9) {
+            star.alphaChange *= -1;
+          }
+
+          const twinkle = Math.sin(Date.now() * star.twinkleSpeed) * 0.2 + 0.8;
+
+          this.ctx.beginPath();
+          this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(232, 212, 139, ${star.alpha * twinkle})`;
+          this.ctx.fill();
+        });
+
+        this.animationId = requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    const canvas = document.getElementById('stars-canvas');
+    if (canvas) {
+      new StarsCanvas(canvas);
+    }
+
     const moduleChars = document.querySelectorAll('.module-char');
-
-    moduleChars.forEach((module) => {
-      const char = module.querySelector('.char') as HTMLElement;
-
-      module.addEventListener('mousemove', (e) => {
-        const rect = module.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-
-        char.style.transform = `perspective(500px) rotateX(${-y / 20}deg) rotateY(${x / 20}deg) scale(1.1)`;
+    moduleChars.forEach((card) => {
+      card.addEventListener('mouseenter', () => {
+        card.querySelector('.char-particles')?.classList.add('active');
       });
-
-      module.addEventListener('mouseleave', () => {
-        char.style.transform = 'scale(1)';
+      card.addEventListener('mouseleave', () => {
+        card.querySelector('.char-particles')?.classList.remove('active');
       });
     });
   </script>

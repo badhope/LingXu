@@ -25,6 +25,47 @@ import SectionHeader from '@components/ui/SectionHeader.astro';
           灵墟试图在这些碎片中，重建那个失落世界的轮廓。
         </p>
 
+        <h2>系统架构</h2>
+        <p>
+          灵墟采用「天地玄黄，宇宙洪荒」八字作为核心框架，
+          将修行文明的全部知识体系归纳为八大模块：
+        </p>
+
+        <div class="modules-grid">
+          <div class="module-item">
+            <h3>天 · 天时</h3>
+            <p>天道运行之理，星辰变化之机，黄历节气之道</p>
+          </div>
+          <div class="module-item">
+            <h3>地 · 地理</h3>
+            <p>天地山川之形，风水龙脉之理，福地洞天之秘</p>
+          </div>
+          <div class="module-item">
+            <h3>玄 · 玄学</h3>
+            <p>易道玄微之机，卦象推演之妙，符箓阵法之秘</p>
+          </div>
+          <div class="module-item">
+            <h3>黄 · 历史</h3>
+            <p>千古兴亡之鉴，文明传承之脉，秘辛档案之库</p>
+          </div>
+          <div class="module-item">
+            <h3>宇 · 空间</h3>
+            <p>天地宇宙之构，多维空间之理，万界苍茫之景</p>
+          </div>
+          <div class="module-item">
+            <h3>宙 · 时间</h3>
+            <p>时间长河之流，轮回因果之链，纪年更迭之道</p>
+          </div>
+          <div class="module-item">
+            <h3>洪 · 洪荒</h3>
+            <p>神怪异兽之形，洪荒神话之源，万兽图腾之灵</p>
+          </div>
+          <div class="module-item">
+            <h3>荒 · 失落</h3>
+            <p>失传秘术之库，失落文明之迹，远古记忆之痕</p>
+          </div>
+        </div>
+
         <h2>我们的方法</h2>
         <p>
           灵墟不是玄学网站，也不是宗教团体。我们以学术的态度对待材料，
@@ -43,7 +84,7 @@ import SectionHeader from '@components/ui/SectionHeader.astro';
         </p>
         <ul>
           <li>道教、佛教经典及相关注释</li>
-          <li>《黄帝内经》《山海经》等先秦两汉典籍</li>
+          <li>《黄帝内经》《山海经》《易经》等先秦两汉典籍</li>
           <li>历代志怪小说、仙侠传记</li>
           <li>近现代学者的研究成果</li>
           <li>田野调查与口述传统</li>
@@ -66,3 +107,29 @@ import SectionHeader from '@components/ui/SectionHeader.astro';
     </div>
   </article>
 </BaseLayout>
+
+<style>
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .module-item {
+    padding: 1.25rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 1px solid rgba(201, 162, 39, 0.15);
+    border-radius: 8px;
+  }
+  .module-item h3 {
+    color: #d4af37;
+    font-size: 1rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .module-item p {
+    color: #888;
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+</style>

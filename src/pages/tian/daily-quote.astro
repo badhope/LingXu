@@ -1,0 +1,317 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const today = new Date();
+const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+
+const quotes = [
+  { text: '天行健，君子以自强不息；地势坤，君子以厚德载物。', source: '周易·乾卦', category: '周易', fortune: '大吉' },
+  { text: '道法自然，万物归一。', source: '道德经', category: '道家', fortune: '吉' },
+  { text: '祸兮福之所倚，福兮祸之所伏。', source: '道德经', category: '道家', fortune: '平' },
+  { text: '知人者智，自知者明。', source: '道德经', category: '道家', fortune: '吉' },
+  { text: '上善若水，水善利万物而不争。', source: '道德经', category: '道家', fortune: '大吉' },
+  { text: '致虚极，守静笃。', source: '道德经', category: '道家', fortune: '吉' },
+  { text: '阴阳者，天地之道也，万物之纲纪。', source: '黄帝内经', category: '医典', fortune: '平' },
+  { text: '正气存内，邪不可干。', source: '黄帝内经', category: '医典', fortune: '吉' },
+  { text: '形与神俱，尽终其天年。', source: '黄帝内经', category: '医典', fortune: '大吉' },
+  { text: '工欲善其事，必先利其器。', source: '论语', category: '儒学', fortune: '平' },
+];
+
+const todayQuote = quotes[dayOfYear % quotes.length];
+
+const dailyTip = {
+  element: '木',
+  direction: '东方',
+  color: '青绿',
+  number: 3,
+  time: '卯时(5-7点)',
+  advice: '今日木气旺盛，宜伸展条达，保持心情舒畅。'
+};
+
+const affirmations = [
+  '我与天地之气相合，身心和谐统一',
+  '今日运势上佳，把握时机，勇猛精进',
+  '静心凝神，感受天地自然的滋养',
+  '顺应天时，修行之路更添助力'
+];
+---
+
+<ModuleLayout moduleId="tian" title="每日吉言" description="每日箴言，运势提示，古语智慧">
+  <div class="daily-quote-page">
+    <section class="quote-hero">
+      <div class="quote-icon">📜</div>
+      <h2>今日箴言</h2>
+      <blockquote class="main-quote">
+        <p>「{todayQuote.text}」</p>
+        <cite>—— {todayQuote.source}</cite>
+      </blockquote>
+      <div class="quote-meta">
+        <span class={`fortune-badge ${todayQuote.fortune}`}>{todayQuote.fortune}</span>
+        <span class="category-tag">{todayQuote.category}</span>
+      </div>
+    </section>
+
+    <section class="daily-info">
+      <h2>今日运势</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="info-icon">🌿</span>
+          <span class="info-label">五行</span>
+          <span class="info-value">{dailyTip.element}</span>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">🧭</span>
+          <span class="info-label">方位</span>
+          <span class="info-value">{dailyTip.direction}</span>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">🎨</span>
+          <span class="info-label">色彩</span>
+          <span class="info-value">{dailyTip.color}</span>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">🔢</span>
+          <span class="info-label">幸运数</span>
+          <span class="info-value">{dailyTip.number}</span>
+        </div>
+        <div class="info-card">
+          <span class="info-icon">⏰</span>
+          <span class="info-label">吉时</span>
+          <span class="info-value">{dailyTip.time}</span>
+        </div>
+      </div>
+      <div class="daily-advice">
+        <p>{dailyTip.advice}</p>
+      </div>
+    </section>
+
+    <section class="affirmations">
+      <h2>今日 affirmations</h2>
+      <div class="affirmation-list">
+        {affirmations.map((aff, i) => (
+          <div class="affirmation-item">
+            <span class="aff-number">{i + 1}</span>
+            <p>{aff}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="wisdom-library">
+      <h2>智慧典藏</h2>
+      <div class="wisdom-categories">
+        <div class="wisdom-category">
+          <h3>周易</h3>
+          <div class="wisdom-quotes">
+            <p>「大人者，与天地合其德，与日月合其明，与四时合其序。」</p>
+            <span class="wisdom-source">周易·乾卦</span>
+          </div>
+          <div class="wisdom-quotes">
+            <p>「物以类聚，人以群分。」</p>
+            <span class="wisdom-source">周易·系辞</span>
+          </div>
+        </div>
+        <div class="wisdom-category">
+          <h3>道德经</h3>
+          <div class="wisdom-quotes">
+            <p>「为学日益，为道日损。」</p>
+            <span class="wisdom-source">道德经·第四十八章</span>
+          </div>
+          <div class="wisdom-quotes">
+            <p>「少则得，多则惑。」</p>
+            <span class="wisdom-source">道德经·第二十二章</span>
+          </div>
+        </div>
+        <div class="wisdom-category">
+          <h3>黄帝内经</h3>
+          <div class="wisdom-quotes">
+            <p>「春夏养阳，秋冬养阴。」</p>
+            <span class="wisdom-source">黄帝内经·素问</span>
+          </div>
+          <div class="wisdom-quotes">
+            <p>「怒伤肝，喜伤心，思伤脾，忧伤肺，恐伤肾。」</p>
+            <span class="wisdom-source">黄帝内经·素问</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="moon-phase-tip">
+      <h2>月相提示</h2>
+      <div class="phase-info">
+        <div class="phase-visual">
+          {dayOfYear % 30 < 15 ? (dayOfYear % 30 < 7 ? '🌓' : '🌕') : (dayOfYear % 30 < 22 ? '🌗' : '🌑')}
+        </div>
+        <div class="phase-details">
+          <h3>{dayOfYear % 30 < 7 ? '上弦月' : dayOfYear % 30 < 15 ? '满月' : dayOfYear % 30 < 22 ? '下弦月' : '新月'}</h3>
+          <p>{dayOfYear % 30 < 7 ? '月华渐盈，灵气上升，适宜吸纳月华，闭关修炼' : dayOfYear % 30 < 15 ? '月圆之夜，灵气最盛，诸事大吉，适宜突破境界' : dayOfYear % 30 < 22 ? '月华渐亏，灵气回落，适宜内观反思，总结经验' : '新月伊始，灵气沉寂，宜静养休息，蓄势待发'}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .daily-quote-page { max-width: 900px; margin: 0 auto; }
+
+    .quote-hero, .daily-info, .affirmations, .wisdom-library, .moon-phase-tip {
+      background: rgba(240, 192, 64, 0.05);
+      border: 1px solid rgba(240, 192, 64, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: #f0c040;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(240, 192, 64, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .quote-hero { text-align: center; }
+
+    .quote-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    .main-quote {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .main-quote p {
+      font-size: 1.3rem;
+      color: #ffe066;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .main-quote cite {
+      color: #888;
+      font-size: 0.9rem;
+      font-style: normal;
+    }
+
+    .quote-meta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .fortune-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .fortune-badge.大吉 { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+    .fortune-badge.吉 { background: rgba(74, 222, 128, 0.15); color: #86efac; }
+    .fortune-badge.平 { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+
+    .category-tag {
+      background: rgba(240, 192, 64, 0.2);
+      color: #f0c040;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    .info-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .info-label { color: #888; font-size: 0.75rem; }
+    .info-value { color: #ffe066; font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem; }
+
+    .daily-advice {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .daily-advice p { color: #4ade80; font-size: 0.95rem; }
+
+    .affirmation-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .affirmation-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    .aff-number {
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(240, 192, 64, 0.2);
+      color: #f0c040;
+      border-radius: 50%;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .affirmation-item p { color: #ccc; font-size: 0.95rem; }
+
+    .wisdom-categories { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .wisdom-category h3 {
+      color: #f0c040;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .wisdom-quotes {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .wisdom-quotes p {
+      color: #ccc;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .wisdom-source { color: #888; font-size: 0.75rem; }
+
+    .phase-info {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .phase-visual { font-size: 4rem; }
+
+    .phase-details h3 { color: #ffe066; margin-bottom: 0.5rem; }
+    .phase-details p { color: #aaa; font-size: 0.9rem; line-height: 1.6; }
+
+    @media (max-width: 768px) {
+      .info-grid { grid-template-columns: repeat(3, 1fr); }
+      .phase-info { flex-direction: column; text-align: center; }
+    }
+  </style>
+</ModuleLayout>
