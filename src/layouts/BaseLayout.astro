@@ -29,6 +29,14 @@ const basePath = import.meta.env.BASE_URL || SITE_CONFIG.base;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={SITE_CONFIG.url} />
+    <meta property="og:site_name" content={SITE_CONFIG.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
     <title>{fullTitle}</title>
     <link rel="icon" type="image/svg+xml" href={`${basePath}/favicon.svg`} />
   </head>
