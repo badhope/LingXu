@@ -1,0 +1,279 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const charms = [
+  { name: '六魂符', type: '禁术', danger: '极高', desc: '可直接杀死圣人的禁术符咒。需施术者以命换命。', usage: '禁术', sideEffect: '施术者必遭天谴而死' },
+  { name: '镇魂符', type: '封印', danger: '中', desc: '封印亡魂，阻止轮回的符咒。常用于镇压厉鬼。', usage: '封印', sideEffect: '封印松动则厉鬼更凶' },
+  { name: '避火符', type: '护身', danger: '低', desc: '可抵御火焰与高温的护身符。孙悟空曾用之过火焰山。', usage: '护身', sideEffect: '时效有限，需定期更换' },
+  { name: '隐身符', type: '隐匿', danger: '低', desc: '可隐去身形气息的符咒。高阶修士可见。', usage: '隐匿', sideEffect: '移动时会显现痕迹' },
+  { name: '定身符', type: '控制', danger: '高', desc: '可短暂定住敌人身形的符咒。对高阶修士效弱。', usage: '控制', sideEffect: '消耗极大，不可连用' },
+  { name: '招魂符', type: '通灵', danger: '中', desc: '召唤亡魂问话或供养的符咒。需有引路物。', usage: '通灵', sideEffect: '招来亡魂不确定友善' },
+  { name: '破妄符', type: '破法', danger: '中', desc: '可破除幻术、迷阵、障眼法的符咒。', usage: '破法', sideEffect: '对实体幻术效果有限' },
+  { name: '传送符', type: '空间', danger: '高', desc: '短距离空间传送符咒。可瞬间转移。', usage: '传送', sideEffect: '定位不准可能传错地方' },
+  { name: '金光符', type: '护身', danger: '低', desc: '形成金色护罩，抵御攻击的护身符。', usage: '护身', sideEffect: '防御有上限' },
+  { name: '天雷符', type: '攻击', danger: '极高', desc: '召唤天雷攻击目标的攻击符咒。威力巨大。', usage: '攻击', sideEffect: '敌我不分，易伤无辜' },
+  { name: '追踪符', type: '辅助', danger: '低', desc: '可追踪特定人物气息的符咒。无距离限制。', usage: '追踪', sideEffect: '目标隐匿气息后失效' },
+  { name: '傀儡符', type: '控制', danger: '高', desc: '可操控尸体或假人行动的符咒。用于刺探。', usage: '控制', sideEffect: '操控时间有限' },
+];
+
+const types = [
+  { name: '护身', color: '#40b040', count: 3 },
+  { name: '攻击', color: '#f04040', count: 1 },
+  { name: '封印', color: '#f08040', count: 1 },
+  { name: '控制', color: '#8040f0', count: 2 },
+  { name: '隐匿', color: '#4080f0', count: 2 },
+  { name: '通灵', color: '#c080f0', count: 1 },
+  { name: '破法', color: '#f0c040', count: 1 },
+  { name: '空间', color: '#40c0f0', count: 1 },
+];
+
+const usage = [
+  '符咒需以精血绘制，方有灵验',
+  '符咒威力与绘制者修为成正比',
+  '高品质符纸可提升符咒威力',
+  '符咒有有效期，过期失效',
+  '有些符咒只能用一次',
+];
+---
+
+<ModuleLayout moduleId="huang-lost" title="符咒" description="失落符咒与禁术">
+  <div class="charms-page">
+    <section class="intro-section">
+      <h2>失落符咒</h2>
+      <p>符咒者，以符纸为媒，以灵力为引，可沟通天地，施展神通。上古符咒威力无穷，然多已失传。今所存者，十不存一。</p>
+    </section>
+
+    <section class="types-section">
+      <h2>符咒分类</h2>
+      <div class="types-grid">
+        {types.map(t => (
+          <div class="type-card" style={`--type-color: ${t.color}`}>
+            <span class="type-count">{t.count}</span>
+            <span class="type-name">{t.name}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="charms-grid-section">
+      <h2>符咒详解</h2>
+      <div class="charms-grid">
+        {charms.map(charm => (
+          <div class="charm-card">
+            <div class="charm-header">
+              <h3>{charm.name}</h3>
+              <span class="charm-type" data-type={charm.type}>{charm.type}</span>
+            </div>
+            <p class="charm-desc">{charm.desc}</p>
+            <div class="charm-details">
+              <div class="charm-usage">
+                <span class="detail-icon">📜</span>
+                <span>{charm.usage}</span>
+              </div>
+              <div class="charm-danger" data-level={charm.danger}>
+                <span class="danger-icon">⚠️</span>
+                <span>{charm.danger}</span>
+              </div>
+            </div>
+            <div class="charm-sideeffect">
+              <span class="sideeffect-label">副作用:</span>
+              <span>{charm.sideEffect}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="tips-section">
+      <h2>符咒须知</h2>
+      <ul class="tips-list">
+        {usage.map(tip => (
+          <li>{tip}</li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .charms-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+  }
+
+  .intro-section h2 {
+    font-size: 2rem;
+    color: #f0c040;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #a0a0a0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #f0c040;
+  }
+
+  .types-grid {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .type-card {
+    flex: 1;
+    min-width: 120px;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid var(--type-color);
+    text-align: center;
+  }
+
+  .type-count {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--type-color);
+    display: block;
+  }
+
+  .type-name {
+    color: #c0c0c0;
+    font-size: 0.9rem;
+  }
+
+  .charms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .charm-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2a4a;
+    transition: transform 0.3s ease;
+  }
+
+  .charm-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .charm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .charm-header h3 {
+    font-size: 1.2rem;
+    color: #f0c040;
+    margin: 0;
+  }
+
+  .charm-type {
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    background: #2a2a4a;
+    color: #c0c0c0;
+  }
+
+  .charm-type[data-type="禁术"] { background: #f04040; color: #fff; }
+  .charm-type[data-type="攻击"] { background: #f04040; color: #fff; }
+  .charm-type[data-type="封印"] { background: #f08040; color: #1a1a2e; }
+
+  .charm-desc {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .charm-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  .charm-usage {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .detail-icon { font-size: 1rem; }
+  .charm-usage span:last-child { color: #c0c0c0; }
+
+  .charm-danger {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  .charm-danger[data-level="极高"] { background: #f04040; color: #fff; }
+  .charm-danger[data-level="高"] { background: #f08040; color: #1a1a2e; }
+  .charm-danger[data-level="中"] { background: #f0c040; color: #1a1a2e; }
+  .charm-danger[data-level="低"] { background: #40b040; color: #fff; }
+
+  .charm-sideeffect {
+    padding: 0.8rem;
+    background: rgba(240, 64, 64, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #f04040;
+    font-size: 0.85rem;
+  }
+
+  .sideeffect-label { color: #f04040; margin-right: 0.5rem; }
+  .charm-sideeffect span:last-child { color: #a0a0a0; }
+
+  .tips-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1.5rem;
+    background: #1a1a2e;
+    border-radius: 12px;
+    border-left: 4px solid #f0c040;
+  }
+
+  .tips-list li {
+    color: #a0a0a0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .charms-page {
+      padding: 1rem;
+    }
+
+    .charms-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
