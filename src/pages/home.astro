@@ -363,8 +363,10 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
+      gap: calc(1.5rem + 15px);
+      padding: calc(2rem + 20px);
       max-width: 1000px;
+      margin: 0 auto;
     }
 
     .module-char {
@@ -551,7 +553,8 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
       display: flex;
       align-items: center;
       gap: 1.5rem;
-      margin-top: 5rem;
+      margin-top: calc(5rem + 20px);
+      margin-bottom: calc(3rem + 20px);
       font-size: 1.3rem;
       color: #c9a227;
       letter-spacing: 0.3em;
@@ -575,8 +578,9 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
 
     .quick-nav {
       display: flex;
-      gap: 2rem;
-      margin-top: 4rem;
+      gap: calc(2rem + 20px);
+      margin-top: calc(4rem + 20px);
+      margin-bottom: calc(3rem + 20px);
     }
 
     .nav-btn {
@@ -698,7 +702,8 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
     @media (max-width: 1024px) {
       .modules-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
+        gap: calc(1.5rem + 15px);
+        padding: calc(1.5rem + 15px);
       }
       .site-title {
         font-size: 4.5rem;
@@ -713,8 +718,9 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
     @media (max-width: 768px) {
       .modules-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        gap: calc(1rem + 15px);
         max-width: 500px;
+        padding: calc(1.5rem + 15px);
       }
       .site-title {
         font-size: 3.5rem;
@@ -731,11 +737,13 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
         font-size: 1rem;
         flex-direction: column;
         gap: 0.5rem;
-        margin-top: 3rem;
+        margin-top: calc(3rem + 20px);
+        margin-bottom: calc(2rem + 15px);
       }
       .quick-nav {
-        gap: 1rem;
-        margin-top: 2rem;
+        gap: calc(1rem + 15px);
+        margin-top: calc(2rem + 15px);
+        margin-bottom: calc(2rem + 15px);
       }
       .nav-btn {
         padding: 0.6rem 1.2rem;
@@ -745,7 +753,7 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
         display: none;
       }
       .modules-wrapper {
-        padding: 2rem 1rem;
+        padding: calc(2rem + 15px) calc(1rem + 10px);
       }
     }
   </style>

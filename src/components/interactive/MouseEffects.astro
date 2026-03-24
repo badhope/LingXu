@@ -1,93 +1,348 @@
 ---
 export interface Props {
   enableParticles?: boolean;
+  enableTrail?: boolean;
   particleCount?: number;
+  trailLength?: number;
 }
 
 const {
   enableParticles = true,
-  particleCount = 12
+  enableTrail = true,
+  particleCount = 80,
+  trailLength = 50
 } = Astro.props;
 ---
 
 <div id="cursor-glow" class="cursor-glow"></div>
-<div id="cursor-trail" class="pointer-events-none fixed inset-0 z-[9998]"></div>
+<canvas id="mouse-trail-canvas" class="pointer-events-none fixed inset-0 z-[9998]"></canvas>
+<canvas id="particle-interact-canvas" class="pointer-events-none fixed inset-0 z-[9997]"></canvas>
 
-<script define:vars={{ enableParticles, particleCount }}>
-  class MouseTrail {
+<script define:vars={{ enableParticles, enableTrail, particleCount, trailLength }}>
+  class MouseTrailRenderer {
     constructor() {
-      this.container = document.getElementById('cursor-trail');
-      this.particles = [];
-      this.maxParticles = enableParticles ? Math.min(particleCount, 15) : 0;
+      this.canvas = document.getElementById('mouse-trail-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.points = [];
+      this.maxPoints = enableTrail ? Math.min(trailLength, 60) : 0;
       this.isMobile = window.innerWidth < 768;
       this.hue = 38;
-      this.positions = [];
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.init();
+    }
+
+    init() {
+      if (this.isMobile || !this.maxPoints) return;
+      this.resize();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      const { clientX, clientY, movementX, movementY } = e;
+      const speed = Math.sqrt(movementX * movementX + movementY * movementY);
+
+      this.points.unshift({
+        x: clientX,
+        y: clientY,
+        age: 0,
+        speed: Math.min(speed, 50),
+        hue: this.hue + (Math.random() - 0.5) * 10
+      });
+
+      if (this.points.length > this.maxPoints) {
+        this.points.pop();
+      }
+    }
+
+    onMouseLeave() {
+      this.points = [];
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      if (this.points.length < 2) return;
+
+      for (let i = this.points.length - 1; i >= 0; i--) {
+        const point = this.points[i];
+        point.age++;
+
+        if (point.age > this.maxPoints) {
+          this.points.splice(i, 1);
+          continue;
+        }
+
+        const progress = i / this.maxPoints;
+        const alpha = Math.max(0, 1 - progress * 1.2);
+        const width = (1 - progress) * 8 + 1;
+
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = `hsla(${point.hue}, 70%, 65%, ${alpha * 0.6})`;
+        this.ctx.lineWidth = width;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        if (i === 0) {
+          this.ctx.moveTo(point.x, point.y);
+        } else {
+          const prev = this.points[i - 1];
+          const midX = (point.x + prev.x) / 2;
+          const midY = (point.y + prev.y) / 2;
+          this.ctx.moveTo(midX, midY);
+          this.ctx.quadraticCurveTo(point.x, point.y, prev.x, prev.y);
+        }
+        this.ctx.stroke();
+
+        if (i < this.points.length - 1) {
+          const glow = this.ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, width * 3
+          );
+          glow.addColorStop(0, `hsla(${point.hue}, 80%, 70%, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'transparent');
+          this.ctx.fillStyle = glow;
+          this.ctx.beginPath();
+          this.ctx.arc(point.x, point.y, width * 3, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+    }
+  }
+
+  class InteractiveParticleSystem {
+    constructor() {
+      this.canvas = document.getElementById('particle-interact-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = enableParticles ? Math.min(particleCount, 100) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+      this.isMouseNear = false;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.detectPerformance();
       this.init();
     }
 
     detectPerformance() {
-      if (this.isMobile) return 'low';
+      if (this.isMobile) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.5);
+        this.fps = 30;
+        this.frameInterval = 1000 / this.fps;
+      }
       const dpr = window.devicePixelRatio || 1;
-      if (dpr >= 2) return 'high';
-      return 'medium';
+      if (dpr >= 2) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.75);
+      }
     }
 
     init() {
-      if (this.isMobile || !this.maxParticles) return;
-
-      for (let i = 0; i < this.maxParticles; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'trail-particle';
-        particle.style.cssText = `
-          position: absolute;
-          width: ${4 + Math.random() * 4}px;
-          height: ${4 + Math.random() * 4}px;
-          background: radial-gradient(circle, rgba(201, 162, 39, 0.8) 0%, rgba(201, 162, 39, 0) 70%);
-          border-radius: 50%;
-          pointer-events: none;
-          opacity: 0;
-          transform: scale(0);
-          will-change: transform, opacity;
-          transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-        `;
-        this.container.appendChild(particle);
-        this.particles.push(particle);
-      }
-
-      document.addEventListener('mousemove', this.handleMouseMove.bind(this), { passive: true });
+      if (!this.maxParticles) return;
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate(0);
     }
 
-    handleMouseMove(e) {
-      const { clientX, clientY } = e;
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
 
-      this.positions.unshift({ x: clientX, y: clientY, active: true });
+    createParticles() {
+      this.particles = [];
+      const colors = [
+        { h: 38, s: 70, l: 65 },
+        { h: 45, s: 65, l: 55 },
+        { h: 30, s: 80, l: 60 }
+      ];
 
-      if (this.positions.length > this.maxParticles) {
-        this.positions.pop();
+      for (let i = 0; i < this.maxParticles; i++) {
+        const color = colors[i % colors.length];
+        this.particles.push({
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          baseX: 0,
+          baseY: 0,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 2 + 1,
+          baseSize: 0,
+          color: color,
+          alpha: Math.random() * 0.4 + 0.2,
+          attraction: Math.random() * 0.02 + 0.005,
+          friction: 0.98,
+          maxSpeed: 2
+        });
+        this.particles[i].baseX = this.particles[i].x;
+        this.particles[i].baseY = this.particles[i].y;
+        this.particles[i].baseSize = this.particles[i].size;
       }
+    }
 
-      this.particles.forEach((particle, i) => {
-        const pos = this.positions[i];
-        if (!pos) {
-          particle.style.opacity = '0';
-          particle.style.transform = 'scale(0)';
-          return;
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      this.isMouseNear = true;
+    }
+
+    onTouchMove(e) {
+      if (e.touches.length > 0) {
+        this.mouseX = e.touches[0].clientX;
+        this.mouseY = e.touches[0].clientY;
+        this.isMouseNear = true;
+      }
+    }
+
+    onMouseLeave() {
+      this.isMouseNear = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+    }
+
+    updatePhysics() {
+      this.particles.forEach(p => {
+        const dx = p.baseX - p.x;
+        const dy = p.baseY - p.y;
+        p.vx += dx * 0.001;
+        p.vy += dy * 0.001;
+
+        if (this.isMouseNear) {
+          const mdx = this.mouseX - p.x;
+          const mdy = this.mouseY - p.y;
+          const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          const interactionRadius = 120;
+
+          if (dist < interactionRadius) {
+            const force = (1 - dist / interactionRadius) * p.attraction * 30;
+            const angle = Math.atan2(mdy, mdx);
+            if (dist < 60) {
+              p.vx -= Math.cos(angle) * force;
+              p.vy -= Math.sin(angle) * force;
+            } else {
+              p.vx += Math.cos(angle) * force * 0.5;
+              p.vy += Math.sin(angle) * force * 0.5;
+            }
+            p.size = p.baseSize * (1 + (1 - dist / interactionRadius) * 0.5);
+          } else {
+            p.size = Math.max(p.baseSize, p.size * 0.95);
+          }
+        } else {
+          p.size = Math.max(p.baseSize, p.size * 0.95);
         }
 
-        const delay = i * 25;
-        setTimeout(() => {
-          particle.style.left = `${pos.x}px`;
-          particle.style.top = `${pos.y}px`;
-          particle.style.opacity = String(0.6 - i * 0.04);
-          particle.style.transform = `scale(${1 - i * 0.06})`;
-        }, delay);
+        p.vx *= p.friction;
+        p.vy *= p.friction;
+
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > p.maxSpeed) {
+          p.vx = (p.vx / speed) * p.maxSpeed;
+          p.vy = (p.vy / speed) * p.maxSpeed;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) { p.x = this.width; p.baseX = p.x; }
+        if (p.x > this.width) { p.x = 0; p.baseX = p.x; }
+        if (p.y < 0) { p.y = this.height; p.baseY = p.y; }
+        if (p.y > this.height) { p.y = 0; p.baseY = p.y; }
       });
+    }
+
+    render() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      this.particles.forEach(p => {
+        const gradient = this.ctx.createRadialGradient(
+          p.x, p.y, 0,
+          p.x, p.y, p.size * 3
+        );
+        gradient.addColorStop(0, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`);
+        gradient.addColorStop(0.5, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha * 0.3})`);
+        gradient.addColorStop(1, 'transparent');
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`;
+        this.ctx.fill();
+      });
+
+      if (this.isMouseNear) {
+        const mouseGradient = this.ctx.createRadialGradient(
+          this.mouseX, this.mouseY, 0,
+          this.mouseX, this.mouseY, 150
+        );
+        mouseGradient.addColorStop(0, 'rgba(201, 162, 39, 0.05)');
+        mouseGradient.addColorStop(0.5, 'rgba(201, 162, 39, 0.02)');
+        mouseGradient.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = mouseGradient;
+        this.ctx.beginPath();
+        this.ctx.arc(this.mouseX, this.mouseY, 150, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.updatePhysics();
+      this.render();
     }
   }
 
   class CursorGlow {
     constructor() {
       this.el = document.getElementById('cursor-glow');
+      if (!this.el) return;
       this.glow = document.createElement('div');
       this.glow.className = 'cursor-glow-inner';
       this.glow.style.cssText = `
@@ -98,38 +353,65 @@ const {
         border-radius: 50%;
         pointer-events: none;
         transform: translate(-50%, -50%);
-        transition: opacity 0.3s ease-out;
-        will-change: left, top;
+        transition: opacity 0.3s ease;
+        will-change: transform, left, top;
       `;
       this.el.appendChild(this.glow);
+      this.x = 0;
+      this.y = 0;
+      this.targetX = 0;
+      this.targetY = 0;
       this.isMobile = window.innerWidth < 768;
-
       if (!this.isMobile) {
-        document.addEventListener('mousemove', this.handleMouseMove.bind(this), { passive: true });
+        this.bindEvents();
+        this.animate();
       }
     }
 
-    handleMouseMove(e) {
-      requestAnimationFrame(() => {
-        this.glow.style.left = `${e.clientX}px`;
-        this.glow.style.top = `${e.clientY}px`;
-      });
+    bindEvents() {
+      document.addEventListener('mousemove', (e) => {
+        this.targetX = e.clientX;
+        this.targetY = e.clientY;
+      }, { passive: true });
+      document.addEventListener('mouseleave', () => {
+        this.glow.style.opacity = '0';
+      }, { passive: true });
+      document.addEventListener('mouseenter', () => {
+        this.glow.style.opacity = '1';
+      }, { passive: true });
+    }
+
+    animate() {
+      requestAnimationFrame(this.animate.bind(this));
+      this.x += (this.targetX - this.x) * 0.1;
+      this.y += (this.targetY - this.y) * 0.1;
+      this.glow.style.left = `${this.x}px`;
+      this.glow.style.top = `${this.y}px`;
     }
   }
 
-  document.addEventListener('astro:page-load', () => {
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      new MouseTrail();
-      new CursorGlow();
-    }
+  document.addEventListener('DOMContentLoaded', () => {
+    new MouseTrailRenderer();
+    new InteractiveParticleSystem();
+    new CursorGlow();
   });
 </script>
 
 <style>
   .cursor-glow {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
     pointer-events: none;
-    z-index: 9997;
+    z-index: 9999;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #mouse-trail-canvas,
+    #particle-interact-canvas {
+      display: none;
+    }
   }
 </style>
