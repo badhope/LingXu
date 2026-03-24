@@ -4,7 +4,7 @@
 
 *A Digital Archive Exploring the Ancient Art of Cultivation*
 
-[![Version](https://img.shields.io/badge/version-v2.0-gold)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v1.1.0-gold)](CHANGELOG.md)
 [![Framework](https://img.shields.io/badge/framework-Astro-ff5d01)](https://astro.build)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -91,7 +91,54 @@ npm run dev
 
 # Production build
 npm run build
+
+# Preview production build
+npm run preview
 ```
+
+---
+
+## ⚙️ Configuration
+
+### Site Configuration (astro.config.mjs)
+
+| Setting | Value | Description |
+|---------|-------|-------------|
+| site | `https://lingxu.xn--jbtt24bux6a.com` | Production URL |
+| base | `/` | Base path |
+| output | `static` | Static site generation |
+
+### Environment Variables
+
+Create `.env` file for local development:
+
+```env
+# No environment variables required for static site
+```
+
+### GitHub Pages Deployment
+
+The project uses GitHub Actions for automatic deployment. See `.github/workflows/deploy.yml`:
+
+- Triggers on push to `main` branch
+- Uses Node 20
+- Builds to `dist/` directory
+- Deployed to GitHub Pages with custom domain
+
+### Custom Domain
+
+The site uses `lingxu.xn--jbtt24bux6a.com` (CNAME file configured).
+
+---
+
+## 🔧 Build & Deployment
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run deploy` | Deploy to GitHub Pages (manual) |
 
 ---
 
