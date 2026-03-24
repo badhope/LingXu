@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE_CONFIG } from '@lib/constants';
+import { withBase } from '@lib/utils';
 ---
 
 <BaseLayout title="页面未找到" description="您访问的页面不存在">
@@ -30,7 +30,7 @@ import { SITE_CONFIG } from '@lib/constants';
 
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a
-          href={SITE_CONFIG.base || '/'}
+          href={withBase('/')}
           class="group relative px-8 py-3 rounded-lg overflow-hidden transition-all duration-500 hover:scale-105"
         >
           <div class="absolute inset-0 bg-gradient-to-r from-[#c9a227]/20 via-[#d4af37]/10 to-[#c9a227]/20 border border-[#c9a227]/40 rounded-lg"></div>
@@ -40,25 +40,23 @@ import { SITE_CONFIG } from '@lib/constants';
         </a>
 
         <a
-          href={`${SITE_CONFIG.base}/archive`}
+          href={withBase('/home')}
           class="group px-8 py-3 rounded-lg border border-[#333333]/60 text-[#666666] hover:text-[#c9a227] hover:border-[#444444] transition-all duration-500"
         >
-          <span class="tracking-wider">探索档案馆</span>
+          <span class="tracking-wider">探索首页</span>
         </a>
       </div>
 
       <div class="mt-16 pt-8 border-t border-[#222222]">
         <p class="text-sm text-[#555555] mb-4">或者选择一个板块：</p>
         <div class="flex flex-wrap justify-center gap-3">
-          <a href={`${SITE_CONFIG.base}/archive`} class="text-[#c9a227]/60 hover:text-[#d4af37] transition-colors text-sm">档案馆</a>
+          <a href={withBase('/tian')} class="text-[#c9a227]/60 hover:text-[#d4af37] transition-colors text-sm">天时</a>
           <span class="text-[#333333]">·</span>
-          <a href={`${SITE_CONFIG.base}/medicine`} class="text-[#2d8a8a]/60 hover:text-[#5ababa] transition-colors text-sm">典籍</a>
+          <a href={withBase('/di')} class="text-[#40b040]/60 hover:text-[#60d060] transition-colors text-sm">地理</a>
           <span class="text-[#333333]">·</span>
-          <a href={`${SITE_CONFIG.base}/myth`} class="text-[#6b4a8a]/60 hover:text-[#a878b8] transition-colors text-sm">神话</a>
+          <a href={withBase('/xuan')} class="text-[#8040f0]/60 hover:text-[#a060ff] transition-colors text-sm">玄学</a>
           <span class="text-[#333333]">·</span>
-          <a href={`${SITE_CONFIG.base}/dharma`} class="text-[#2d4a6b]/60 hover:text-[#6b9ad4] transition-colors text-sm">法门</a>
-          <span class="text-[#333333]">·</span>
-          <a href={`${SITE_CONFIG.base}/realms`} class="text-[#8a4a2d]/60 hover:text-[#ba7a5a] transition-colors text-sm">境界</a>
+          <a href={withBase('/huang')} class="text-[#c08040]/60 hover:text-[#e0a060] transition-colors text-sm">历史</a>
         </div>
       </div>
     </div>

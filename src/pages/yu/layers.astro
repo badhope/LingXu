@@ -1,0 +1,369 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const layers = [
+  { level: 1, name: '炼气期', color: '#40b040', desc: '吸纳灵气，开辟气海。是修行的起点。', ability: '可施展初级法术' },
+  { level: 2, name: '筑基期', color: '#4080f0', desc: '气海化液，筑就道基。真正踏入修行之门。', ability: '可御器飞行' },
+  { level: 3, name: '金丹期', color: '#f0c040', desc: '凝气成丹，圆润无瑕。金丹一成，寿元大增。', ability: '可结丹婴' },
+  { level: 4, name: '元婴期', color: '#f04080', desc: '丹碎婴生，神魂出窍。阳神出游，千万里须臾即至。', ability: '可夺舍重生' },
+  { level: 5, name: '化神期', color: '#8040f0', desc: '元婴化神，神通自生。可初步沟通天地之力。', ability: '可炼虚合道' },
+  { level: 6, name: '炼虚期', color: '#ff6b6b', desc: '虚实合一，道法自然。与天地元气浑然一体。', ability: '可开宗立派' },
+  { level: 7, name: '大乘期', color: '#ff4500', desc: '道果将熟，只待飞升。修行之巅峰，半步仙人。', ability: '可飞升仙界' },
+];
+
+const spaceLayers = [
+  { name: '表世界', depth: '0', desc: '常人可见可感之世界，遵循物理法则', stability: '极高' },
+  { name: '里世界', depth: '1', desc: '与表世界重叠的异空间，灵气较充沛', stability: '高' },
+  { name: '洞天', depth: '2-3', desc: '仙人开辟的独立空间，灵气浓郁', stability: '中等' },
+  { name: '福地', depth: '2-3', desc: '天然形成的灵气聚集地，适合修炼', stability: '中等' },
+  { name: '小世界', depth: '4-5', desc: '大能者以大法力构建的完整世界', stability: '需维护' },
+  { name: '仙域', depth: '6+', desc: '仙界碎片或大能道场，与仙界相连', stability: '高' },
+];
+---
+
+<ModuleLayout moduleId="yu" title="空间层级" description="万界结构层次，修行境界">
+  <div class="layers-page">
+    <section class="intro-section">
+      <h2>万界层次</h2>
+      <p>宇宙分多层，空间有虚实。修行者超脱低层空间，方能触及更高境界。知层次之分，方能定位自身，知进退之道。</p>
+    </section>
+
+    <section class="cultivation-realms">
+      <h2>修行境界</h2>
+      <div class="realms-visual">
+        <div class="realms-pyramid">
+          {layers.slice().reverse().map((realm, index) => (
+            <div class="realm-tier" style={`--realm-color: ${realm.color}; --width: ${100 - index * 12}%`}>
+              <div class="tier-content">
+                <span class="tier-level">{realm.level}</span>
+                <span class="tier-name">{realm.name}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="realms-grid">
+        {layers.map(realm => (
+          <div class="realm-card" style={`--realm-color: ${realm.color}`}>
+            <div class="realm-header">
+              <span class="realm-level">{realm.level}</span>
+              <h3>{realm.name}</h3>
+            </div>
+            <p class="realm-desc">{realm.desc}</p>
+            <div class="realm-ability">
+              <span class="ability-label">能力:</span>
+              <span>{realm.ability}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="space-layers">
+      <h2>空间深度</h2>
+      <div class="layers-table">
+        <div class="layer-header">
+          <span>空间名</span>
+          <span>深度</span>
+          <span>描述</span>
+          <span>稳定度</span>
+        </div>
+        {spaceLayers.map(layer => (
+          <div class="layer-row">
+            <span class="layer-name">{layer.name}</span>
+            <span class="layer-depth">{layer.depth}</span>
+            <span class="layer-desc">{layer.desc}</span>
+            <span class="layer-stability">{layer.stability}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="passing-knowledge">
+      <h2>穿界要义</h2>
+      <div class="knowledge-cards">
+        <div class="knowledge-card">
+          <h3>穿界条件</h3>
+          <p>进入里世界需筑基以上修为；洞天需金丹以上；小世界需元婴以上；仙域需化神以上。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>空间坐标</h3>
+          <p>各空间有独特坐标标记，常以"方位-深度-灵气浓度"表示。修行者需熟记常用坐标。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>界门</h3>
+          <p>连接各空间的通道名为界门，多位于灵气浓郁之处。界门开启有时间规律，需把握时机。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="danger-section">
+      <h2>空间危险</h2>
+      <div class="danger-cards">
+        <div class="danger-card">
+          <h3>空间乱流</h3>
+          <p>不稳定空间充满乱流，卷入则可能被撕裂。境界不足者切勿深入。</p>
+        </div>
+        <div class="danger-card">
+          <h3>迷失方向</h3>
+          <p>异空间中难以分辨方向，容易永远困于其中。需携带定位法器。</p>
+        </div>
+        <div class="danger-card">
+          <h3>原住民</h3>
+          <p>各空间多有原住民或原生物，对外来者未必友好。需小心应对。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .layers-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #888;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.4rem;
+    color: #c9a227;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  .realms-visual {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .realms-pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .realm-tier {
+    width: var(--width);
+    background: linear-gradient(90deg, var(--realm-color), color-mix(in srgb, var(--realm-color) 60%, #000));
+    border: 1px solid var(--realm-color);
+    border-radius: 4px;
+    padding: 0.8rem;
+    transition: all 0.3s ease;
+  }
+
+  .realm-tier:hover {
+    transform: scale(1.02);
+    z-index: 1;
+  }
+
+  .tier-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tier-level {
+    width: 24px;
+    height: 24px;
+    background: var(--realm-color);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  .tier-name {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .realms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .realm-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid var(--realm-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .realm-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--realm-color) 20%, transparent);
+  }
+
+  .realm-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .realm-level {
+    width: 32px;
+    height: 32px;
+    background: var(--realm-color);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .realm-card h3 {
+    color: var(--realm-color);
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .realm-desc {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .realm-ability {
+    font-size: 0.85rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .ability-label {
+    color: #888;
+    margin-right: 0.5rem;
+  }
+
+  .realm-ability span:last-child {
+    color: #aaa;
+  }
+
+  .layers-table {
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .layer-header, .layer-row {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 2fr 1fr;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .layer-header {
+    background: rgba(64, 128, 240, 0.2);
+    color: #4080f0;
+    font-weight: 600;
+  }
+
+  .layer-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+  }
+
+  .layer-row:last-child {
+    border-bottom: none;
+  }
+
+  .layer-name {
+    color: #4080f0;
+    font-weight: 600;
+  }
+
+  .layer-depth {
+    color: #e8d48b;
+  }
+
+  .layer-desc {
+    color: #888;
+    text-align: left !important;
+  }
+
+  .layer-stability {
+    color: #40b040;
+  }
+
+  .knowledge-cards, .danger-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .knowledge-card, .danger-card {
+    background: rgba(20, 20, 20, 0.6);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .knowledge-card {
+    border: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  .danger-card {
+    border: 1px solid rgba(240, 64, 64, 0.2);
+  }
+
+  .knowledge-card h3 {
+    color: #d4af37;
+    margin-bottom: 0.8rem;
+  }
+
+  .danger-card h3 {
+    color: #f04040;
+    margin-bottom: 0.8rem;
+  }
+
+  .knowledge-card p, .danger-card p {
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .layer-header, .layer-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .layer-desc {
+      grid-column: span 2;
+      text-align: left !important;
+    }
+  }
+</style>

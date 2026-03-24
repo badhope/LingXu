@@ -1,0 +1,382 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const calendarSystems = [
+  { name: '干支纪年', symbol: '60', desc: '以六十甲子循环纪年，修行界通用', example: '2024年为甲辰年' },
+  { name: '干支纪月', symbol: '12', desc: '以十二地支纪月，以节气为界', example: '立春为寅月之始' },
+  { name: '干支纪日', symbol: '60', desc: '以六十甲子纪日，精确到日', example: '2024年3月21日为乙酉日' },
+  { name: '干支纪时', symbol: '12', desc: '以十二地支纪时，一时辰等于两小时', example: '子时为23:00-01:00' },
+];
+
+const eras = [
+  { name: '洪荒纪元', years: '约数万年', start: '混沌初开', end: '天庭建立', feature: '神魔纪年，蛮荒时代' },
+  { name: '上古纪元', years: '约数千年', start: '天庭建立', end: '封神之战', feature: '天界秩序初定' },
+  { name: '中古纪元', years: '约三千年', start: '封神之后', end: '秦一统', feature: '人神共存，修行鼎盛' },
+  { name: '近古纪元', years: '约两千年', start: '秦一统', end: '清末', feature: '历代王朝更迭' },
+  { name: '末法纪元', years: '进行中', start: '清末', end: '未知', feature: '灵气衰竭，传承断绝' },
+];
+
+const timeUnits = [
+  { unit: '刹那', equals: '一念', desc: '最短的时间单位' },
+  { unit: '念', equals: '一瞬', desc: '约0.018秒' },
+  { unit: '瞬', equals: '一息', desc: '约1.8秒' },
+  { unit: '息', equals: '一须臾', desc: '约3分钟' },
+  { unit: '须臾', equals: '一刻', desc: '约48分钟' },
+  { unit: '刻', equals: '一时辰', desc: '约2小时' },
+  { unit: '时辰', equals: '一日十二分之一', desc: '约2小时' },
+  { unit: '日', equals: '昼夜一轮回', desc: '24小时' },
+  { unit: '月', equals: '约30日', desc: '月亮盈亏一周期' },
+  { unit: '年', equals: '约365日', desc: '地球公转一周期' },
+  { unit: '纪', equals: '十二年', desc: '十二地支一循环' },
+  { unit: '元', equals: '六十年', desc: '六十甲子一循环' },
+];
+---
+
+<ModuleLayout moduleId="zhou" title="纪年系统" description="多纪元时间转换，历法系统">
+  <div class="calendar-system-page">
+    <section class="intro-section">
+      <h2>时间之理</h2>
+      <p>宙者，古往今来之谓也。世间纪年方式众多，修行界以干支为基，辅以各纪元。知时间之理，方能把握机缘。</p>
+    </section>
+
+    <section class="calendar-types">
+      <h2>干支纪法</h2>
+      <div class="types-grid">
+        {calendarSystems.map(type => (
+          <div class="type-card">
+            <div class="type-symbol">{type.symbol}</div>
+            <h3>{type.name}</h3>
+            <p class="type-desc">{type.desc}</p>
+            <span class="type-example">{type.example}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="time-units">
+      <h2>时间单位</h2>
+      <div class="units-table">
+        <div class="unit-header">
+          <span>单位</span>
+          <span>等于</span>
+          <span>说明</span>
+        </div>
+        {timeUnits.map(unit => (
+          <div class="unit-row">
+            <span class="unit-name">{unit.unit}</span>
+            <span class="unit-equals">{unit.equals}</span>
+            <span class="unit-desc">{unit.desc}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="historical-eras">
+      <h2>历史纪元</h2>
+      <div class="eras-timeline">
+        {eras.map((era, index) => (
+          <div class="era-item">
+            <div class="era-marker">{index + 1}</div>
+            <div class="era-content">
+              <div class="era-header">
+                <h3>{era.name}</h3>
+                <span class="era-years">{era.years}</span>
+              </div>
+              <p class="era-range">
+                <span>起:</span> {era.start} | <span>终:</span> {era.end}
+              </p>
+              <p class="era-feature">{era.feature}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="conversion-section">
+      <h2>实用换算</h2>
+      <div class="conversion-cards">
+        <div class="conversion-card">
+          <h3>公历年份 → 干支年</h3>
+          <p>公式: (公历年份 - 3) % 60</p>
+          <p>结果为0-59，对应六十甲子序号</p>
+          <p class="conversion-example">2024年: (2024-3)%60=37 → 戊子</p>
+        </div>
+        <div class="conversion-card">
+          <h3>干支年 → 公历年份</h3>
+          <p>公式: 60×n + 甲子年 + 3</p>
+          <p>甲子年为公历4年或往前推算</p>
+          <p class="conversion-example">甲子年: 60×n + 4 + 3</p>
+        </div>
+        <div class="conversion-card">
+          <h3>月干支计算</h3>
+          <p>年干 × 5 + 月支 = 月干序号</p>
+          <p>简化: 甲己年起甲寅，乙庚年起丙寅...</p>
+          <p class="conversion-example">甲年寅月为丙寅月</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cultivation-time">
+      <h2>修行与时间</h2>
+      <div class="cultivation-tips">
+        <div class="tip-card">
+          <h3>闭关计时</h3>
+          <p>闭关通常以"须臾"或"刻"计时。一须臾约48分钟，一刻约2小时。</p>
+        </div>
+        <div class="tip-card">
+          <h3>灵气潮汐</h3>
+          <p>灵气随时间有潮汐变化。子时、午时为灵气交汇之机，修行者当把握。</p>
+        </div>
+        <div class="tip-card">
+          <h3>劫运周期</h3>
+          <p>天地大劫以"元"为单位，一元为60年。末法时代，劫运连连，修行者需谨慎。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .calendar-system-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #888;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.4rem;
+    color: #c9a227;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .type-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(240, 64, 128, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .type-symbol {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f04080, #c03060);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+  }
+
+  .type-card h3 {
+    color: #f04080;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .type-desc {
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .type-example {
+    color: #e8d48b;
+    font-size: 0.85rem;
+    background: rgba(232, 212, 139, 0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+  }
+
+  .units-table {
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .unit-header, .unit-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    text-align: center;
+    padding: 0.8rem 1rem;
+  }
+
+  .unit-header {
+    background: rgba(240, 64, 128, 0.2);
+    color: #f04080;
+    font-weight: 600;
+  }
+
+  .unit-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #888;
+    font-size: 0.9rem;
+  }
+
+  .unit-row:last-child {
+    border-bottom: none;
+  }
+
+  .unit-name {
+    color: #f04080;
+    font-weight: 600;
+  }
+
+  .unit-equals {
+    color: #e8d48b;
+  }
+
+  .eras-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .era-item {
+    display: flex;
+    gap: 1rem;
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(240, 64, 128, 0.2);
+    border-radius: 8px;
+    padding: 1.2rem;
+  }
+
+  .era-marker {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #f04080, #c03060);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .era-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .era-content h3 {
+    color: #f04080;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .era-years {
+    color: #e8d48b;
+    font-size: 0.85rem;
+  }
+
+  .era-range {
+    color: #888;
+    font-size: 0.85rem;
+    margin: 0.5rem 0;
+  }
+
+  .era-range span {
+    color: #666;
+  }
+
+  .era-feature {
+    color: #aaa;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 0;
+  }
+
+  .conversion-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .conversion-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .conversion-card h3 {
+    color: #d4af37;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .conversion-card p {
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .conversion-example {
+    color: #40b040 !important;
+    background: rgba(64, 176, 64, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem !important;
+  }
+
+  .cultivation-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tip-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(64, 128, 240, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .tip-card h3 {
+    color: #4080f0;
+    margin-bottom: 0.8rem;
+  }
+
+  .tip-card p {
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>

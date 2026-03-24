@@ -1,0 +1,358 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const convertTypes = [
+  { name: '公历', alias: '阳历、西历', desc: '以地球绕太阳公转为基准的历法，现今国际通用', epoch: '公元', yearStart: 1 },
+  { name: '农历', alias: '阴历、夏历', desc: '以月亮盈亏周期为基础，结合二十四节气的阴阳合历', epoch: '公元', yearStart: 1 },
+  { name: '干支历', alias: '节气历', desc: '以六十甲子为周期的历法，修行界通用', epoch: '黄帝纪元', yearStart: -2697 },
+  { name: '道历', alias: '道教历', desc: '以老子诞生年为起点，修行界用于标注功法年代', epoch: '太上老君纪元', yearStart: -1300 },
+];
+
+const stemNames = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+const branchNames = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+const recentConversions = [
+  { year: 2024, ganzhi: '甲辰', element: '木', zodiac: '龙' },
+  { year: 2025, ganzhi: '乙巳', element: '木', zodiac: '蛇' },
+  { year: 2026, ganzhi: '丙午', element: '火', zodiac: '马' },
+];
+---
+
+<ModuleLayout moduleId="huang" title="纪年转换" description="纪年方式互转，历法换算">
+  <div class="era-convert-page">
+    <section class="intro-section">
+      <h2>纪年转换</h2>
+      <p>世间历法众多，公历、农历、干支历、道历各有不同。修行者需知各历法之转换，方能解读古籍之纪年。</p>
+    </section>
+
+    <section class="calendar-types">
+      <h2>历法类型</h2>
+      <div class="types-grid">
+        {convertTypes.map(type => (
+          <div class="type-card">
+            <div class="type-header">
+              <h3>{type.name}</h3>
+              <span class="type-alias">{type.alias}</span>
+            </div>
+            <p class="type-desc">{type.desc}</p>
+            <div class="type-info">
+              <span>纪元: {type.epoch}</span>
+              <span>起点: {type.yearStart < 0 ? '公元前' + Math.abs(type.yearStart) + '年' : '公元' + type.yearStart + '年'}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ganzhi-system">
+      <h2>六十甲子</h2>
+      <div class="stems-section">
+        <h3>十天干</h3>
+        <div class="stems-row">
+          {stemNames.map((stem, i) => (
+            <span class="stem" style={`--stem-hue: ${i * 36}`}>{stem}</span>
+          ))}
+        </div>
+        <p class="stems-meaning">甲乙木、丙丁火、戊己土、庚辛金、壬癸水</p>
+      </div>
+
+      <div class="branches-section">
+        <h3>十二地支</h3>
+        <div class="branches-row">
+          {branchNames.map((branch, i) => (
+            <span class="branch" style={`--branch-hue: ${i * 30}`}>
+              {branch}
+              <span class="zodiac">{['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'][i]}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div class="combinations-section">
+        <h3>干支组合表（节选）</h3>
+        <div class="combinations-grid">
+          <div class="combo-header">
+            <span>公历</span>
+            <span>干支</span>
+            <span>五行</span>
+            <span>生肖</span>
+          </div>
+          {recentConversions.map(c => (
+            <div class="combo-row">
+              <span>{c.year}年</span>
+              <span class="ganzhi">{c.ganzhi}</span>
+              <span>{c.element}</span>
+              <span>{c.zodiac}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="conversion-methods">
+      <h2>转换方法</h2>
+      <div class="methods-cards">
+        <div class="method-card">
+          <h3>公历转干支</h3>
+          <p>公式: 年份 - 3 - 2697 = 干支序号</p>
+          <p>如: 2024 - 3 - 2697 = -676</p>
+          <p class="method-note">公元4年为甲子年</p>
+        </div>
+        <div class="method-card">
+          <h3>干支转公历</h3>
+          <p>公式: 干支年 + 2697 + 3 = 公历年</p>
+          <p>如: 甲子 + 2697 + 3 = 2704</p>
+          <p class="method-note">仅限公元前的反向推算</p>
+        </div>
+        <div class="method-card">
+          <h3>农历公历互转</h3>
+          <p>需查万年历，农历置闰不固定</p>
+          <p>十九年七闰法</p>
+          <p class="method-note">现代可用工具快速查询</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="practical-knowledge">
+      <h2>实用知识</h2>
+      <div class="tips">
+        <div class="tip">
+          <h3>修行纪年</h3>
+          <p>古籍功法多以干支纪年，如"甲子年间"、"乙酉之变"，需换算为公历方能确定具体年代。</p>
+        </div>
+        <div class="tip">
+          <h3>节气与月份</h3>
+          <p>干支纪月以节气为界，不是单纯以日期划分。立春为寅月之始，惊蛰为卯月之始。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .era-convert-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #888;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.4rem;
+    color: #c9a227;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  section h3 {
+    font-size: 1.1rem;
+    color: #e8d48b;
+    margin-bottom: 1rem;
+  }
+
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .type-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(192, 128, 64, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .type-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .type-header h3 {
+    color: #e8d48b;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .type-alias {
+    color: #c08040;
+    font-size: 0.8rem;
+  }
+
+  .type-desc {
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .type-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .stems-row, .branches-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .stem {
+    width: 50px;
+    height: 50px;
+    background: hsl(var(--stem-hue), 50%, 20%);
+    border: 1px solid hsl(var(--stem-hue), 50%, 40%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: hsl(var(--stem-hue), 70%, 70%);
+    font-weight: bold;
+  }
+
+  .branch {
+    width: 70px;
+    height: 50px;
+    background: hsl(var(--branch-hue), 40%, 15%);
+    border: 1px solid hsl(var(--branch-hue), 40%, 30%);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: hsl(var(--branch-hue), 60%, 60%);
+    font-weight: bold;
+  }
+
+  .branch .zodiac {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  .stems-meaning {
+    color: #888;
+    font-size: 0.9rem;
+  }
+
+  .combinations-section {
+    margin-top: 2rem;
+  }
+
+  .combinations-grid {
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .combo-header, .combo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    text-align: center;
+    padding: 0.8rem 1rem;
+  }
+
+  .combo-header {
+    background: rgba(192, 128, 64, 0.2);
+    color: #c08040;
+    font-weight: 600;
+  }
+
+  .combo-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #888;
+    font-size: 0.9rem;
+  }
+
+  .combo-row:last-child {
+    border-bottom: none;
+  }
+
+  .ganzhi {
+    color: #e8d48b;
+    font-weight: bold;
+  }
+
+  .methods-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .method-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .method-card h3 {
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .method-card p {
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .method-note {
+    color: #666;
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+
+  .tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tip {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(64, 176, 64, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .tip h3 {
+    color: #40b040;
+    margin-bottom: 0.8rem;
+  }
+
+  .tip p {
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>

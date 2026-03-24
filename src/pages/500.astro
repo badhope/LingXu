@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE_CONFIG } from '../lib/constants';
+import { withBase } from '@lib/utils';
 ---
 
 <BaseLayout title="服务器错误" description="服务器遇到了问题">
@@ -30,7 +30,7 @@ import { SITE_CONFIG } from '../lib/constants';
 
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a
-          href={SITE_CONFIG.base || '/'}
+          href={withBase('/')}
           class="group relative px-8 py-3 rounded-lg overflow-hidden transition-all duration-500 hover:scale-105"
         >
           <div class="absolute inset-0 bg-gradient-to-r from-[#c9a227]/20 via-[#d4af37]/10 to-[#c9a227]/20 border border-[#c9a227]/40 rounded-lg"></div>
@@ -40,16 +40,16 @@ import { SITE_CONFIG } from '../lib/constants';
         </a>
 
         <a
-          href={`${SITE_CONFIG.base}/archive`}
+          href={withBase('/home')}
           class="group px-8 py-3 rounded-lg border border-[#333333]/60 text-[#666666] hover:text-[#c9a227] hover:border-[#444444] transition-all duration-500"
         >
-          <span class="tracking-wider">探索档案馆</span>
+          <span class="tracking-wider">探索首页</span>
         </a>
       </div>
 
       <div class="mt-16 pt-8 border-t border-[#222222]">
         <p class="text-xs text-[#555555]">
-          如问题持续，请联系管理员
+          如问题持续，请稍后重试
         </p>
       </div>
     </div>

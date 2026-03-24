@@ -1,0 +1,324 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const realms = [
+  { name: '仙界', color: '#f0c040', icon: '☁️', desc: '灵气充沛，仙人所居。有三十六重天，一重一天。', population: '稀少', environment: '云雾缭绕，仙山飘渺' },
+  { name: '人间界', color: '#40b040', icon: '🏠', desc: '凡人所居，灵气稀薄。虽如此，亦有洞天福地散落其间。', population: '众多', environment: '山河大地，城镇村落' },
+  { name: '冥界', color: '#606060', icon: '🌑', desc: '亡魂所归，阴气极重。十殿阎罗各司其职，轮回之所。', population: '无数', environment: '幽暗无光，阴风阵阵' },
+  { name: '妖界', color: '#8040f0', icon: '🌸', desc: '妖族聚居，修炼之所。多在深山大海，少与人往来。', population: '中等', environment: '深山老林，异域空间' },
+];
+
+const regions = [
+  { name: '三十三重天', type: '仙界上层', desc: '三清所居：玉清境、上清境、太清境', feature: '最高灵气浓度' },
+  { name: '四大部洲', type: '人间界', desc: '东胜神洲、南瞻部洲、西牛贺洲、北俱芦洲', feature: '人杰地灵' },
+  { name: '十殿冥府', type: '冥界', desc: '秦广王殿至轮回殿，十殿各有职责', feature: '掌管轮回转世' },
+  { name: '东岳泰山', type: '人冥交界', desc: '掌管生死之籍，阴阳交替之地', feature: '阴阳交汇' },
+];
+---
+
+<ModuleLayout moduleId="yu" title="世界地图" description="各界地域浏览，世界地图">
+  <div class="world-map-page">
+    <section class="intro-section">
+      <h2>万界苍茫</h2>
+      <p>宇者，上下四方之谓也。天地宇宙浩瀚无垠，多维空间错综复杂。人间、仙界、冥界，界界不同；天上、地下、人间，层层相叠。</p>
+    </section>
+
+    <section class="realms-overview">
+      <h2>各界概况</h2>
+      <div class="realms-grid">
+        {realms.map(realm => (
+          <div class="realm-card" style={`--realm-color: ${realm.color}`}>
+            <div class="realm-icon">{realm.icon}</div>
+            <h3>{realm.name}</h3>
+            <p class="realm-desc">{realm.desc}</p>
+            <div class="realm-info">
+              <span>人口: {realm.population}</span>
+              <span>环境: {realm.environment}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="world-diagram">
+      <h2>世界结构</h2>
+      <div class="structure-visual">
+        <div class="layer heaven">
+          <span class="layer-label">仙界</span>
+          <span class="layer-desc">☁️ 三十三重天 · 三清圣地</span>
+        </div>
+        <div class="layer-divider">
+          <span class="divider-text">天界与人间的结界</span>
+        </div>
+        <div class="layer mortal">
+          <span class="layer-label">人间界</span>
+          <span class="layer-desc">四大部洲 · 洞天福地</span>
+        </div>
+        <div class="layer-divider">
+          <span class="divider-text">生死之界</span>
+        </div>
+        <div class="layer underworld">
+          <span class="layer-label">冥界</span>
+          <span class="layer-desc">🌑 十殿冥府 · 轮回之所</span>
+        </div>
+        <div class="layer-divider">
+          <span class="divider-text">幽冥深渊</span>
+        </div>
+        <div class="layer abyss">
+          <span class="layer-label">混沌虚空</span>
+          <span class="layer-desc">? 未可知之地</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="regions-section">
+      <h2>著名区域</h2>
+      <div class="regions-grid">
+        {regions.map(region => (
+          <div class="region-card">
+            <div class="region-header">
+              <h3>{region.name}</h3>
+              <span class="region-type">{region.type}</span>
+            </div>
+            <p class="region-desc">{region.desc}</p>
+            <span class="region-feature">{region.feature}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="map-knowledge">
+      <h2>地理要义</h2>
+      <div class="knowledge-cards">
+        <div class="knowledge-card">
+          <h3>结界</h3>
+          <p>各界之间有结界相隔，寻常人等难以穿越。唯有仙人或有大机缘者，方能往来各界。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>洞天福地</h3>
+          <p>人间界中亦有灵气充沛之所，名为洞天福地。共有三十六洞天、七十二福地。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>空间法则</h3>
+          <p>空间大小并非固定，高维空间可包含低维空间。仙界一花一草，可能便是人间一山一水。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .world-map-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #888;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.4rem;
+    color: #c9a227;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  .realms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .realm-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid var(--realm-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .realm-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--realm-color) 20%, transparent);
+  }
+
+  .realm-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .realm-card h3 {
+    color: var(--realm-color);
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .realm-desc {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .realm-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: #888;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .structure-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 2rem;
+    background: rgba(10, 10, 20, 0.8);
+    border-radius: 12px;
+  }
+
+  .layer {
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .heaven {
+    background: linear-gradient(135deg, rgba(240, 192, 64, 0.2), rgba(240, 192, 64, 0.05));
+    border: 1px solid rgba(240, 192, 64, 0.4);
+  }
+
+  .mortal {
+    background: linear-gradient(135deg, rgba(64, 176, 64, 0.2), rgba(64, 176, 64, 0.05));
+    border: 1px solid rgba(64, 176, 64, 0.4);
+  }
+
+  .underworld {
+    background: linear-gradient(135deg, rgba(96, 96, 96, 0.2), rgba(96, 96, 96, 0.05));
+    border: 1px solid rgba(96, 96, 96, 0.4);
+  }
+
+  .abyss {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.3), rgba(20, 20, 40, 0.1));
+    border: 1px solid rgba(80, 80, 100, 0.3);
+  }
+
+  .layer-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .heaven .layer-label { color: #f0c040; }
+  .mortal .layer-label { color: #40b040; }
+  .underworld .layer-label { color: #888; }
+  .abyss .layer-label { color: #666; }
+
+  .layer-desc {
+    color: #888;
+    font-size: 0.9rem;
+  }
+
+  .layer-divider {
+    text-align: center;
+    padding: 0.5rem;
+    color: #666;
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+
+  .regions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .region-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(64, 128, 240, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .region-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .region-card h3 {
+    color: #4080f0;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .region-type {
+    color: #888;
+    font-size: 0.8rem;
+    background: rgba(64, 128, 240, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .region-desc {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .region-feature {
+    color: #40b040;
+    font-size: 0.85rem;
+  }
+
+  .knowledge-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .knowledge-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .knowledge-card h3 {
+    color: #d4af37;
+    margin-bottom: 0.8rem;
+  }
+
+  .knowledge-card p {
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>

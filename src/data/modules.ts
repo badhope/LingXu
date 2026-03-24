@@ -1,4 +1,4 @@
-const BASE_PATH = '/LingXu';
+const BASE_PATH = '/';
 
 export interface ModuleConfig {
   id: string;

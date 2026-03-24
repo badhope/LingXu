@@ -1,0 +1,307 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const mountains = [
+  { name: '昆仑山', alias: '万山之祖', desc: '位于西北高原，灵气最为充沛，为天下龙脉之祖', height: '海拔约5500米' },
+  { name: '泰山', alias: '五岳之首', desc: '主生死之籍，阴阳交替之地，历代帝王封禅之所', height: '海拔1545米' },
+  { name: '华山', alias: '奇险天下第一', desc: '花岗岩体最为坚硬，修炼金系功法之圣地', height: '海拔2154米' },
+  { name: '黄山', alias: '天下第一奇山', desc: '云海奇松温泉，炼丹修仙之佳境', height: '海拔1864米' },
+  { name: '庐山', alias: '瀑布飞流', desc: '瀑布之下灵气充沛，适合水系功法修炼', height: '海拔1474米' },
+  { name: '峨眉山', alias: '普贤菩萨道场', desc: '佛教圣地，禅定修炼之绝佳场所', height: '海拔3099米' },
+];
+
+const rivers = [
+  { name: '长江', flow: '自西向东', desc: '亚洲第一长河，流经之处灵气充沛' },
+  { name: '黄河', flow: '自西向东', desc: '母亲河，孕育中华文明，龙脉之气汇聚' },
+  { name: '淮河', flow: '自西向东', desc: '分隔南北，气候过渡带' },
+  { name: '运河', flow: '南北贯通', desc: '人工开凿，汇聚各地灵气' },
+];
+
+const landforms = [
+  { type: '盆地', examples: '四川盆地、塔里木盆地、准噶尔盆地', feature: '四面环山，灵气汇聚不易扩散' },
+  { type: '平原', examples: '华北平原、长江中下游平原', feature: '地势平坦，灵气流转畅通' },
+  { type: '丘陵', examples: '东南丘陵、黄土丘陵', feature: '起伏有致，层次分明，适合布局' },
+  { type: '高原', examples: '青藏高原、云贵高原', feature: '海拔高远，接近天界，灵气稀薄而纯净' },
+];
+---
+
+<ModuleLayout moduleId="di" title="地理志" description="山川地理知识，洞天福地分布">
+  <div class="geography-page">
+    <section class="intro-section">
+      <h2>山川地理之学</h2>
+      <p>地理者，地之理也。山川形势，关乎灵气走向；水土之性，影响修行成败。古之修士，必先观山水之势，方能寻得洞天福地。</p>
+    </section>
+
+    <section class="mountains-section">
+      <h2>名山志</h2>
+      <div class="mountains-grid">
+        {mountains.map(m => (
+          <div class="mountain-card">
+            <div class="mountain-header">
+              <span class="mountain-icon">🏔️</span>
+              <div class="mountain-title">
+                <h3>{m.name}</h3>
+                <span class="mountain-alias">{m.alias}</span>
+              </div>
+            </div>
+            <p class="mountain-desc">{m.desc}</p>
+            <span class="mountain-height">{m.height}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="rivers-section">
+      <h2>水系志</h2>
+      <div class="rivers-grid">
+        {rivers.map(r => (
+          <div class="river-card">
+            <div class="river-icon">💧</div>
+            <div class="river-info">
+              <h3>{r.name}</h3>
+              <span class="river-flow">{r.flow}</span>
+            </div>
+            <p class="river-desc">{r.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="landforms-section">
+      <h2>地形论</h2>
+      <div class="landforms-table">
+        {landforms.map(l => (
+          <div class="landform-row">
+            <div class="landform-type">{l.type}</div>
+            <div class="landform-examples">
+              <span class="label">代表:</span>
+              <span>{l.examples}</span>
+            </div>
+            <div class="landform-feature">
+              <span class="label">特点:</span>
+              <span>{l.feature}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="knowledge-section">
+      <h2>地理要义</h2>
+      <div class="knowledge-cards">
+        <div class="knowledge-card">
+          <h3>龙脉走向</h3>
+          <p>龙脉起于昆仑，绵延万里，入首结穴。山势起伏如龙腾，方位吉凶由此定。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>寻龙点穴</h3>
+          <p>寻龙需观山脉起伏、左右护砂、明堂水口。点穴要察气聚之所，阴阳交变之机。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>四神相应</h3>
+          <p>左青龙、右白虎、前朱雀、后玄武。四神相应之地，乃风水宝地之核心。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .geography-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #888;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.4rem;
+    color: #c9a227;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  .mountains-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .mountain-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(64, 176, 64, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .mountain-card:hover {
+    border-color: rgba(64, 176, 64, 0.6);
+    transform: translateY(-2px);
+  }
+
+  .mountain-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .mountain-icon {
+    font-size: 2rem;
+  }
+
+  .mountain-title h3 {
+    color: #e8d48b;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .mountain-alias {
+    color: #40b040;
+    font-size: 0.85rem;
+  }
+
+  .mountain-desc {
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .mountain-height {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .rivers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .river-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(64, 128, 240, 0.3);
+    border-radius: 8px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .river-card:hover {
+    border-color: rgba(64, 128, 240, 0.6);
+  }
+
+  .river-icon {
+    font-size: 1.5rem;
+  }
+
+  .river-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .river-info h3 {
+    color: #e8d48b;
+    margin: 0;
+  }
+
+  .river-flow {
+    color: #4080f0;
+    font-size: 0.85rem;
+  }
+
+  .river-desc {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .landforms-table {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .landform-row {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(192, 128, 64, 0.3);
+    border-radius: 8px;
+    padding: 1.2rem;
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .landform-type {
+    font-size: 1.1rem;
+    color: #c08040;
+    font-weight: 600;
+  }
+
+  .landform-examples,
+  .landform-feature {
+    color: #888;
+    font-size: 0.9rem;
+  }
+
+  .landform-examples .label,
+  .landform-feature .label {
+    color: #666;
+    margin-right: 0.5rem;
+  }
+
+  .knowledge-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .knowledge-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .knowledge-card h3 {
+    color: #d4af37;
+    margin-bottom: 0.8rem;
+  }
+
+  .knowledge-card p {
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .landform-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

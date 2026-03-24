@@ -1,0 +1,306 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const eras = [
+  { name: '洪荒纪元', period: '混沌初开至天庭建立', keyEvents: ['盘古开天辟地', '龙汉初劫', '巫妖大战', '天庭建立'], feature: '神魔并起，万族林立' },
+  { name: '上古纪元', period: '天庭建立至封神之战', keyEvents: ['大禹治水', '夏商更迭', '周朝建立', '百家争鸣'], feature: '人族崛起，修行鼎盛' },
+  { name: '中古纪元', period: '封神之战至秦始皇一统', keyEvents: ['封神演义', '春秋战国', '诸子百家', '秦皇一统'], feature: '天界人间秩序初定' },
+  { name: '近古纪元', period: '秦一统至清末', keyEvents: ['汉武盛世', '丝绸之路', '佛教东传', '道佛争锋'], feature: '修行文明高度发展' },
+  { name: '末法纪元', period: '清末至今', keyEvents: ['灵气衰竭', '科技兴起', '修行传承断绝', '秘术散佚'], feature: '末法降临，修行艰难' },
+];
+
+const scrolls = [
+  { title: '山海经', type: '地理志', desc: '记载上古地理山川、神怪异兽，为洪荒时代最重要的文献之一', author: '不详', status: '基本完好' },
+  { title: '封神演义', type: '神话史', desc: '记载封神之战始末，诸多仙人神将的来历与归宿', author: '许仲琳', status: '完好' },
+  { title: '搜神记', type: '神怪录', desc: '记载历代神异之事，鬼怪狐仙之传说', author: '干宝', status: '部分残缺' },
+  { title: '阅微草堂笔记', type: '志怪集', desc: '记载狐鬼神异之事，寓意深刻', author: '纪昀', status: '完好' },
+  { title: '聊斋志异', type: '传奇集', desc: '人鬼恋、狐仙情，世间悲欢', author: '蒲松龄', status: '完好' },
+];
+---
+
+<ModuleLayout moduleId="huang" title="历史卷轴" description="卷轴式历史浏览，各时代卷轴">
+  <div class="scrolls-page">
+    <section class="intro-section">
+      <h2>历史卷轴</h2>
+      <p>历史如卷，缓缓展开。每一卷都是一个时代，记载着修行文明的兴衰变迁。拂去尘埃，方见真容。</p>
+    </section>
+
+    <section class="eras-timeline">
+      <h2>时代划分</h2>
+      <div class="timeline">
+        {eras.map((era, index) => (
+          <div class="timeline-item" style={`--delay: ${index * 0.2}s`}>
+            <div class="timeline-marker">
+              <span class="marker-number">{index + 1}</span>
+            </div>
+            <div class="timeline-content">
+              <h3>{era.name}</h3>
+              <span class="era-period">{era.period}</span>
+              <p class="era-feature">{era.feature}</p>
+              <div class="era-events">
+                {era.keyEvents.map(event => (
+                  <span class="event-tag">{event}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="scrolls-library">
+      <h2>典籍一览</h2>
+      <div class="scrolls-grid">
+        {scrolls.map(scroll => (
+          <div class="scroll-card">
+            <div class="scroll-header">
+              <span class="scroll-type">{scroll.type}</span>
+              <span class="scroll-status">{scroll.status}</span>
+            </div>
+            <h3>{scroll.title}</h3>
+            <p class="scroll-desc">{scroll.desc}</p>
+            <div class="scroll-meta">
+              <span class="meta-author">作者: {scroll.author}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="history-knowledge">
+      <h2>历史要义</h2>
+      <div class="knowledge-cards">
+        <div class="knowledge-card">
+          <h3>轮回史观</h3>
+          <p>历史如轮回，兴衰交替。每一纪元都有其特点，周而复始，终而复始。修行者当以史为鉴。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>文明断层</h3>
+          <p>上古文明与今世有巨大断层，许多功法秘术失传。唯有残篇断简中，方能窥见一二。</p>
+        </div>
+        <div class="knowledge-card">
+          <h3>天机隐匿</h3>
+          <p>末法时代，天机隐匿。许多历史真相被掩盖，唯有有缘者方能得知一二。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .scrolls-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .intro-section h2 {
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #888;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.4rem;
+    color: #c9a227;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #c9a227, rgba(201, 162, 39, 0.2));
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+    padding-left: 2rem;
+    animation: fadeIn 0.5s ease forwards;
+    animation-delay: var(--delay);
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -2rem;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #c9a227, #8b7017);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(-50%);
+  }
+
+  .marker-number {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .timeline-content {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(192, 128, 64, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .timeline-content h3 {
+    color: #e8d48b;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .era-period {
+    color: #c08040;
+    font-size: 0.85rem;
+  }
+
+  .era-feature {
+    color: #888;
+    margin: 1rem 0;
+    font-style: italic;
+  }
+
+  .era-events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .event-tag {
+    background: rgba(192, 128, 64, 0.2);
+    color: #c08040;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  .scrolls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .scroll-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(192, 128, 64, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .scroll-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+    right: 1.5rem;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #c08040, transparent);
+  }
+
+  .scroll-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(192, 128, 64, 0.6);
+  }
+
+  .scroll-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .scroll-type {
+    color: #c08040;
+    font-size: 0.85rem;
+    background: rgba(192, 128, 64, 0.15);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .scroll-status {
+    font-size: 0.8rem;
+    color: #40b040;
+  }
+
+  .scroll-card h3 {
+    color: #e8d48b;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .scroll-desc {
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .scroll-meta {
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .meta-author {
+    color: #666;
+    font-size: 0.8rem;
+  }
+
+  .knowledge-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .knowledge-card {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .knowledge-card h3 {
+    color: #d4af37;
+    margin-bottom: 0.8rem;
+  }
+
+  .knowledge-card p {
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>
