@@ -13,78 +13,104 @@ const MODULES = [
   { char: '洪', name: '洪荒', pinyin: 'Hóng', description: '神怪异兽，洪荒神话', href: withBase('/hong'), color: '#f06040' },
   { char: '荒', name: '失落', pinyin: 'Huāng', description: '失传秘术，失落文明', href: withBase('/huang-lost'), color: '#806040' },
 ];
+
+const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', '⚹', '⟡', '⊛', '✴', '⬢', '❋', '✵'];
 ---
 
 <BaseLayout title="灵墟 - 天地玄黄宇宙洪荒">
-  <div class="home-container">
+  <div class="home-container" id="home-container">
     <div class="stars-container">
       <canvas id="stars-canvas"></canvas>
     </div>
-    <div class="nebula-layer"></div>
-    <div class="mist-layer"></div>
 
-    <header class="home-header">
-      <h1 class="site-title">
-        <span class="title-word">灵</span>
-        <span class="title-word">墟</span>
-      </h1>
-      <p class="site-subtitle">末法时代 · 失落修行文明档案馆</p>
-    </header>
+    <div class="title-section" id="title-section">
+      <div class="title-orbit-ring ring-1"></div>
+      <div class="title-orbit-ring ring-2"></div>
+      <div class="title-orbit-ring ring-3"></div>
 
-    <main class="modules-grid">
-      {MODULES.map((module, index) => (
-        <a
-          href={module.href}
-          class="module-char"
-          data-module={module.char}
-          style={`--char-color: ${module.color}; --delay: ${index * 0.1}s`}
-        >
-          <span class="char">{module.char}</span>
-          <span class="char-info">
-            <span class="char-name">{module.name}</span>
-            <span class="char-pinyin">{module.pinyin}</span>
-          </span>
-          <span class="char-desc">{module.description}</span>
-          <div class="char-glow"></div>
-          <div class="char-particles"></div>
-        </a>
-      ))}
-    </main>
+      <div class="symbol-container" id="symbol-container"></div>
 
-    <div class="poem-line">
-      <span>天地玄黄</span>
-      <span class="separator">·</span>
-      <span>宇宙洪荒</span>
+      <div class="light-beam-container" id="light-beam-container"></div>
+
+      <div class="title-content">
+        <h1 class="site-title">
+          <span class="title-word">灵</span>
+          <span class="title-word">墟</span>
+        </h1>
+        <p class="site-subtitle">末法时代 · 失落修行文明档案馆</p>
+      </div>
+
+      <div class="scroll-hint" id="scroll-hint">
+        <span class="scroll-text">向下滚动探索</span>
+        <div class="scroll-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M19 12l-7 7-7-7"/>
+          </svg>
+        </div>
+      </div>
     </div>
 
-    <nav class="quick-nav">
-      <a href={withBase('/search')} class="nav-btn search-btn">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.35-4.35"></path>
-        </svg>
-        <span>搜索</span>
-      </a>
-      <a href={withBase('/bookmarks')} class="nav-btn bookmark-btn">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
-        </svg>
-        <span>收藏</span>
-      </a>
-      <a href={withBase('/profile')} class="nav-btn profile-btn">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="8" r="5"></circle>
-          <path d="M20 21a8 8 0 0 0-16 0"></path>
-        </svg>
-        <span>我的</span>
-      </a>
-    </nav>
+    <div class="content-section" id="content-section">
+      <div class="modules-wrapper">
+        <div class="modules-grid">
+          {MODULES.map((module, index) => (
+            <a
+              href={module.href}
+              class="module-char"
+              data-module={module.char}
+              style={`--char-color: ${module.color}; --delay: ${index * 0.1}s`}
+            >
+              <div class="card-glow"></div>
+              <div class="card-border"></div>
+              <div class="card-inner">
+                <span class="char">{module.char}</span>
+                <span class="char-info">
+                  <span class="char-name">{module.name}</span>
+                  <span class="char-pinyin">{module.pinyin}</span>
+                </span>
+                <span class="char-desc">{module.description}</span>
+              </div>
+              <div class="char-particles"></div>
+            </a>
+          ))}
+        </div>
 
-    <div class="cosmic-bg">
-      <div class="orbit orbit-1"></div>
-      <div class="orbit orbit-2"></div>
-      <div class="orbit orbit-3"></div>
-      <div class="orbit orbit-4"></div>
+        <div class="poem-line">
+          <span>天地玄黄</span>
+          <span class="separator">·</span>
+          <span>宇宙洪荒</span>
+        </div>
+
+        <nav class="quick-nav">
+          <a href={withBase('/search')} class="nav-btn search-btn">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <span>搜索</span>
+          </a>
+          <a href={withBase('/bookmarks')} class="nav-btn bookmark-btn">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
+            </svg>
+            <span>收藏</span>
+          </a>
+          <a href={withBase('/profile')} class="nav-btn profile-btn">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="5"></circle>
+              <path d="M20 21a8 8 0 0 0-16 0"></path>
+            </svg>
+            <span>我的</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="cosmic-bg">
+        <div class="orbit orbit-1"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="orbit orbit-3"></div>
+        <div class="orbit orbit-4"></div>
+      </div>
     </div>
   </div>
 
@@ -92,20 +118,14 @@ const MODULES = [
     .home-container {
       min-height: 100vh;
       background: radial-gradient(ellipse at center, #0a0a0f 0%, #050508 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
       position: relative;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .stars-container {
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 1;
-      will-change: transform;
     }
 
     #stars-canvas {
@@ -113,41 +133,118 @@ const MODULES = [
       height: 100%;
     }
 
-    .nebula-layer {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 30%, rgba(201, 162, 39, 0.03) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(107, 74, 138, 0.03) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(45, 138, 138, 0.02) 0%, transparent 60%);
-      animation: nebulaPulse 20s ease-in-out infinite;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    @keyframes nebulaPulse {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.02); }
-    }
-
-    .mist-layer {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(5, 5, 8, 0.6) 100%);
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    .home-header {
-      text-align: center;
-      margin-bottom: 3rem;
-      z-index: 10;
+    .title-section {
       position: relative;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      perspective: 1000px;
+    }
+
+    .title-orbit-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 162, 39, 0.1);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .ring-1 {
+      width: 500px;
+      height: 500px;
+      animation: ringRotate 40s linear infinite;
+    }
+
+    .ring-2 {
+      width: 700px;
+      height: 700px;
+      border-color: rgba(201, 162, 39, 0.06);
+      animation: ringRotate 60s linear infinite reverse;
+    }
+
+    .ring-3 {
+      width: 900px;
+      height: 900px;
+      border-color: rgba(201, 162, 39, 0.03);
+      animation: ringRotate 80s linear infinite;
+    }
+
+    @keyframes ringRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .symbol-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .symbol {
+      position: absolute;
+      color: rgba(201, 162, 39, 0.4);
+      font-size: 14px;
+      animation: symbolOrbit 30s linear infinite;
+      will-change: transform;
+      text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+    }
+
+    @keyframes symbolOrbit {
+      from { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
+    }
+
+    .light-beam-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 800px;
+      height: 800px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .light-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #f0c040;
+      border-radius: 50%;
+      box-shadow: 0 0 6px 2px rgba(240, 192, 64, 0.8);
+      animation: lightOrbit 20s linear infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes lightOrbit {
+      from {
+        transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      to {
+        transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg);
+        opacity: 0;
+      }
+    }
+
+    .title-content {
+      position: relative;
+      z-index: 20;
+      text-align: center;
     }
 
     .site-title {
-      font-size: 4rem;
+      font-size: 6rem;
       font-weight: 400;
       letter-spacing: 0.5em;
       margin: 0;
@@ -159,39 +256,33 @@ const MODULES = [
     .title-word {
       color: #e8d48b;
       text-shadow:
-        0 0 20px rgba(201, 162, 39, 0.5),
-        0 0 40px rgba(201, 162, 39, 0.3),
-        0 0 60px rgba(201, 162, 39, 0.2);
-      animation: titleGlow 4s ease-in-out infinite, fadeSlideDown 1s ease backwards;
+        0 0 20px rgba(201, 162, 39, 0.6),
+        0 0 40px rgba(201, 162, 39, 0.4),
+        0 0 80px rgba(201, 162, 39, 0.2),
+        0 0 120px rgba(201, 162, 39, 0.1);
+      animation: titleFloat 6s ease-in-out infinite;
       will-change: transform, text-shadow;
     }
 
     .title-word:nth-child(2) {
-      animation-delay: 0.15s;
+      animation-delay: 0.1s;
     }
 
-    @keyframes titleGlow {
+    @keyframes titleFloat {
       0%, 100% {
+        transform: translateY(0);
         text-shadow:
-          0 0 20px rgba(201, 162, 39, 0.5),
-          0 0 40px rgba(201, 162, 39, 0.3);
-      }
-      50% {
-        text-shadow:
-          0 0 30px rgba(201, 162, 39, 0.7),
-          0 0 60px rgba(201, 162, 39, 0.4),
+          0 0 20px rgba(201, 162, 39, 0.6),
+          0 0 40px rgba(201, 162, 39, 0.4),
           0 0 80px rgba(201, 162, 39, 0.2);
       }
-    }
-
-    @keyframes fadeSlideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      50% {
+        transform: translateY(-10px);
+        text-shadow:
+          0 0 30px rgba(201, 162, 39, 0.8),
+          0 0 60px rgba(201, 162, 39, 0.5),
+          0 0 100px rgba(201, 162, 39, 0.3),
+          0 0 140px rgba(201, 162, 39, 0.15);
       }
     }
 
@@ -199,16 +290,79 @@ const MODULES = [
       font-size: 1rem;
       color: #888;
       letter-spacing: 0.3em;
-      margin-top: 1rem;
-      animation: fadeIn 1s ease 0.3s backwards;
+      margin-top: 1.5rem;
+      animation: subtitleFade 2s ease 0.5s backwards;
+    }
+
+    @keyframes subtitleFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      animation: scrollHintPulse 2s ease-in-out infinite;
+      z-index: 20;
+    }
+
+    .scroll-text {
+      font-size: 0.8rem;
+      color: #666;
+      letter-spacing: 0.2em;
+    }
+
+    .scroll-arrow {
+      width: 24px;
+      height: 24px;
+      color: #666;
+      animation: scrollBounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollHintPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    .content-section {
+      position: relative;
+      min-height: 100vh;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(100px);
+      transition: opacity 1s ease, transform 1s ease;
+      pointer-events: none;
+    }
+
+    .content-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .modules-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 4rem 2rem;
     }
 
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 2rem;
-      max-width: 900px;
-      z-index: 10;
+      max-width: 1000px;
     }
 
     .module-char {
@@ -216,110 +370,127 @@ const MODULES = [
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1.5rem;
-      background: rgba(10, 10, 15, 0.8);
-      border: 1px solid rgba(201, 162, 39, 0.2);
-      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      background: rgba(10, 10, 15, 0.9);
+      border-radius: 16px;
       text-decoration: none;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden;
-      animation: fadeSlideIn 0.8s ease backwards;
+      animation: cardFloat 4s ease-in-out infinite;
       animation-delay: var(--delay);
-      will-change: transform, box-shadow;
+      will-change: transform;
+      transform-style: preserve-3d;
     }
 
-    .module-char::before {
-      content: '';
+    .module-char:nth-child(1) { animation-delay: 0s; }
+    .module-char:nth-child(2) { animation-delay: 0.5s; }
+    .module-char:nth-child(3) { animation-delay: 1s; }
+    .module-char:nth-child(4) { animation-delay: 1.5s; }
+    .module-char:nth-child(5) { animation-delay: 2s; }
+    .module-char:nth-child(6) { animation-delay: 2.5s; }
+    .module-char:nth-child(7) { animation-delay: 3s; }
+    .module-char:nth-child(8) { animation-delay: 3.5s; }
+
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0) rotateX(0deg); }
+      50% { transform: translateY(-8px) rotateX(2deg); }
+    }
+
+    .card-glow {
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--char-color), transparent 50%, var(--char-color));
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      animation: cardGlowRotate 8s linear infinite;
+    }
+
+    @keyframes cardGlowRotate {
+      from { filter: hue-rotate(0deg); }
+      to { filter: hue-rotate(360deg); }
+    }
+
+    .card-border {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, var(--char-color), transparent 70%);
-      opacity: 0;
+      border-radius: 16px;
+      padding: 2px;
+      background: linear-gradient(135deg, var(--char-color), transparent 30%, transparent 70%, var(--char-color));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.3;
       transition: opacity 0.4s ease;
     }
 
-    .module-char::after {
-      content: '';
-      position: absolute;
-      inset: -50%;
-      background: radial-gradient(circle, var(--char-color) 0%, transparent 70%);
-      opacity: 0;
-      transform: scale(0.5);
-      transition: all 0.6s ease;
-      pointer-events: none;
+    .card-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: 100%;
     }
 
     .module-char:hover {
-      transform: translateY(-8px) scale(1.05);
-      border-color: var(--char-color);
+      transform: translateY(-12px) scale(1.05) rotateX(5deg);
       box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.5),
-        0 0 40px color-mix(in srgb, var(--char-color) 30%, transparent);
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 60px color-mix(in srgb, var(--char-color) 40%, transparent);
     }
 
-    .module-char:hover::before {
+    .module-char:hover .card-glow {
       opacity: 0.15;
     }
 
-    .module-char:hover::after {
-      opacity: 0.1;
-      transform: scale(1.5);
+    .module-char:hover .card-border {
+      opacity: 0.8;
     }
 
     .module-char:hover .char {
       text-shadow:
         0 0 20px var(--char-color),
-        0 0 40px var(--char-color);
-      transform: scale(1.1);
-    }
-
-    .module-char:hover .char-glow {
-      opacity: 0.6;
-      transform: translateX(-50%) scale(1.2);
-    }
-
-    .module-char:hover .char-particles {
-      opacity: 1;
+        0 0 40px var(--char-color),
+        0 0 60px var(--char-color);
+      transform: scale(1.15);
     }
 
     .char {
-      font-size: 3.5rem;
+      font-size: 4rem;
       color: var(--char-color);
       line-height: 1;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      z-index: 2;
     }
 
     .char-info {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 1rem;
-      position: relative;
-      z-index: 2;
+      margin-top: 1.2rem;
     }
 
     .char-name {
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       color: #e8d48b;
       letter-spacing: 0.2em;
     }
 
     .char-pinyin {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       color: #666;
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
       letter-spacing: 0.1em;
     }
 
     .char-desc {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: #555;
-      margin-top: 0.75rem;
+      margin-top: 1rem;
       text-align: center;
-      line-height: 1.4;
-      position: relative;
-      z-index: 2;
+      line-height: 1.5;
       transition: color 0.3s ease;
     }
 
@@ -327,67 +498,73 @@ const MODULES = [
       color: #888;
     }
 
-    .char-glow {
-      position: absolute;
-      bottom: -50%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, var(--char-color), transparent 70%);
-      opacity: 0;
-      transition: all 0.4s ease;
-      pointer-events: none;
-      will-change: transform, opacity;
-    }
-
     .char-particles {
       position: absolute;
       inset: 0;
-      opacity: 0;
-      transition: opacity 0.4s ease;
       pointer-events: none;
       overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .module-char:hover .char-particles {
+      opacity: 1;
     }
 
     .char-particles::before,
     .char-particles::after {
       content: '';
       position: absolute;
-      width: 4px;
-      height: 4px;
+      width: 6px;
+      height: 6px;
       background: var(--char-color);
       border-radius: 50%;
       animation: particleFloat 2s ease-in-out infinite;
     }
 
     .char-particles::before {
-      top: 20%;
-      left: 20%;
+      top: 15%;
+      left: 15%;
       animation-delay: 0s;
     }
 
     .char-particles::after {
-      bottom: 30%;
-      right: 25%;
-      animation-delay: 0.5s;
+      bottom: 20%;
+      right: 20%;
+      animation-delay: 0.6s;
     }
 
     @keyframes particleFloat {
-      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-      50% { transform: translate(10px, -15px) scale(1.2); opacity: 1; }
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.4;
+      }
+      50% {
+        transform: translate(12px, -18px) scale(1.3);
+        opacity: 1;
+      }
     }
 
     .poem-line {
       display: flex;
       align-items: center;
       gap: 1.5rem;
-      margin-top: 4rem;
-      font-size: 1.25rem;
+      margin-top: 5rem;
+      font-size: 1.3rem;
       color: #c9a227;
       letter-spacing: 0.3em;
-      animation: fadeIn 1s ease 0.8s backwards;
-      z-index: 10;
+      animation: poemGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes poemGlow {
+      0%, 100% {
+        text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+        opacity: 0.8;
+      }
+      50% {
+        text-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+        opacity: 1;
+      }
     }
 
     .poem-line .separator {
@@ -397,50 +574,50 @@ const MODULES = [
     .quick-nav {
       display: flex;
       gap: 2rem;
-      margin-top: 3rem;
-      z-index: 10;
-      animation: fadeSlideUp 0.8s ease 1s backwards;
+      margin-top: 4rem;
     }
 
     .nav-btn {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: rgba(10, 10, 15, 0.6);
+      padding: 0.8rem 1.8rem;
+      background: rgba(10, 10, 15, 0.8);
       border: 1px solid rgba(201, 162, 39, 0.3);
-      border-radius: 6px;
+      border-radius: 8px;
       color: #c9a227;
       text-decoration: none;
-      font-size: 0.9rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(8px);
+      font-size: 0.95rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
       will-change: transform, background, border-color;
     }
 
     .nav-btn:hover {
       background: rgba(201, 162, 39, 0.15);
       border-color: #c9a227;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(201, 162, 39, 0.2);
+      transform: translateY(-4px) scale(1.05);
+      box-shadow:
+        0 12px 30px rgba(201, 162, 39, 0.25),
+        0 0 20px rgba(201, 162, 39, 0.15);
     }
 
     .nav-btn:active {
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.02);
     }
 
     .nav-btn .icon {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: 1.3rem;
+      height: 1.3rem;
       transition: transform 0.3s ease;
     }
 
     .nav-btn:hover .icon {
-      transform: scale(1.1);
+      transform: scale(1.15);
     }
 
     .cosmic-bg {
-      position: absolute;
+      position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 4;
@@ -497,52 +674,37 @@ const MODULES = [
       to { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    @keyframes fadeSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes fadeSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     @media (prefers-reduced-motion: reduce) {
       .title-word,
       .module-char,
       .poem-line,
       .quick-nav,
-      .nebula-layer,
       .orbit,
-      .char-particles::before,
-      .char-particles::after {
+      .card-glow,
+      .scroll-hint,
+      .symbol,
+      .light-particle {
         animation: none;
       }
-      .module-char:hover {
+      .content-section {
+        opacity: 1;
         transform: none;
+        pointer-events: auto;
       }
-      .module-char:hover .char {
-        transform: none;
+    }
+
+    @media (max-width: 1024px) {
+      .modules-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
       }
-      .nav-btn:hover {
-        transform: none;
+      .site-title {
+        font-size: 4.5rem;
+      }
+      .symbol-container,
+      .light-beam-container {
+        width: 400px;
+        height: 400px;
       }
     }
 
@@ -550,115 +712,211 @@ const MODULES = [
       .modules-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
+        max-width: 500px;
       }
       .site-title {
-        font-size: 3rem;
+        font-size: 3.5rem;
+      }
+      .title-orbit-ring {
+        display: none;
+      }
+      .symbol-container,
+      .light-beam-container {
+        width: 300px;
+        height: 300px;
       }
       .poem-line {
         font-size: 1rem;
         flex-direction: column;
         gap: 0.5rem;
+        margin-top: 3rem;
       }
       .quick-nav {
         gap: 1rem;
+        margin-top: 2rem;
       }
       .nav-btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
       }
       .orbit {
         display: none;
       }
+      .modules-wrapper {
+        padding: 2rem 1rem;
+      }
     }
   </style>
 
-  <script>
-    class StarsCanvas {
-      constructor(canvas) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
-        this.stars = [];
-        this.maxStars = 120;
-        this.animationId = 0;
-        this.isMobile = window.innerWidth < 768;
-        this.init();
+  <script define:vars={{ SYMBOLS }}>
+    function initTitleAnimation() {
+      const symbolContainer = document.getElementById('symbol-container');
+      const lightContainer = document.getElementById('light-beam-container');
+      if (!symbolContainer || !lightContainer) return;
+
+      const symbolCount = 200;
+      const particleCount = 100;
+
+      for (let i = 0; i < symbolCount; i++) {
+        const symbol = document.createElement('div');
+        symbol.className = 'symbol';
+        const char = SYMBOLS[i % SYMBOLS.length];
+        symbol.textContent = char;
+
+        const orbitRadius = 150 + Math.random() * 200;
+        const startAngle = Math.random() * 360;
+        const duration = 20 + Math.random() * 30;
+        const delay = Math.random() * -duration;
+        const size = 10 + Math.random() * 10;
+
+        symbol.style.cssText = `
+          --orbit-radius: ${orbitRadius}px;
+          --start-angle: ${startAngle}deg;
+          font-size: ${size}px;
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+          transform: rotate(${startAngle}deg) translateX(${orbitRadius}px);
+          color: rgba(201, 162, 39, ${0.2 + Math.random() * 0.4});
+        `;
+
+        symbolContainer.appendChild(symbol);
       }
 
-      init() {
-        this.resize();
-        this.createStars();
-        this.bindEvents();
-        this.animate();
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'light-particle';
+
+        const orbitRadius = 200 + Math.random() * 250;
+        const startAngle = Math.random() * 360;
+        const duration = 15 + Math.random() * 20;
+        const delay = Math.random() * -duration;
+        const size = 1 + Math.random() * 3;
+
+        particle.style.cssText = `
+          --orbit-radius: ${orbitRadius}px;
+          width: ${size}px;
+          height: ${size}px;
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+          transform: rotate(${startAngle}deg) translateX(${orbitRadius}px);
+          box-shadow: 0 0 ${size * 3}px ${size}px rgba(240, 192, 64, ${0.4 + Math.random() * 0.6});
+        `;
+
+        lightContainer.appendChild(particle);
+      }
+    }
+
+    function initScrollAnimation() {
+      const titleSection = document.getElementById('title-section');
+      const contentSection = document.getElementById('content-section');
+      const scrollHint = document.getElementById('scroll-hint');
+      if (!titleSection || !contentSection) return;
+
+      let hasScrolled = false;
+      let ticking = false;
+
+      function updateOnScroll() {
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const triggerPoint = windowHeight * 0.3;
+
+        if (scrollY > triggerPoint && !hasScrolled) {
+          hasScrolled = true;
+          contentSection.classList.add('visible');
+          if (scrollHint) scrollHint.style.opacity = '0';
+        } else if (scrollY <= triggerPoint && hasScrolled) {
+          hasScrolled = false;
+          contentSection.classList.remove('visible');
+          if (scrollHint) scrollHint.style.opacity = '1';
+        }
+
+        const titleOpacity = Math.max(0, 1 - scrollY / (windowHeight * 0.5));
+        titleSection.style.opacity = titleOpacity;
+        titleSection.style.transform = `translateY(${scrollY * 0.3}px)`;
+
+        ticking = false;
       }
 
-      resize() {
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateOnScroll);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      updateOnScroll();
+    }
+
+    function initStarsCanvas() {
+      const canvas = document.getElementById('stars-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      let animationId;
+      let isMobile = window.innerWidth < 768;
+      const maxStars = isMobile ? 60 : 120;
+
+      function resize() {
         const dpr = window.devicePixelRatio || 1;
-        this.canvas.width = window.innerWidth * dpr;
-        this.canvas.height = window.innerHeight * dpr;
-        this.ctx.scale(dpr, dpr);
-        this.stars = [];
-        this.createStars();
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
       }
 
-      createStars() {
-        const count = this.isMobile ? 60 : this.maxStars;
-        for (let i = 0; i < count; i++) {
-          this.stars.push({
+      function createStars() {
+        stars = [];
+        for (let i = 0; i < maxStars; i++) {
+          stars.push({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
-            radius: Math.random() * 1.5 + 0.3,
-            alpha: Math.random() * 0.5 + 0.3,
-            alphaChange: (Math.random() - 0.5) * 0.01,
-            twinkleSpeed: Math.random() * 0.015 + 0.005
+            radius: Math.random() * 1.5,
+            alpha: Math.random(),
+            alphaDirection: Math.random() > 0.5 ? 1 : -1,
+            speed: 0.002 + Math.random() * 0.01,
           });
         }
       }
 
-      bindEvents() {
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(() => {
-            this.isMobile = window.innerWidth < 768;
-            this.resize();
-          }, 200);
-        });
-      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      animate() {
-        this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-        this.stars.forEach(star => {
-          star.alpha += star.alphaChange;
-          if (star.alpha <= 0.2 || star.alpha >= 0.9) {
-            star.alphaChange *= -1;
+        stars.forEach(star => {
+          star.alpha += star.speed * star.alphaDirection;
+          if (star.alpha >= 1 || star.alpha <= 0.1) {
+            star.alphaDirection *= -1;
           }
 
-          const twinkle = Math.sin(Date.now() * star.twinkleSpeed) * 0.2 + 0.8;
-
-          this.ctx.beginPath();
-          this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          this.ctx.fillStyle = `rgba(232, 212, 139, ${star.alpha * twinkle})`;
-          this.ctx.fill();
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+          ctx.fill();
         });
 
-        this.animationId = requestAnimationFrame(() => this.animate());
+        animationId = requestAnimationFrame(animate);
       }
+
+      resize();
+      createStars();
+      animate();
+
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          cancelAnimationFrame(animationId);
+          isMobile = window.innerWidth < 768;
+          resize();
+          createStars();
+          animate();
+        }, 200);
+      });
     }
 
-    const canvas = document.getElementById('stars-canvas');
-    if (canvas) {
-      new StarsCanvas(canvas);
-    }
-
-    const moduleChars = document.querySelectorAll('.module-char');
-    moduleChars.forEach((card) => {
-      card.addEventListener('mouseenter', () => {
-        card.querySelector('.char-particles')?.classList.add('active');
-      });
-      card.addEventListener('mouseleave', () => {
-        card.querySelector('.char-particles')?.classList.remove('active');
-      });
+    document.addEventListener('DOMContentLoaded', () => {
+      initTitleAnimation();
+      initScrollAnimation();
+      initStarsCanvas();
     });
   </script>
 </BaseLayout>
