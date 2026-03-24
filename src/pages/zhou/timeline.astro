@@ -1,0 +1,208 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const timelineEvents = [
+  { era: '混沌', time: '虚无之前', event: '鸿蒙初开，万物未生', type: '起始' },
+  { era: '洪荒', time: '盘古纪元', event: '盘古开天辟地，身化万物', type: '创始' },
+  { era: '洪荒', time: '龙汉纪元', event: '龙凤麒麟三族崛起', type: '种族' },
+  { era: '洪荒', time: '龙汉纪元', event: '第一次大劫爆发', type: '劫难' },
+  { era: '洪荒', time: '巫妖纪元', event: '巫族十二祖巫诞生', type: '种族' },
+  { era: '洪荒', time: '巫妖纪元', event: '妖族天庭建立，帝俊东皇称霸', type: '建立' },
+  { era: '洪荒', time: '巫妖纪元', event: '后羿射日，嫦娥奔月', type: '传说' },
+  { era: '洪荒', time: '巫妖纪元', event: '共工怒触不周山', type: '传说' },
+  { era: '洪荒', time: '巫妖纪元', event: '第二次大劫 - 巫妖大战', type: '劫难' },
+  { era: '洪荒', time: '巫妖纪元', event: '女娲补天', type: '传说' },
+  { era: '天庭', time: '天庭初立', event: '昊天上帝建立天庭', type: '建立' },
+  { era: '天庭', time: '天庭纪元', event: '封神计划启动', type: '计划' },
+  { era: '封神', time: '商朝末年', event: '纣王失德，妲己乱商', type: '衰败' },
+  { era: '封神', time: '西周纪元', event: '武王伐纣，姜子牙封神', type: '更迭' },
+  { era: '封神', time: '封神大劫', event: '阐截二教大战', type: '劫难' },
+  { era: '西游', time: '唐朝', event: '唐三藏西行取经', type: '传说' },
+  { era: '西游', time: '取经路', event: '孙悟空大闹天宫', type: '传说' },
+  { era: '仙道', time: '唐宋之间', event: '金丹大道兴起', type: '修行' },
+  { era: '仙道', time: '仙道纪元', event: '各大门派建立', type: '建立' },
+  { era: '末法', time: '近现代', event: '灵气衰退，修行艰难', type: '衰败' },
+];
+
+const typeColors = {
+  '起始': '#f0c040',
+  '创始': '#f08040',
+  '种族': '#40b0f0',
+  '劫难': '#f04040',
+  '建立': '#40f080',
+  '传说': '#c080f0',
+  '更迭': '#80c0f0',
+  '衰败': '#a0a0a0',
+  '修行': '#40f0c0',
+  '计划': '#f0c080',
+};
+---
+
+<ModuleLayout moduleId="zhou" title="时间线" description="修行界重大历史事件时间线">
+  <div class="timeline-page">
+    <section class="intro-section">
+      <h2>修行界时间线</h2>
+      <p>从混沌初开到末法降临，修行界经历了无数劫难与变迁。此处记载各纪元重大事件，以供后学者了然于胸。</p>
+    </section>
+
+    <section class="timeline-container">
+      <h2>纪元大事件</h2>
+      <div class="timeline-list">
+        {timelineEvents.map(item => (
+          <div class="timeline-event" data-type={item.type}>
+            <div class="event-marker">
+              <span class="event-era">{item.era}</span>
+              <span class="event-dot"></span>
+            </div>
+            <div class="event-content">
+              <div class="event-header">
+                <span class="event-time">{item.time}</span>
+                <span class="event-type" style={`background: ${typeColors[item.type] || '#808080'}`}>{item.type}</span>
+              </div>
+              <p class="event-desc">{item.event}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .timeline-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+  }
+
+  .intro-section h2 {
+    font-size: 2rem;
+    color: #f0c040;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #a0a0a0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #f0c040;
+  }
+
+  .timeline-list {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 80px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #f0c040, #808080);
+  }
+
+  .timeline-event {
+    position: relative;
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .event-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
+
+  .event-era {
+    font-size: 0.85rem;
+    color: #808080;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #f0c040;
+    border: 3px solid #1a1a2e;
+    box-shadow: 0 0 8px rgba(240, 192, 64, 0.4);
+  }
+
+  .event-content {
+    flex: 1;
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    border: 1px solid #2a2a4a;
+  }
+
+  .event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  .event-time {
+    color: #f0c040;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .event-type {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #1a1a2e;
+    font-weight: bold;
+  }
+
+  .event-desc {
+    color: #c0c0c0;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-page {
+      padding: 1rem;
+    }
+
+    .timeline-list {
+      padding-left: 1rem;
+    }
+
+    .timeline-list::before {
+      left: 60px;
+    }
+
+    .event-marker {
+      min-width: 60px;
+    }
+
+    .event-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>

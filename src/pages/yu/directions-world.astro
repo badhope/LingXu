@@ -1,0 +1,319 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const directions = [
+  { name: '东方', symbol: '甲卯乙', element: '木', color: '#40b040', deity: '青龙', feature: '日出之地，木气生发', suitable: '创业、修身、种植', unsuitable: '诉讼、讨债' },
+  { name: '南方', symbol: '丙午丁', element: '火', color: '#f04040', deity: '朱雀', feature: '向阳之地，火气长养', suitable: '功名、文书、典礼', unsuitable: '口舌是非、灯火暗淡' },
+  { name: '西方', symbol: '庚酉辛', element: '金', color: '#e0e0e0', deity: '白虎', feature: '日落之地，金气收肃', suitable: '交易、讨债、改革', unsuitable: '婚嫁、姻缘、投资' },
+  { name: '北方', symbol: '壬子癸', element: '水', color: '#4080f0', deity: '玄武', feature: '坎位，水气闭藏', suitable: '智谋、隐遁、储蓄', unsuitable: '出行、动土、搬家' },
+  { name: '东南', symbol: '辰巽巳', element: '木', color: '#60b060', deity: '巽', feature: '风起之地，木气动荡', suitable: '经商、利市、求职', unsuitable: '安床、新婚、签约' },
+  { name: '西南', symbol: '未坤申', element: '土', color: '#c08040', deity: '坤', feature: '地户所在，土气厚重', suitable: '丧葬、疾病治疗', unsuitable: '婚嫁、动土、开业' },
+  { name: '东北', symbol: '丑艮寅', element: '土', color: '#b08040', deity: '艮', feature: '鬼门所在，土气凝结', suitable: '少男姻亲、学术', unsuitable: '深夜独行、探病' },
+  { name: '西北', symbol: '戌乾亥', element: '金', color: '#a0a0c0', deity: '乾', feature: '天门所在，金气刚健', suitable: '决策、外交、变革', unsuitable: '固执己见、蛮干' },
+];
+
+const worldDirections = [
+  { name: '中原', position: '天下正中', desc: '中华文明发源地，龙脉汇聚之地，灵气最为浓郁', ruler: '历代正统王朝' },
+  { name: '西域', position: '中原以西', desc: '沙漠绿洲，佛道交融之地，有诸多小国', ruler: '诸国并立' },
+  { name: '北漠', position: '中原以北', desc: '草原荒漠，游牧民族之地，风气刚健', ruler: '匈奴、鲜卑、蒙古' },
+  { name: '南疆', position: '中原以南', desc: '山林瘴气，苗疆蛊术之地，神秘莫测', ruler: '百越、苗疆' },
+  { name: '东海', position: '中原以东', desc: '沧海汪洋，海族聚居之地，灵气充沛', ruler: '龙族、海妖' },
+  { name: '西荒', position: '中原以西荒芜', desc: '戈壁荒漠，上古遗迹所在，危险重重', ruler: '妖兽横行' },
+];
+
+const fengshui = [
+  { type: '左青龙', desc: '左手边有流水或道路，主文才贵人', favorable: true },
+  { type: '右白虎', desc: '右手边有低矮山丘或建筑，主武略财运', favorable: true },
+  { type: '前朱雀', desc: '前方地势开阔明亮，主事业前程', favorable: true },
+  { type: '后玄武', desc: '后方有高山依靠，主靠山人丁', favorable: true },
+  { type: '路冲', desc: '正对道路或直线，易招灾祸', favorable: false },
+  { type: '反弓水', desc: '河流或道路环绕如弓，主破财离散', favorable: false },
+];
+---
+
+<ModuleLayout moduleId="yu" title="方位" description="八方吉凶与世界地理方位">
+  <div class="directions-page">
+    <section class="intro-section">
+      <h2>方位之道</h2>
+      <p>方位者，天地之气交于不同空间之所也。修行者顺之则昌，逆之则凶。择吉位而居，选良时而动，方能得天时地利之和。</p>
+    </section>
+
+    <section class="eight-directions">
+      <h2>八方吉凶</h2>
+      <div class="directions-grid">
+        {directions.map(dir => (
+          <div class="direction-card" style={`--dir-color: ${dir.color}`}>
+            <div class="dir-header">
+              <span class="dir-icon">{dir.deity[0]}</span>
+              <div class="dir-title">
+                <h3>{dir.name}</h3>
+                <span class="dir-element">{dir.element} · {dir.deity}</span>
+              </div>
+            </div>
+            <div class="dir-symbol">{dir.symbol}</div>
+            <p class="dir-feature">{dir.feature}</p>
+            <div class="dir-suitable">
+              <span class="suitable-label">宜:</span>
+              <span>{dir.suitable}</span>
+            </div>
+            <div class="dir-unsuitable">
+              <span class="unsuitable-label">忌:</span>
+              <span>{dir.unsuitable}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="world-dir-section">
+      <h2>世界地理方位</h2>
+      <div class="world-grid">
+        {worldDirections.map(wd => (
+          <div class="world-card">
+            <div class="world-header">
+              <h3>{wd.name}</h3>
+              <span class="world-position">{wd.position}</span>
+            </div>
+            <p class="world-desc">{wd.desc}</p>
+            <div class="world-ruler">
+              <span class="ruler-label">主宰:</span>
+              <span>{wd.ruler}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="fengshui-section">
+      <h2>风水形势</h2>
+      <div class="fengshui-grid">
+        {fengshui.map(fs => (
+          <div class={`fengshui-card ${fs.favorable ? 'favorable' : 'unfavorable'}`}>
+            <span class="fs-type">{fs.type}</span>
+            <p class="fs-desc">{fs.desc}</p>
+            <span class={`fs-badge ${fs.favorable ? 'good' : 'bad'}`}>
+              {fs.favorable ? '吉' : '凶'}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .directions-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+  }
+
+  .intro-section h2 {
+    font-size: 2rem;
+    color: #f0c040;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #a0a0a0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #f0c040;
+  }
+
+  .directions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .direction-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--dir-color);
+    transition: transform 0.3s ease;
+  }
+
+  .direction-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .dir-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .dir-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dir-color);
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1a1a2e;
+  }
+
+  .dir-title h3 {
+    font-size: 1.2rem;
+    color: var(--dir-color);
+    margin: 0;
+  }
+
+  .dir-element {
+    font-size: 0.85rem;
+    color: #808080;
+  }
+
+  .dir-symbol {
+    background: #2a2a4a;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #c0c0c0;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+  }
+
+  .dir-feature {
+    color: #a0a0a0;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .dir-suitable, .dir-unsuitable {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .suitable-label { color: #40b040; }
+  .unsuitable-label { color: #f04040; }
+  .dir-suitable span:last-child, .dir-unsuitable span:last-child { color: #a0a0a0; }
+
+  .world-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .world-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2a4a;
+  }
+
+  .world-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .world-header h3 {
+    font-size: 1.2rem;
+    color: #f0c040;
+    margin: 0;
+  }
+
+  .world-position {
+    font-size: 0.85rem;
+    color: #808080;
+  }
+
+  .world-desc {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .world-ruler {
+    font-size: 0.9rem;
+  }
+
+  .ruler-label { color: #808080; }
+  .world-ruler span:last-child { color: #c0c0c0; }
+
+  .fengshui-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .fengshui-card {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid #2a2a4a;
+    position: relative;
+  }
+
+  .fengshui-card.favorable { border-color: #40b040; }
+  .fengshui-card.unfavorable { border-color: #f04040; }
+
+  .fs-type {
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .favorable .fs-type { color: #40b040; }
+  .unfavorable .fs-type { color: #f04040; }
+
+  .fs-desc {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .fs-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  .fs-badge.good { background: #40b040; color: #1a1a2e; }
+  .fs-badge.bad { background: #f04040; color: #fff; }
+
+  @media (max-width: 768px) {
+    .directions-page {
+      padding: 1rem;
+    }
+
+    .directions-grid, .world-grid, .fengshui-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

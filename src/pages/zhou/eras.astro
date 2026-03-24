@@ -1,0 +1,207 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const eraSystems = [
+  { name: '洪荒纪元', period: '约公元前至天庭建立前', symbol: '龙凤麒麟三族', desc: '混沌初开后的第一个纪元，妖魔横行，神兽争霸。' },
+  { name: '天庭纪元', period: '天庭建立后约十万年', symbol: '天庭封神榜', desc: '天庭建立，众神归位，三界秩序初成。' },
+  { name: '封神纪元', period: '商周交替之际', symbol: '封神演义', desc: '阐截二教争斗，三百六十五路正神归位。' },
+  { name: '西游纪元', period: '唐初', symbol: '取经之路', desc: '佛门东传，大乘佛法广布天下。' },
+  { name: '仙道纪元', period: '唐宋之间', symbol: '金丹大道', desc: '人族崛起，修行之法大兴，仙道门派林立。' },
+  { name: '末法纪元', period: '近现代', symbol: '灵气衰退', desc: '末法降临，灵气稀薄，修行艰难，大能沉睡。' },
+];
+
+const timeline = [
+  { year: '混沌之前', event: '虚无之际，无天无地' },
+  { year: '盘古开天', event: '混沌初开，天地分离' },
+  { year: '龙汉初劫', event: '龙凤麒麟三族大战' },
+  { year: '巫妖大战', event: '十二祖巫与妖族天庭对抗' },
+  { year: '天庭建立', event: '昊天上帝称帝，三界秩序成' },
+  { year: '封神大劫', event: '阐截之争，三百六十五路神归位' },
+  { year: '西游取经', event: '唐三藏西行取经' },
+  { year: '仙道大兴', event: '人族修行门派崛起' },
+];
+---
+
+<ModuleLayout moduleId="zhou" title="纪年方式" description="修行界各大纪元与历史纪年">
+  <div class="eras-page">
+    <section class="intro-section">
+      <h2>纪年之道</h2>
+      <p>修行界纪年，与凡间不同。以大劫大难为界，以天地变动为纪。知其先后，方能明古往今来之理。</p>
+    </section>
+
+    <section class="era-systems">
+      <h2>各大纪元</h2>
+      <div class="era-grid">
+        {eraSystems.map(era => (
+          <div class="era-card">
+            <div class="era-header">
+              <h3>{era.name}</h3>
+              <span class="era-symbol">{era.symbol}</span>
+            </div>
+            <p class="era-period">{era.period}</p>
+            <p class="era-desc">{era.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="timeline-section">
+      <h2>重大纪年节点</h2>
+      <div class="timeline">
+        {timeline.map(item => (
+          <div class="timeline-item">
+            <span class="timeline-year">{item.year}</span>
+            <span class="timeline-arrow">→</span>
+            <span class="timeline-event">{item.event}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .eras-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+  }
+
+  .intro-section h2 {
+    font-size: 2rem;
+    color: #f0c040;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #a0a0a0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #f0c040;
+  }
+
+  .era-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .era-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2a4a;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .era-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(240, 192, 64, 0.15);
+  }
+
+  .era-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .era-header h3 {
+    font-size: 1.3rem;
+    color: #f0c040;
+    margin: 0;
+  }
+
+  .era-symbol {
+    background: #2a2a4a;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #c0c0c0;
+  }
+
+  .era-period {
+    color: #808080;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .era-desc {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: #1a1a2e;
+    border-radius: 8px;
+    border: 1px solid #2a2a4a;
+  }
+
+  .timeline-year {
+    min-width: 120px;
+    font-weight: bold;
+    color: #f0c040;
+    font-size: 1.1rem;
+  }
+
+  .timeline-arrow {
+    color: #606080;
+    font-size: 1.2rem;
+  }
+
+  .timeline-event {
+    color: #c0c0c0;
+    flex: 1;
+  }
+
+  @media (max-width: 768px) {
+    .eras-page {
+      padding: 1rem;
+    }
+
+    .era-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .timeline-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .timeline-year {
+      min-width: auto;
+    }
+
+    .timeline-arrow {
+      display: none;
+    }
+  }
+</style>

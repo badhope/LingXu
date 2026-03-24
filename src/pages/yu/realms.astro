@@ -1,0 +1,240 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const realms = [
+  { name: '人界', color: '#40b040', icon: '🏠', desc: '凡人生存之地，灵气稀薄但适合根基稳固。修士多在人界出身。', features: ['凡俗国度', '世俗王朝', '市井人间'] },
+  { name: '妖界', color: '#f04040', icon: '🦊', desc: '妖族聚居之地，灵气充沛，弱肉强食。妖兽横行，危机四伏。', features: ['万妖山脉', '蛮荒森林', '妖兽巢穴'] },
+  { name: '幽冥界', color: '#606080', icon: '💀', desc: '亡魂归宿之地，阴气极重。有十殿阎罗掌管轮回转世。', features: ['黄泉路', '奈何桥', '十八层地狱'] },
+  { name: '魔界', color: '#8b008b', icon: '👹', desc: '域外天魔所在，魔力浑浊。是修行者心魔外化之地。', features: ['心魔渊', '堕落之地', '天魔战场'] },
+  { name: '仙界', color: '#f0c040', icon: '☁️', desc: '仙人所居之地，灵气最为充沛。有三十六重天，一重一天。', features: ['三十六重天', '瑶池圣地', '蟠桃园'] },
+  { name: '佛界', color: '#ffa500', icon: '🙏', desc: '西天极乐世界，如来佛祖道场。大乘佛法普度众生。', features: ['灵山大雷音寺', '西天极乐', '八宝功德池'] },
+  { name: '天庭', color: '#4169e1', icon: '👑', desc: '天界统治者昊天上帝所居。三界秩序的维护者。', features: ['凌霄宝殿', '封神榜', '天兵天将'] },
+  { name: '地府', color: '#2f4f4f', icon: '⚰️', desc: '主管生死轮回的地下世界。十殿阎罗各司其职。', features: ['酆都城', '枉死城', '轮回殿'] },
+];
+
+const connections = [
+  { from: '人界', to: '仙界', method: '飞升', difficulty: '极难', desc: '渡过天劫方可飞升' },
+  { from: '人界', to: '妖界', method: '传送阵', difficulty: '危险', desc: '需有高手护送' },
+  { from: '人界', to: '幽冥界', method: '死亡', difficulty: '不可逆', desc: '只有亡灵才能进入' },
+  { from: '人界', to: '天庭', method: '天劫', difficulty: '极难', desc: '受封成为天庭正神' },
+  { from: '妖界', to: '魔界', method: '心魔', difficulty: '危险', desc: '域外天魔引诱' },
+  { from: '幽冥界', to: '人界', method: '轮回', difficulty: '随机', desc: '转世投胎重修' },
+];
+---
+
+<ModuleLayout moduleId="yu" title="世界" description="各界概况与界域介绍">
+  <div class="realms-page">
+    <section class="intro-section">
+      <h2>诸天万界</h2>
+      <p>修行界并非单一世界，而是由无数界域组成。人界、妖界、幽冥界、魔界、仙界、佛界……各界的法则不同，灵气各异，修行者若能穿梭各界，当有无限机缘。</p>
+    </section>
+
+    <section class="realms-grid-section">
+      <h2>各界概况</h2>
+      <div class="realms-grid">
+        {realms.map(realm => (
+          <div class="realm-card" style={`--realm-color: ${realm.color}`}>
+            <div class="realm-icon">{realm.icon}</div>
+            <div class="realm-header">
+              <h3>{realm.name}</h3>
+            </div>
+            <p class="realm-desc">{realm.desc}</p>
+            <div class="realm-features">
+              {realm.features.map(f => (
+                <span class="feature-tag">{f}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="connections-section">
+      <h2>界域通道</h2>
+      <div class="connections-list">
+        {connections.map(conn => (
+          <div class="connection-item">
+            <span class="conn-from">{conn.from}</span>
+            <div class="conn-arrow">
+              <span class="conn-method">{conn.method}</span>
+              <span class="conn-line">━━</span>
+            </div>
+            <span class="conn-to">{conn.to}</span>
+            <span class="conn-difficulty" data-level={conn.difficulty}>{conn.difficulty}</span>
+          </div>
+        ))}
+      </div>
+      <p class="connections-note">注：界域穿梭需有大神通，非一般人所能及。凡人误入异界，九死一生。</p>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .realms-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+  }
+
+  .intro-section h2 {
+    font-size: 2rem;
+    color: #f0c040;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #a0a0a0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #f0c040;
+  }
+
+  .realms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .realm-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2a4a;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .realm-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(var(--realm-color), 0.2);
+    border-color: var(--realm-color);
+  }
+
+  .realm-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .realm-header h3 {
+    font-size: 1.3rem;
+    color: var(--realm-color);
+    margin: 0 0 0.8rem 0;
+  }
+
+  .realm-desc {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .realm-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .feature-tag {
+    background: #2a2a4a;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #c0c0c0;
+  }
+
+  .connections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .connection-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: #1a1a2e;
+    border-radius: 8px;
+    border: 1px solid #2a2a4a;
+  }
+
+  .conn-from, .conn-to {
+    min-width: 80px;
+    font-weight: bold;
+    color: #f0c040;
+  }
+
+  .conn-arrow {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .conn-method {
+    background: #2a2a4a;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #c0c0c0;
+  }
+
+  .conn-line {
+    flex: 1;
+    color: #404060;
+  }
+
+  .conn-difficulty {
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+
+  .conn-difficulty[data-level="极难"] { background: #f04040; color: #fff; }
+  .conn-difficulty[data-level="危险"] { background: #f08040; color: #1a1a2e; }
+  .conn-difficulty[data-level="不可逆"] { background: #606080; color: #fff; }
+  .conn-difficulty[data-level="随机"] { background: #4080f0; color: #fff; }
+
+  .connections-note {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #1a1a2e;
+    border-radius: 8px;
+    border-left: 4px solid #f08040;
+    color: #808080;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .realms-page {
+      padding: 1rem;
+    }
+
+    .realms-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .connection-item {
+      flex-wrap: wrap;
+    }
+
+    .conn-from, .conn-to {
+      min-width: auto;
+    }
+  }
+</style>

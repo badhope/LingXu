@@ -1,0 +1,315 @@
+---
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+
+const deities = [
+  { name: '昊天上帝', rank: '天帝', domain: '天界', power: '统御三界', desc: '天界最高统治者，号令日月星辰，主宰三界秩序。', temples: '天庭凌霄宝殿' },
+  { name: '王母娘娘', rank: '天后', domain: '瑶池', power: '不死药', desc: '掌管不死药与瑶池，寿诞为蟠桃会。', temples: '瑶池宫' },
+  { name: '太上老君', rank: '道祖', domain: '兜率宫', power: '炼丹术', desc: '道德天尊化身，居兜率宫，炼仙丹，传金丹大道。', temples: '兜率宫' },
+  { name: '元始天尊', rank: '阐教教主', domain: '玉清宫', power: '阐道', desc: '阐教之祖，主持封神，弟子众多。', temples: '玉清宫' },
+  { name: '灵宝天尊', rank: '截教教主', domain: '碧游宫', power: '截道', desc: '截教之祖，有教无类，门人遍布三界。', temples: '碧游宫' },
+  { name: '接引道人', rank: '佛祖', domain: '西方极乐', power: '西方教', desc: '西方教教主，与准提道人共创西方极乐世界。', temples: '大雷音寺' },
+  { name: '准提道人', rank: '佛母', domain: '西方极乐', power: '西方教', desc: '西方教二教主，神通广大，弟子众多。', temples: '大雷音寺' },
+  { name: '女娲娘娘', rank: '圣母', domain: '大地', power: '造人补天', desc: '人族圣母，大地之母，可炼石补天。', temples: '女娲宫' },
+  { name: '东岳大帝', rank: '山神', domain: '泰山', power: '主生死', desc: '掌管天下山岳，主宰生死之籍。', temples: '岱庙' },
+  { name: '阎罗王', rank: '冥王', domain: '地府', power: '判生死', desc: '十殿阎罗之首，审判亡魂功过。', temples: '酆都城' },
+  { name: '盘古', rank: '创世神', domain: '天地', power: '开天辟地', desc: '混沌中诞生的巨神，身化万物。', temples: '无庙' },
+  { name: '后土娘娘', rank: '土神', domain: '大地', power: '主幽冥', desc: '共工之后，掌管大地与幽冥。', temples: '后土庙' },
+];
+
+const ranks = [
+  { name: '天帝', color: '#f0c040', count: 1 },
+  { name: '道祖', color: '#f08040', count: 1 },
+  { name: '佛祖', color: '#ffa500', count: 2 },
+  { name: '圣母', color: '#f04080', count: 2 },
+  { name: '冥王', color: '#808080', count: 1 },
+  { name: '山神', color: '#40b040', count: 1 },
+  { name: '创世神', color: '#f0c040', count: 1 },
+];
+
+const hierarchy = [
+  { level: '至高', members: ['昊天上帝', '盘古'], color: '#f0c040' },
+  { level: '天道圣人', members: ['太上老君', '元始天尊', '灵宝天尊', '接引道人', '准提道人', '女娲'], color: '#f08040' },
+  { level: '大能', members: ['王母娘娘', '东岳大帝', '后土娘娘', '阎罗王'], color: '#ffa500' },
+  { level: '正神', members: ['诸天星君', '天兵天将', '土地山神'], color: '#40b040' },
+];
+---
+
+<ModuleLayout moduleId="hong" title="神祇" description="神祇体系与神位">
+  <div class="deity-page">
+    <section class="intro-section">
+      <h2>神祇体系</h2>
+      <p>修行界神祇众多，有先天神祇自混沌而生，有后天神祇因功德而封。天道循环，神祇亦有升降增减。明其体系，知其权责，方能敬而不媚，祷而有应。</p>
+    </section>
+
+    <section class="hierarchy-section">
+      <h2>神祇等级</h2>
+      <div class="hierarchy-list">
+        {hierarchy.map(h => (
+          <div class="hierarchy-level" style={`--level-color: ${h.color}`}>
+            <div class="level-header">
+              <span class="level-name">{h.level}</span>
+              <span class="level-count">{h.members.length}位</span>
+            </div>
+            <div class="level-members">
+              {h.members.map(m => (
+                <span class="member-name">{m}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ranks-section">
+      <h2>神祇分类</h2>
+      <div class="ranks-grid">
+        {ranks.map(rank => (
+          <div class="rank-card" style={`--rank-color: ${rank.color}`}>
+            <span class="rank-count">{rank.count}</span>
+            <span class="rank-name">{rank.name}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="deities-grid-section">
+      <h2>主要神祇</h2>
+      <div class="deities-grid">
+        {deities.map(deity => (
+          <div class="deity-card">
+            <div class="deity-header">
+              <span class="deity-icon">{deity.name[0]}</span>
+              <div class="deity-title">
+                <h3>{deity.name}</h3>
+                <span class="deity-rank">{deity.rank}</span>
+              </div>
+            </div>
+            <div class="deity-domain">
+              <span class="domain-label">神域:</span>
+              <span>{deity.domain}</span>
+            </div>
+            <p class="deity-desc">{deity.desc}</p>
+            <div class="deity-footer">
+              <div class="deity-power">
+                <span class="power-label">权柄:</span>
+                <span>{deity.power}</span>
+              </div>
+              <div class="deity-temple">
+                <span class="temple-label">道场:</span>
+                <span>{deity.temples}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</ModuleLayout>
+
+<style>
+  .deity-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .intro-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+  }
+
+  .intro-section h2 {
+    font-size: 2rem;
+    color: #f0c040;
+    margin-bottom: 1rem;
+  }
+
+  .intro-section p {
+    color: #a0a0a0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid #f0c040;
+  }
+
+  .hierarchy-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .hierarchy-level {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    border-left: 4px solid var(--level-color);
+  }
+
+  .level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+
+  .level-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--level-color);
+  }
+
+  .level-count {
+    background: #2a2a4a;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #808080;
+  }
+
+  .level-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .member-name {
+    background: #2a2a4a;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    color: #c0c0c0;
+  }
+
+  .ranks-grid {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .rank-card {
+    flex: 1;
+    min-width: 120px;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid var(--rank-color);
+    text-align: center;
+  }
+
+  .rank-count {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--rank-color);
+    display: block;
+  }
+
+  .rank-name {
+    color: #c0c0c0;
+    font-size: 0.95rem;
+  }
+
+  .deities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .deity-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #2a2a4a;
+    transition: transform 0.3s ease;
+  }
+
+  .deity-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .deity-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .deity-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0c040, #f08040);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #1a1a2e;
+  }
+
+  .deity-title h3 {
+    font-size: 1.2rem;
+    color: #f0c040;
+    margin: 0;
+  }
+
+  .deity-rank {
+    font-size: 0.85rem;
+    color: #808080;
+  }
+
+  .deity-domain {
+    background: #2a2a4a;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  .domain-label { color: #808080; }
+  .deity-domain span:last-child { color: #c0c0c0; }
+
+  .deity-desc {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .deity-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #2a2a4a;
+  }
+
+  .deity-power, .deity-temple {
+    font-size: 0.9rem;
+  }
+
+  .power-label, .temple-label { color: #808080; }
+  .deity-power span:last-child { color: #f08040; }
+  .deity-temple span:last-child { color: #c0c0c0; }
+
+  @media (max-width: 768px) {
+    .deity-page {
+      padding: 1rem;
+    }
+
+    .deities-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
