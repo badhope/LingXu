@@ -120,6 +120,8 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
       background: radial-gradient(ellipse at center, #0a0a0f 0%, #050508 100%);
       position: relative;
       overflow-x: hidden;
+      content-visibility: auto;
+      contain: layout style paint;
     }
 
     .stars-container {
@@ -312,14 +314,14 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
 
     .scroll-text {
       font-size: 0.8rem;
-      color: #666;
+      color: #808080;
       letter-spacing: 0.2em;
     }
 
     .scroll-arrow {
       width: 24px;
       height: 24px;
-      color: #666;
+      color: #808080;
       animation: scrollBounce 1.5s ease-in-out infinite;
     }
 
@@ -480,14 +482,14 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
 
     .char-pinyin {
       font-size: 0.8rem;
-      color: #666;
+      color: #777;
       margin-top: 0.3rem;
       letter-spacing: 0.1em;
     }
 
     .char-desc {
       font-size: 0.85rem;
-      color: #555;
+      color: #666;
       margin-top: 1rem;
       text-align: center;
       line-height: 1.5;
@@ -754,8 +756,8 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
       const lightContainer = document.getElementById('light-beam-container');
       if (!symbolContainer || !lightContainer) return;
 
-      const symbolCount = 200;
-      const particleCount = 100;
+      const symbolCount = 80;
+      const particleCount = 40;
 
       for (let i = 0; i < symbolCount; i++) {
         const symbol = document.createElement('div');
@@ -855,7 +857,8 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
       let stars = [];
       let animationId;
       let isMobile = window.innerWidth < 768;
-      const maxStars = isMobile ? 60 : 120;
+      const maxStars = isMobile ? 40 : 80;
+      let isVisible = true;
 
       function resize() {
         const dpr = window.devicePixelRatio || 1;
@@ -879,6 +882,11 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
       }
 
       function animate() {
+        if (!isVisible) {
+          animationId = requestAnimationFrame(animate);
+          return;
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         stars.forEach(star => {
@@ -899,6 +907,14 @@ const SYMBOLS = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', 
       resize();
       createStars();
       animate();
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isVisible = entry.isIntersecting;
+        });
+      }, { threshold: 0.1 });
+
+      observer.observe(canvas);
 
       let resizeTimeout;
       window.addEventListener('resize', () => {

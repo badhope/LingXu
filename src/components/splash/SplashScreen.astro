@@ -1,0 +1,499 @@
+---
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  autoRedirect?: boolean;
+  redirectDelay?: number;
+}
+
+const {
+  title = "天地玄黄 · 宇宙洪荒",
+  subtitle = "末法时代 · 失落修行文明档案馆",
+  autoRedirect = true,
+  redirectDelay = 5000
+} = Astro.props;
+---
+
+<div class="splash-container" id="splash-container">
+  <canvas class="splash-particles" id="splash-particles"></canvas>
+
+  <div class="splash-content">
+    <div class="taiji-container">
+      <div class="taiji-wrapper">
+        <div class="taiji">
+          <div class="taiji-half taiji-dark">
+            <div class="taiji-dot taiji-light"></div>
+          </div>
+          <div class="taiji-half taiji-light">
+            <div class="taiji-dot taiji-dark"></div>
+          </div>
+        </div>
+        <div class="taiji-ring ring-1"></div>
+        <div class="taiji-ring ring-2"></div>
+        <div class="taiji-ring ring-3"></div>
+      </div>
+    </div>
+
+    <div class="splash-title">
+      <h1 class="main-title">
+        <span class="title-char">灵</span>
+        <span class="title-char">墟</span>
+      </h1>
+      <p class="sub-title">{title}</p>
+      <p class="sub-sub-title">{subtitle}</p>
+    </div>
+
+    <div class="splash-footer">
+      <button class="enter-btn" id="enter-btn">
+        <span class="btn-text">进入灵墟</span>
+        <span class="btn-arrow">→</span>
+      </button>
+      <p class="splash-hint">或等待 {redirectDelay / 1000} 秒自动跳转</p>
+    </div>
+  </div>
+
+  <div class="splash-bg-gradient"></div>
+</div>
+
+<style>
+  .splash-container {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+    overflow: hidden;
+  }
+
+  .splash-bg-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(240, 192, 64, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(128, 64, 240, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(64, 128, 240, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .splash-particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .splash-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding: 2rem;
+  }
+
+  .taiji-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+
+  .taiji-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .taiji {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #1a1a1a 50%, #f5f5f5 50%);
+    animation: rotate-taiji 20s linear infinite;
+    box-shadow:
+      0 0 60px rgba(240, 192, 64, 0.3),
+      0 0 120px rgba(128, 64, 240, 0.2),
+      inset 0 0 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .taiji-half {
+    position: absolute;
+    width: 90px;
+    height: 180px;
+    top: 0;
+    overflow: hidden;
+  }
+
+  .taiji-dark {
+    left: 0;
+    background: #1a1a1a;
+    border-radius: 90px 0 0 90px;
+  }
+
+  .taiji-light {
+    right: 0;
+    background: #f5f5f5;
+    border-radius: 0 90px 90px 0;
+  }
+
+  .taiji-dot {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .taiji-light .taiji-dot.taiji-dark {
+    background: #1a1a1a;
+    right: 0;
+    transform: translateY(-50%);
+  }
+
+  .taiji-dark .taiji-dot.taiji-light {
+    background: #f5f5f5;
+    left: 0;
+    transform: translateY(-50%);
+  }
+
+  .taiji-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(240, 192, 64, 0.2);
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+
+  .taiji-ring.ring-1 {
+    inset: -15px;
+    animation-delay: 0s;
+  }
+
+  .taiji-ring.ring-2 {
+    inset: -30px;
+    animation-delay: 1s;
+    border-color: rgba(128, 64, 240, 0.15);
+  }
+
+  .taiji-ring.ring-3 {
+    inset: -45px;
+    animation-delay: 2s;
+    border-color: rgba(64, 128, 240, 0.1);
+  }
+
+  @keyframes rotate-taiji {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.05);
+    }
+  }
+
+  .splash-title {
+    text-align: center;
+    opacity: 0;
+    animation: fade-in-up 1s ease-out 0.5s forwards;
+  }
+
+  .main-title {
+    font-size: 4rem;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: 0.5em;
+    text-shadow:
+      0 0 20px rgba(240, 192, 64, 0.5),
+      0 0 40px rgba(240, 192, 64, 0.3),
+      0 0 60px rgba(240, 192, 64, 0.2);
+  }
+
+  .main-title .title-char {
+    display: inline-block;
+    background: linear-gradient(135deg, #f0c040, #c9a227, #f0c040);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .sub-title {
+    font-size: 1.5rem;
+    color: rgba(240, 224, 200, 0.9);
+    margin: 1rem 0 0.5rem;
+    letter-spacing: 0.3em;
+    font-weight: 400;
+  }
+
+  .sub-sub-title {
+    font-size: 1rem;
+    color: rgba(240, 224, 200, 0.6);
+    margin: 0;
+    letter-spacing: 0.2em;
+    font-weight: 300;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .splash-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    animation: fade-in-up 1s ease-out 1s forwards;
+  }
+
+  .enter-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, rgba(240, 192, 64, 0.15), rgba(240, 192, 64, 0.05));
+    border: 1px solid rgba(240, 192, 64, 0.4);
+    border-radius: 4px;
+    color: #f0c040;
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .enter-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(240, 192, 64, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .enter-btn:hover {
+    border-color: rgba(240, 192, 64, 0.8);
+    box-shadow:
+      0 0 30px rgba(240, 192, 64, 0.3),
+      0 0 60px rgba(240, 192, 64, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .enter-btn:hover::before {
+    opacity: 1;
+  }
+
+  .enter-btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .enter-btn:hover .btn-arrow {
+    transform: translateX(5px);
+  }
+
+  .splash-hint {
+    font-size: 0.75rem;
+    color: rgba(240, 224, 200, 0.4);
+    margin: 0;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .taiji-container {
+      width: 150px;
+      height: 150px;
+    }
+
+    .taiji {
+      width: 135px;
+      height: 135px;
+    }
+
+    .taiji-half {
+      width: 67.5px;
+      height: 135px;
+    }
+
+    .taiji-dot {
+      width: 45px;
+      height: 45px;
+    }
+
+    .main-title {
+      font-size: 3rem;
+    }
+
+    .sub-title {
+      font-size: 1.125rem;
+    }
+
+    .sub-sub-title {
+      font-size: 0.875rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .taiji-container {
+      width: 120px;
+      height: 120px;
+    }
+
+    .taiji {
+      width: 108px;
+      height: 108px;
+    }
+
+    .taiji-half {
+      width: 54px;
+      height: 108px;
+    }
+
+    .taiji-dot {
+      width: 36px;
+      height: 36px;
+    }
+
+    .main-title {
+      font-size: 2.5rem;
+      letter-spacing: 0.3em;
+    }
+  }
+</style>
+
+<script define:vars={{ autoRedirect, redirectDelay }}>
+  class SplashController {
+    constructor() {
+      this.container = document.getElementById('splash-container');
+      this.enterBtn = document.getElementById('enter-btn');
+      this.particlesCanvas = document.getElementById('splash-particles');
+      this.init();
+    }
+
+    init() {
+      this.initParticles();
+      this.bindEvents();
+
+      if (autoRedirect) {
+        this.startAutoRedirect();
+      }
+    }
+
+    initParticles() {
+      if (!this.particlesCanvas) return;
+
+      const canvas = this.particlesCanvas;
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      const isMobile = window.innerWidth < 768;
+      const particleCount = isMobile ? 30 : 60;
+
+      const resize = () => {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+      };
+
+      const createParticles = () => {
+        particles = [];
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            size: Math.random() * 2 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.3,
+            speedY: (Math.random() - 0.5) * 0.3,
+            opacity: Math.random() * 0.5 + 0.2,
+            twinkle: Math.random() > 0.7
+          });
+        }
+      };
+
+      const animate = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+
+          if (p.x < 0) p.x = window.innerWidth;
+          if (p.x > window.innerWidth) p.x = 0;
+          if (p.y < 0) p.y = window.innerHeight;
+          if (p.y > window.innerHeight) p.y = 0;
+
+          if (p.twinkle) {
+            p.opacity += (Math.random() - 0.5) * 0.05;
+            p.opacity = Math.max(0.1, Math.min(0.8, p.opacity));
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(240, 192, 64, ${p.opacity})`;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      resize();
+      createParticles();
+      animate();
+
+      window.addEventListener('resize', () => {
+        resize();
+        createParticles();
+      });
+    }
+
+    bindEvents() {
+      if (this.enterBtn) {
+        this.enterBtn.addEventListener('click', () => this.enter());
+      }
+    }
+
+    startAutoRedirect() {
+      const countdown = setTimeout(() => {
+        this.enter();
+      }, redirectDelay);
+    }
+
+    enter() {
+      if (this.container) {
+        this.container.style.transition = 'opacity 0.8s ease-out';
+        this.container.style.opacity = '0';
+
+        setTimeout(() => {
+          window.location.href = '/home';
+        }, 800);
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new SplashController();
+  });
+</script>

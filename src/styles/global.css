@@ -77,7 +77,7 @@
   }
 
   .prose-lingxu p {
-    @apply mb-5 sm:mb-6 md:mb-8 text-[0.875rem] sm:text-[0.9375rem] md:text-[1rem] text-[#a0a0a0];
+    @apply mb-5 sm:mb-6 md:mb-8 text-[0.875rem] sm:text-[0.9375rem] md:text-[1rem] text-[#b0b0b0];
     text-indent: 2em;
   }
 
