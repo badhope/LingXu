@@ -296,12 +296,24 @@ import { withBase } from '../lib/utils';
     const importFile = document.getElementById('importFile') as HTMLInputElement;
     const clearBtn = document.getElementById('clearBtn');
 
+    function escapeHtml(text: string): string {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     function getBookmarks(): Bookmark[] {
       const stored = localStorage.getItem('lingxu-user-store');
       if (stored) {
         try {
           const data = JSON.parse(stored);
-          return data.state?.bookmarks || [];
+          const bookmarks = data?.state?.bookmarks;
+          if (!Array.isArray(bookmarks)) return [];
+          return bookmarks.filter(b =>
+            b && typeof b.id === 'string' &&
+            typeof b.title === 'string' &&
+            typeof b.href === 'string'
+          );
         } catch {
           return [];
         }
@@ -325,16 +337,16 @@ import { withBase } from '../lib/utils';
 
       if (bookmarkItems) {
         bookmarkItems.innerHTML = bookmarks.map(b => `
-          <div class="bookmark-item" data-id="${b.id}">
+          <div class="bookmark-item" data-id="${escapeHtml(b.id)}">
             <div class="bookmark-content">
-              <div class="bookmark-module">${b.moduleName}</div>
-              <h4 class="bookmark-title">${b.title}</h4>
-              <p class="bookmark-excerpt">${b.excerpt}</p>
+              <div class="bookmark-module">${escapeHtml(b.moduleName || '')}</div>
+              <h4 class="bookmark-title">${escapeHtml(b.title)}</h4>
+              <p class="bookmark-excerpt">${escapeHtml(b.excerpt || '')}</p>
               <div class="bookmark-date">收藏于 ${new Date(b.createdAt).toLocaleDateString('zh-CN')}</div>
             </div>
             <div class="bookmark-actions">
-              <a href="${b.href}" class="bookmark-btn" title="查看">→</a>
-              <button class="bookmark-btn delete" title="删除" onclick="deleteBookmark('${b.id}')">×</button>
+              <a href="${escapeHtml(b.href)}" class="bookmark-btn" title="查看">→</a>
+              <button class="bookmark-btn delete" title="删除" onclick="deleteBookmark('${escapeHtml(b.id)}')">×</button>
             </div>
           </div>
         `).join('');
