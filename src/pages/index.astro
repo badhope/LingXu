@@ -1,10 +1,13 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import SplashScreen from '../components/splash/SplashScreen.astro';
 ---
 
-<SplashScreen
-  title="天地玄黄 · 宇宙洪荒"
-  subtitle="末法时代 · 失落修行文明档案馆"
-  autoRedirect={true}
-  redirectDelay={5000}
-/>
+<BaseLayout title="灵墟 - 入口">
+  <SplashScreen
+    title="天地玄黄 · 宇宙洪荒"
+    subtitle="末法时代 · 失落修行文明档案馆"
+    autoRedirect={true}
+    redirectDelay={5000}
+  />
+</BaseLayout>
