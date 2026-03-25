@@ -12,8 +12,8 @@ const alias = {
 };
 
 export default defineConfig({
-  site: isGitHubPages ? 'https://x1882.github.io' : 'http://localhost:4321',
-  base: isGitHubPages ? '/LingXu' : '/',
+  site: 'https://lingxu.xn--jbtt24bux6a.com',
+  base: '/',
   output: 'static',
   vite: {
     resolve: {
