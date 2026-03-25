@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/badhope/LingXu/discussions
+    about: 使用 Discussions 进行一般性讨论和问答
+  - name: 📖 项目文档
+    url: https://github.com/badhope/LingXu/tree/main/docs
+    about: 查看项目文档了解详细信息
+  - name: 🔒 安全问题
+    url: https://github.com/badhope/LingXu/security/advisories/new
+    about: 请通过安全公告报告安全漏洞

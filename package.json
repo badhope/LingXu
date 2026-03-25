@@ -1,13 +1,41 @@
 {
   "name": "lingxu",
+  "version": "2.0.0",
+  "description": "灵墟 - 失落修行文明档案馆 | An immersive digital archive exploring Chinese metaphysical culture",
   "type": "module",
-  "version": "1.1.0",
+  "author": {
+    "name": "LingXu Team"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/badhope/LingXu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/badhope/LingXu/issues"
+  },
+  "homepage": "https://lingxu.xn--jbtt24bux6a.com",
+  "keywords": [
+    "lingxu",
+    "astro",
+    "chinese-culture",
+    "metaphysics",
+    "cultivation",
+    "static-site",
+    "tailwindcss"
+  ],
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "typecheck": "astro check",
+    "lint": "eslint src --ext .ts,.tsx,.astro",
+    "lint:fix": "eslint src --ext .ts,.tsx,.astro --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,astro,css,md,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,astro,css,md,json}\"",
+    "clean": "rm -rf dist node_modules/.astro",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -23,5 +51,14 @@
     "@astrojs/check": "^0.9.8",
     "gh-pages": "^6.3.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ]
 }

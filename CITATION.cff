@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "如果您在研究中使用了灵墟，请按以下格式引用。"
+title: "LingXu"
+version: 2.0.0
+date-released: 2024-01-01
+url: "https://github.com/badhope/LingXu"
+repository-code: "https://github.com/badhope/LingXu"
+abstract: "灵墟是一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁。采用「天地玄黄，宇宙洪荒」八字框架，将修行文明的知识体系归纳为八大模块。"
+keywords:
+  - Chinese culture
+  - Metaphysics
+  - Cultivation
+  - Digital archive
+  - Astro
+license: MIT
+authors:
+  - name: "LingXu Team"
+    website: "https://lingxu.xn--jbtt24bux6a.com"
+preferred-citation:
+  type: software
+  title: "LingXu: Archive of a Lost Cultivation Civilization"
+  authors:
+    - name: "LingXu Team"
+  year: 2024
+  url: "https://github.com/badhope/LingXu"
