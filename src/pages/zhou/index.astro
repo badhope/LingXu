@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="zhou" title="时间">
@@ -10,22 +11,22 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/zhou/reincarnation" class="feature-card">
+      <a href={withBase('/zhou/reincarnation')} class="feature-card">
         <div class="card-icon">🔄</div>
         <h3>轮回查询</h3>
         <p>前世今生因果</p>
       </a>
-      <a href="/zhou/calendar-system" class="feature-card">
+      <a href={withBase('/zhou/calendar-system')} class="feature-card">
         <div class="card-icon">📅</div>
         <h3>纪年系统</h3>
         <p>多纪元时间转换</p>
       </a>
-      <a href="/zhou/eras" class="feature-card">
+      <a href={withBase('/zhou/eras')} class="feature-card">
         <div class="card-icon">⏳</div>
         <h3>时代划分</h3>
         <p>各时代浏览</p>
       </a>
-      <a href="/zhou/timeline" class="feature-card">
+      <a href={withBase('/zhou/timeline')} class="feature-card">
         <div class="card-icon">📊</div>
         <h3>时间线</h3>
         <p>大事年表</p>

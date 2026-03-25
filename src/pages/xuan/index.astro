@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="xuan" title="玄学">
@@ -10,27 +11,27 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/xuan/yijing" class="feature-card">
+      <a href={withBase('/xuan/yijing')} class="feature-card">
         <div class="card-icon">☯️</div>
         <h3>易经占卜</h3>
         <p>六十四卦解读</p>
       </a>
-      <a href="/xuan/destiny" class="feature-card">
+      <a href={withBase('/xuan/destiny')} class="feature-card">
         <div class="card-icon">🎲</div>
         <h3>命理推演</h3>
         <p>八字紫微斗数</p>
       </a>
-      <a href="/xuan/talismans" class="feature-card">
+      <a href={withBase('/xuan/talismans')} class="feature-card">
         <div class="card-icon">📜</div>
         <h3>符箓识别</h3>
         <p>符咒图鉴大全</p>
       </a>
-      <a href="/xuan/formations" class="feature-card">
+      <a href={withBase('/xuan/formations')} class="feature-card">
         <div class="card-icon">🔮</div>
         <h3>阵法布局</h3>
         <p>阵法图鉴布置</p>
       </a>
-      <a href="/xuan/classics" class="feature-card">
+      <a href={withBase('/xuan/classics')} class="feature-card">
         <div class="card-icon">📚</div>
         <h3>玄学典籍</h3>
         <p>经典文献阅读</p>

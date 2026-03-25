@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="hong" title="洪荒">
@@ -10,27 +11,27 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/hong/divine-beasts" class="feature-card">
+      <a href={withBase('/hong/divine-beasts')} class="feature-card">
         <div class="card-icon">🐉</div>
         <h3>神兽录</h3>
         <p>祥瑞神兽图鉴</p>
       </a>
-      <a href="/hong/evil-beasts" class="feature-card">
+      <a href={withBase('/hong/evil-beasts')} class="feature-card">
         <div class="card-icon">🦄</div>
         <h3>异兽图</h3>
         <p>凶险异兽图鉴</p>
       </a>
-      <a href="/hong/birth-match" class="feature-card">
+      <a href={withBase('/hong/birth-match')} class="feature-card">
         <div class="card-icon">🎯</div>
         <h3>出生匹配</h3>
         <p>神兽缘分测试</p>
       </a>
-      <a href="/hong/deity-tree" class="feature-card">
+      <a href={withBase('/hong/deity-tree')} class="feature-card">
         <div class="card-icon">🌳</div>
         <h3>神灵谱系</h3>
         <p>神系族谱关系</p>
       </a>
-      <a href="/hong/auspicious" class="feature-card">
+      <a href={withBase('/hong/auspicious')} class="feature-card">
         <div class="card-icon">✨</div>
         <h3>祥瑞凶兆</h3>
         <p>吉凶兽对照</p>

@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="huang-lost" title="失落">
@@ -10,27 +11,27 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/huang-lost/techniques" class="feature-card">
+      <a href={withBase('/huang-lost/techniques')} class="feature-card">
         <div class="card-icon">⚔️</div>
         <h3>失传功法</h3>
         <p>远古功法秘籍</p>
       </a>
-      <a href="/huang-lost/medicine" class="feature-card">
+      <a href={withBase('/huang-lost/medicine')} class="feature-card">
         <div class="card-icon">💊</div>
         <h3>医道秘术</h3>
         <p>岐黄之术秘方</p>
       </a>
-      <a href="/huang-lost/artifacts" class="feature-card">
+      <a href={withBase('/huang-lost/artifacts')} class="feature-card">
         <div class="card-icon">🔧</div>
         <h3>炼器之道</h3>
         <p>神器法宝图纸</p>
       </a>
-      <a href="/huang-lost/charms" class="feature-card">
+      <a href={withBase('/huang-lost/charms')} class="feature-card">
         <div class="card-icon">📋</div>
         <h3>符咒大全</h3>
         <p>符咒秘笈禁忌</p>
       </a>
-      <a href="/huang-lost/ruins" class="feature-card">
+      <a href={withBase('/huang-lost/ruins')} class="feature-card">
         <div class="card-icon">🏛️</div>
         <h3>遗迹探查</h3>
         <p>远古遗迹宝藏</p>

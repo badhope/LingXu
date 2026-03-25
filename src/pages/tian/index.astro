@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="tian" title="天时">
@@ -10,27 +11,27 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/tian/calendar" class="feature-card">
+      <a href={withBase('/tian/calendar')} class="feature-card">
         <div class="card-icon">📅</div>
         <h3>黄历吉凶</h3>
         <p>每日宜忌查询</p>
       </a>
-      <a href="/tian/bazi" class="feature-card">
+      <a href={withBase('/tian/bazi')} class="feature-card">
         <div class="card-icon">🎴</div>
         <h3>八字排盘</h3>
         <p>生辰四柱推演</p>
       </a>
-      <a href="/tian/stars" class="feature-card">
+      <a href={withBase('/tian/stars')} class="feature-card">
         <div class="card-icon">⭐</div>
         <h3>星辰运行</h3>
         <p>二十八宿星象</p>
       </a>
-      <a href="/tian/solar-terms" class="feature-card">
+      <a href={withBase('/tian/solar-terms')} class="feature-card">
         <div class="card-icon">🌿</div>
         <h3>节气养生</h3>
         <p>节气与养生</p>
       </a>
-      <a href="/tian/daily-quote" class="feature-card">
+      <a href={withBase('/tian/daily-quote')} class="feature-card">
         <div class="card-icon">💫</div>
         <h3>每日吉言</h3>
         <p>每日箴言运势</p>

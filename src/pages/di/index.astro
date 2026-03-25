@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="di" title="地理">
@@ -10,27 +11,27 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/di/compass" class="feature-card">
+      <a href={withBase('/di/compass')} class="feature-card">
         <div class="card-icon">🧭</div>
         <h3>罗盘定向</h3>
         <p>八卦方位分析</p>
       </a>
-      <a href="/di/caves" class="feature-card">
+      <a href={withBase('/di/caves')} class="feature-card">
         <div class="card-icon">🏔️</div>
         <h3>洞天福地</h3>
         <p>仙山福地查询</p>
       </a>
-      <a href="/di/fengshui" class="feature-card">
+      <a href={withBase('/di/fengshui')} class="feature-card">
         <div class="card-icon">🌊</div>
         <h3>风水堪舆</h3>
         <p>龙脉风水分析</p>
       </a>
-      <a href="/di/geography" class="feature-card">
+      <a href={withBase('/di/geography')} class="feature-card">
         <div class="card-icon">🗺️</div>
         <h3>地理志</h3>
         <p>山川地理知识</p>
       </a>
-      <a href="/di/directions" class="feature-card">
+      <a href={withBase('/di/directions')} class="feature-card">
         <div class="card-icon">⬆️</div>
         <h3>方位吉凶</h3>
         <p>方位时辰宜忌</p>

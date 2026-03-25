@@ -1,5 +1,6 @@
 ---
 import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import { withBase } from '../../lib/utils';
 ---
 
 <ModuleLayout moduleId="yu" title="空间">
@@ -10,22 +11,22 @@ import ModuleLayout from '../../layouts/ModuleLayout.astro';
     </section>
 
     <section class="features-grid">
-      <a href="/yu/world-map" class="feature-card">
+      <a href={withBase('/yu/world-map')} class="feature-card">
         <div class="card-icon">🗺️</div>
         <h3>世界地图</h3>
         <p>各界地域浏览</p>
       </a>
-      <a href="/yu/layers" class="feature-card">
+      <a href={withBase('/yu/layers')} class="feature-card">
         <div class="card-icon">🏯</div>
         <h3>空间层级</h3>
         <p>万界结构层次</p>
       </a>
-      <a href="/yu/realms" class="feature-card">
+      <a href={withBase('/yu/realms')} class="feature-card">
         <div class="card-icon">🌍</div>
         <h3>界域详情</h3>
         <p>各界特色资源</p>
       </a>
-      <a href="/yu/directions-world" class="feature-card">
+      <a href={withBase('/yu/directions-world')} class="feature-card">
         <div class="card-icon">⬆️</div>
         <h3>方位世界</h3>
         <p>五方世界体系</p>
