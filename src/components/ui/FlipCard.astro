@@ -172,9 +172,17 @@ const flipType = type === 'hover' ? 'flip-card-hover' : type === 'swipe' ? 'flip
     }
   }
 
-  document.addEventListener('astro:page-load', () => {
+  function initFlipCards() {
     new FlipCardController();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFlipCards);
+  } else {
+    initFlipCards();
+  }
+
+  document.addEventListener('astro:page-load', initFlipCards);
 </script>
 
 <style>

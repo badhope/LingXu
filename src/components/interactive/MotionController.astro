@@ -206,7 +206,7 @@
 
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', handleReducedMotionChange);
 
-  document.addEventListener('astro:page-load', () => {
+  function initAll() {
     initScrollReveal();
     initDividers();
     initTOC();
@@ -214,5 +214,13 @@
     initTouchFeedback();
     initAccordions();
     initPageLoadAnimations();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('astro:page-load', initAll);
 </script>

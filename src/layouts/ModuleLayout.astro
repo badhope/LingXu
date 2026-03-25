@@ -247,10 +247,18 @@ if (!module) {
         }
       }
 
-      document.addEventListener('astro:page-load', () => {
+      function initModuleEffects() {
         new ModuleParticleBackground();
         new ModuleParallax();
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initModuleEffects);
+      } else {
+        initModuleEffects();
+      }
+
+      document.addEventListener('astro:page-load', initModuleEffects);
     </script>
 
     <style define:vars={{ moduleColor: module.color }}>

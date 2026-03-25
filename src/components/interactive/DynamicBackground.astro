@@ -235,7 +235,7 @@ const {
     }
   }
 
-  document.addEventListener('astro:page-load', () => {
+  function initAll() {
     const gradientLayer = document.getElementById('gradient-layer');
     const canvas = document.getElementById('bg-particle-canvas');
     const container = document.getElementById('parallax-container');
@@ -243,5 +243,13 @@ const {
     if (gradientLayer) new GradientFlow(gradientLayer);
     if (canvas && mode !== 'parallax') new CanvasBackground(canvas);
     if (container) new ParallaxBackground();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('astro:page-load', initAll);
 </script>
