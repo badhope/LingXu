@@ -3,14 +3,13 @@
  */
 
 import Layout from '@/components/layout/Layout'
-import styles from '../tian/SubPage.module.scss'
+import styles from './index.module.scss'
 
-export default function MajiePage() {
+export default function MijiePage() {
   const secrets = [
-    { name: '昆仑秘境', desc: '位于昆仑山深处，传说中神仙居住之地' },
+    { name: '昆仑秘境', desc: '位于昆仑山深处，神仙居住之地' },
     { name: '瑶池仙境', desc: '西王母所居，灵气充沛' },
     { name: '东海龙宫', desc: '龙族领地，藏有无数珍宝' },
-    { name: '幽冥地府', desc: '亡魂归宿，六道轮回之地' },
   ]
 
   return (
@@ -26,8 +25,8 @@ export default function MajiePage() {
           <h2 className={styles.sectionTitle}>秘界探幽</h2>
           <div className={styles.cardGrid}>
             {secrets.map((s, i) => (
-              <div key={s.name} className={styles.card} style={{ animationDelay: `${i * 0.1}s` }}>
-                <h3 style={{ color: '#c9a227', marginBottom: '1rem' }}>{s.name}</h3>
+              <div key={s.name} className={styles.card}>
+                <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}>{s.name}</h3>
                 <p className={styles.cardDesc}>{s.desc}</p>
               </div>
             ))}
