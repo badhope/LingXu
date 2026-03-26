@@ -1,0 +1,54 @@
+{
+  "name": "lingxu",
+  "short_name": "灵墟",
+  "description": "末法时代 · 失落修行文明档案馆",
+  "start_url": "/LingXu/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#c9a227",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/LingXu/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/LingXu/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "entertainment", "lifestyle"],
+  "lang": "zh-CN"
+}

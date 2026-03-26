@@ -2,72 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2026-03-21
-
-### Added
-- **Component barrel exports** (`src/components/index.ts`) - Centralized component exports for cleaner imports
-- **ESLint configuration** (`eslint.config.mjs`) - Code linting with Astro rules
-- **Prettier configuration** (`prettierrc.json`) - Code formatting standards
-- **500 error page** (`src/pages/500.astro`) - Server error fallback page
-- **Motion system** - Portal animations, scroll reveal, touch feedback, reduced-motion support
-- **MotionController component** - Scroll reveal, dividers, TOC, timeline, touch interactions
-- **Portal component** - Ritualized entry gateway with seal/gate unlock sequence
-- **PortalParticles component** - Transit particle effects
-- **motion.css** - Site-wide motion foundation with CSS variables and keyframes
-- **Bilingual README** - English primary + Chinese (README.zh-CN.md)
-
-### Improved
-- Mobile navigation drawer toggle behavior
-- Touch target sizes for accessibility
-- Reduced motion support across all animations
-- Article content structure with proper section headings
-- **BaseLayout motion integration** - MotionController and ParticleField now properly loaded
-- **motion.css integration** - Now correctly imported in BaseLayout (critical fix)
-- README documentation - Comprehensive English + Chinese documentation
-
-### Fixed
-- **Critical**: motion.css was not imported in BaseLayout - all motion classes were non-functional
-- **Critical**: MotionController was defined but never instantiated in BaseLayout
-- **Critical**: ParticleField was not included in BaseLayout
-
-### Documentation
-- Updated handoff.md to reflect V1.1.0 status
-
-## [1.0.0] - 2026-03-20
+## [2.0.0] - 2024-03-26
 
 ### Added
-- Initial project setup with Astro + Tailwind + MDX
-- 5 content collections (archive, medicine, myth, dharma, realms)
-- Complete route skeleton (28 pages)
-- 3 layout templates (BaseLayout, PageLayout, ArticleLayout)
-- Navigation system with mobile support
-- Design tokens and typography system
-- Section color palettes (gold, jade, amethyst, sapphire, ochre)
-- Timeline component for era visualization
-- SectionHeader component with reveal animations
-- 404 page with worldbuilding-consistent styling
-- About page with project backstory
-- ParticleField atmospheric background
-- MistEffect ambient layer
-- ScrollReveal interaction component
-- ArchiveCard and SectionNav widgets
-- Comprehensive documentation (9 docs files)
-- GitHub Pages deployment configuration
+- 🎉 Complete rewrite using Next.js 14 + TypeScript
+- 🌌 New immersive splash screen with particle effects
+- ✨ Eight main modules: 天时, 地理, 玄学, 历史, 空间, 时间, 洪荒, 失落
+- 🎨 Gold and dark theme with starry background
+- 🔄 Interactive orbital system with mouse tracking
+- ☯️ Animated Taiji diagram on splash screen
+- 📦 Zustand-based state management
+- 🌙 Dark mode by default
+- 📱 Responsive design for all devices
+- 🎭 Framer Motion animations throughout
+- 🌐 Static site generation for GitHub Pages
 
-### Content
-- 20 topic pages across 5 sections
-- Placeholder content for all planned entries
-- Frontmatter schema with title, subtitle, description, tags, era, quote, status
+### Changed
+- Migrated from Astro to Next.js
+- Redesigned entire UI with modern aesthetics
+- Improved performance and loading times
+- Enhanced accessibility features
 
----
+### Technical
+- Upgraded to React 18
+- Implemented Tailwind CSS + SCSS Modules
+- Added Three.js for future 3D features
+- Integrated lunar-javascript for Chinese calendar
 
-## Versioning
+## [1.0.0] - Previous Version
 
-This project uses semantic versioning. Versions are tagged in git.
-
-## Branches
-
-- `main` - Stable releases
-- No feature branches currently in use (single-developer workflow)
+### Added
+- Initial release with Astro framework
+- Basic module structure
+- Static content pages

@@ -1,64 +1,44 @@
 {
   "name": "lingxu",
   "version": "2.0.0",
-  "description": "灵墟 - 失落修行文明档案馆 | An immersive digital archive exploring Chinese metaphysical culture",
-  "type": "module",
-  "author": {
-    "name": "LingXu Team"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/badhope/LingXu.git"
-  },
-  "bugs": {
-    "url": "https://github.com/badhope/LingXu/issues"
-  },
-  "homepage": "https://lingxu.xn--jbtt24bux6a.com",
-  "keywords": [
-    "lingxu",
-    "astro",
-    "chinese-culture",
-    "metaphysics",
-    "cultivation",
-    "static-site",
-    "tailwindcss"
-  ],
+  "private": true,
+  "description": "灵墟 - 末法时代·失落修行文明档案馆",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "typecheck": "astro check",
-    "lint": "eslint src --ext .ts,.tsx,.astro",
-    "lint:fix": "eslint src --ext .ts,.tsx,.astro --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx,astro,css,md,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,astro,css,md,json}\"",
-    "clean": "rm -rf dist node_modules/.astro",
-    "deploy": "gh-pages -d dist"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build && next export",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@astrojs/mdx": "^3.1.0",
-    "@astrojs/sitemap": "^3.7.1",
-    "@astrojs/tailwind": "^5.1.0",
-    "astro": "^4.16.0",
-    "framer-motion": "^12.38.0",
-    "tailwindcss": "^3.4.0",
-    "zustand": "^5.0.12"
+    "@react-three/drei": "^9.99.0",
+    "@react-three/fiber": "^8.15.0",
+    "canvas-confetti": "^1.9.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^3.3.0",
+    "echarts": "^5.5.0",
+    "echarts-for-react": "^3.0.0",
+    "framer-motion": "^11.0.0",
+    "lunar-javascript": "^1.6.0",
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^3.5.0",
+    "three": "^0.162.0",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8",
-    "gh-pages": "^6.3.0",
-    "typescript": "^5.9.3"
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ]
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/three": "^0.162.0",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8.5.8",
+    "sass": "^1.71.0",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.3.0"
+  }
 }

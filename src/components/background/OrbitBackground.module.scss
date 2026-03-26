@@ -1,0 +1,149 @@
+.container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: transform 0.3s ease-out;
+}
+
+.orbitSystem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 900px;
+}
+
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 162, 39, 0.06);
+  transform: translate(-50%, -50%);
+}
+
+.orbit1 {
+  width: 300px;
+  height: 300px;
+  animation: orbitRotate 25s linear infinite;
+  border-color: rgba(201, 162, 39, 0.1);
+}
+
+.orbit2 {
+  width: 450px;
+  height: 450px;
+  animation: orbitRotate 35s linear infinite reverse;
+  border-color: rgba(201, 162, 39, 0.08);
+}
+
+.orbit3 {
+  width: 600px;
+  height: 600px;
+  animation: orbitRotate 45s linear infinite;
+  border-color: rgba(201, 162, 39, 0.06);
+}
+
+.orbit4 {
+  width: 750px;
+  height: 750px;
+  animation: orbitRotate 55s linear infinite reverse;
+  border-color: rgba(201, 162, 39, 0.04);
+}
+
+.orbit5 {
+  width: 900px;
+  height: 900px;
+  animation: orbitRotate 65s linear infinite;
+  border-color: rgba(201, 162, 39, 0.02);
+}
+
+@keyframes orbitRotate {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.centerDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: #c9a227;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(201, 162, 39, 0.8);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(201, 162, 39, 0.8);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(201, 162, 39, 1);
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particleOrbit linear infinite;
+}
+
+@keyframes particleOrbit {
+  from {
+    transform: rotate(0deg) translateX(var(--orbit-radius, 150px)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--orbit-radius, 150px)) rotate(-360deg);
+  }
+}
+
+.symbols {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.symbol {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 14px;
+  color: rgba(201, 162, 39, 0.3);
+  text-shadow: 0 0 15px rgba(201, 162, 39, 0.4);
+  animation: symbolOrbit var(--duration, 30s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes symbolOrbit {
+  from {
+    transform: rotate(0deg) translateX(var(--radius, 200px)) rotate(0deg);
+    opacity: 0;
+  }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  to {
+    transform: rotate(360deg) translateX(var(--radius, 200px)) rotate(-360deg);
+    opacity: 0;
+  }
+}
+
+// 响应式
+@media (max-width: 768px) {
+  .orbitSystem {
+    width: 100vw;
+    height: 100vw;
+    max-width: 500px;
+    max-height: 500px;
+  }
+  
+  .orbit1 { width: 150px; height: 150px; }
+  .orbit2 { width: 225px; height: 225px; }
+  .orbit3 { width: 300px; height: 300px; }
+  .orbit4 { width: 375px; height: 375px; }
+  .orbit5 { width: 450px; height: 450px; }
+}

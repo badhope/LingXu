@@ -1,305 +1,212 @@
-<div align="center">
-
 # 灵墟 · LingXu
 
-**天地玄黄 · 宇宙洪荒**
-
-**失落修行文明档案馆**
-
-*Archive of a Lost Cultivation Civilization*
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Astro](https://img.shields.io/badge/Astro-5.x-FF5D01?logo=astro)](https://astro.build)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Deployed-success?logo=github)](https://pages.github.com)
-
-[在线预览](https://lingxu.xn--jbtt24bux6a.com) · [English](README.en.md) · [更新日志](CHANGELOG.md) · [贡献指南](CONTRIBUTING.md)
-
+<div align="center">
+  
+  ![灵墟 Logo](./docs/images/logo.png)
+  
+  **末法时代 · 失落修行文明档案馆**
+  
+  *Archive of a Lost Cultivation Civilization*
+  
+  [![GitHub](https://img.shields.io/badge/GitHub-badhope%2FLingXu-181717?style=flat&logo=github)](https://github.com/badhope/LingXu)
+  [![License](https://img.shields.io/badge/License-MIT-c9a227?style=flat)](./LICENSE)
+  [![Version](https://img.shields.io/badge/Version-2.0.0-c9a227?style=flat)](./CHANGELOG.md)
+  [![Stars](https://img.shields.io/github/stars/badhope/LingXu?style=flat&color=c9a227)](https://github.com/badhope/LingXu/stargazers)
+  
 </div>
 
 ---
 
-## 📖 项目简介
+## 🌟 项目简介
 
-灵墟是一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁。项目采用「天地玄黄，宇宙洪荒」八字框架，将修行文明的知识体系归纳为八大模块。
+**灵墟**是一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁。
 
-### 核心问题
+公元2026年，末法时代。万年来灵气衰落，历史被封锁，世人忘却了那些曾是真实的奇人异事——老子飞升、庄子化蝶、列子御风...那些不是神话，而是真实存在的修行者。
 
-> 一个拥有精密精神技术的古老文明，为何只在现代留下零散的痕迹？
+灵墟档案馆致力于记录这些被遗忘的修行文明，探索天地玄黄、宇宙洪荒的奥秘。
 
-我们不是要证明修行是真的，而是要理解为什么这么多古人会相信修行是真的。
+### ✨ 特色功能
 
-### ✨ 特性
-
-- 🎨 **沉浸式设计** - 精心设计的视觉效果与交互体验
-- 📚 **八大模块** - 天时、地理、玄学、历史、空间、时间、洪荒、失落
-- 🌙 **暗色主题** - 符合修行文化的神秘氛围
-- ⚡ **极速加载** - 静态生成，首屏秒开
-- 📱 **响应式设计** - 完美适配各种设备
-- 🔍 **全文搜索** - 快速定位感兴趣的内容
-- 💾 **本地存储** - 收藏、历史记录本地持久化
+- 🌌 **沉浸式体验** - WebGL 3D 星空、粒子系统、水墨动态背景
+- ☯️ **玄学工具** - 易经八卦、八字命理、风水罗盘、符箓生成
+- 📜 **丰富内容** - 八大模块、数百个子页面、详尽解读
+- 🎮 **交互功能** - 每日签到、占卜大厅、修炼模拟器
+- 🌙 **神秘玄幻** - 仙侠风格界面，深邃的文化氛围
 
 ---
 
-## 🗺️ 内容架构
+## 🗺️ 八大模块
 
-```
-入口 (Portal)
-    │
-    ▼
-首页 (Homepage) ─ 八大模块导航
-    │
-    ├── 天 (Tiān) ─ 天时
-    │   ├── 黄历吉凶
-    │   ├── 八字排盘
-    │   ├── 星辰运行
-    │   ├── 节气养生
-    │   └── 每日吉言
-    │
-    ├── 地 (Dì) ─ 地理
-    │   ├── 罗盘定向
-    │   ├── 洞天福地
-    │   ├── 风水堪舆
-    │   ├── 地理志
-    │   └── 方位吉凶
-    │
-    ├── 玄 (Xuán) ─ 玄学
-    │   ├── 易经占卜
-    │   ├── 命理推演
-    │   ├── 符箓识别
-    │   ├── 阵法布局
-    │   └── 玄学典籍
-    │
-    ├── 黄 (Huáng) ─ 历史
-    │   ├── 历史卷轴
-    │   ├── 纪年转换
-    │   ├── 人物谱
-    │   ├── 大事件
-    │   └── 秘辛档案
-    │
-    ├── 宇 (Yǔ) ─ 空间
-    │   ├── 世界地图
-    │   ├── 空间层次
-    │   ├── 诸天万界
-    │   └── 方位世界
-    │
-    ├── 宙 (Zhòu) ─ 时间
-    │   ├── 时间线
-    │   ├── 纪元
-    │   ├── 轮回因果
-    │   └── 历法系统
-    │
-    ├── 洪 (Hóng) ─ 洪荒
-    │   ├── 神兽录
-    │   ├── 凶兽录
-    │   ├── 神谱
-    │   ├── 吉祥物
-    │   └── 本命神兽
-    │
-    └── 荒 (Huāng) ─ 失落
-        ├── 功法典籍
-        ├── 秘术
-        ├── 法器
-        ├── 丹药
-        ├── 符咒
-        └── 遗迹
-```
+| 模块 | 描述 | 内容 |
+|------|------|------|
+| **天** | 天道运行，星辰变化 | 星宿、运势、节气、占卜 |
+| **地** | 山川地理，风水堪舆 | 风水、罗盘、龙脉、地理 |
+| **玄** | 易经八卦，符箓命理 | 易经、八字、占卜、符箓 |
+| **黄** | 千古兴亡，秘辛档案 | 朝代、人物、秘辛、文献 |
+| **宇** | 万界苍茫，空间层次 | 三界、洞天、维度、秘界 |
+| **宙** | 时间长河，轮回因果 | 轮回、因果、时光、预言 |
+| **洪** | 神怪异兽，洪荒神话 | 神兽、妖魔、传说、图腾 |
+| **荒** | 失传秘术，失落文明 | 功法、丹药、法宝、秘室 |
 
 ---
 
 ## 🚀 快速开始
 
-### 环境要求
+### 在线访问
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0 或 pnpm >= 8.0.0
+[https://badhope.github.io/LingXu](https://badhope.github.io/LingXu)
 
-### 安装
+### 本地运行
 
 ```bash
 # 克隆仓库
 git clone https://github.com/badhope/LingXu.git
-
-# 进入目录
 cd LingXu
 
 # 安装依赖
-npm install
-```
+pnpm install
 
-### 开发
-
-```bash
 # 启动开发服务器
-npm run dev
+pnpm dev
 
-# 访问 http://localhost:4321
+# 构建静态网站
+pnpm build
+
+# 导出静态文件
+pnpm export
 ```
 
-### 构建
+### 技术栈
 
-```bash
-# 生产构建
-npm run build
-
-# 预览构建结果
-npm run preview
-```
-
-### 代码检查
-
-```bash
-# TypeScript 类型检查
-npm run typecheck
-
-# ESLint 检查
-npm run lint
-
-# 格式化代码
-npm run format
-```
+- **框架**: Next.js 14 (React 18)
+- **语言**: TypeScript 5
+- **样式**: Tailwind CSS + SCSS Modules
+- **动画**: Framer Motion
+- **3D 渲染**: Three.js + React Three Fiber
+- **状态管理**: Zustand
+- **图表**: ECharts
+- **农历计算**: lunar-javascript
 
 ---
 
-## 🛠️ 技术栈
-
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| [Astro](https://astro.build) | 5.x | 静态站点框架 |
-| [TypeScript](https://www.typescriptlang.org/) | 5.x | 类型安全 |
-| [Tailwind CSS](https://tailwindcss.com/) | 4.x | 样式系统 |
-| [Zustand](https://zustand-demo.pmnd.rs/) | 5.x | 状态管理 |
-| [Vite](https://vitejs.dev/) | 6.x | 构建工具 |
-
----
-
-## 📁 项目结构
+## 📖 项目结构
 
 ```
 LingXu/
-├── .github/                    # GitHub 配置
-│   ├── workflows/              # GitHub Actions
-│   ├── ISSUE_TEMPLATE/         # Issue 模板
-│   └── PULL_REQUEST_TEMPLATE/  # PR 模板
-├── docs/                       # 项目文档
-│   ├── architecture.md         # 架构设计
-│   ├── content-model.md        # 内容模型
-│   ├── motion-principles.md    # 动效原则
-│   └── ...
-├── public/                     # 静态资源
-│   ├── favicon.svg
-│   └── sitemap.xml
 ├── src/
-│   ├── components/             # 组件
-│   │   ├── interactive/        # 交互组件
-│   │   ├── layout/             # 布局组件
-│   │   ├── portal/             # 传送门组件
-│   │   ├── splash/             # 启动画面
-│   │   ├── ui/                 # UI 组件
-│   │   └── widgets/            # 小部件
-│   ├── data/                   # 数据配置
-│   ├── layouts/                # 页面布局
-│   ├── lib/                    # 工具库
-│   ├── pages/                  # 页面路由
-│   ├── stores/                 # 状态存储
-│   └── styles/                 # 全局样式
-├── astro.config.mjs            # Astro 配置
-├── tailwind.config.mjs         # Tailwind 配置
-├── tsconfig.json               # TypeScript 配置
-├── LICENSE                     # 许可证
-├── CHANGELOG.md                # 更新日志
-├── CONTRIBUTING.md             # 贡献指南
-├── CODE_OF_CONDUCT.md          # 行为准则
-├── SECURITY.md                 # 安全政策
-├── README.md                   # 中文文档
-└── README.en.md                # 英文文档
+│   ├── components/          # 组件
+│   │   ├── background/      # 背景组件（星空、轨道）
+│   │   ├── interactive/     # 交互组件（太极、八卦）
+│   │   ├── layout/          # 布局组件
+│   │   └── splash/          # 启动页
+│   ├── hooks/               # 自定义 Hooks
+│   ├── lib/                 # 工具库
+│   │   ├── constants.ts     # 常量配置
+│   │   └── utils.ts         # 工具函数
+│   ├── pages/               # 页面路由
+│   │   ├── index.tsx        # 入口页
+│   │   ├── home.tsx         # 主页
+│   │   ├── tian.tsx         # 天时模块
+│   │   ├── di.tsx           # 地理模块
+│   │   ├── xuan.tsx         # 玄学模块
+│   │   ├── huang.tsx        # 历史模块
+│   │   ├── yu.tsx           # 空间模块
+│   │   ├── zhou.tsx         # 时间模块
+│   │   ├── hong.tsx         # 洪荒模块
+│   │   └── huang-lost.tsx   # 失落模块
+│   ├── stores/              # 状态管理
+│   └── styles/              # 全局样式
+├── public/                  # 静态资源
+├── docs/                    # 文档
+└── [配置文件]
 ```
 
 ---
 
-## 🎨 设计原则
+## 🎨 设计理念
 
 ### 视觉风格
 
-- **色彩**：以金色（#c9a227）为主色调，象征修行文明的神秘与庄严
-- **字体**：使用「思源宋体」和「站酷小薇」等中文衬线字体
-- **动效**：粒子效果、太极旋转、传送门动画等沉浸式体验
+- **主题色**: 金色 (#c9a227) + 玄色 (#1a1a2e)
+- **点缀**: 发光星辰效果
+- **氛围**: 神秘、深邃、仙侠
 
-### 交互设计
+### 动画系统
 
-- **仪式感入口**：通过传送门动画营造进入档案馆的仪式感
-- **模块化导航**：八字框架清晰呈现内容结构
-- **渐进式探索**：从概览到详情，层层深入
+- 粒子系统: 星空、光粒子、龙形粒子
+- 轨道系统: 旋转轨道、符号环绕
+- 太极图: 旋转、发光、交互
+- 过渡动画: 页面切换、元素入场
+
+### 响应式设计
+
+- 桌面端: 完整体验
+- 平板端: 自适应布局
+- 移动端: 简化动画、触控优化
 
 ---
 
-## 📊 项目统计
+## 🌐 API 集成
 
-![GitHub repo size](https://img.shields.io/github/repo-size/badhope/LingXu)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/badhope/LingXu)
-![GitHub last commit](https://img.shields.io/github/last-commit/badhope/LingXu)
-![GitHub stars](https://img.shields.io/github/stars/badhope/LingXu?style=social)
+灵墟整合了多个免费开源 API：
+
+| 类型 | API | 用途 |
+|------|-----|------|
+| 天文 | NASA API | 每日天文图片、星图数据 |
+| 天气 | 和风天气 | 节气、天气查询 |
+| 日历 | 公共日历 API | 节假日、农历转换 |
+| 星座 | 内置算法 | 星座计算、运势生成 |
+
+> 注：部分功能使用本地算法实现，无需外部 API
 
 ---
 
 ## 🤝 参与贡献
 
-我们欢迎所有形式的贡献！
+欢迎所有形式的贡献！
 
 ### 贡献方式
 
-- 🐛 [报告 Bug](https://github.com/badhope/LingXu/issues/new?template=bug_report.md)
-- 💡 [提出新功能](https://github.com/badhope/LingXu/issues/new?template=feature_request.md)
-- 📝 改进文档
-- 🔧 提交代码
+1. **内容贡献** - 添加玄学知识、历史资料、神话故事
+2. **代码贡献** - 修复 Bug、添加功能、优化性能
+3. **设计贡献** - 改进 UI、添加动画、设计素材
+4. **翻译贡献** - 翻译成其他语言
 
 ### 贡献流程
 
 1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'feat: 添加某个功能'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
+2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add amazing feature'`)
+4. 推送分支 (`git push origin feature/amazing-feature`)
 5. 提交 Pull Request
 
-详细指南请参阅 [贡献指南](CONTRIBUTING.md)。
+---
+
+## 📄 许可证
+
+本项目基于 [MIT 许可证](./LICENSE) 开源。
+
+**注意**: 
+- 本项目仅供娱乐和学习，不构成任何形式的预测或建议
+- 玄学内容源自传统文化，不代表科学观点
+- 如有侵权，请联系作者删除
 
 ---
 
-## 📜 许可证
+## 📞 联系方式
 
-本项目基于 [MIT License](LICENSE) 开源。
-
----
-
-## 🙏 致谢
-
-### 内容来源
-
-- 道教、佛教经典及相关注释
-- 《黄帝内经》《山海经》《易经》等先秦两汉典籍
-- 历代志怪小说、仙侠传记
-- 近现代学者的研究成果
-
-### 免责声明
-
-> 灵墟收录的内容仅供文化研究与欣赏之用。我们不提供任何形式的算命、占卜、法事服务，也不鼓励任何形式的盲目修炼。文中涉及的宗教内容，均作为文化遗产呈现，不代表本站立场。
-
----
-
-## 📮 联系方式
-
-- **网站**：[https://lingxu.xn--jbtt24bux6a.com](https://lingxu.xn--jbtt24bux6a.com)
-- **Issues**：[GitHub Issues](https://github.com/badhope/LingXu/issues)
+- **GitHub**: [https://github.com/badhope/LingXu](https://github.com/badhope/LingXu)
+- **问题反馈**: [Issues](https://github.com/badhope/LingXu/issues)
+- **功能建议**: [Discussions](https://github.com/badhope/LingXu/discussions)
 
 ---
 
 <div align="center">
-
-**愿见者得度，闻者觉悟**
-
-*May those who see find liberation, may those who hear attain enlightenment.*
-
-[⬆ 返回顶部](#灵墟--lingxu)
-
+  
+  **愿你在灵墟中找到属于自己的修行之路**
+  
+  *May you find your own path of cultivation in LingXu*
+  
+  ![Star](https://img.shields.io/github/stars/badhope/LingXu?style=social)
+  
 </div>

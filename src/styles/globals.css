@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================
+   全局字体引入
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap');
+
+/* ==========================================
+   CSS 变量
+   ========================================== */
+:root {
+  /* 主色 */
+  --color-gold: #c9a227;
+  --color-gold-light: #f0d78c;
+  --color-gold-dark: #845c17;
+  
+  /* 玄色 */
+  --color-xuan: #1a1a2e;
+  --color-xuan-light: #393a4a;
+  --color-xuan-dark: #0a0a0f;
+  
+  /* 文字 */
+  --color-text-primary: #e8d48b;
+  --color-text-secondary: #a8a8a8;
+  --color-text-muted: #666666;
+  
+  /* 边框 */
+  --color-border: rgba(201, 162, 39, 0.2);
+  --color-border-hover: rgba(201, 162, 39, 0.5);
+  
+  /* 背景 */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: rgba(26, 26, 46, 0.6);
+  
+  /* 发光 */
+  --glow-gold: 0 0 20px rgba(201, 162, 39, 0.5);
+  --glow-gold-strong: 0 0 40px rgba(201, 162, 39, 0.8);
+  
+  /* 动画时长 */
+  --duration-fast: 0.2s;
+  --duration-normal: 0.4s;
+  --duration-slow: 0.8s;
+}
+
+/* ==========================================
+   基础样式
+   ========================================== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ==========================================
+   滚动条样式
+   ========================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-light);
+}
+
+/* ==========================================
+   选择文字样式
+   ========================================== */
+::selection {
+  background: rgba(201, 162, 39, 0.3);
+  color: var(--color-gold-light);
+}
+
+/* ==========================================
+   链接样式
+   ========================================== */
+a {
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: all var(--duration-fast) ease;
+}
+
+a:hover {
+  color: var(--color-gold-light);
+  text-shadow: var(--glow-gold);
+}
+
+/* ==========================================
+   组件样式
+   ========================================== */
+@layer components {
+  /* 金色发光文字 */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(201, 162, 39, 0.5),
+                 0 0 20px rgba(201, 162, 39, 0.3),
+                 0 0 30px rgba(201, 162, 39, 0.2);
+  }
+  
+  /* 金色渐变文字 */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #f0d78c 0%, #c9a227 25%, #e8c76b 50%, #c9a227 75%, #f0d78c 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  /* 卡片样式 */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all var(--duration-normal) ease;
+  }
+  
+  .card:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--glow-gold);
+    transform: translateY(-4px);
+  }
+  
+  /* 按钮样式 */
+  .btn-gold {
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    color: var(--bg-primary);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    transition: all var(--duration-normal) ease;
+    border: 1px solid transparent;
+  }
+  
+  .btn-gold:hover {
+    box-shadow: var(--glow-gold-strong);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+  }
+  
+  .btn-outline-gold {
+    background: transparent;
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    transition: all var(--duration-normal) ease;
+  }
+  
+  .btn-outline-gold:hover {
+    background: rgba(201, 162, 39, 0.1);
+    box-shadow: var(--glow-gold);
+  }
+  
+  /* 分隔线 */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-gold), transparent);
+  }
+  
+  /* 装饰边框 */
+  .ornate-border {
+    position: relative;
+    border: 1px solid var(--color-border);
+  }
+  
+  .ornate-border::before,
+  .ornate-border::after {
+    content: '◆';
+    position: absolute;
+    color: var(--color-gold);
+    font-size: 8px;
+  }
+  
+  .ornate-border::before {
+    top: -5px;
+    left: -5px;
+  }
+  
+  .ornate-border::after {
+    bottom: -5px;
+    right: -5px;
+  }
+}
+
+/* ==========================================
+   动画工具类
+   ========================================== */
+@layer utilities {
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+  .animate-delay-1000 { animation-delay: 1000ms; }
+  
+  .backdrop-blur-gold {
+    backdrop-filter: blur(10px);
+    background: rgba(201, 162, 39, 0.05);
+  }
+  
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ==========================================
+   减少动画偏好
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
