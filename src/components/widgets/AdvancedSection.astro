@@ -1,0 +1,336 @@
+---
+/**
+ * 灵墟 - 高级内容区块组件
+ * Advanced Content Section Component
+ * 
+ * 用于展示模块内的详细内容区块
+ */
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  icon?: string;
+  theme?: 'gold' | 'purple' | 'blue' | 'green' | 'red';
+  size?: 'sm' | 'md' | 'lg';
+  animated?: boolean;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  icon,
+  theme = 'gold',
+  size = 'md',
+  animated = true,
+} = Astro.props;
+
+const themeColors = {
+  gold: { primary: '#c9a227', secondary: '#e8d48b', bg: 'rgba(201, 162, 39, 0.05)' },
+  purple: { primary: '#8040f0', secondary: '#a066ff', bg: 'rgba(128, 64, 240, 0.05)' },
+  blue: { primary: '#4080f0', secondary: '#66a0ff', bg: 'rgba(64, 128, 240, 0.05)' },
+  green: { primary: '#40b040', secondary: '#66d066', bg: 'rgba(64, 176, 64, 0.05)' },
+  red: { primary: '#f04080', secondary: '#ff66a0', bg: 'rgba(240, 64, 128, 0.05)' },
+};
+
+const colors = themeColors[theme];
+---
+
+<section 
+  class:list={['content-section', `size-${size}`, { animated }]}
+  style={`--section-color: ${colors.primary}; --section-color-secondary: ${colors.secondary}; --section-bg: ${colors.bg};`}
+>
+  <!-- 背景装饰 -->
+  <div class="section-bg">
+    <div class="bg-glow"></div>
+    <div class="bg-pattern"></div>
+  </div>
+
+  <!-- 标题区域 -->
+  <header class="section-header">
+    {icon && <span class="header-icon">{icon}</span>}
+    <div class="header-text">
+      {subtitle && <span class="header-subtitle">{subtitle}</span>}
+      <h2 class="header-title">{title}</h2>
+    </div>
+    <div class="header-line"></div>
+  </header>
+
+  <!-- 内容区域 -->
+  <div class="section-content">
+    <slot />
+  </div>
+
+  <!-- 底部装饰 -->
+  <footer class="section-footer">
+    <div class="footer-decoration">
+      <span class="deco-dot"></span>
+      <span class="deco-line"></span>
+      <span class="deco-dot"></span>
+    </div>
+  </footer>
+</section>
+
+<style>
+  .content-section {
+    position: relative;
+    padding: 2.5rem 2rem;
+    margin: 2rem 0;
+    background: rgba(10, 10, 15, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* 尺寸变体 */
+  .size-sm {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .size-md {
+    padding: 2.5rem 2rem;
+  }
+
+  .size-lg {
+    padding: 3.5rem 2.5rem;
+  }
+
+  /* 背景效果 */
+  .section-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .bg-glow {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 200px;
+    background: radial-gradient(
+      ellipse at center,
+      var(--section-color) 0%,
+      transparent 70%
+    );
+    opacity: 0.08;
+    filter: blur(40px);
+  }
+
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 2px 2px, rgba(201, 162, 39, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.5;
+  }
+
+  /* 标题区域 */
+  .section-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+  }
+
+  .header-icon {
+    font-size: 2rem;
+    line-height: 1;
+    animation: iconPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes iconPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  .header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.75rem;
+    color: var(--section-color);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .header-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--section-color-secondary);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 20px var(--section-color);
+  }
+
+  .header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--section-color),
+      transparent
+    );
+    opacity: 0.3;
+  }
+
+  /* 内容区域 */
+  .section-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 底部装饰 */
+  .section-footer {
+    position: relative;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(201, 162, 39, 0.1);
+  }
+
+  .footer-decoration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .deco-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--section-color);
+    border-radius: 50%;
+    opacity: 0.5;
+    box-shadow: 0 0 8px var(--section-color);
+  }
+
+  .deco-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--section-color),
+      transparent
+    );
+    opacity: 0.3;
+  }
+
+  /* 动画入场 */
+  .animated .section-header {
+    animation: headerReveal 0.8s ease-out backwards;
+  }
+
+  .animated .section-content > :global(*:nth-child(1)) {
+    animation: contentReveal 0.6s ease-out 0.2s backwards;
+  }
+
+  .animated .section-content > :global(*:nth-child(2)) {
+    animation: contentReveal 0.6s ease-out 0.3s backwards;
+  }
+
+  .animated .section-content > :global(*:nth-child(3)) {
+    animation: contentReveal 0.6s ease-out 0.4s backwards;
+  }
+
+  @keyframes headerReveal {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes contentReveal {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 悬浮效果 */
+  .content-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      var(--section-bg) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .content-section:hover::before {
+    opacity: 1;
+  }
+
+  .content-section:hover {
+    border-color: rgba(201, 162, 39, 0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .content-section {
+      padding: 1.5rem 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .size-lg {
+      padding: 2rem 1.5rem;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .header-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(
+        to right,
+        var(--section-color),
+        transparent
+      );
+    }
+
+    .header-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .animated .section-header,
+    .animated .section-content > :global(*) {
+      animation: none;
+    }
+
+    .header-icon {
+      animation: none;
+    }
+  }
+</style>

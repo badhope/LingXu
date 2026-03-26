@@ -1,0 +1,166 @@
+---
+/**
+ * 灵墟 - 交错揭示动画组件
+ * Stagger Reveal Component
+ * 
+ * 为列表/网格提供批量入场动画效果
+ * Provides batch entrance animations for lists/grids
+ */
+
+export interface Props {
+  // 容器类名
+  class?: string;
+  // 动画方向
+  direction?: 'up' | 'down' | 'left' | 'right';
+  // 每个子元素延迟（毫秒）
+  staggerDelay?: number;
+  // 初始延迟（毫秒）
+  initialDelay?: number;
+  // 视口阈值
+  threshold?: number;
+}
+
+const {
+  class: className = '',
+  direction = 'up',
+  staggerDelay = 80,
+  initialDelay = 0,
+  threshold = 0.1,
+} = Astro.props;
+---
+
+<div
+  class:list={['stagger-container', className]}
+  data-stagger
+  data-direction={direction}
+  data-delay={staggerDelay}
+  data-initial={initialDelay}
+  data-threshold={threshold}
+>
+  <slot />
+</div>
+
+<style>
+  .stagger-container {
+    display: contents;
+  }
+
+  .stagger-container > * {
+    opacity: 0;
+    transition: 
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* 向上 */
+  .stagger-container[data-direction="up"] > * {
+    transform: translateY(30px);
+  }
+
+  .stagger-container[data-direction="up"].revealed > * {
+    transform: translateY(0);
+  }
+
+  /* 向下 */
+  .stagger-container[data-direction="down"] > * {
+    transform: translateY(-30px);
+  }
+
+  .stagger-container[data-direction="down"].revealed > * {
+    transform: translateY(0);
+  }
+
+  /* 向左 */
+  .stagger-container[data-direction="left"] > * {
+    transform: translateX(30px);
+  }
+
+  .stagger-container[data-direction="left"].revealed > * {
+    transform: translateX(0);
+  }
+
+  /* 向右 */
+  .stagger-container[data-direction="right"] > * {
+    transform: translateX(-30px);
+  }
+
+  .stagger-container[data-direction="right"].revealed > * {
+    transform: translateX(0);
+  }
+
+  .stagger-container.revealed > * {
+    opacity: 1;
+  }
+
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-container > * {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  class StaggerReveal {
+    private container: HTMLElement | null;
+    private children: HTMLElement[];
+    private observer: IntersectionObserver | null;
+
+    constructor() {
+      this.container = document.querySelector('[data-stagger]');
+      if (!this.container) return;
+
+      this.children = Array.from(this.container.children) as HTMLElement[];
+      this.init();
+    }
+
+    private init(): void {
+      const threshold = parseFloat(this.container!.dataset.threshold || '0.1');
+      const delay = parseInt(this.container!.dataset.delay || '80');
+      const initialDelay = parseInt(this.container!.dataset.initial || '0');
+
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.animateChildren(delay, initialDelay);
+              this.observer?.unobserve(this.container!);
+            }
+          });
+        },
+        { threshold }
+      );
+
+      this.observer.observe(this.container!);
+    }
+
+    private animateChildren(delay: number, initialDelay: number): void {
+      this.container!.classList.add('revealed');
+
+      this.children.forEach((child, index) => {
+        child.style.transitionDelay = `${initialDelay + index * delay}ms`;
+      });
+    }
+
+    public destroy(): void {
+      this.observer?.disconnect();
+    }
+  }
+
+  function initStaggerReveal(): void {
+    const staggerContainers = document.querySelectorAll('[data-stagger]');
+    staggerContainers.forEach((container) => {
+      new StaggerReveal();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStaggerReveal);
+  } else {
+    initStaggerReveal();
+  }
+
+  document.addEventListener('astro:page-load', initStaggerReveal);
+</script>

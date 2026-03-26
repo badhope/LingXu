@@ -1,0 +1,335 @@
+---
+/**
+ * 灵墟 - 增强型滚动动画控制器
+ * Enhanced Scroll Reveal Controller
+ * 
+ * 高性能滚动触发动画组件
+ * High-performance scroll-triggered animations
+ */
+
+export interface Props {
+  threshold?: number;
+  rootMargin?: string;
+  once?: boolean;
+}
+
+const { 
+  threshold = 0.1,
+  rootMargin = '0px 0px -50px 0px',
+  once = true 
+} = Astro.props;
+---
+
+<div 
+  class="scroll-reveal-container"
+  data-reveal-threshold={threshold}
+  data-reveal-root-margin={rootMargin}
+  data-reveal-once={once}
+>
+  <slot />
+</div>
+
+<style>
+  .scroll-reveal-container {
+    width: 100%;
+  }
+</style>
+
+<script>
+  // 滚动触发动画控制器
+  class ScrollRevealController {
+    private container: HTMLElement | null;
+    private observer: IntersectionObserver | null = null;
+    private revealedCount = 0;
+    private totalElements = 0;
+
+    constructor() {
+      this.container = document.querySelector('.scroll-reveal-container');
+      this.init();
+    }
+
+    private init(): void {
+      if (!this.container) return;
+
+      // 获取配置
+      const threshold = parseFloat(this.container.dataset.revealThreshold || '0.1');
+      const rootMargin = this.container.dataset.revealRootMargin || '0px 0px -50px 0px';
+      const once = this.container.dataset.revealOnce !== 'false';
+
+      // 收集所有需要动画的元素
+      const elements = this.container.querySelectorAll('[data-reveal]');
+      this.totalElements = elements.length;
+
+      if (elements.length === 0) return;
+
+      // 创建观察器
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.animateElement(entry.target as HTMLElement);
+              
+              if (once) {
+                this.observer?.unobserve(entry.target);
+              }
+              this.revealedCount++;
+            } else if (!once) {
+              // 非一次性动画：重新隐藏
+              this.resetElement(entry.target as HTMLElement);
+            }
+          });
+        },
+        { threshold, rootMargin }
+      );
+
+      // 观察所有元素
+      elements.forEach((el) => {
+        this.observer?.observe(el);
+      });
+    }
+
+    private animateElement(el: HTMLElement): void {
+      const delay = parseFloat(el.dataset.revealDelay || '0');
+      const duration = parseFloat(el.dataset.revealDuration || '600');
+      const direction = el.dataset.reveal || 'up';
+
+      setTimeout(() => {
+        el.classList.add('revealed');
+        el.style.transitionDuration = `${duration}ms`;
+      }, delay);
+    }
+
+    private resetElement(el: HTMLElement): void {
+      el.classList.remove('revealed');
+    }
+
+    public destroy(): void {
+      this.observer?.disconnect();
+    }
+  }
+
+  // 子模块卡片动画控制器
+  class SubModuleCardAnimator {
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      const grids = document.querySelectorAll('[data-submodule-grid]');
+      
+      grids.forEach((grid) => {
+        const cards = grid.querySelectorAll('[data-submodule-card]');
+        
+        cards.forEach((card, index) => {
+          const el = card as HTMLElement;
+          el.dataset.reveal = 'up';
+          el.dataset.revealDelay = String(index * 80);
+          el.classList.add('submodule-card');
+        });
+      });
+
+      // 初始化滚动观察器
+      new ScrollRevealController();
+    }
+  }
+
+  // 视差滚动效果
+  class ParallaxController {
+    private elements: NodeListOf<HTMLElement>;
+    private ticking = false;
+
+    constructor() {
+      this.elements = document.querySelectorAll('[data-parallax]');
+      if (this.elements.length === 0) return;
+      this.init();
+    }
+
+    private init(): void {
+      window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+      this.elements.forEach((el) => {
+        el.style.willChange = 'transform';
+      });
+    }
+
+    private onScroll(): void {
+      if (!this.ticking) {
+        requestAnimationFrame(() => {
+          this.update();
+          this.ticking = false;
+        });
+        this.ticking = true;
+      }
+    }
+
+    private update(): void {
+      const scrollY = window.scrollY;
+
+      this.elements.forEach((el) => {
+        const speed = parseFloat(el.dataset.parallax || '0.5');
+        const offset = scrollY * speed;
+        el.style.transform = `translateY(${offset}px)`;
+      });
+    }
+  }
+
+  // 初始化所有控制器
+  function initScrollAnimations(): void {
+    new ScrollRevealController();
+    new SubModuleCardAnimator();
+    new ParallaxController();
+  }
+
+  // 页面加载时初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollAnimations);
+  } else {
+    initScrollAnimations();
+  }
+
+  // Astro 页面切换后重新初始化
+  document.addEventListener('astro:page-load', initScrollAnimations);
+</script>
+
+<style is:global>
+  /* 滚动触发动画基础类 */
+  [data-reveal] {
+    opacity: 0;
+    transition: 
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* 上浮动画 */
+  [data-reveal="up"] {
+    transform: translateY(40px);
+  }
+
+  [data-reveal="up"].revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 下滑动画 */
+  [data-reveal="down"] {
+    transform: translateY(-40px);
+  }
+
+  [data-reveal="down"].revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 左滑动画 */
+  [data-reveal="left"] {
+    transform: translateX(-40px);
+  }
+
+  [data-reveal="left"].revealed {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* 右滑动画 */
+  [data-reveal="right"] {
+    transform: translateX(40px);
+  }
+
+  [data-reveal="right"].revealed {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* 缩放动画 */
+  [data-reveal="scale"] {
+    transform: scale(0.9);
+  }
+
+  [data-reveal="scale"].revealed {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* 模糊动画 */
+  [data-reveal="blur"] {
+    filter: blur(10px);
+  }
+
+  [data-reveal="blur"].revealed {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  /* 组合动画 */
+  [data-reveal="fade"] {
+    opacity: 0;
+  }
+
+  [data-reveal="fade"].revealed {
+    opacity: 1;
+  }
+
+  /* 旋转动画 */
+  [data-reveal="rotate"] {
+    transform: rotate(-10deg) scale(0.95);
+  }
+
+  [data-reveal="rotate"].revealed {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+
+  /* 子模块卡片样式 */
+  .submodule-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    background: rgba(10, 10, 15, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.15);
+    border-radius: 12px;
+    text-decoration: none;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .submodule-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(201, 162, 39, 0.08) 0%,
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .submodule-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(201, 162, 39, 0.4);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(201, 162, 39, 0.1);
+  }
+
+  .submodule-card:hover::before {
+    opacity: 1;
+  }
+
+  /* 视差元素 */
+  [data-parallax] {
+    will-change: transform;
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+  }
+</style>

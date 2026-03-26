@@ -1,0 +1,397 @@
+---
+/**
+ * 灵墟 - 快速导航组件
+ * Quick Navigation Component
+ * 
+ * 提供快捷入口导航，带有高级动画效果
+ */
+
+export interface Props {
+  variant?: 'default' | 'compact' | 'minimal';
+  showLabels?: boolean;
+}
+
+const { variant = 'default', showLabels = true } = Astro.props;
+
+// 导航项配置
+const navItems = [
+  {
+    id: 'search',
+    label: '搜索',
+    icon: `<path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    href: '/search',
+    color: '#c9a227',
+  },
+  {
+    id: 'bookmarks',
+    label: '收藏',
+    icon: `<path d="M17 3H7a2 2 0 00-2 2v14l7-3 7 3V5a2 2 0 00-2-2z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    href: '/bookmarks',
+    color: '#e8d48b',
+  },
+  {
+    id: 'profile',
+    label: '我的',
+    icon: `<circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 21a8 8 0 00-16 0" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    href: '/profile',
+    color: '#d4af37',
+  },
+];
+---
+
+<nav class={`quick-nav quick-nav--${variant}`} role="navigation" aria-label="快捷导航">
+  <div class="nav-container">
+    {navItems.map((item, index) => (
+      <a
+        href={item.href}
+        class="nav-item"
+        data-nav={item.id}
+        style={`--nav-color: ${item.color}; --nav-delay: ${index * 0.1}s`}
+        aria-label={item.label}
+      >
+        <!-- 图标容器 -->
+        <div class="nav-icon-wrapper">
+          <div class="nav-icon-bg"></div>
+          <svg class="nav-icon" viewBox="0 0 24 24" set:html={item.icon} />
+          <div class="nav-icon-glow"></div>
+        </div>
+        
+        <!-- 标签 -->
+        {showLabels && (
+          <span class="nav-label">{item.label}</span>
+        )}
+        
+        <!-- 涟漪效果 -->
+        <div class="nav-ripple"></div>
+        
+        <!-- 装饰 -->
+        <div class="nav-deco">
+          <span class="deco-dot"></span>
+        </div>
+      </a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .quick-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-container {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(10, 10, 15, 0.8);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* 紧凑变体 */
+  .quick-nav--compact .nav-container {
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  /* 简约变体 */
+  .quick-nav--minimal .nav-container {
+    background: transparent;
+    border: none;
+    backdrop-filter: none;
+  }
+
+  /* 导航项 */
+  .nav-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    /* 入场动画 */
+    animation: navItemEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--nav-delay, 0s);
+  }
+
+  @keyframes navItemEnter {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* 图标容器 */
+  .nav-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-icon-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at center,
+      var(--nav-color) 0%,
+      transparent 70%
+    );
+    opacity: 0.1;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .nav-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    color: var(--nav-color);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+  }
+
+  .nav-icon-glow {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: var(--nav-color);
+    opacity: 0;
+    filter: blur(8px);
+    transition: opacity 0.3s ease;
+  }
+
+  /* 标签 */
+  .nav-label {
+    font-size: 0.8rem;
+    color: #c9a227;
+    letter-spacing: 0.15em;
+    transition: all 0.3s ease;
+  }
+
+  /* 涟漪效果 */
+  .nav-ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .nav-ripple::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--ripple-x, 50%) var(--ripple-y, 50%),
+      var(--nav-color) 0%,
+      transparent 60%
+    );
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.4s ease;
+  }
+
+  /* 装饰 */
+  .nav-deco {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .deco-dot {
+    width: 4px;
+    height: 4px;
+    background: var(--nav-color);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--nav-color);
+  }
+
+  /* 悬停状态 */
+  .nav-item:hover {
+    background: rgba(201, 162, 39, 0.08);
+    transform: translateY(-3px);
+  }
+
+  .nav-item:hover .nav-icon-bg {
+    opacity: 0.2;
+    transform: scale(1.2);
+  }
+
+  .nav-item:hover .nav-icon {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .nav-item:hover .nav-icon-glow {
+    opacity: 0.3;
+  }
+
+  .nav-item:hover .nav-label {
+    color: var(--nav-color);
+    text-shadow: 0 0 10px var(--nav-color);
+  }
+
+  .nav-item:hover .nav-deco {
+    opacity: 1;
+  }
+
+  /* 按下状态 */
+  .nav-item:active {
+    transform: translateY(-1px) scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* 焦点状态 */
+  .nav-item:focus-visible {
+    outline: 2px solid var(--nav-color);
+    outline-offset: 2px;
+  }
+
+  /* 紧凑变体样式 */
+  .quick-nav--compact .nav-item {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .quick-nav--compact .nav-icon-wrapper {
+    width: 32px;
+    height: 32px;
+  }
+
+  .quick-nav--compact .nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .quick-nav--compact .nav-label {
+    font-size: 0.7rem;
+  }
+
+  /* 简约变体样式 */
+  .quick-nav--minimal .nav-item {
+    padding: 0.5rem;
+    background: transparent;
+    border-radius: 6px;
+  }
+
+  .quick-nav--minimal .nav-item:hover {
+    background: rgba(201, 162, 39, 0.1);
+  }
+
+  .quick-nav--minimal .nav-icon-wrapper {
+    width: 36px;
+    height: 36px;
+  }
+
+  .quick-nav--minimal .nav-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+  }
+
+  .quick-nav--minimal .nav-item:hover .nav-icon {
+    opacity: 1;
+  }
+
+  .quick-nav--minimal .nav-label {
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  .quick-nav--minimal .nav-item:hover .nav-label {
+    opacity: 1;
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    .nav-container {
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .nav-item {
+      padding: 0.5rem 0.75rem;
+    }
+
+    .nav-icon-wrapper {
+      width: 36px;
+      height: 36px;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .nav-label {
+      font-size: 0.7rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nav-container {
+      width: 100%;
+      justify-content: space-around;
+    }
+
+    .nav-label {
+      display: none;
+    }
+
+    .nav-item {
+      padding: 0.75rem;
+    }
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-item {
+      animation: none;
+    }
+
+    .nav-item:hover {
+      transform: translateY(-2px);
+    }
+  }
+</style>
+
+<script>
+  // 涟漪效果
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      const rect = (item as HTMLElement).getBoundingClientRect();
+      const x = ((e as MouseEvent).clientX - rect.left) / rect.width * 100;
+      const y = ((e as MouseEvent).clientY - rect.top) / rect.height * 100;
+      
+      item.style.setProperty('--ripple-x', `${x}%`);
+      item.style.setProperty('--ripple-y', `${y}%`);
+      
+      const ripple = item.querySelector('.nav-ripple::before') as HTMLElement;
+      if (ripple) {
+        ripple.style.transform = 'scale(2)';
+        ripple.style.opacity = '0.3';
+        
+        setTimeout(() => {
+          ripple.style.transform = 'scale(0)';
+          ripple.style.opacity = '0';
+        }, 400);
+      }
+    });
+  });
+</script>

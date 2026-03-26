@@ -1,0 +1,298 @@
+---
+/**
+ * 灵墟 - 增强粒子场组件
+ * Enhanced Particle Field Component
+ * 
+ * 高性能粒子动画系统，支持鼠标交互和模块主题色
+ */
+
+export interface Props {
+  moduleColor?: string;
+  particleCount?: number;
+  enableMouseInteraction?: boolean;
+  enableConnection?: boolean;
+}
+
+const {
+  moduleColor = '#c9a227',
+  particleCount = 50,
+  enableMouseInteraction = true,
+  enableConnection = true,
+} = Astro.props;
+
+const canvasId = `enhanced-particles-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class="particle-field-wrapper" id={canvasId}>
+  <canvas 
+    class="enhanced-particles-canvas"
+    data-color={moduleColor}
+    data-count={particleCount}
+    data-mouse={enableMouseInteraction}
+    data-connection={enableConnection}
+  ></canvas>
+</div>
+
+<style>
+  .particle-field-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .enhanced-particles-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<script>
+  class EnhancedParticleField {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private particles: Particle[] = [];
+    private mouseX: number = 0;
+    private mouseY: number = 0;
+    private animationId: number = 0;
+    private lastTime: number = 0;
+    private targetFPS: number = 45;
+    private color: string;
+    private count: number;
+    private enableMouse: boolean;
+    private enableConnection: boolean;
+    private isVisible: boolean = true;
+
+    constructor(canvas: HTMLCanvasElement) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d')!;
+      this.color = canvas.dataset.color || '#c9a227';
+      this.count = parseInt(canvas.dataset.count || '50');
+      this.enableMouse = canvas.dataset.mouse !== 'false';
+      this.enableConnection = canvas.dataset.connection !== 'false';
+      
+      this.init();
+    }
+
+    private init(): void {
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate();
+    }
+
+    private resize(): void {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+    }
+
+    private createParticles(): void {
+      this.particles = [];
+      const isMobile = window.innerWidth < 768;
+      const count = isMobile ? Math.floor(this.count * 0.6) : this.count;
+
+      // 解析颜色获取HSL值
+      const tempColor = document.createElement('div');
+      tempColor.style.color = this.color;
+      document.body.appendChild(tempColor);
+      const computedColor = getComputedStyle(tempColor).color;
+      document.body.removeChild(tempColor);
+
+      // 提取RGB值
+      const rgbMatch = computedColor.match(/\d+/g);
+      const r = rgbMatch ? parseInt(rgbMatch[0]) : 201;
+      const g = rgbMatch ? parseInt(rgbMatch[1]) : 162;
+      const b = rgbMatch ? parseInt(rgbMatch[2]) : 39;
+
+      for (let i = 0; i < count; i++) {
+        this.particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          size: Math.random() * 1.5 + 0.5,
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.4 + 0.2,
+          r,
+          g,
+          b,
+        });
+      }
+    }
+
+    private bindEvents(): void {
+      let resizeTimeout: number;
+
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(() => {
+          this.resize();
+          this.createParticles();
+        }, 200);
+      }, { passive: true });
+
+      if (this.enableMouse) {
+        window.addEventListener('mousemove', (e: MouseEvent) => {
+          this.mouseX = e.clientX;
+          this.mouseY = e.clientY;
+        }, { passive: true });
+      }
+
+      // 页面可见性处理
+      document.addEventListener('visibilitychange', () => {
+        this.isVisible = document.visibilityState === 'visible';
+        if (this.isVisible) {
+          this.lastTime = 0;
+          this.animate();
+        }
+      });
+    }
+
+    private animate = (currentTime: number = 0): void => {
+      if (!this.isVisible) {
+        this.animationId = requestAnimationFrame(this.animate);
+        return;
+      }
+
+      // FPS控制
+      const frameInterval = 1000 / this.targetFPS;
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < frameInterval) {
+        this.animationId = requestAnimationFrame(this.animate);
+        return;
+      }
+      this.lastTime = currentTime - (elapsed % frameInterval);
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      const interactionRadius = 120;
+      const connectionRadius = 80;
+
+      this.particles.forEach((p) => {
+        // 移动
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        // 鼠标交互
+        if (this.enableMouse) {
+          const dx = this.mouseX - p.x;
+          const dy = this.mouseY - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < interactionRadius) {
+            const force = (interactionRadius - dist) / interactionRadius * 0.015;
+            p.x -= dx * force;
+            p.y -= dy * force;
+            
+            // 靠近时增加亮度
+            p.opacity = Math.min(0.8, p.opacity + force * 2);
+          } else {
+            // 恢复正常亮度
+            p.opacity = Math.max(0.2, p.opacity - 0.01);
+          }
+        }
+
+        // 边界检测
+        if (p.x < 0) p.x = window.innerWidth;
+        if (p.x > window.innerWidth) p.x = 0;
+        if (p.y < 0) p.y = window.innerHeight;
+        if (p.y > window.innerHeight) p.y = 0;
+
+        // 绘制粒子
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.opacity})`;
+        this.ctx.fill();
+
+        // 绘制光晕
+        const gradient = this.ctx.createRadialGradient(
+          p.x, p.y, 0,
+          p.x, p.y, p.size * 3
+        );
+        gradient.addColorStop(0, `rgba(${p.r}, ${p.g}, ${p.b}, ${p.opacity * 0.3})`);
+        gradient.addColorStop(1, `rgba(${p.r}, ${p.g}, ${p.b}, 0)`);
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+      });
+
+      // 绘制连接线
+      if (this.enableConnection) {
+        for (let i = 0; i < this.particles.length; i++) {
+          for (let j = i + 1; j < this.particles.length; j++) {
+            const dx = this.particles[i].x - this.particles[j].x;
+            const dy = this.particles[i].y - this.particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < connectionRadius) {
+              const opacity = (1 - dist / connectionRadius) * 0.15;
+              
+              // 使用渐变线条
+              const gradient = this.ctx.createLinearGradient(
+                this.particles[i].x, this.particles[i].y,
+                this.particles[j].x, this.particles[j].y
+              );
+              gradient.addColorStop(0, `rgba(${this.particles[i].r}, ${this.particles[i].g}, ${this.particles[i].b}, ${opacity})`);
+              gradient.addColorStop(1, `rgba(${this.particles[j].r}, ${this.particles[j].g}, ${this.particles[j].b}, ${opacity})`);
+
+              this.ctx.beginPath();
+              this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+              this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+              this.ctx.strokeStyle = gradient;
+              this.ctx.lineWidth = 0.5;
+              this.ctx.stroke();
+            }
+          }
+        }
+      }
+
+      this.animationId = requestAnimationFrame(this.animate);
+    };
+
+    public destroy(): void {
+      cancelAnimationFrame(this.animationId);
+    }
+
+    public updateColor(color: string): void {
+      this.color = color;
+      
+      // 更新粒子颜色
+      const tempColor = document.createElement('div');
+      tempColor.style.color = color;
+      document.body.appendChild(tempColor);
+      const computedColor = getComputedStyle(tempColor).color;
+      document.body.removeChild(tempColor);
+
+      const rgbMatch = computedColor.match(/\d+/g);
+      this.particles.forEach(p => {
+        if (rgbMatch) {
+          p.r = parseInt(rgbMatch[0]);
+          p.g = parseInt(rgbMatch[1]);
+          p.b = parseInt(rgbMatch[2]);
+        }
+      });
+    }
+  }
+
+  // 初始化所有粒子场
+  function initParticleFields(): void {
+    const canvases = document.querySelectorAll('.enhanced-particles-canvas');
+    canvases.forEach((canvas) => {
+      new EnhancedParticleField(canvas as HTMLCanvasElement);
+    });
+  }
+
+  // 页面加载时初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initParticleFields);
+  } else {
+    initParticleFields();
+  }
+
+  // Astro页面切换时重新初始化
+  document.addEventListener('astro:page-load', initParticleFields);
+</script>

@@ -1,60 +1,70 @@
 ---
 /**
  * 灵墟 - 滚动揭示动画组件
- * Scroll Reveal Component
+ * Scroll Reveal Animation Component
  * 
- * 元素进入视口时触发入场动画
- * Triggers entrance animations when elements enter viewport
+ * 监听元素进入视口时触发动画效果
+ * Triggers animations when elements enter the viewport
  */
 
 export interface Props {
-  // 动画类型: fade, slide-up, slide-left, scale, blur
-  type?: 'fade' | 'slide-up' | 'slide-left' | 'scale' | 'blur';
+  // 动画类型
+  type?: 'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'scale' | 'blur';
   // 延迟（毫秒）
   delay?: number;
   // 距离阈值
   threshold?: number;
-  // 是否在首次进入时触发动画
+  // 是否一次性动画
   once?: boolean;
   // 自定义类名
   class?: string;
 }
 
 const {
-  type = 'slide-up',
+  type = 'fade',
   delay = 0,
   threshold = 0.15,
   once = true,
   class: className = '',
 } = Astro.props;
 
-const animationClass = `reveal-${type}`;
+// 生成唯一ID
+const id = `reveal-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <div
-  class:list={['scroll-reveal', animationClass, className]}
-  data-reveal
-  data-delay={delay}
-  data-threshold={threshold}
-  data-once={once}
-  style={`--reveal-delay: ${delay}ms`}
+  id={id}
+  class={`scroll-reveal reveal-${type} ${className}`}
+  data-reveal-id={id}
+  data-reveal-delay={delay}
+  data-reveal-threshold={threshold}
+  data-reveal-once={once}
 >
   <slot />
 </div>
 
 <style>
   .scroll-reveal {
-    will-change: transform, opacity;
+    will-change: transform, opacity, filter;
   }
 
-  /* 向上揭示 */
+  /* 淡入 */
+  .reveal-fade {
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .reveal-fade.revealed {
+    opacity: 1;
+  }
+
+  /* 上滑 */
   .reveal-slide-up {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(50px);
     transition: 
-      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: var(--reveal-delay, 0ms);
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .reveal-slide-up.revealed {
@@ -62,14 +72,27 @@ const animationClass = `reveal-${type}`;
     transform: translateY(0);
   }
 
-  /* 向左揭示 */
+  /* 下滑 */
+  .reveal-slide-down {
+    opacity: 0;
+    transform: translateY(-50px);
+    transition: 
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .reveal-slide-down.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 左滑 */
   .reveal-slide-left {
     opacity: 0;
-    transform: translateX(-40px);
+    transform: translateX(50px);
     transition: 
-      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: var(--reveal-delay, 0ms);
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .reveal-slide-left.revealed {
@@ -77,25 +100,27 @@ const animationClass = `reveal-${type}`;
     transform: translateX(0);
   }
 
-  /* 淡入 */
-  .reveal-fade {
+  /* 右滑 */
+  .reveal-slide-right {
     opacity: 0;
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: var(--reveal-delay, 0ms);
+    transform: translateX(-50px);
+    transition: 
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .reveal-fade.revealed {
+  .reveal-slide-right.revealed {
     opacity: 1;
+    transform: translateX(0);
   }
 
   /* 缩放 */
   .reveal-scale {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.85);
     transition: 
-      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
       transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transition-delay: var(--reveal-delay, 0ms);
   }
 
   .reveal-scale.revealed {
@@ -106,11 +131,10 @@ const animationClass = `reveal-${type}`;
   /* 模糊 */
   .reveal-blur {
     opacity: 0;
-    filter: blur(10px);
+    filter: blur(15px);
     transition: 
-      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-      filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: var(--reveal-delay, 0ms);
+      opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+      filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .reveal-blur.revealed {
@@ -131,91 +155,73 @@ const animationClass = `reveal-${type}`;
 
 <script>
   class ScrollRevealController {
-    private observer: IntersectionObserver | null = null;
-    private elements: NodeListOf<Element>;
+    private reveals: NodeListOf<Element>;
 
     constructor() {
-      this.elements = document.querySelectorAll('[data-reveal]');
+      this.reveals = document.querySelectorAll('.scroll-reveal');
       this.init();
     }
 
     private init(): void {
+      if (this.reveals.length === 0) return;
+
+      // 检查 IntersectionObserver 支持
       if ('IntersectionObserver' in window) {
-        this.createObserver();
-        this.observeElements();
+        this.setupObserver();
       } else {
-        // Fallback: 直接显示所有元素
-        this.elements.forEach((el) => {
+        // 后备方案：直接显示所有元素
+        this.reveals.forEach(el => {
           el.classList.add('revealed');
         });
       }
+
+      // 页面切换后重新初始化
+      document.addEventListener('astro:page-load', () => {
+        this.reveals = document.querySelectorAll('.scroll-reveal');
+        this.init();
+      });
     }
 
-    private createObserver(): void {
-      const options: IntersectionObserverInit = {
+    private setupObserver(): void {
+      const observerOptions: IntersectionObserverInit = {
         root: null,
-        rootMargin: '0px 0px -10% 0px',
-        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px',
+        threshold: Array.from({ length: 20 }, (_, i) => i * 0.05)
       };
 
-      this.observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement;
-            const delay = el.dataset.delay ? parseInt(el.dataset.delay) : 0;
-            const once = el.dataset.once !== 'false';
+            const delay = parseInt(el.dataset.revealDelay || '0', 10);
+            const once = el.dataset.revealOnce !== 'false';
 
             setTimeout(() => {
               el.classList.add('revealed');
             }, delay);
 
-            if (once && this.observer) {
-              this.observer.unobserve(el);
+            // 如果是一次性动画，停止观察
+            if (once) {
+              observer.unobserve(el);
             }
           } else {
+            // 非一次性动画，移出revealed类
             const el = entry.target as HTMLElement;
-            const once = el.dataset.once !== 'false';
-            if (!once) {
+            if (el.dataset.revealOnce === 'false') {
               el.classList.remove('revealed');
             }
           }
         });
-      }, options);
-    }
+      }, observerOptions);
 
-    private observeElements(): void {
-      if (!this.observer) return;
-      
-      this.elements.forEach((el) => {
-        const threshold = (el as HTMLElement).dataset.threshold;
-        if (threshold && this.observer) {
-          // 动态调整阈值
-          (this.observer as any).observe(el, { threshold: parseFloat(threshold) });
-        } else {
-          this.observer.observe(el);
-        }
-      });
-    }
-
-    public destroy(): void {
-      if (this.observer) {
-        this.observer.disconnect();
-        this.observer = null;
-      }
+      this.reveals.forEach(el => observer.observe(el));
     }
   }
 
   // 初始化
-  function initScrollReveal(): void {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new ScrollRevealController());
+  } else {
     new ScrollRevealController();
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initScrollReveal);
-  } else {
-    initScrollReveal();
-  }
-
-  // Astro 页面切换时重新初始化
-  document.addEventListener('astro:page-load', initScrollReveal);
 </script>

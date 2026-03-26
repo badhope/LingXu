@@ -1,0 +1,424 @@
+---
+/**
+ * 灵墟 - 魔法按钮组件
+ * Magic Button Component
+ * 
+ * 带有炫酷动画效果的按钮
+ * Button with stunning animation effects
+ */
+
+export interface Props {
+  // 按钮文字
+  label: string;
+  // 链接地址
+  href?: string;
+  // 按钮类型
+  variant?: 'primary' | 'secondary' | 'ghost';
+  // 尺寸
+  size?: 'sm' | 'md' | 'lg';
+  // 是否禁用
+  disabled?: boolean;
+  // 图标
+  icon?: string;
+  // 额外类名
+  class?: string;
+  // 点击事件处理
+  onClick?: string;
+}
+
+const {
+  label,
+  href,
+  variant = 'primary',
+  size = 'md',
+  disabled = false,
+  icon,
+  class: className = '',
+  onClick,
+} = Astro.props;
+
+const isLink = !!href;
+const Element = isLink ? 'a' : 'button';
+
+const sizeClasses = {
+  sm: 'btn-sm',
+  md: 'btn-md',
+  lg: 'btn-lg',
+};
+
+const variantClasses = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+  ghost: 'btn-ghost',
+};
+---
+
+<Element
+  class:list={[
+    'magic-btn',
+    sizeClasses[size],
+    variantClasses[variant],
+    className,
+  ]}
+  href={isLink ? href : undefined}
+  disabled={!isLink ? disabled : undefined}
+  data-magic-btn
+  onclick={onClick}
+  aria-label={label}
+>
+  <!-- 背景光效 -->
+  <span class="btn-bg"></span>
+  
+  <!-- 边框光效 -->
+  <span class="btn-border"></span>
+  
+  <!-- 涟漪容器 -->
+  <span class="btn-ripples"></span>
+  
+  <!-- 内容 -->
+  <span class="btn-content">
+    {icon && <span class="btn-icon" set:html={icon} />}
+    <span class="btn-label">{label}</span>
+    <span class="btn-arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </span>
+  </span>
+  
+  <!-- 粒子 -->
+  <span class="btn-particles" aria-hidden="true">
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+  </span>
+</Element>
+
+<style>
+  .magic-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: inherit;
+  }
+
+  /* 尺寸 */
+  .btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-md {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+  }
+
+  /* 主要样式 */
+  .btn-primary {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.2), rgba(201, 162, 39, 0.1));
+    color: #c9a227;
+    border: 1px solid rgba(201, 162, 39, 0.4);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.3), rgba(201, 162, 39, 0.15));
+    border-color: #c9a227;
+    box-shadow: 
+      0 10px 30px rgba(201, 162, 39, 0.3),
+      0 0 60px rgba(201, 162, 39, 0.15);
+    transform: translateY(-3px);
+  }
+
+  /* 次要样式 */
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e8d48b;
+    border: 1px solid rgba(232, 212, 139, 0.3);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #e8d48b;
+    transform: translateY(-2px);
+  }
+
+  /* 幽灵样式 */
+  .btn-ghost {
+    background: transparent;
+    color: #888;
+    border: 1px solid transparent;
+  }
+
+  .btn-ghost:hover {
+    color: #c9a227;
+    background: rgba(201, 162, 39, 0.1);
+    border-color: rgba(201, 162, 39, 0.2);
+  }
+
+  /* 背景 */
+  .btn-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(201, 162, 39, 0.3) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .magic-btn:hover .btn-bg {
+    opacity: 1;
+  }
+
+  /* 边框 */
+  .btn-border {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(201, 162, 39, 0.6) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgba(201, 162, 39, 0.6) 100%
+    );
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .magic-btn:hover .btn-border {
+    opacity: 1;
+  }
+
+  /* 内容 */
+  .btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .btn-icon {
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-label {
+    letter-spacing: 0.1em;
+  }
+
+  .btn-arrow {
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+  }
+
+  .btn-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .magic-btn:hover .btn-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+
+  /* 涟漪 */
+  .btn-ripples {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(201, 162, 39, 0.4);
+    transform: scale(0);
+    animation: btnRipple 0.6s ease-out;
+    pointer-events: none;
+  }
+
+  @keyframes btnRipple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  /* 粒子 */
+  .btn-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #c9a227;
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  .magic-btn:hover .particle {
+    animation: particleFloat 1s ease-out infinite;
+  }
+
+  .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+  .particle:nth-child(2) { left: 30%; animation-delay: 0.15s; }
+  .particle:nth-child(3) { left: 50%; animation-delay: 0.3s; }
+  .particle:nth-child(4) { left: 70%; animation-delay: 0.45s; }
+  .particle:nth-child(5) { left: 90%; animation-delay: 0.6s; }
+  .particle:nth-child(6) { left: 50%; animation-delay: 0.75s; }
+
+  @keyframes particleFloat {
+    0% {
+      bottom: -10%;
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      bottom: 110%;
+      opacity: 0;
+    }
+  }
+
+  /* 按下效果 */
+  .magic-btn:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+
+  /* 禁用状态 */
+  .magic-btn:disabled,
+  .magic-btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* 焦点状态 */
+  .magic-btn:focus-visible {
+    outline: 2px solid #c9a227;
+    outline-offset: 4px;
+  }
+
+  /* 移动端 */
+  @media (hover: none) and (pointer: coarse) {
+    .btn-bg {
+      display: none;
+    }
+
+    .magic-btn:active {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .magic-btn {
+      transition: none;
+    }
+
+    .particle,
+    .ripple {
+      animation: none;
+    }
+
+    .magic-btn:hover .btn-border {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  class MagicButton {
+    private buttons: NodeListOf<Element>;
+
+    constructor() {
+      this.buttons = document.querySelectorAll('[data-magic-btn]');
+      this.init();
+    }
+
+    private init(): void {
+      this.buttons.forEach((btn) => {
+        const el = btn as HTMLElement;
+
+        // 鼠标追踪
+        el.addEventListener('mousemove', (e: MouseEvent) => {
+          const rect = el.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          el.style.setProperty('--mouse-x', `${x}%`);
+          el.style.setProperty('--mouse-y', `${y}%`);
+        });
+
+        // 涟漪效果
+        el.addEventListener('click', (e: MouseEvent) => {
+          const ripples = el.querySelector('.btn-ripples');
+          if (!ripples) return;
+
+          const ripple = document.createElement('span');
+          ripple.className = 'ripple';
+          
+          const rect = el.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          ripple.style.width = ripple.style.height = `${size}px`;
+          ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+          ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+
+          ripples.appendChild(ripple);
+
+          setTimeout(() => ripple.remove(), 600);
+        });
+      });
+    }
+  }
+
+  function initMagicButtons(): void {
+    new MagicButton();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMagicButtons);
+  } else {
+    initMagicButtons();
+  }
+
+  document.addEventListener('astro:page-load', initMagicButtons);
+</script>
