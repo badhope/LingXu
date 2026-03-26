@@ -11,9 +11,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// 获取基础路径
+// 获取基础路径（域名根路径）
 export function getBasePath(): string {
-  return process.env.NODE_ENV === 'production' ? '/LingXu' : ''
+  return ''
 }
 
 // 拼接路径
