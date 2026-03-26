@@ -1,0 +1,583 @@
+---
+/**
+ * 灵墟 - 高级模块卡片组件
+ * Advanced Module Card Component
+ * 
+ * 带有丰富动画和交互效果的模块导航卡片
+ * Features rich animations and interactive effects
+ */
+
+export interface Props {
+  char: string;
+  name: string;
+  pinyin: string;
+  description: string;
+  href: string;
+  color: string;
+  index?: number;
+}
+
+const { char, name, pinyin, description, href, color, index = 0 } = Astro.props;
+
+// 生成独特的符号数组
+const symbols = ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', '⚹', '⟡', '⊛', '✴', '⬢', '❋', '✵'];
+const cardSymbols = symbols.slice(index * 2, index * 2 + 2);
+---
+
+<a
+  href={href}
+  class="module-card"
+  data-module={name}
+  style={`--char-color: ${color}; --delay: ${index * 0.1}s`}
+  aria-label={`进入${name}模块`}
+>
+  <!-- 背景光效层 -->
+  <div class="card-glow-bg"></div>
+  
+  <!-- 边框光效 -->
+  <div class="card-border-glow"></div>
+  
+  <!-- 旋转光环 -->
+  <div class="card-orb-ring">
+    <svg viewBox="0 0 100 100" class="orb-svg">
+      <circle cx="50" cy="50" r="45" class="orb-circle" />
+      <circle cx="50" cy="50" r="38" class="orb-inner" />
+    </svg>
+  </div>
+  
+  <!-- 粒子效果 -->
+  <div class="card-particles" aria-hidden="true">
+    <span class="particle p1"></span>
+    <span class="particle p2"></span>
+    <span class="particle p3"></span>
+    <span class="particle p4"></span>
+    <span class="particle p5"></span>
+  </div>
+  
+  <!-- 漂浮符号 -->
+  <div class="card-symbols" aria-hidden="true">
+    <span class="symbol s1">{cardSymbols[0]}</span>
+    <span class="symbol s2">{cardSymbols[1]}</span>
+  </div>
+  
+  <!-- 主内容 -->
+  <div class="card-content">
+    <!-- 主字符 -->
+    <div class="char-wrapper">
+      <span class="char">{char}</span>
+      <div class="char-glow"></div>
+    </div>
+    
+    <!-- 信息区域 -->
+    <div class="info-wrapper">
+      <h3 class="card-name">
+        <span class="name-text">{name}</span>
+      </h3>
+      <p class="card-pinyin">{pinyin}</p>
+    </div>
+    
+    <!-- 描述 -->
+    <p class="card-description">{description}</p>
+    
+    <!-- 底部装饰 -->
+    <div class="card-footer">
+      <span class="footer-text">探索</span>
+      <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </div>
+  </div>
+  
+  <!-- 悬停光效 -->
+  <div class="hover-light"></div>
+</a>
+
+<style>
+  .module-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    min-height: 280px;
+    background: 
+      radial-gradient(ellipse at 50% 0%, rgba(10, 10, 15, 0.9) 0%, rgba(5, 5, 8, 0.95) 100%);
+    border-radius: 16px;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+    
+    /* 3D变换准备 */
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    
+    /* 入场动画 */
+    animation: cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--delay, 0s);
+    
+    /* 浮动动画 */
+    animation: 
+      cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards,
+      cardFloat 6s ease-in-out infinite;
+    animation-delay: var(--delay, 0s), 1s;
+  }
+
+  @keyframes cardEnter {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes cardFloat {
+    0%, 100% {
+      transform: translateY(0) rotateX(0deg);
+    }
+    25% {
+      transform: translateY(-6px) rotateX(1deg);
+    }
+    50% {
+      transform: translateY(-10px) rotateX(0deg);
+    }
+    75% {
+      transform: translateY(-6px) rotateX(-1deg);
+    }
+  }
+
+  /* 背景光效 */
+  .card-glow-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 50% 30%,
+      var(--char-color) 0%,
+      transparent 60%
+    );
+    opacity: 0.08;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  /* 边框光效 */
+  .card-border-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      var(--char-color) 0%,
+      transparent 30%,
+      transparent 70%,
+      var(--char-color) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.3;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  /* 旋转光环 */
+  .card-orb-ring {
+    position: absolute;
+    width: 180%;
+    height: 180%;
+    top: -40%;
+    left: -40%;
+    opacity: 0.15;
+    pointer-events: none;
+    animation: orbRotate 30s linear infinite;
+  }
+
+  .orb-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .orb-circle {
+    fill: none;
+    stroke: var(--char-color);
+    stroke-width: 0.5;
+    stroke-dasharray: 4 8;
+  }
+
+  .orb-inner {
+    fill: none;
+    stroke: var(--char-color);
+    stroke-width: 0.3;
+    stroke-dasharray: 2 6;
+  }
+
+  @keyframes orbRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* 粒子效果 */
+  .card-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--char-color);
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 8px var(--char-color);
+  }
+
+  .p1 { top: 20%; left: 15%; animation: particleFloat1 4s ease-in-out infinite; }
+  .p2 { top: 70%; left: 80%; animation: particleFloat2 5s ease-in-out infinite 0.5s; }
+  .p3 { top: 40%; left: 85%; animation: particleFloat3 4.5s ease-in-out infinite 1s; }
+  .p4 { top: 80%; left: 25%; animation: particleFloat4 5.5s ease-in-out infinite 1.5s; }
+  .p5 { top: 30%; left: 70%; animation: particleFloat5 4s ease-in-out infinite 2s; }
+
+  @keyframes particleFloat1 {
+    0%, 100% { transform: translate(0, 0); opacity: 0; }
+    20% { opacity: 0.8; }
+    50% { transform: translate(15px, -20px); opacity: 0.6; }
+    80% { opacity: 0.4; }
+  }
+
+  @keyframes particleFloat2 {
+    0%, 100% { transform: translate(0, 0); opacity: 0; }
+    20% { opacity: 0.7; }
+    50% { transform: translate(-20px, -15px); opacity: 0.5; }
+    80% { opacity: 0.3; }
+  }
+
+  @keyframes particleFloat3 {
+    0%, 100% { transform: translate(0, 0); opacity: 0; }
+    20% { opacity: 0.6; }
+    50% { transform: translate(-15px, 20px); opacity: 0.5; }
+    80% { opacity: 0.3; }
+  }
+
+  @keyframes particleFloat4 {
+    0%, 100% { transform: translate(0, 0); opacity: 0; }
+    20% { opacity: 0.8; }
+    50% { transform: translate(20px, 10px); opacity: 0.6; }
+    80% { opacity: 0.4; }
+  }
+
+  @keyframes particleFloat5 {
+    0%, 100% { transform: translate(0, 0); opacity: 0; }
+    20% { opacity: 0.7; }
+    50% { transform: translate(-10px, -25px); opacity: 0.5; }
+    80% { opacity: 0.3; }
+  }
+
+  /* 漂浮符号 */
+  .card-symbols {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .symbol {
+    position: absolute;
+    font-size: 12px;
+    color: var(--char-color);
+    opacity: 0.3;
+    text-shadow: 0 0 10px var(--char-color);
+  }
+
+  .s1 {
+    top: 15%;
+    right: 20%;
+    animation: symbolFloat 8s ease-in-out infinite;
+  }
+
+  .s2 {
+    bottom: 25%;
+    left: 15%;
+    animation: symbolFloat 10s ease-in-out infinite 2s reverse;
+  }
+
+  @keyframes symbolFloat {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translate(10px, -15px) rotate(90deg);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translate(-5px, -25px) rotate(180deg);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translate(15px, -10px) rotate(270deg);
+      opacity: 0.5;
+    }
+  }
+
+  /* 主内容 */
+  .card-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  /* 主字符 */
+  .char-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .char {
+    font-size: 4.5rem;
+    font-weight: 300;
+    color: var(--char-color);
+    line-height: 1;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-shadow: 0 0 20px var(--char-color);
+  }
+
+  .char-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--char-color) 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(1.5);
+    transition: all 0.5s ease;
+    pointer-events: none;
+    filter: blur(20px);
+  }
+
+  /* 信息区域 */
+  .info-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .card-name {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    color: #e8d48b;
+  }
+
+  .name-text {
+    position: relative;
+  }
+
+  .card-pinyin {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #777;
+    letter-spacing: 0.15em;
+  }
+
+  /* 描述 */
+  .card-description {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.6;
+    max-width: 180px;
+    transition: color 0.4s ease;
+  }
+
+  /* 底部 */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .footer-text {
+    font-size: 0.8rem;
+    color: var(--char-color);
+    letter-spacing: 0.2em;
+  }
+
+  .footer-arrow {
+    width: 16px;
+    height: 16px;
+    color: var(--char-color);
+    transition: transform 0.3s ease;
+  }
+
+  /* 悬停光效 */
+  .hover-light {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.6s ease;
+    pointer-events: none;
+  }
+
+  /* 悬停状态 */
+  .module-card:hover {
+    animation-play-state: paused;
+    transform: translateY(-15px) scale(1.03);
+    box-shadow: 
+      0 30px 60px rgba(0, 0, 0, 0.4),
+      0 0 80px color-mix(in srgb, var(--char-color) 30%, transparent);
+  }
+
+  .module-card:hover .card-glow-bg {
+    opacity: 0.2;
+  }
+
+  .module-card:hover .card-border-glow {
+    opacity: 0.7;
+  }
+
+  .module-card:hover .card-orb-ring {
+    opacity: 0.3;
+    animation-duration: 8s;
+  }
+
+  .module-card:hover .char {
+    transform: scale(1.15);
+    text-shadow: 
+      0 0 30px var(--char-color),
+      0 0 60px var(--char-color),
+      0 0 90px var(--char-color);
+  }
+
+  .module-card:hover .char-glow {
+    opacity: 0.3;
+    transform: scale(2);
+  }
+
+  .module-card:hover .card-description {
+    color: #aaa;
+  }
+
+  .module-card:hover .card-footer {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .module-card:hover .footer-arrow {
+    transform: translateX(5px);
+  }
+
+  .module-card:hover .hover-light {
+    left: 150%;
+  }
+
+  /* 粒子激活 */
+  .module-card:hover .particle {
+    animation-duration: 2s;
+  }
+
+  /* 按下状态 */
+  .module-card:active {
+    transform: translateY(-10px) scale(1.01);
+    transition: transform 0.1s ease;
+  }
+
+  /* 焦点状态（无障碍） */
+  .module-card:focus-visible {
+    outline: 2px solid var(--char-color);
+    outline-offset: 4px;
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .module-card {
+      animation: none;
+    }
+
+    .card-orb-ring,
+    .particle,
+    .symbol {
+      animation: none;
+    }
+
+    .module-card:hover {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    .module-card {
+      min-height: 220px;
+      padding: 1.5rem 1rem;
+    }
+
+    .char {
+      font-size: 3.5rem;
+    }
+
+    .card-name {
+      font-size: 1.25rem;
+    }
+
+    .card-description {
+      font-size: 0.8rem;
+      max-width: 160px;
+    }
+
+    .card-orb-ring {
+      width: 150%;
+      height: 150%;
+      top: -25%;
+      left: -25%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .module-card {
+      min-height: 180px;
+      padding: 1.25rem 0.75rem;
+    }
+
+    .char {
+      font-size: 3rem;
+    }
+
+    .card-name {
+      font-size: 1.1rem;
+    }
+
+    .card-footer {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

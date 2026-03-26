@@ -1,0 +1,322 @@
+---
+/**
+ * 灵墟 - 高级光标效果组件
+ * Advanced Cursor Effects Component
+ * 
+ * 增强鼠标交互效果
+ * Enhanced mouse interaction effects
+ */
+
+export interface Props {
+  // 是否启用
+  enabled?: boolean;
+  // 光标颜色
+  color?: string;
+  // 光标大小
+  size?: number;
+}
+
+const {
+  enabled = true,
+  color = '#c9a227',
+  size = 20,
+} = Astro.props;
+---
+
+{enabled && (
+  <>
+    <div id="cursor-glow" class="cursor-glow" aria-hidden="true">
+      <div class="glow-ring"></div>
+      <div class="glow-core"></div>
+    </div>
+    
+    <div id="cursor-trail" class="cursor-trail" aria-hidden="true">
+      <div class="trail-particle"></div>
+      <div class="trail-particle"></div>
+      <div class="trail-particle"></div>
+      <div class="trail-particle"></div>
+      <div class="trail-particle"></div>
+    </div>
+    
+    <div id="cursor-follower" class="cursor-follower" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+      </svg>
+    </div>
+  </>
+)}
+
+<style define:vars={{ color, size }}>
+  /* 光晕效果 */
+  .cursor-glow {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0;
+    mix-blend-mode: screen;
+  }
+
+  .glow-ring {
+    position: absolute;
+    width: calc(var(--size) * 3);
+    height: calc(var(--size) * 3);
+    top: calc(var(--size) * -1);
+    left: calc(var(--size) * -1);
+    border: 1px solid var(--color);
+    border-radius: 50%;
+    opacity: 0.3;
+    transition: 
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.3s ease;
+  }
+
+  .glow-core {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    top: calc(var(--size) / -2);
+    left: calc(var(--size) / -2);
+    background: var(--color);
+    border-radius: 50%;
+    opacity: 0.4;
+    box-shadow: 
+      0 0 10px var(--color),
+      0 0 20px var(--color),
+      0 0 40px color-mix(in srgb, var(--color) 50%, transparent);
+    transition: 
+      transform 0.15s ease,
+      opacity 0.15s ease;
+  }
+
+  .cursor-glow.active .glow-ring {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  .cursor-glow.active .glow-core {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+
+  .cursor-glow.clicking .glow-core {
+    transform: scale(0.8);
+  }
+
+  /* 拖尾效果 */
+  .cursor-trail {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99998;
+  }
+
+  .trail-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--color);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px var(--color);
+  }
+
+  /* 跟随者效果 */
+  .cursor-follower {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99997;
+    width: 40px;
+    height: 40px;
+    color: var(--color);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+  }
+
+  .cursor-follower svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cursor-follower.active {
+    opacity: 0.6;
+  }
+
+  /* 移动端隐藏 */
+  @media (hover: none) and (pointer: coarse) {
+    .cursor-glow,
+    .cursor-trail,
+    .cursor-follower {
+      display: none;
+    }
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-glow,
+    .cursor-follower {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  class AdvancedCursorEffects {
+    private glow: HTMLElement | null;
+    private follower: HTMLElement | null;
+    private particles: NodeListOf<Element>;
+    private mouseX = 0;
+    private mouseY = 0;
+    private followerX = 0;
+    private followerY = 0;
+    private particlePositions: { x: number; y: number }[] = [];
+    private isClicking = false;
+    private isActive = false;
+    private animationId: number | null = null;
+
+    constructor() {
+      this.glow = document.getElementById('cursor-glow');
+      this.follower = document.getElementById('cursor-follower');
+      this.particles = document.querySelectorAll('.trail-particle');
+      
+      // 初始化粒子位置数组
+      for (let i = 0; i < this.particles.length; i++) {
+        this.particlePositions.push({ x: 0, y: 0 });
+      }
+      
+      this.init();
+    }
+
+    private init(): void {
+      if (!this.glow && !this.follower) return;
+      
+      this.bindEvents();
+      this.startAnimation();
+    }
+
+    private bindEvents(): void {
+      // 鼠标移动
+      document.addEventListener('mousemove', (e: MouseEvent) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+        
+        // 更新光晕位置
+        if (this.glow) {
+          this.glow.style.left = `${this.mouseX}px`;
+          this.glow.style.top = `${this.mouseY}px`;
+        }
+      }, { passive: true });
+
+      // 鼠标进入交互元素
+      document.addEventListener('mouseenter', (e: Event) => {
+        const target = e.target as HTMLElement;
+        if (target.matches('a, button, [role="button"], .interactive, .card-hover')) {
+          this.setActive(true);
+        }
+      }, { passive: true });
+
+      // 鼠标离开交互元素
+      document.addEventListener('mouseleave', (e: Event) => {
+        const target = e.target as HTMLElement;
+        if (target.matches('a, button, [role="button"], .interactive, .card-hover')) {
+          this.setActive(false);
+        }
+      }, { passive: true });
+
+      // 按下鼠标
+      document.addEventListener('mousedown', () => {
+        this.isClicking = true;
+        this.glow?.classList.add('clicking');
+      }, { passive: true });
+
+      // 释放鼠标
+      document.addEventListener('mouseup', () => {
+        this.isClicking = false;
+        this.glow?.classList.remove('clicking');
+      }, { passive: true });
+
+      // 离开窗口
+      document.addEventListener('mouseleave', () => {
+        this.glow!.style.opacity = '0';
+        this.follower!.style.opacity = '0';
+      }, { passive: true });
+
+      // 进入窗口
+      document.addEventListener('mouseenter', () => {
+        this.glow!.style.opacity = '1';
+      }, { passive: true });
+    }
+
+    private setActive(active: boolean): void {
+      this.isActive = active;
+      if (active) {
+        this.glow?.classList.add('active');
+        this.follower?.classList.add('active');
+      } else {
+        this.glow?.classList.remove('active');
+        this.follower?.classList.remove('active');
+      }
+    }
+
+    private startAnimation(): void {
+      const animate = () => {
+        // 平滑跟随
+        this.followerX += (this.mouseX - this.followerX) * 0.15;
+        this.followerY += (this.mouseY - this.followerY) * 0.15;
+
+        if (this.follower) {
+          this.follower.style.left = `${this.followerX}px`;
+          this.follower.style.top = `${this.followerY}px`;
+        }
+
+        // 更新粒子拖尾
+        this.updateParticles();
+
+        this.animationId = requestAnimationFrame(animate);
+      };
+
+      this.animationId = requestAnimationFrame(animate);
+    }
+
+    private updateParticles(): void {
+      this.particles.forEach((particle, index) => {
+        const el = particle as HTMLElement;
+        const delay = (index + 1) * 0.1;
+        
+        // 粒子跟随前一个位置（带延迟）
+        const target = index === 0 
+          ? { x: this.mouseX, y: this.mouseY }
+          : this.particlePositions[index - 1];
+
+        this.particlePositions[index].x += (target.x - this.particlePositions[index].x) * (0.3 - delay * 0.05);
+        this.particlePositions[index].y += (target.y - this.particlePositions[index].y) * (0.3 - delay * 0.05);
+
+        el.style.left = `${this.particlePositions[index].x}px`;
+        el.style.top = `${this.particlePositions[index].y}px`;
+        el.style.opacity = `${0.6 - index * 0.1}`;
+        el.style.transform = `translate(-50%, -50%) scale(${1 - index * 0.15})`;
+      });
+    }
+
+    public destroy(): void {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+    }
+  }
+
+  // 初始化
+  function initCursorEffects(): void {
+    new AdvancedCursorEffects();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCursorEffects);
+  } else {
+    initCursorEffects();
+  }
+
+  document.addEventListener('astro:page-load', initCursorEffects);
+</script>

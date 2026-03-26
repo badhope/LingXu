@@ -1,0 +1,464 @@
+---
+/**
+ * 灵墟 - 增强型粒子背景组件
+ * Enhanced Particle Background Component
+ * 
+ * 高性能粒子系统，带星空、能量流效果
+ * High-performance particle system with starfield and energy flow effects
+ */
+
+export interface Props {
+  // 粒子类型: stars, energy, mist, combined
+  type?: 'stars' | 'energy' | 'mist' | 'combined';
+  // 密度
+  density?: 'low' | 'medium' | 'high';
+  // 主题色
+  color?: string;
+}
+
+const {
+  type = 'combined',
+  density = 'medium',
+  color = '#c9a227',
+} = Astro.props;
+
+// 根据密度设置粒子数量
+const densityMap = {
+  low: { stars: 40, energy: 20, mist: 5 },
+  medium: { stars: 80, energy: 40, mist: 10 },
+  high: { stars: 120, energy: 60, mist: 15 },
+};
+
+const particles = densityMap[density];
+---
+
+<div 
+  id="enhanced-particles" 
+  class="enhanced-particles"
+  data-type={type}
+  data-color={color}
+  data-stars={particles.stars}
+  data-energy={particles.energy}
+  data-mist={particles.mist}
+  aria-hidden="true"
+>
+  <canvas id="particles-canvas"></canvas>
+  <div class="mist-layer mist-1"></div>
+  <div class="mist-layer mist-2"></div>
+  <div class="mist-layer mist-3"></div>
+  <div class="nebula-layer"></div>
+</div>
+
+<style>
+  .enhanced-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  #particles-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 薄雾层 */
+  .mist-layer {
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(201, 162, 39, 0.03) 0%,
+      transparent 50%
+    );
+    animation: mistFloat 25s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .mist-1 {
+    top: -30%;
+    left: -30%;
+    animation-delay: 0s;
+    animation-duration: 30s;
+  }
+
+  .mist-2 {
+    top: -20%;
+    left: -20%;
+    animation-delay: -12s;
+    animation-duration: 35s;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(107, 74, 138, 0.02) 0%,
+      transparent 50%
+    );
+  }
+
+  .mist-3 {
+    top: -25%;
+    left: -25%;
+    animation-delay: -20s;
+    animation-duration: 40s;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(64, 128, 240, 0.02) 0%,
+      transparent 50%
+    );
+  }
+
+  @keyframes mistFloat {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+      opacity: 0.4;
+    }
+    25% {
+      transform: translate(3%, -2%) rotate(1deg) scale(1.02);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translate(-2%, 3%) rotate(-1deg) scale(0.98);
+      opacity: 0.5;
+    }
+    75% {
+      transform: translate(-3%, -1%) rotate(0.5deg) scale(1.01);
+      opacity: 0.55;
+    }
+  }
+
+  /* 星云层 */
+  .nebula-layer {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(201, 162, 39, 0.05) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 80%, rgba(107, 74, 138, 0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(64, 128, 240, 0.03) 0%, transparent 50%);
+    animation: nebulaPulse 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes nebulaPulse {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    .mist-layer {
+      animation-duration: 45s;
+    }
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .mist-layer,
+    .nebula-layer {
+      animation: none;
+      opacity: 0.3;
+    }
+  }
+</style>
+
+<script>
+  type ParticleType = 'star' | 'energy' | 'connection';
+
+  interface Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    opacity: number;
+    opacityDir: number;
+    color: string;
+    type: ParticleType;
+    pulsePhase: number;
+    pulseSpeed: number;
+  }
+
+  interface EnergyLine {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    opacity: number;
+    age: number;
+    maxAge: number;
+  }
+
+  class EnhancedParticleSystem {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private particles: Particle[] = [];
+    private energyLines: EnergyLine[] = [];
+    private mouseX = 0;
+    private mouseY = 0;
+    private isMouseInCanvas = false;
+    private animationId: number | null = null;
+    private lastTime = 0;
+    private targetFPS = 60;
+    
+    // 配置
+    private config = {
+      starCount: 80,
+      energyCount: 40,
+      connectionDistance: 120,
+      mouseInfluence: 150,
+    };
+
+    constructor(canvasId: string) {
+      this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+      if (!this.canvas) return;
+      
+      this.ctx = this.canvas.getContext('2d')!;
+      this.init();
+    }
+
+    private init(): void {
+      this.resize();
+      this.loadConfig();
+      this.createParticles();
+      this.bindEvents();
+      this.animate();
+    }
+
+    private loadConfig(): void {
+      const container = this.canvas.parentElement;
+      if (!container) return;
+
+      const density = container.dataset.type || 'combined';
+      
+      if (density === 'stars') {
+        this.config.starCount = 120;
+        this.config.energyCount = 0;
+      } else if (density === 'energy') {
+        this.config.starCount = 20;
+        this.config.energyCount = 60;
+      } else if (density === 'mist') {
+        this.config.starCount = 40;
+        this.config.energyCount = 20;
+      }
+    }
+
+    private resize(): void {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+    }
+
+    private createParticles(): void {
+      this.particles = [];
+      
+      // 创建星星
+      for (let i = 0; i < this.config.starCount; i++) {
+        this.particles.push(this.createStar());
+      }
+      
+      // 创建能量粒子
+      for (let i = 0; i < this.config.energyCount; i++) {
+        this.particles.push(this.createEnergyParticle());
+      }
+    }
+
+    private createStar(): Particle {
+      const colors = ['#c9a227', '#d4af37', '#f0c040', '#e8d48b'];
+      return {
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
+        size: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.5 + 0.2,
+        opacityDir: Math.random() > 0.5 ? 1 : -1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        type: 'star',
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.02 + Math.random() * 0.02,
+      };
+    }
+
+    private createEnergyParticle(): Particle {
+      const colors = ['#c9a227', '#8040f0', '#4080f0', '#40b040'];
+      return {
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.3 + 0.1,
+        opacityDir: Math.random() > 0.5 ? 1 : -1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        type: 'energy',
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.03 + Math.random() * 0.03,
+      };
+    }
+
+    private bindEvents(): void {
+      let resizeTimeout: ReturnType<typeof setTimeout>;
+      
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          this.resize();
+          this.createParticles();
+        }, 200);
+      }, { passive: true });
+
+      window.addEventListener('mousemove', (e: MouseEvent) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+        this.isMouseInCanvas = true;
+      }, { passive: true });
+
+      window.addEventListener('mouseleave', () => {
+        this.isMouseInCanvas = false;
+      }, { passive: true });
+    }
+
+    private animate = (currentTime = 0): void => {
+      // FPS 控制
+      const frameInterval = 1000 / this.targetFPS;
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < frameInterval) {
+        this.animationId = requestAnimationFrame(this.animate);
+        return;
+      }
+      this.lastTime = currentTime - (elapsed % frameInterval);
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.updateParticles();
+      this.drawParticles();
+      this.drawConnections();
+
+      this.animationId = requestAnimationFrame(this.animate);
+    };
+
+    private updateParticles(): void {
+      this.particles.forEach((p) => {
+        // 移动
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // 鼠标影响
+        if (this.isMouseInCanvas) {
+          const dx = this.mouseX - p.x;
+          const dy = this.mouseY - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < this.config.mouseInfluence && dist > 0) {
+            const force = (this.config.mouseInfluence - dist) / this.config.mouseInfluence * 0.02;
+            p.vx -= dx / dist * force;
+            p.vy -= dy / dist * force;
+          }
+        }
+
+        // 边界处理
+        if (p.x < 0) p.x = window.innerWidth;
+        if (p.x > window.innerWidth) p.x = 0;
+        if (p.y < 0) p.y = window.innerHeight;
+        if (p.y > window.innerHeight) p.y = 0;
+
+        // 闪烁效果
+        p.pulsePhase += p.pulseSpeed;
+        p.opacity += p.opacityDir * 0.005;
+        if (p.opacity > 0.8 || p.opacity < 0.1) {
+          p.opacityDir *= -1;
+        }
+
+        // 阻尼
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+      });
+    }
+
+    private drawParticles(): void {
+      this.particles.forEach((p) => {
+        this.ctx.beginPath();
+        
+        if (p.type === 'star') {
+          // 星星：带光芒
+          const gradient = this.ctx.createRadialGradient(
+            p.x, p.y, 0,
+            p.x, p.y, p.size * 3
+          );
+          gradient.addColorStop(0, p.color);
+          gradient.addColorStop(0.3, `${p.color}${Math.round(p.opacity * 255).toString(16).padStart(2, '0')}`);
+          gradient.addColorStop(1, 'transparent');
+          
+          this.ctx.fillStyle = gradient;
+          this.ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        } else {
+          // 能量粒子：发光点
+          this.ctx.fillStyle = `${p.color}${Math.round(p.opacity * 255).toString(16).padStart(2, '0')}`;
+          this.ctx.shadowBlur = 10;
+          this.ctx.shadowColor = p.color;
+          this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        }
+        
+        this.ctx.fill();
+        this.ctx.shadowBlur = 0;
+      });
+    }
+
+    private drawConnections(): void {
+      for (let i = 0; i < this.particles.length; i++) {
+        for (let j = i + 1; j < this.particles.length; j++) {
+          const p1 = this.particles[i];
+          const p2 = this.particles[j];
+          
+          // 只连接同类型粒子
+          if (p1.type !== p2.type) continue;
+          
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < this.config.connectionDistance) {
+            const opacity = (1 - dist / this.config.connectionDistance) * 0.15;
+            
+            this.ctx.beginPath();
+            this.ctx.moveTo(p1.x, p1.y);
+            this.ctx.lineTo(p2.x, p2.y);
+            this.ctx.strokeStyle = `rgba(201, 162, 39, ${opacity})`;
+            this.ctx.lineWidth = 0.5;
+            this.ctx.stroke();
+          }
+        }
+      }
+    }
+
+    public destroy(): void {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+    }
+  }
+
+  // 初始化
+  function initEnhancedParticles(): void {
+    const canvas = document.getElementById('particles-canvas');
+    if (canvas) {
+      new EnhancedParticleSystem('particles-canvas');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEnhancedParticles);
+  } else {
+    initEnhancedParticles();
+  }
+
+  document.addEventListener('astro:page-load', initEnhancedParticles);
+</script>

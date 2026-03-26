@@ -1,0 +1,221 @@
+---
+/**
+ * 灵墟 - 滚动揭示动画组件
+ * Scroll Reveal Component
+ * 
+ * 元素进入视口时触发入场动画
+ * Triggers entrance animations when elements enter viewport
+ */
+
+export interface Props {
+  // 动画类型: fade, slide-up, slide-left, scale, blur
+  type?: 'fade' | 'slide-up' | 'slide-left' | 'scale' | 'blur';
+  // 延迟（毫秒）
+  delay?: number;
+  // 距离阈值
+  threshold?: number;
+  // 是否在首次进入时触发动画
+  once?: boolean;
+  // 自定义类名
+  class?: string;
+}
+
+const {
+  type = 'slide-up',
+  delay = 0,
+  threshold = 0.15,
+  once = true,
+  class: className = '',
+} = Astro.props;
+
+const animationClass = `reveal-${type}`;
+---
+
+<div
+  class:list={['scroll-reveal', animationClass, className]}
+  data-reveal
+  data-delay={delay}
+  data-threshold={threshold}
+  data-once={once}
+  style={`--reveal-delay: ${delay}ms`}
+>
+  <slot />
+</div>
+
+<style>
+  .scroll-reveal {
+    will-change: transform, opacity;
+  }
+
+  /* 向上揭示 */
+  .reveal-slide-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-slide-up.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 向左揭示 */
+  .reveal-slide-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: 
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-slide-left.revealed {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* 淡入 */
+  .reveal-fade {
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-fade.revealed {
+    opacity: 1;
+  }
+
+  /* 缩放 */
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: 
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-scale.revealed {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* 模糊 */
+  .reveal-blur {
+    opacity: 0;
+    filter: blur(10px);
+    transition: 
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-blur.revealed {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  /* 减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  class ScrollRevealController {
+    private observer: IntersectionObserver | null = null;
+    private elements: NodeListOf<Element>;
+
+    constructor() {
+      this.elements = document.querySelectorAll('[data-reveal]');
+      this.init();
+    }
+
+    private init(): void {
+      if ('IntersectionObserver' in window) {
+        this.createObserver();
+        this.observeElements();
+      } else {
+        // Fallback: 直接显示所有元素
+        this.elements.forEach((el) => {
+          el.classList.add('revealed');
+        });
+      }
+    }
+
+    private createObserver(): void {
+      const options: IntersectionObserverInit = {
+        root: null,
+        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.15,
+      };
+
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const delay = el.dataset.delay ? parseInt(el.dataset.delay) : 0;
+            const once = el.dataset.once !== 'false';
+
+            setTimeout(() => {
+              el.classList.add('revealed');
+            }, delay);
+
+            if (once && this.observer) {
+              this.observer.unobserve(el);
+            }
+          } else {
+            const el = entry.target as HTMLElement;
+            const once = el.dataset.once !== 'false';
+            if (!once) {
+              el.classList.remove('revealed');
+            }
+          }
+        });
+      }, options);
+    }
+
+    private observeElements(): void {
+      if (!this.observer) return;
+      
+      this.elements.forEach((el) => {
+        const threshold = (el as HTMLElement).dataset.threshold;
+        if (threshold && this.observer) {
+          // 动态调整阈值
+          (this.observer as any).observe(el, { threshold: parseFloat(threshold) });
+        } else {
+          this.observer.observe(el);
+        }
+      });
+    }
+
+    public destroy(): void {
+      if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
+      }
+    }
+  }
+
+  // 初始化
+  function initScrollReveal(): void {
+    new ScrollRevealController();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollReveal);
+  } else {
+    initScrollReveal();
+  }
+
+  // Astro 页面切换时重新初始化
+  document.addEventListener('astro:page-load', initScrollReveal);
+</script>
