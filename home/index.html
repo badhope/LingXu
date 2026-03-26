@@ -1,0 +1,809 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"><meta name="description" content="一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁"><meta name="theme-color" content="#050508"><meta name="color-scheme" content="dark"><!-- Open Graph --><meta property="og:title" content="灵墟 - 天地玄黄宇宙洪荒 - 灵墟"><meta property="og:description" content="一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁"><meta property="og:type" content="website"><meta property="og:url" content="https://lingxu.xn--jbtt24bux6a.com"><meta property="og:site_name" content="灵墟"><!-- Twitter --><meta name="twitter:card" content="summary"><meta name="twitter:title" content="灵墟 - 天地玄黄宇宙洪荒 - 灵墟"><meta name="twitter:description" content="一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁"><!-- Preload 关键资源 --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@200;300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap"><title>灵墟 - 天地玄黄宇宙洪荒 - 灵墟</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- 页面过渡动画 --><link rel="stylesheet" href="/_astro/about.Ys5EYSWJ.css">
+<link rel="stylesheet" href="/_astro/home.BvRCmgfC.css"><script type="module" src="/_astro/hoisted.DevzCjvz.js"></script></head> <body class="min-h-screen flex flex-col" data-astro-cid-37fxchfa> <!-- 页面过渡遮罩 --> <div id="page-transition-overlay" class="page-transition-overlay" data-astro-cid-37fxchfa></div> <!-- 全局效果层 --> <div class="mist-layer" data-astro-cid-37fxchfa></div> <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>  <div id="cursor-glow" class="cursor-glow" data-astro-cid-xx7mdr7a></div> <canvas id="mouse-trail-canvas" class="pointer-events-none fixed inset-0 z-[9998]" data-astro-cid-xx7mdr7a></canvas> <canvas id="particle-interact-canvas" class="pointer-events-none fixed inset-0 z-[9997]" data-astro-cid-xx7mdr7a></canvas> <script>(function(){const enableParticles = true;
+const enableTrail = true;
+const particleCount = 80;
+const trailLength = 50;
+
+  class MouseTrailRenderer {
+    constructor() {
+      this.canvas = document.getElementById('mouse-trail-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.points = [];
+      this.maxPoints = enableTrail ? Math.min(trailLength, 60) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.hue = 38;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.init();
+    }
+
+    init() {
+      if (this.isMobile || !this.maxPoints) return;
+      this.resize();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      const { clientX, clientY, movementX, movementY } = e;
+      const speed = Math.sqrt(movementX * movementX + movementY * movementY);
+
+      this.points.unshift({
+        x: clientX,
+        y: clientY,
+        age: 0,
+        speed: Math.min(speed, 50),
+        hue: this.hue + (Math.random() - 0.5) * 10
+      });
+
+      if (this.points.length > this.maxPoints) {
+        this.points.pop();
+      }
+    }
+
+    onMouseLeave() {
+      this.points = [];
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      if (this.points.length < 2) return;
+
+      for (let i = this.points.length - 1; i >= 0; i--) {
+        const point = this.points[i];
+        point.age++;
+
+        if (point.age > this.maxPoints) {
+          this.points.splice(i, 1);
+          continue;
+        }
+
+        const progress = i / this.maxPoints;
+        const alpha = Math.max(0, 1 - progress * 1.2);
+        const width = (1 - progress) * 8 + 1;
+
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = `hsla(${point.hue}, 70%, 65%, ${alpha * 0.6})`;
+        this.ctx.lineWidth = width;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        if (i === 0) {
+          this.ctx.moveTo(point.x, point.y);
+        } else {
+          const prev = this.points[i - 1];
+          const midX = (point.x + prev.x) / 2;
+          const midY = (point.y + prev.y) / 2;
+          this.ctx.moveTo(midX, midY);
+          this.ctx.quadraticCurveTo(point.x, point.y, prev.x, prev.y);
+        }
+        this.ctx.stroke();
+
+        if (i < this.points.length - 1) {
+          const glow = this.ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, width * 3
+          );
+          glow.addColorStop(0, `hsla(${point.hue}, 80%, 70%, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'transparent');
+          this.ctx.fillStyle = glow;
+          this.ctx.beginPath();
+          this.ctx.arc(point.x, point.y, width * 3, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+    }
+  }
+
+  class InteractiveParticleSystem {
+    constructor() {
+      this.canvas = document.getElementById('particle-interact-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = enableParticles ? Math.min(particleCount, 100) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+      this.isMouseNear = false;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.detectPerformance();
+      this.init();
+    }
+
+    detectPerformance() {
+      if (this.isMobile) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.5);
+        this.fps = 30;
+        this.frameInterval = 1000 / this.fps;
+      }
+      const dpr = window.devicePixelRatio || 1;
+      if (dpr >= 2) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.75);
+      }
+    }
+
+    init() {
+      if (!this.maxParticles) return;
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    createParticles() {
+      this.particles = [];
+      const colors = [
+        { h: 38, s: 70, l: 65 },
+        { h: 45, s: 65, l: 55 },
+        { h: 30, s: 80, l: 60 }
+      ];
+
+      for (let i = 0; i < this.maxParticles; i++) {
+        const color = colors[i % colors.length];
+        this.particles.push({
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          baseX: 0,
+          baseY: 0,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 2 + 1,
+          baseSize: 0,
+          color: color,
+          alpha: Math.random() * 0.4 + 0.2,
+          attraction: Math.random() * 0.02 + 0.005,
+          friction: 0.98,
+          maxSpeed: 2
+        });
+        this.particles[i].baseX = this.particles[i].x;
+        this.particles[i].baseY = this.particles[i].y;
+        this.particles[i].baseSize = this.particles[i].size;
+      }
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      this.isMouseNear = true;
+    }
+
+    onTouchMove(e) {
+      if (e.touches.length > 0) {
+        this.mouseX = e.touches[0].clientX;
+        this.mouseY = e.touches[0].clientY;
+        this.isMouseNear = true;
+      }
+    }
+
+    onMouseLeave() {
+      this.isMouseNear = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+    }
+
+    updatePhysics() {
+      this.particles.forEach(p => {
+        const dx = p.baseX - p.x;
+        const dy = p.baseY - p.y;
+        p.vx += dx * 0.001;
+        p.vy += dy * 0.001;
+
+        if (this.isMouseNear) {
+          const mdx = this.mouseX - p.x;
+          const mdy = this.mouseY - p.y;
+          const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          const interactionRadius = 120;
+
+          if (dist < interactionRadius) {
+            const force = (1 - dist / interactionRadius) * p.attraction * 30;
+            const angle = Math.atan2(mdy, mdx);
+            if (dist < 60) {
+              p.vx -= Math.cos(angle) * force;
+              p.vy -= Math.sin(angle) * force;
+            } else {
+              p.vx += Math.cos(angle) * force * 0.5;
+              p.vy += Math.sin(angle) * force * 0.5;
+            }
+            p.size = p.baseSize * (1 + (1 - dist / interactionRadius) * 0.5);
+          } else {
+            p.size = Math.max(p.baseSize, p.size * 0.95);
+          }
+        } else {
+          p.size = Math.max(p.baseSize, p.size * 0.95);
+        }
+
+        p.vx *= p.friction;
+        p.vy *= p.friction;
+
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > p.maxSpeed) {
+          p.vx = (p.vx / speed) * p.maxSpeed;
+          p.vy = (p.vy / speed) * p.maxSpeed;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) { p.x = this.width; p.baseX = p.x; }
+        if (p.x > this.width) { p.x = 0; p.baseX = p.x; }
+        if (p.y < 0) { p.y = this.height; p.baseY = p.y; }
+        if (p.y > this.height) { p.y = 0; p.baseY = p.y; }
+      });
+    }
+
+    render() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      this.particles.forEach(p => {
+        const gradient = this.ctx.createRadialGradient(
+          p.x, p.y, 0,
+          p.x, p.y, p.size * 3
+        );
+        gradient.addColorStop(0, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`);
+        gradient.addColorStop(0.5, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha * 0.3})`);
+        gradient.addColorStop(1, 'transparent');
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`;
+        this.ctx.fill();
+      });
+
+      if (this.isMouseNear) {
+        const mouseGradient = this.ctx.createRadialGradient(
+          this.mouseX, this.mouseY, 0,
+          this.mouseX, this.mouseY, 150
+        );
+        mouseGradient.addColorStop(0, 'rgba(201, 162, 39, 0.05)');
+        mouseGradient.addColorStop(0.5, 'rgba(201, 162, 39, 0.02)');
+        mouseGradient.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = mouseGradient;
+        this.ctx.beginPath();
+        this.ctx.arc(this.mouseX, this.mouseY, 150, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.updatePhysics();
+      this.render();
+    }
+  }
+
+  class CursorGlow {
+    constructor() {
+      this.el = document.getElementById('cursor-glow');
+      if (!this.el) return;
+      this.glow = document.createElement('div');
+      this.glow.className = 'cursor-glow-inner';
+      this.glow.style.cssText = `
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s ease;
+        will-change: transform, left, top;
+      `;
+      this.el.appendChild(this.glow);
+      this.x = 0;
+      this.y = 0;
+      this.targetX = 0;
+      this.targetY = 0;
+      this.isMobile = window.innerWidth < 768;
+      if (!this.isMobile) {
+        this.bindEvents();
+        this.animate();
+      }
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', (e) => {
+        this.targetX = e.clientX;
+        this.targetY = e.clientY;
+      }, { passive: true });
+      document.addEventListener('mouseleave', () => {
+        this.glow.style.opacity = '0';
+      }, { passive: true });
+      document.addEventListener('mouseenter', () => {
+        this.glow.style.opacity = '1';
+      }, { passive: true });
+    }
+
+    animate() {
+      requestAnimationFrame(this.animate.bind(this));
+      this.x += (this.targetX - this.x) * 0.1;
+      this.y += (this.targetY - this.y) * 0.1;
+      this.glow.style.left = `${this.x}px`;
+      this.glow.style.top = `${this.y}px`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new MouseTrailRenderer();
+    new InteractiveParticleSystem();
+    new CursorGlow();
+  });
+})();</script>  <div id="dynamic-bg" class="fixed inset-0 -z-10 overflow-hidden"> <div id="gradient-layer" class="absolute inset-0"></div> <canvas id="bg-particle-canvas" class="absolute inset-0"></canvas> <div id="parallax-container" class="absolute inset-0"> <div class="parallax-layer" data-depth="0.1" data-speed="0.5"> <div class="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.03)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.2" data-speed="1"> <div class="absolute top-1/4 -right-20 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(90,186,186,0.02)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.15" data-speed="0.75"> <div class="absolute bottom-20 left-1/4 w-64 h-64 rounded-full bg-[radial-gradient(circle,rgba(168,120,184,0.02)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.25" data-speed="1.5"> <div class="absolute top-1/2 right-1/3 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.025)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.05" data-speed="0.25"> <div class="absolute -bottom-10 right-1/4 w-56 h-56 rounded-full bg-[radial-gradient(circle,rgba(107,74,138,0.03)_0%,transparent_70%)]"></div> </div> </div> </div> <script>(function(){const mode = "all";
+const particleDensity = 80;
+const enableParallax = true;
+
+  class GradientFlow {
+    constructor(el) {
+      this.el = el;
+      this.hue = 38;
+      this.animationId = 0;
+      this.init();
+    }
+
+    init() {
+      if (mode !== 'gradient' && mode !== 'all') return;
+
+      this.el.style.cssText = `
+        background: radial-gradient(ellipse at 20% 0%, rgba(201, 162, 39, 0.04) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 100%, rgba(107, 74, 138, 0.04) 0%, transparent 50%);
+        animation: gradientShift 90s ease-in-out infinite;
+      `;
+
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes gradientShift {
+          0%, 100% {
+            background-position: 0% 50%;
+            filter: hue-rotate(0deg);
+          }
+          25% {
+            background-position: 50% 100%;
+            filter: hue-rotate(5deg);
+          }
+          50% {
+            background-position: 100% 50%;
+            filter: hue-rotate(0deg);
+          }
+          75% {
+            background-position: 50% 0%;
+            filter: hue-rotate(-5deg);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  class CanvasBackground {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = 0;
+      this.animationId = 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.init();
+    }
+
+    init() {
+      if (mode !== 'particles' && mode !== 'all') return;
+
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate();
+    }
+
+    resize() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
+
+    createParticles() {
+      this.particles = [];
+      this.maxParticles = this.isMobile ? Math.floor(particleDensity * 0.5) : particleDensity;
+      for (let i = 0; i < this.maxParticles; i++) {
+        this.particles.push(this.createParticle());
+      }
+    }
+
+    createParticle() {
+      return {
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.3,
+        speedY: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.4 + 0.1,
+        hue: 38 + Math.random() * 10 - 5
+      };
+    }
+
+    bindEvents() {
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          this.resize();
+          this.createParticles();
+        }, 250);
+      }, { passive: true });
+
+      document.addEventListener('mousemove', (e) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+      }, { passive: true });
+    }
+
+    animate = () => {
+      if (mode !== 'particles' && mode !== 'all') return;
+
+      this.animationId = requestAnimationFrame(this.animate);
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.particles.forEach((p, i) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        const dx = this.mouseX - p.x;
+        const dy = this.mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          const force = (150 - dist) / 150 * 0.02;
+          p.x -= dx * force;
+          p.y -= dy * force;
+        }
+
+        if (p.x < 0) p.x = this.canvas.width;
+        if (p.x > this.canvas.width) p.x = 0;
+        if (p.y < 0) p.y = this.canvas.height;
+        if (p.y > this.canvas.height) p.y = 0;
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.hue}, 60%, 65%, ${p.opacity})`;
+        this.ctx.fill();
+      });
+
+      for (let i = 0; i < this.particles.length; i++) {
+        for (let j = i + 1; j < this.particles.length; j++) {
+          const dx = this.particles[i].x - this.particles[j].x;
+          const dy = this.particles[i].y - this.particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 100) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+            this.ctx.strokeStyle = `rgba(201, 162, 39, ${0.1 * (1 - dist / 100)})`;
+            this.ctx.lineWidth = 0.5;
+            this.ctx.stroke();
+          }
+        }
+      }
+    };
+
+    destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  class ParallaxBackground {
+    constructor() {
+      this.layers = null;
+      this.animationId = 0;
+      if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
+
+      this.layers = document.querySelectorAll('.parallax-layer');
+      if (this.layers.length === 0) return;
+
+      this.bindEvents();
+      this.animate();
+    }
+
+    bindEvents() {
+      let lastY = 0;
+      window.addEventListener('scroll', () => {
+        lastY = window.scrollY;
+        this.update(lastY);
+      }, { passive: true });
+    }
+
+    update(scrollY) {
+      this.layers.forEach((layer) => {
+        const el = layer;
+        const depth = parseFloat(el.dataset.depth || '0.1');
+        const speed = parseFloat(el.dataset.speed || '1');
+        const movement = scrollY * depth * speed * 0.1;
+        el.style.transform = `translateY(${movement}px)`;
+      });
+    }
+
+    animate = () => {
+      if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
+      this.animationId = requestAnimationFrame(this.animate);
+    };
+
+    destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  function initAll() {
+    const gradientLayer = document.getElementById('gradient-layer');
+    const canvas = document.getElementById('bg-particle-canvas');
+    const container = document.getElementById('parallax-container');
+
+    if (gradientLayer) new GradientFlow(gradientLayer);
+    if (canvas && mode !== 'parallax') new CanvasBackground(canvas);
+    if (container) new ParallaxBackground();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('astro:page-load', initAll);
+})();</script> <!-- 头部导航 --> <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#080808]/85 border-b border-[#1f1f1f]/60"> <div class="absolute inset-0 bg-gradient-to-b from-[#c9a227]/[0.02] to-transparent pointer-events-none"></div> <nav class="relative max-w-7xl mx-auto px-6 sm:px-8"> <div class="flex items-center justify-between h-[4.5rem]"> <a href="/" class="flex items-center gap-3 group"> <div class="relative"> <div class="w-10 h-10 rounded-full border border-[#c9a227]/40 flex items-center justify-center group-hover:border-[#d4af37]/70 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(201,162,39,0.2)]"> <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg> </div> <div class="absolute inset-0 rounded-full border border-[#c9a227]/20 scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div> </div> <div class="flex flex-col"> <span class="font-display text-xl text-[#d4af37] tracking-[0.2em]">灵墟</span> <span class="text-[10px] text-[#666666] tracking-widest hidden sm:block">失落修行文明档案</span> </div> </a> <div class="hidden lg:flex items-center gap-10"> <a href="/tian" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 天时 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/di" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 地理 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/xuan" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 玄学 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/huang" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 历史 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/yu" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 空间 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/zhou" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 时间 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/hong" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 洪荒 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/huang-lost" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 失落 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a> </div> <div class="flex items-center gap-4">  <button id="mobile-menu-btn" class="lg:hidden p-2 text-[#888888] hover:text-[#d4af37] transition-colors" aria-label="菜单"> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path> </svg> </button> </div> </div> <div id="mobile-menu" class="hidden lg:hidden pb-6"> <div class="flex flex-col gap-1"> <a href="/tian" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 天时 </a><a href="/di" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 地理 </a><a href="/xuan" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 玄学 </a><a href="/huang" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 历史 </a><a href="/yu" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 空间 </a><a href="/zhou" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 时间 </a><a href="/hong" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 洪荒 </a><a href="/huang-lost" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 失落 </a> <div class="flex items-center gap-2 px-4 py-3 mt-2 text-xs text-[#555555] border-t border-[#2a2a2a] pt-4"> <span class="text-[#d4af37]">中</span> <span class="text-[#444444]">/</span> <span class="text-[#555555]">EN 暂未开放</span> </div> </div> </div> </nav> </header>  <!-- 主内容区 --> <main class="flex-1 relative z-20" data-page-transition data-astro-cid-37fxchfa>   <div class="home-container" id="home-container" data-astro-cid-reuxuyy6> <!-- 动态星空背景 --> <div class="stars-field" data-astro-cid-reuxuyy6> <canvas id="stars-canvas" data-astro-cid-reuxuyy6></canvas> </div> <!-- 旋转轨道背景 --> <div class="orbital-system" aria-hidden="true" data-astro-cid-reuxuyy6> <div class="orbit orbit-1" data-astro-cid-reuxuyy6></div> <div class="orbit orbit-2" data-astro-cid-reuxuyy6></div> <div class="orbit orbit-3" data-astro-cid-reuxuyy6></div> <div class="orbit orbit-4" data-astro-cid-reuxuyy6></div> <div class="orbit orbit-5" data-astro-cid-reuxuyy6></div> </div> <!-- 主标题区域 --> <section class="hero-section" id="hero-section" data-astro-cid-reuxuyy6> <!-- 装饰性符号 --> <div class="hero-symbols" id="hero-symbols" aria-hidden="true" data-astro-cid-reuxuyy6></div> <!-- 光粒子容器 --> <div class="light-particles" id="light-particles" aria-hidden="true" data-astro-cid-reuxuyy6></div> <!-- 核心标题 --> <div class="hero-content" data-astro-cid-reuxuyy6> <h1 class="site-title" aria-label="灵墟" data-astro-cid-reuxuyy6> <span class="title-char" data-char="灵" data-astro-cid-reuxuyy6>灵</span> <span class="title-char" data-char="墟" data-astro-cid-reuxuyy6>墟</span> </h1> <p class="site-subtitle" data-astro-cid-reuxuyy6> <span class="subtitle-line" data-astro-cid-reuxuyy6>天地玄黄</span> <span class="subtitle-separator" data-astro-cid-reuxuyy6>·</span> <span class="subtitle-line" data-astro-cid-reuxuyy6>宇宙洪荒</span> </p> <p class="site-tagline" data-astro-cid-reuxuyy6>末法时代 · 失落修行文明档案馆</p> </div> <!-- 滚动提示 --> <div class="scroll-indicator" id="scroll-indicator" data-astro-cid-reuxuyy6> <span class="scroll-text" data-astro-cid-reuxuyy6>向下探索</span> <div class="scroll-icon" data-astro-cid-reuxuyy6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-astro-cid-reuxuyy6> <path d="M12 5v14M19 12l-7 7-7-7" data-astro-cid-reuxuyy6></path> </svg> </div> </div> </section> <!-- 模块导航区域 --> <section class="modules-section" id="modules-section" data-astro-cid-reuxuyy6> <!-- 装饰线 --> <div class="section-decoration" data-astro-cid-reuxuyy6> <div class="deco-line left" data-astro-cid-reuxuyy6></div> <div class="deco-ornament" data-astro-cid-reuxuyy6> <svg viewBox="0 0 100 20" class="ornament-svg" data-astro-cid-reuxuyy6> <path d="M0 10 L30 10 L40 5 L50 10 L60 5 L70 10 L100 10" stroke="currentColor" fill="none" stroke-width="0.5" data-astro-cid-reuxuyy6></path> <circle cx="50" cy="10" r="3" fill="currentColor" data-astro-cid-reuxuyy6></circle> <circle cx="30" cy="10" r="1.5" fill="currentColor" data-astro-cid-reuxuyy6></circle> <circle cx="70" cy="10" r="1.5" fill="currentColor" data-astro-cid-reuxuyy6></circle> </svg> </div> <div class="deco-line right" data-astro-cid-reuxuyy6></div> </div> <!-- 副标题 --> <div class="section-header" data-astro-cid-reuxuyy6> <h2 class="section-title" data-astro-cid-reuxuyy6> <span class="title-prefix" data-astro-cid-reuxuyy6>◇</span> <span class="title-text" data-astro-cid-reuxuyy6>八大修行模块</span> <span class="title-suffix" data-astro-cid-reuxuyy6>◇</span> </h2> <p class="section-subtitle" data-astro-cid-reuxuyy6>探索失落文明的奥秘</p> </div> <!-- 模块网格 --> <div class="modules-grid" data-astro-cid-reuxuyy6> <a href="/tian" class="module-card" data-module="天时" style="--char-color: #f0c040; --delay: 0s" aria-label="进入天时模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>☯</span> <span class="symbol s2" data-astro-cid-uyuayxll>⚝</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>天</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>天时</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Tiān</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>天道运行，星辰变化</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/di" class="module-card" data-module="地理" style="--char-color: #40b040; --delay: 0.1s" aria-label="进入地理模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>✧</span> <span class="symbol s2" data-astro-cid-uyuayxll>❂</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>地</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>地理</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Dì</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>山川地理，风水堪舆</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/xuan" class="module-card" data-module="玄学" style="--char-color: #8040f0; --delay: 0.2s" aria-label="进入玄学模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>⬡</span> <span class="symbol s2" data-astro-cid-uyuayxll>☆</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>玄</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>玄学</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Xuán</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>易经八卦，符箓命理</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/huang" class="module-card" data-module="历史" style="--char-color: #c08040; --delay: 0.30000000000000004s" aria-label="进入历史模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>✦</span> <span class="symbol s2" data-astro-cid-uyuayxll>◈</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>黄</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>历史</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Huáng</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>千古兴亡，秘辛档案</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/yu" class="module-card" data-module="空间" style="--char-color: #4080f0; --delay: 0.4s" aria-label="进入空间模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>❃</span> <span class="symbol s2" data-astro-cid-uyuayxll>⚹</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>宇</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>空间</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Yǔ</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>万界苍茫，空间层次</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/zhou" class="module-card" data-module="时间" style="--char-color: #f04080; --delay: 0.5s" aria-label="进入时间模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>⟡</span> <span class="symbol s2" data-astro-cid-uyuayxll>⊛</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>宙</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>时间</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Zhòu</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>时间长河，轮回因果</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/hong" class="module-card" data-module="洪荒" style="--char-color: #f06040; --delay: 0.6000000000000001s" aria-label="进入洪荒模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>✴</span> <span class="symbol s2" data-astro-cid-uyuayxll>⬢</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>洪</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>洪荒</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Hóng</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>神怪异兽，洪荒神话</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a> <a href="/huang-lost" class="module-card" data-module="失落" style="--char-color: #806040; --delay: 0.7000000000000001s" aria-label="进入失落模块" data-astro-cid-uyuayxll> <!-- 背景光效层 --> <div class="card-glow-bg" data-astro-cid-uyuayxll></div> <!-- 边框光效 --> <div class="card-border-glow" data-astro-cid-uyuayxll></div> <!-- 旋转光环 --> <div class="card-orb-ring" data-astro-cid-uyuayxll> <svg viewBox="0 0 100 100" class="orb-svg" data-astro-cid-uyuayxll> <circle cx="50" cy="50" r="45" class="orb-circle" data-astro-cid-uyuayxll></circle> <circle cx="50" cy="50" r="38" class="orb-inner" data-astro-cid-uyuayxll></circle> </svg> </div> <!-- 粒子效果 --> <div class="card-particles" aria-hidden="true" data-astro-cid-uyuayxll> <span class="particle p1" data-astro-cid-uyuayxll></span> <span class="particle p2" data-astro-cid-uyuayxll></span> <span class="particle p3" data-astro-cid-uyuayxll></span> <span class="particle p4" data-astro-cid-uyuayxll></span> <span class="particle p5" data-astro-cid-uyuayxll></span> </div> <!-- 漂浮符号 --> <div class="card-symbols" aria-hidden="true" data-astro-cid-uyuayxll> <span class="symbol s1" data-astro-cid-uyuayxll>❋</span> <span class="symbol s2" data-astro-cid-uyuayxll>✵</span> </div> <!-- 主内容 --> <div class="card-content" data-astro-cid-uyuayxll> <!-- 主字符 --> <div class="char-wrapper" data-astro-cid-uyuayxll> <span class="char" data-astro-cid-uyuayxll>荒</span> <div class="char-glow" data-astro-cid-uyuayxll></div> </div> <!-- 信息区域 --> <div class="info-wrapper" data-astro-cid-uyuayxll> <h3 class="card-name" data-astro-cid-uyuayxll> <span class="name-text" data-astro-cid-uyuayxll>失落</span> </h3> <p class="card-pinyin" data-astro-cid-uyuayxll>Huāng</p> </div> <!-- 描述 --> <p class="card-description" data-astro-cid-uyuayxll>失传秘术，失落文明</p> <!-- 底部装饰 --> <div class="card-footer" data-astro-cid-uyuayxll> <span class="footer-text" data-astro-cid-uyuayxll>探索</span> <svg class="footer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-uyuayxll> <path d="M5 12h14M12 5l7 7-7 7" data-astro-cid-uyuayxll></path> </svg> </div> </div> <!-- 悬停光效 --> <div class="hover-light" data-astro-cid-uyuayxll></div> </a>  </div> <!-- 底部诗句 --> <div class="poem-banner" data-astro-cid-reuxuyy6> <p class="poem-text" data-astro-cid-reuxuyy6> <span class="poem-line" data-astro-cid-reuxuyy6>天行健，君子以自强不息</span> <span class="poem-divider" data-astro-cid-reuxuyy6>｜</span> <span class="poem-line" data-astro-cid-reuxuyy6>地势坤，君子以厚德载物</span> </p> </div> </section> <!-- 快捷导航 --> <nav class="quick-nav" id="quick-nav" data-astro-cid-reuxuyy6> <a href="/search" class="quick-link search-link" data-astro-cid-reuxuyy6> <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-astro-cid-reuxuyy6> <circle cx="11" cy="11" r="8" data-astro-cid-reuxuyy6></circle> <path d="m21 21-4.35-4.35" data-astro-cid-reuxuyy6></path> </svg> <span class="link-text" data-astro-cid-reuxuyy6>搜索</span> </a> <a href="/bookmarks" class="quick-link bookmark-link" data-astro-cid-reuxuyy6> <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-astro-cid-reuxuyy6> <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" data-astro-cid-reuxuyy6></path> </svg> <span class="link-text" data-astro-cid-reuxuyy6>收藏</span> </a> <a href="/profile" class="quick-link profile-link" data-astro-cid-reuxuyy6> <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-astro-cid-reuxuyy6> <circle cx="12" cy="8" r="5" data-astro-cid-reuxuyy6></circle> <path d="M20 21a8 8 0 0 0-16 0" data-astro-cid-reuxuyy6></path> </svg> <span class="link-text" data-astro-cid-reuxuyy6>我的</span> </a> <a href="/about" class="quick-link about-link" data-astro-cid-reuxuyy6> <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-astro-cid-reuxuyy6> <circle cx="12" cy="12" r="10" data-astro-cid-reuxuyy6></circle> <path d="M12 16v-4M12 8h.01" data-astro-cid-reuxuyy6></path> </svg> <span class="link-text" data-astro-cid-reuxuyy6>关于</span> </a> </nav> </div>  </main> <!-- 页脚 --> <footer class="relative z-20 border-t border-[#1a1a1a] bg-[#050505]/90 backdrop-blur-sm"> <div class="absolute inset-0 bg-gradient-to-t from-[#080808] to-transparent pointer-events-none"></div> <div class="relative max-w-7xl mx-auto px-6 sm:px-8 py-16"> <div class="grid gap-12 md:grid-cols-3"> <div> <div class="flex items-center gap-3 mb-6"> <div class="w-10 h-10 rounded-full border border-[#c9a227]/30 flex items-center justify-center"> <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg> </div> <span class="font-display text-xl text-[#d4af37] tracking-[0.2em]">灵墟</span> </div> <p class="text-[#666666] text-sm leading-loose"> 一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁 </p> </div> <div> <h4 class="text-[#c9a227]/80 text-sm font-medium tracking-wider mb-6">探索</h4> <ul class="space-y-3"> <li><a href="/huang" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">历史</a></li> <li><a href="/xuan" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">玄学</a></li> <li><a href="/hong" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">洪荒</a></li> <li><a href="/huang-lost" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">失落</a></li> <li><a href="/yu" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">空间</a></li> </ul> </div> <div> <h4 class="text-[#c9a227]/80 text-sm font-medium tracking-wider mb-6">关于</h4> <ul class="space-y-3"> <li><a href="/intro" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">项目介绍</a></li> </ul> <div class="mt-8 pt-6 border-t border-[#1a1a1a]"> <div class="flex items-center gap-2 text-xs text-[#444444]"> <a href="/" class="text-[#d4af37] hover:text-[#f0d78c] transition-colors">中</a> <span class="text-[#333333]">/</span> <a href="/en/" class="text-[#444444] hover:text-[#d4af37] transition-colors">EN</a> </div> </div> </div> </div> <div class="mt-16 pt-8"> <div class="gold-line mb-8 opacity-50"></div> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <p class="text-[#444444] text-xs tracking-wider">
+© 二〇二六 灵墟 · 末法时代·失落修行文明档案馆 </p> <p class="text-[#333333] text-xs tracking-wider">
+愿见者得度，闻者觉悟
+</p> </div> </div> </div> </footer> <!-- 动效控制器 -->  <!-- 页面过渡脚本 -->  </body> </html>  <script>(function(){const SYMBOLS = ["☯","⚝","✧","❂","⬡","☆","✦","◈","❃","⚹","⟡","⊛","✴","⬢","❋","✵"];
+
+  /**
+   * 首页交互脚本
+   * Homepage Interaction Scripts
+   */
+  class HomeController {
+    constructor() {
+      this.symbolContainer = document.getElementById('hero-symbols');
+      this.particleContainer = document.getElementById('light-particles');
+      this.starsCanvas = document.getElementById('stars-canvas');
+      this.modulesSection = document.getElementById('modules-section');
+      this.sectionHeader = document.querySelector('.section-header');
+      this.scrollIndicator = document.getElementById('scroll-indicator');
+      
+      this.init();
+    }
+
+    init() {
+      this.initHeroSymbols();
+      this.initLightParticles();
+      this.initStarsCanvas();
+      this.initScrollObserver();
+      this.initScrollToExplore();
+    }
+
+    /**
+     * 初始化装饰符号
+     */
+    initHeroSymbols() {
+      if (!this.symbolContainer) return;
+      
+      const symbolCount = 40;
+      
+      for (let i = 0; i < symbolCount; i++) {
+        const symbol = document.createElement('span');
+        symbol.className = 'hero-symbol';
+        symbol.textContent = SYMBOLS[i % SYMBOLS.length];
+        
+        const orbitRadius = 100 + Math.random() * 200;
+        const startAngle = Math.random() * 360;
+        const duration = 15 + Math.random() * 25;
+        const delay = Math.random() * -duration;
+        const size = 10 + Math.random() * 12;
+        
+        symbol.style.cssText = `
+          --orbit-radius: ${orbitRadius}px;
+          font-size: ${size}px;
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+          transform: rotate(${startAngle}deg) translateX(${orbitRadius}px);
+          opacity: ${0.2 + Math.random() * 0.4};
+        `;
+        
+        this.symbolContainer.appendChild(symbol);
+      }
+    }
+
+    /**
+     * 初始化光粒子
+     */
+    initLightParticles() {
+      if (!this.particleContainer) return;
+      
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('span');
+        particle.className = 'light-particle';
+        
+        const orbitRadius = 150 + Math.random() * 250;
+        const startAngle = Math.random() * 360;
+        const duration = 10 + Math.random() * 15;
+        const delay = Math.random() * -duration;
+        const size = 2 + Math.random() * 3;
+        
+        particle.style.cssText = `
+          --orbit-radius: ${orbitRadius}px;
+          width: ${size}px;
+          height: ${size}px;
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+          transform: rotate(${startAngle}deg) translateX(${orbitRadius}px);
+        `;
+        
+        this.particleContainer.appendChild(particle);
+      }
+    }
+
+    /**
+     * 初始化星空画布
+     */
+    initStarsCanvas() {
+      if (!this.starsCanvas) return;
+      
+      const ctx = this.starsCanvas.getContext('2d');
+      let stars = [];
+      let animationId;
+      const isMobile = window.innerWidth < 768;
+      const maxStars = isMobile ? 50 : 100;
+
+      const resize = () => {
+        const dpr = window.devicePixelRatio || 1;
+        this.starsCanvas.width = window.innerWidth * dpr;
+        this.starsCanvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+      };
+
+      const createStars = () => {
+        stars = [];
+        for (let i = 0; i < maxStars; i++) {
+          stars.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            radius: Math.random() * 1.5,
+            alpha: Math.random(),
+            alphaDirection: Math.random() > 0.5 ? 1 : -1,
+            speed: 0.002 + Math.random() * 0.008,
+            twinkle: Math.random() > 0.8
+          });
+        }
+      };
+
+      const animate = () => {
+        ctx.clearRect(0, 0, this.starsCanvas.width, this.starsCanvas.height);
+
+        stars.forEach(star => {
+          if (star.twinkle) {
+            star.alpha += star.speed * star.alphaDirection;
+            if (star.alpha >= 1 || star.alpha <= 0.1) {
+              star.alphaDirection *= -1;
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+          ctx.fill();
+        });
+
+        animationId = requestAnimationFrame(animate);
+      };
+
+      resize();
+      createStars();
+      animate();
+
+      // 响应式处理
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          cancelAnimationFrame(animationId);
+          resize();
+          createStars();
+          animate();
+        }, 200);
+      }, { passive: true });
+    }
+
+    /**
+     * 初始化滚动观察器
+     */
+    initScrollObserver() {
+      if (!this.sectionHeader) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        {
+          threshold: 0.2,
+          rootMargin: '0px 0px -50px 0px'
+        }
+      );
+
+      observer.observe(this.sectionHeader);
+    }
+
+    /**
+     * 初始化滚动探索
+     */
+    initScrollToExplore() {
+      if (!this.scrollIndicator) return;
+
+      this.scrollIndicator.addEventListener('click', () => {
+        this.modulesSection?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      });
+    }
+  }
+
+  // 页面加载完成后初始化
+  document.addEventListener('DOMContentLoaded', () => {
+    new HomeController();
+  });
+})();</script>

@@ -1,0 +1,721 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"><meta name="description" content="一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁"><meta name="theme-color" content="#050508"><meta name="color-scheme" content="dark"><!-- Open Graph --><meta property="og:title" content="灵墟 - 入口 - 灵墟"><meta property="og:description" content="一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁"><meta property="og:type" content="website"><meta property="og:url" content="https://lingxu.xn--jbtt24bux6a.com"><meta property="og:site_name" content="灵墟"><!-- Twitter --><meta name="twitter:card" content="summary"><meta name="twitter:title" content="灵墟 - 入口 - 灵墟"><meta name="twitter:description" content="一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁"><!-- Preload 关键资源 --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@200;300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap"><title>灵墟 - 入口 - 灵墟</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- 页面过渡动画 --><link rel="stylesheet" href="/_astro/about.Ys5EYSWJ.css">
+<link rel="stylesheet" href="/_astro/index.BpcQprol.css"><script type="module" src="/_astro/hoisted.DevzCjvz.js"></script></head> <body class="min-h-screen flex flex-col" data-astro-cid-37fxchfa> <!-- 页面过渡遮罩 --> <div id="page-transition-overlay" class="page-transition-overlay" data-astro-cid-37fxchfa></div> <!-- 全局效果层 --> <div class="mist-layer" data-astro-cid-37fxchfa></div> <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>  <div id="cursor-glow" class="cursor-glow" data-astro-cid-xx7mdr7a></div> <canvas id="mouse-trail-canvas" class="pointer-events-none fixed inset-0 z-[9998]" data-astro-cid-xx7mdr7a></canvas> <canvas id="particle-interact-canvas" class="pointer-events-none fixed inset-0 z-[9997]" data-astro-cid-xx7mdr7a></canvas> <script>(function(){const enableParticles = true;
+const enableTrail = true;
+const particleCount = 80;
+const trailLength = 50;
+
+  class MouseTrailRenderer {
+    constructor() {
+      this.canvas = document.getElementById('mouse-trail-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.points = [];
+      this.maxPoints = enableTrail ? Math.min(trailLength, 60) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.hue = 38;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.init();
+    }
+
+    init() {
+      if (this.isMobile || !this.maxPoints) return;
+      this.resize();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      const { clientX, clientY, movementX, movementY } = e;
+      const speed = Math.sqrt(movementX * movementX + movementY * movementY);
+
+      this.points.unshift({
+        x: clientX,
+        y: clientY,
+        age: 0,
+        speed: Math.min(speed, 50),
+        hue: this.hue + (Math.random() - 0.5) * 10
+      });
+
+      if (this.points.length > this.maxPoints) {
+        this.points.pop();
+      }
+    }
+
+    onMouseLeave() {
+      this.points = [];
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      if (this.points.length < 2) return;
+
+      for (let i = this.points.length - 1; i >= 0; i--) {
+        const point = this.points[i];
+        point.age++;
+
+        if (point.age > this.maxPoints) {
+          this.points.splice(i, 1);
+          continue;
+        }
+
+        const progress = i / this.maxPoints;
+        const alpha = Math.max(0, 1 - progress * 1.2);
+        const width = (1 - progress) * 8 + 1;
+
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = `hsla(${point.hue}, 70%, 65%, ${alpha * 0.6})`;
+        this.ctx.lineWidth = width;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        if (i === 0) {
+          this.ctx.moveTo(point.x, point.y);
+        } else {
+          const prev = this.points[i - 1];
+          const midX = (point.x + prev.x) / 2;
+          const midY = (point.y + prev.y) / 2;
+          this.ctx.moveTo(midX, midY);
+          this.ctx.quadraticCurveTo(point.x, point.y, prev.x, prev.y);
+        }
+        this.ctx.stroke();
+
+        if (i < this.points.length - 1) {
+          const glow = this.ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, width * 3
+          );
+          glow.addColorStop(0, `hsla(${point.hue}, 80%, 70%, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'transparent');
+          this.ctx.fillStyle = glow;
+          this.ctx.beginPath();
+          this.ctx.arc(point.x, point.y, width * 3, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+    }
+  }
+
+  class InteractiveParticleSystem {
+    constructor() {
+      this.canvas = document.getElementById('particle-interact-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = enableParticles ? Math.min(particleCount, 100) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+      this.isMouseNear = false;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.detectPerformance();
+      this.init();
+    }
+
+    detectPerformance() {
+      if (this.isMobile) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.5);
+        this.fps = 30;
+        this.frameInterval = 1000 / this.fps;
+      }
+      const dpr = window.devicePixelRatio || 1;
+      if (dpr >= 2) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.75);
+      }
+    }
+
+    init() {
+      if (!this.maxParticles) return;
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    createParticles() {
+      this.particles = [];
+      const colors = [
+        { h: 38, s: 70, l: 65 },
+        { h: 45, s: 65, l: 55 },
+        { h: 30, s: 80, l: 60 }
+      ];
+
+      for (let i = 0; i < this.maxParticles; i++) {
+        const color = colors[i % colors.length];
+        this.particles.push({
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          baseX: 0,
+          baseY: 0,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 2 + 1,
+          baseSize: 0,
+          color: color,
+          alpha: Math.random() * 0.4 + 0.2,
+          attraction: Math.random() * 0.02 + 0.005,
+          friction: 0.98,
+          maxSpeed: 2
+        });
+        this.particles[i].baseX = this.particles[i].x;
+        this.particles[i].baseY = this.particles[i].y;
+        this.particles[i].baseSize = this.particles[i].size;
+      }
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      this.isMouseNear = true;
+    }
+
+    onTouchMove(e) {
+      if (e.touches.length > 0) {
+        this.mouseX = e.touches[0].clientX;
+        this.mouseY = e.touches[0].clientY;
+        this.isMouseNear = true;
+      }
+    }
+
+    onMouseLeave() {
+      this.isMouseNear = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+    }
+
+    updatePhysics() {
+      this.particles.forEach(p => {
+        const dx = p.baseX - p.x;
+        const dy = p.baseY - p.y;
+        p.vx += dx * 0.001;
+        p.vy += dy * 0.001;
+
+        if (this.isMouseNear) {
+          const mdx = this.mouseX - p.x;
+          const mdy = this.mouseY - p.y;
+          const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          const interactionRadius = 120;
+
+          if (dist < interactionRadius) {
+            const force = (1 - dist / interactionRadius) * p.attraction * 30;
+            const angle = Math.atan2(mdy, mdx);
+            if (dist < 60) {
+              p.vx -= Math.cos(angle) * force;
+              p.vy -= Math.sin(angle) * force;
+            } else {
+              p.vx += Math.cos(angle) * force * 0.5;
+              p.vy += Math.sin(angle) * force * 0.5;
+            }
+            p.size = p.baseSize * (1 + (1 - dist / interactionRadius) * 0.5);
+          } else {
+            p.size = Math.max(p.baseSize, p.size * 0.95);
+          }
+        } else {
+          p.size = Math.max(p.baseSize, p.size * 0.95);
+        }
+
+        p.vx *= p.friction;
+        p.vy *= p.friction;
+
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > p.maxSpeed) {
+          p.vx = (p.vx / speed) * p.maxSpeed;
+          p.vy = (p.vy / speed) * p.maxSpeed;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) { p.x = this.width; p.baseX = p.x; }
+        if (p.x > this.width) { p.x = 0; p.baseX = p.x; }
+        if (p.y < 0) { p.y = this.height; p.baseY = p.y; }
+        if (p.y > this.height) { p.y = 0; p.baseY = p.y; }
+      });
+    }
+
+    render() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      this.particles.forEach(p => {
+        const gradient = this.ctx.createRadialGradient(
+          p.x, p.y, 0,
+          p.x, p.y, p.size * 3
+        );
+        gradient.addColorStop(0, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`);
+        gradient.addColorStop(0.5, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha * 0.3})`);
+        gradient.addColorStop(1, 'transparent');
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`;
+        this.ctx.fill();
+      });
+
+      if (this.isMouseNear) {
+        const mouseGradient = this.ctx.createRadialGradient(
+          this.mouseX, this.mouseY, 0,
+          this.mouseX, this.mouseY, 150
+        );
+        mouseGradient.addColorStop(0, 'rgba(201, 162, 39, 0.05)');
+        mouseGradient.addColorStop(0.5, 'rgba(201, 162, 39, 0.02)');
+        mouseGradient.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = mouseGradient;
+        this.ctx.beginPath();
+        this.ctx.arc(this.mouseX, this.mouseY, 150, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.updatePhysics();
+      this.render();
+    }
+  }
+
+  class CursorGlow {
+    constructor() {
+      this.el = document.getElementById('cursor-glow');
+      if (!this.el) return;
+      this.glow = document.createElement('div');
+      this.glow.className = 'cursor-glow-inner';
+      this.glow.style.cssText = `
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s ease;
+        will-change: transform, left, top;
+      `;
+      this.el.appendChild(this.glow);
+      this.x = 0;
+      this.y = 0;
+      this.targetX = 0;
+      this.targetY = 0;
+      this.isMobile = window.innerWidth < 768;
+      if (!this.isMobile) {
+        this.bindEvents();
+        this.animate();
+      }
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', (e) => {
+        this.targetX = e.clientX;
+        this.targetY = e.clientY;
+      }, { passive: true });
+      document.addEventListener('mouseleave', () => {
+        this.glow.style.opacity = '0';
+      }, { passive: true });
+      document.addEventListener('mouseenter', () => {
+        this.glow.style.opacity = '1';
+      }, { passive: true });
+    }
+
+    animate() {
+      requestAnimationFrame(this.animate.bind(this));
+      this.x += (this.targetX - this.x) * 0.1;
+      this.y += (this.targetY - this.y) * 0.1;
+      this.glow.style.left = `${this.x}px`;
+      this.glow.style.top = `${this.y}px`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new MouseTrailRenderer();
+    new InteractiveParticleSystem();
+    new CursorGlow();
+  });
+})();</script>  <div id="dynamic-bg" class="fixed inset-0 -z-10 overflow-hidden"> <div id="gradient-layer" class="absolute inset-0"></div> <canvas id="bg-particle-canvas" class="absolute inset-0"></canvas> <div id="parallax-container" class="absolute inset-0"> <div class="parallax-layer" data-depth="0.1" data-speed="0.5"> <div class="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.03)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.2" data-speed="1"> <div class="absolute top-1/4 -right-20 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(90,186,186,0.02)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.15" data-speed="0.75"> <div class="absolute bottom-20 left-1/4 w-64 h-64 rounded-full bg-[radial-gradient(circle,rgba(168,120,184,0.02)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.25" data-speed="1.5"> <div class="absolute top-1/2 right-1/3 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.025)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.05" data-speed="0.25"> <div class="absolute -bottom-10 right-1/4 w-56 h-56 rounded-full bg-[radial-gradient(circle,rgba(107,74,138,0.03)_0%,transparent_70%)]"></div> </div> </div> </div> <script>(function(){const mode = "all";
+const particleDensity = 80;
+const enableParallax = true;
+
+  class GradientFlow {
+    constructor(el) {
+      this.el = el;
+      this.hue = 38;
+      this.animationId = 0;
+      this.init();
+    }
+
+    init() {
+      if (mode !== 'gradient' && mode !== 'all') return;
+
+      this.el.style.cssText = `
+        background: radial-gradient(ellipse at 20% 0%, rgba(201, 162, 39, 0.04) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 100%, rgba(107, 74, 138, 0.04) 0%, transparent 50%);
+        animation: gradientShift 90s ease-in-out infinite;
+      `;
+
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes gradientShift {
+          0%, 100% {
+            background-position: 0% 50%;
+            filter: hue-rotate(0deg);
+          }
+          25% {
+            background-position: 50% 100%;
+            filter: hue-rotate(5deg);
+          }
+          50% {
+            background-position: 100% 50%;
+            filter: hue-rotate(0deg);
+          }
+          75% {
+            background-position: 50% 0%;
+            filter: hue-rotate(-5deg);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  class CanvasBackground {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = 0;
+      this.animationId = 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.init();
+    }
+
+    init() {
+      if (mode !== 'particles' && mode !== 'all') return;
+
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate();
+    }
+
+    resize() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
+
+    createParticles() {
+      this.particles = [];
+      this.maxParticles = this.isMobile ? Math.floor(particleDensity * 0.5) : particleDensity;
+      for (let i = 0; i < this.maxParticles; i++) {
+        this.particles.push(this.createParticle());
+      }
+    }
+
+    createParticle() {
+      return {
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.3,
+        speedY: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.4 + 0.1,
+        hue: 38 + Math.random() * 10 - 5
+      };
+    }
+
+    bindEvents() {
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          this.resize();
+          this.createParticles();
+        }, 250);
+      }, { passive: true });
+
+      document.addEventListener('mousemove', (e) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+      }, { passive: true });
+    }
+
+    animate = () => {
+      if (mode !== 'particles' && mode !== 'all') return;
+
+      this.animationId = requestAnimationFrame(this.animate);
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.particles.forEach((p, i) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        const dx = this.mouseX - p.x;
+        const dy = this.mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          const force = (150 - dist) / 150 * 0.02;
+          p.x -= dx * force;
+          p.y -= dy * force;
+        }
+
+        if (p.x < 0) p.x = this.canvas.width;
+        if (p.x > this.canvas.width) p.x = 0;
+        if (p.y < 0) p.y = this.canvas.height;
+        if (p.y > this.canvas.height) p.y = 0;
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.hue}, 60%, 65%, ${p.opacity})`;
+        this.ctx.fill();
+      });
+
+      for (let i = 0; i < this.particles.length; i++) {
+        for (let j = i + 1; j < this.particles.length; j++) {
+          const dx = this.particles[i].x - this.particles[j].x;
+          const dy = this.particles[i].y - this.particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 100) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+            this.ctx.strokeStyle = `rgba(201, 162, 39, ${0.1 * (1 - dist / 100)})`;
+            this.ctx.lineWidth = 0.5;
+            this.ctx.stroke();
+          }
+        }
+      }
+    };
+
+    destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  class ParallaxBackground {
+    constructor() {
+      this.layers = null;
+      this.animationId = 0;
+      if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
+
+      this.layers = document.querySelectorAll('.parallax-layer');
+      if (this.layers.length === 0) return;
+
+      this.bindEvents();
+      this.animate();
+    }
+
+    bindEvents() {
+      let lastY = 0;
+      window.addEventListener('scroll', () => {
+        lastY = window.scrollY;
+        this.update(lastY);
+      }, { passive: true });
+    }
+
+    update(scrollY) {
+      this.layers.forEach((layer) => {
+        const el = layer;
+        const depth = parseFloat(el.dataset.depth || '0.1');
+        const speed = parseFloat(el.dataset.speed || '1');
+        const movement = scrollY * depth * speed * 0.1;
+        el.style.transform = `translateY(${movement}px)`;
+      });
+    }
+
+    animate = () => {
+      if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
+      this.animationId = requestAnimationFrame(this.animate);
+    };
+
+    destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  function initAll() {
+    const gradientLayer = document.getElementById('gradient-layer');
+    const canvas = document.getElementById('bg-particle-canvas');
+    const container = document.getElementById('parallax-container');
+
+    if (gradientLayer) new GradientFlow(gradientLayer);
+    if (canvas && mode !== 'parallax') new CanvasBackground(canvas);
+    if (container) new ParallaxBackground();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('astro:page-load', initAll);
+})();</script> <!-- 头部导航 --> <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#080808]/85 border-b border-[#1f1f1f]/60"> <div class="absolute inset-0 bg-gradient-to-b from-[#c9a227]/[0.02] to-transparent pointer-events-none"></div> <nav class="relative max-w-7xl mx-auto px-6 sm:px-8"> <div class="flex items-center justify-between h-[4.5rem]"> <a href="/" class="flex items-center gap-3 group"> <div class="relative"> <div class="w-10 h-10 rounded-full border border-[#c9a227]/40 flex items-center justify-center group-hover:border-[#d4af37]/70 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(201,162,39,0.2)]"> <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg> </div> <div class="absolute inset-0 rounded-full border border-[#c9a227]/20 scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div> </div> <div class="flex flex-col"> <span class="font-display text-xl text-[#d4af37] tracking-[0.2em]">灵墟</span> <span class="text-[10px] text-[#666666] tracking-widest hidden sm:block">失落修行文明档案</span> </div> </a> <div class="hidden lg:flex items-center gap-10"> <a href="/tian" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 天时 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/di" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 地理 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/xuan" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 玄学 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/huang" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 历史 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/yu" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 空间 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/zhou" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 时间 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/hong" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 洪荒 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/huang-lost" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 失落 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a> </div> <div class="flex items-center gap-4">  <button id="mobile-menu-btn" class="lg:hidden p-2 text-[#888888] hover:text-[#d4af37] transition-colors" aria-label="菜单"> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path> </svg> </button> </div> </div> <div id="mobile-menu" class="hidden lg:hidden pb-6"> <div class="flex flex-col gap-1"> <a href="/tian" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 天时 </a><a href="/di" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 地理 </a><a href="/xuan" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 玄学 </a><a href="/huang" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 历史 </a><a href="/yu" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 空间 </a><a href="/zhou" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 时间 </a><a href="/hong" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 洪荒 </a><a href="/huang-lost" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 失落 </a> <div class="flex items-center gap-2 px-4 py-3 mt-2 text-xs text-[#555555] border-t border-[#2a2a2a] pt-4"> <span class="text-[#d4af37]">中</span> <span class="text-[#444444]">/</span> <span class="text-[#555555]">EN 暂未开放</span> </div> </div> </div> </nav> </header>  <!-- 主内容区 --> <main class="flex-1 relative z-20" data-page-transition data-astro-cid-37fxchfa>  <div class="splash-container" id="splash-container" data-astro-cid-7mzelvsk> <canvas class="splash-particles" id="splash-particles" data-astro-cid-7mzelvsk></canvas> <div class="splash-content" data-astro-cid-7mzelvsk> <div class="taiji-container" data-astro-cid-7mzelvsk> <div class="taiji-wrapper" data-astro-cid-7mzelvsk> <div class="taiji" data-astro-cid-7mzelvsk> <div class="taiji-half taiji-dark" data-astro-cid-7mzelvsk> <div class="taiji-dot taiji-light" data-astro-cid-7mzelvsk></div> </div> <div class="taiji-half taiji-light" data-astro-cid-7mzelvsk> <div class="taiji-dot taiji-dark" data-astro-cid-7mzelvsk></div> </div> </div> <div class="taiji-ring ring-1" data-astro-cid-7mzelvsk></div> <div class="taiji-ring ring-2" data-astro-cid-7mzelvsk></div> <div class="taiji-ring ring-3" data-astro-cid-7mzelvsk></div> </div> </div> <div class="splash-title" data-astro-cid-7mzelvsk> <h1 class="main-title" data-astro-cid-7mzelvsk> <span class="title-char" data-astro-cid-7mzelvsk>灵</span> <span class="title-char" data-astro-cid-7mzelvsk>墟</span> </h1> <p class="sub-title" data-astro-cid-7mzelvsk>天地玄黄 · 宇宙洪荒</p> <p class="sub-sub-title" data-astro-cid-7mzelvsk>末法时代 · 失落修行文明档案馆</p> </div> <div class="splash-footer" data-astro-cid-7mzelvsk> <button class="enter-btn" id="enter-btn" data-astro-cid-7mzelvsk> <span class="btn-text" data-astro-cid-7mzelvsk>进入灵墟</span> <span class="btn-arrow" data-astro-cid-7mzelvsk>→</span> </button> <p class="splash-hint" data-astro-cid-7mzelvsk>或等待 5 秒自动跳转</p> </div> </div> <div class="splash-bg-gradient" data-astro-cid-7mzelvsk></div> </div>  <script>(function(){const autoRedirect = true;
+const redirectDelay = 5000;
+
+  class SplashController {
+    constructor() {
+      this.container = document.getElementById('splash-container');
+      this.enterBtn = document.getElementById('enter-btn');
+      this.particlesCanvas = document.getElementById('splash-particles');
+      this.init();
+    }
+
+    init() {
+      this.initParticles();
+      this.bindEvents();
+
+      if (autoRedirect) {
+        this.startAutoRedirect();
+      }
+    }
+
+    initParticles() {
+      if (!this.particlesCanvas) return;
+
+      const canvas = this.particlesCanvas;
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      const isMobile = window.innerWidth < 768;
+      const particleCount = isMobile ? 30 : 60;
+
+      const resize = () => {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+      };
+
+      const createParticles = () => {
+        particles = [];
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            size: Math.random() * 2 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.3,
+            speedY: (Math.random() - 0.5) * 0.3,
+            opacity: Math.random() * 0.5 + 0.2,
+            twinkle: Math.random() > 0.7
+          });
+        }
+      };
+
+      const animate = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+
+          if (p.x < 0) p.x = window.innerWidth;
+          if (p.x > window.innerWidth) p.x = 0;
+          if (p.y < 0) p.y = window.innerHeight;
+          if (p.y > window.innerHeight) p.y = 0;
+
+          if (p.twinkle) {
+            p.opacity += (Math.random() - 0.5) * 0.05;
+            p.opacity = Math.max(0.1, Math.min(0.8, p.opacity));
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(240, 192, 64, ${p.opacity})`;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      resize();
+      createParticles();
+      animate();
+
+      window.addEventListener('resize', () => {
+        resize();
+        createParticles();
+      });
+    }
+
+    bindEvents() {
+      if (this.enterBtn) {
+        this.enterBtn.addEventListener('click', () => this.enter());
+      }
+    }
+
+    startAutoRedirect() {
+      const countdown = setTimeout(() => {
+        this.enter();
+      }, redirectDelay);
+    }
+
+    enter() {
+      if (this.container) {
+        this.container.style.transition = 'opacity 0.8s ease-out';
+        this.container.style.opacity = '0';
+
+        setTimeout(() => {
+          window.location.href = '/home';
+        }, 800);
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new SplashController();
+  });
+})();</script>  </main> <!-- 页脚 --> <footer class="relative z-20 border-t border-[#1a1a1a] bg-[#050505]/90 backdrop-blur-sm"> <div class="absolute inset-0 bg-gradient-to-t from-[#080808] to-transparent pointer-events-none"></div> <div class="relative max-w-7xl mx-auto px-6 sm:px-8 py-16"> <div class="grid gap-12 md:grid-cols-3"> <div> <div class="flex items-center gap-3 mb-6"> <div class="w-10 h-10 rounded-full border border-[#c9a227]/30 flex items-center justify-center"> <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg> </div> <span class="font-display text-xl text-[#d4af37] tracking-[0.2em]">灵墟</span> </div> <p class="text-[#666666] text-sm leading-loose"> 一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁 </p> </div> <div> <h4 class="text-[#c9a227]/80 text-sm font-medium tracking-wider mb-6">探索</h4> <ul class="space-y-3"> <li><a href="/huang" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">历史</a></li> <li><a href="/xuan" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">玄学</a></li> <li><a href="/hong" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">洪荒</a></li> <li><a href="/huang-lost" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">失落</a></li> <li><a href="/yu" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">空间</a></li> </ul> </div> <div> <h4 class="text-[#c9a227]/80 text-sm font-medium tracking-wider mb-6">关于</h4> <ul class="space-y-3"> <li><a href="/intro" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">项目介绍</a></li> </ul> <div class="mt-8 pt-6 border-t border-[#1a1a1a]"> <div class="flex items-center gap-2 text-xs text-[#444444]"> <a href="/" class="text-[#d4af37] hover:text-[#f0d78c] transition-colors">中</a> <span class="text-[#333333]">/</span> <a href="/en/" class="text-[#444444] hover:text-[#d4af37] transition-colors">EN</a> </div> </div> </div> </div> <div class="mt-16 pt-8"> <div class="gold-line mb-8 opacity-50"></div> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <p class="text-[#444444] text-xs tracking-wider">
+© 二〇二六 灵墟 · 末法时代·失落修行文明档案馆 </p> <p class="text-[#333333] text-xs tracking-wider">
+愿见者得度，闻者觉悟
+</p> </div> </div> </div> </footer> <!-- 动效控制器 -->  <!-- 页面过渡脚本 -->  </body> </html>

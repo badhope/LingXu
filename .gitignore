@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Astro
+.astro/
+
+# TypeScript
+*.tsbuildinfo
+
+# Package manager
+pnpm-lock.yaml
+yarn.lock
+
+# Temporary files
+*.tmp
+*.temp

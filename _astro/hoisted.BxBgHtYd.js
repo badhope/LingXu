@@ -1,0 +1,14 @@
+import"./hoisted.DevzCjvz.js";const c=document.getElementById("emptyState"),l=document.getElementById("bookmarksList"),d=document.getElementById("bookmarkItems"),m=document.getElementById("bookmarkCount"),f=document.getElementById("exportBtn"),p=document.getElementById("importBtn"),k=document.getElementById("importFile"),y=document.getElementById("clearBtn");function s(t){const e=document.createElement("div");return e.textContent=t,e.innerHTML}function a(){const t=localStorage.getItem("lingxu-user-store");if(t)try{const o=JSON.parse(t)?.state?.bookmarks;return Array.isArray(o)?o.filter(r=>r&&typeof r.id=="string"&&typeof r.title=="string"&&typeof r.href=="string"):[]}catch{return[]}return[]}function i(){const t=a();if(t.length===0){c&&(c.style.display="block"),l&&(l.style.display="none");return}c.style.display="none",l.style.display="block",m&&(m.textContent=String(t.length)),d&&(d.innerHTML=t.map(e=>`
+          <div class="bookmark-item" data-id="${s(e.id)}">
+            <div class="bookmark-content">
+              <div class="bookmark-module">${s(e.moduleName||"")}</div>
+              <h4 class="bookmark-title">${s(e.title)}</h4>
+              <p class="bookmark-excerpt">${s(e.excerpt||"")}</p>
+              <div class="bookmark-date">收藏于 ${new Date(e.createdAt).toLocaleDateString("zh-CN")}</div>
+            </div>
+            <div class="bookmark-actions">
+              <a href="${s(e.href)}" class="bookmark-btn" title="查看">→</a>
+              <button class="bookmark-btn delete" title="删除" onclick="deleteBookmark('${s(e.id)}')">×</button>
+            </div>
+          </div>
+        `).join(""))}window.deleteBookmark=function(t){const e=a().filter(o=>o.id!==t);localStorage.setItem("lingxu-user-store",JSON.stringify({state:{bookmarks:e,preferences:{theme:"dark",fontSize:"medium",readingProgress:!0}}})),i()};f?.addEventListener("click",()=>{const t=a(),e=JSON.stringify(t,null,2),o=new Blob([e],{type:"application/json"}),r=URL.createObjectURL(o),n=document.createElement("a");n.href=r,n.download=`lingxu-bookmarks-${new Date().toISOString().split("T")[0]}.json`,n.click(),URL.revokeObjectURL(r)});p?.addEventListener("click",()=>{k.click()});k?.addEventListener("change",t=>{const e=t.target.files?.[0];if(!e)return;const o=new FileReader;o.onload=r=>{try{const n=JSON.parse(r.target?.result);if(Array.isArray(n)){const u=a(),g=[...n,...u];localStorage.setItem("lingxu-user-store",JSON.stringify({state:{bookmarks:g,preferences:{theme:"dark",fontSize:"medium",readingProgress:!0}}})),i(),alert("导入成功！")}}catch{alert("文件格式错误")}},o.readAsText(e)});y?.addEventListener("click",()=>{confirm("确定要清空所有收藏吗？此操作不可恢复。")&&(localStorage.setItem("lingxu-user-store",JSON.stringify({state:{bookmarks:[],preferences:{theme:"dark",fontSize:"medium",readingProgress:!0}}})),i())});i();

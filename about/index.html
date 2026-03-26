@@ -1,0 +1,634 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"><meta name="description" content="了解灵墟项目的缘起与目标"><meta name="theme-color" content="#050508"><meta name="color-scheme" content="dark"><!-- Open Graph --><meta property="og:title" content="关于 - 灵墟 - 灵墟"><meta property="og:description" content="了解灵墟项目的缘起与目标"><meta property="og:type" content="website"><meta property="og:url" content="https://lingxu.xn--jbtt24bux6a.com"><meta property="og:site_name" content="灵墟"><!-- Twitter --><meta name="twitter:card" content="summary"><meta name="twitter:title" content="关于 - 灵墟 - 灵墟"><meta name="twitter:description" content="了解灵墟项目的缘起与目标"><!-- Preload 关键资源 --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@200;300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap"><title>关于 - 灵墟 - 灵墟</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- 页面过渡动画 --><link rel="stylesheet" href="/_astro/about.Ys5EYSWJ.css">
+<style>.modules-grid[data-astro-cid-kh7btl4r]{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}.module-item[data-astro-cid-kh7btl4r]{padding:1.25rem;background:#0a0a0f99;border:1px solid rgba(201,162,39,.15);border-radius:8px}.module-item[data-astro-cid-kh7btl4r] h3[data-astro-cid-kh7btl4r]{color:#d4af37;font-size:1rem;margin:0 0 .5rem}.module-item[data-astro-cid-kh7btl4r] p[data-astro-cid-kh7btl4r]{color:#888;font-size:.85rem;margin:0;line-height:1.5}
+</style><script type="module" src="/_astro/hoisted.DevzCjvz.js"></script></head> <body class="min-h-screen flex flex-col" data-astro-cid-37fxchfa> <!-- 页面过渡遮罩 --> <div id="page-transition-overlay" class="page-transition-overlay" data-astro-cid-37fxchfa></div> <!-- 全局效果层 --> <div class="mist-layer" data-astro-cid-37fxchfa></div> <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>  <div id="cursor-glow" class="cursor-glow" data-astro-cid-xx7mdr7a></div> <canvas id="mouse-trail-canvas" class="pointer-events-none fixed inset-0 z-[9998]" data-astro-cid-xx7mdr7a></canvas> <canvas id="particle-interact-canvas" class="pointer-events-none fixed inset-0 z-[9997]" data-astro-cid-xx7mdr7a></canvas> <script>(function(){const enableParticles = true;
+const enableTrail = true;
+const particleCount = 80;
+const trailLength = 50;
+
+  class MouseTrailRenderer {
+    constructor() {
+      this.canvas = document.getElementById('mouse-trail-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.points = [];
+      this.maxPoints = enableTrail ? Math.min(trailLength, 60) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.hue = 38;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.init();
+    }
+
+    init() {
+      if (this.isMobile || !this.maxPoints) return;
+      this.resize();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      const { clientX, clientY, movementX, movementY } = e;
+      const speed = Math.sqrt(movementX * movementX + movementY * movementY);
+
+      this.points.unshift({
+        x: clientX,
+        y: clientY,
+        age: 0,
+        speed: Math.min(speed, 50),
+        hue: this.hue + (Math.random() - 0.5) * 10
+      });
+
+      if (this.points.length > this.maxPoints) {
+        this.points.pop();
+      }
+    }
+
+    onMouseLeave() {
+      this.points = [];
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      if (this.points.length < 2) return;
+
+      for (let i = this.points.length - 1; i >= 0; i--) {
+        const point = this.points[i];
+        point.age++;
+
+        if (point.age > this.maxPoints) {
+          this.points.splice(i, 1);
+          continue;
+        }
+
+        const progress = i / this.maxPoints;
+        const alpha = Math.max(0, 1 - progress * 1.2);
+        const width = (1 - progress) * 8 + 1;
+
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = `hsla(${point.hue}, 70%, 65%, ${alpha * 0.6})`;
+        this.ctx.lineWidth = width;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        if (i === 0) {
+          this.ctx.moveTo(point.x, point.y);
+        } else {
+          const prev = this.points[i - 1];
+          const midX = (point.x + prev.x) / 2;
+          const midY = (point.y + prev.y) / 2;
+          this.ctx.moveTo(midX, midY);
+          this.ctx.quadraticCurveTo(point.x, point.y, prev.x, prev.y);
+        }
+        this.ctx.stroke();
+
+        if (i < this.points.length - 1) {
+          const glow = this.ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, width * 3
+          );
+          glow.addColorStop(0, `hsla(${point.hue}, 80%, 70%, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'transparent');
+          this.ctx.fillStyle = glow;
+          this.ctx.beginPath();
+          this.ctx.arc(point.x, point.y, width * 3, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+    }
+  }
+
+  class InteractiveParticleSystem {
+    constructor() {
+      this.canvas = document.getElementById('particle-interact-canvas');
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = enableParticles ? Math.min(particleCount, 100) : 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+      this.isMouseNear = false;
+      this.lastTime = 0;
+      this.fps = 60;
+      this.frameInterval = 1000 / this.fps;
+      this.detectPerformance();
+      this.init();
+    }
+
+    detectPerformance() {
+      if (this.isMobile) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.5);
+        this.fps = 30;
+        this.frameInterval = 1000 / this.fps;
+      }
+      const dpr = window.devicePixelRatio || 1;
+      if (dpr >= 2) {
+        this.maxParticles = Math.floor(this.maxParticles * 0.75);
+      }
+    }
+
+    init() {
+      if (!this.maxParticles) return;
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate(0);
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+      this.ctx.scale(dpr, dpr);
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    }
+
+    createParticles() {
+      this.particles = [];
+      const colors = [
+        { h: 38, s: 70, l: 65 },
+        { h: 45, s: 65, l: 55 },
+        { h: 30, s: 80, l: 60 }
+      ];
+
+      for (let i = 0; i < this.maxParticles; i++) {
+        const color = colors[i % colors.length];
+        this.particles.push({
+          x: Math.random() * this.width,
+          y: Math.random() * this.height,
+          baseX: 0,
+          baseY: 0,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 2 + 1,
+          baseSize: 0,
+          color: color,
+          alpha: Math.random() * 0.4 + 0.2,
+          attraction: Math.random() * 0.02 + 0.005,
+          friction: 0.98,
+          maxSpeed: 2
+        });
+        this.particles[i].baseX = this.particles[i].x;
+        this.particles[i].baseY = this.particles[i].y;
+        this.particles[i].baseSize = this.particles[i].size;
+      }
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true });
+      document.addEventListener('mouseleave', this.onMouseLeave.bind(this), { passive: true });
+      document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: true });
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+    }
+
+    onMouseMove(e) {
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      this.isMouseNear = true;
+    }
+
+    onTouchMove(e) {
+      if (e.touches.length > 0) {
+        this.mouseX = e.touches[0].clientX;
+        this.mouseY = e.touches[0].clientY;
+        this.isMouseNear = true;
+      }
+    }
+
+    onMouseLeave() {
+      this.isMouseNear = false;
+      this.mouseX = -1000;
+      this.mouseY = -1000;
+    }
+
+    updatePhysics() {
+      this.particles.forEach(p => {
+        const dx = p.baseX - p.x;
+        const dy = p.baseY - p.y;
+        p.vx += dx * 0.001;
+        p.vy += dy * 0.001;
+
+        if (this.isMouseNear) {
+          const mdx = this.mouseX - p.x;
+          const mdy = this.mouseY - p.y;
+          const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          const interactionRadius = 120;
+
+          if (dist < interactionRadius) {
+            const force = (1 - dist / interactionRadius) * p.attraction * 30;
+            const angle = Math.atan2(mdy, mdx);
+            if (dist < 60) {
+              p.vx -= Math.cos(angle) * force;
+              p.vy -= Math.sin(angle) * force;
+            } else {
+              p.vx += Math.cos(angle) * force * 0.5;
+              p.vy += Math.sin(angle) * force * 0.5;
+            }
+            p.size = p.baseSize * (1 + (1 - dist / interactionRadius) * 0.5);
+          } else {
+            p.size = Math.max(p.baseSize, p.size * 0.95);
+          }
+        } else {
+          p.size = Math.max(p.baseSize, p.size * 0.95);
+        }
+
+        p.vx *= p.friction;
+        p.vy *= p.friction;
+
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > p.maxSpeed) {
+          p.vx = (p.vx / speed) * p.maxSpeed;
+          p.vy = (p.vy / speed) * p.maxSpeed;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) { p.x = this.width; p.baseX = p.x; }
+        if (p.x > this.width) { p.x = 0; p.baseX = p.x; }
+        if (p.y < 0) { p.y = this.height; p.baseY = p.y; }
+        if (p.y > this.height) { p.y = 0; p.baseY = p.y; }
+      });
+    }
+
+    render() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      this.particles.forEach(p => {
+        const gradient = this.ctx.createRadialGradient(
+          p.x, p.y, 0,
+          p.x, p.y, p.size * 3
+        );
+        gradient.addColorStop(0, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`);
+        gradient.addColorStop(0.5, `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha * 0.3})`);
+        gradient.addColorStop(1, 'transparent');
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        this.ctx.fillStyle = gradient;
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.color.h}, ${p.color.s}%, ${p.color.l}%, ${p.alpha})`;
+        this.ctx.fill();
+      });
+
+      if (this.isMouseNear) {
+        const mouseGradient = this.ctx.createRadialGradient(
+          this.mouseX, this.mouseY, 0,
+          this.mouseX, this.mouseY, 150
+        );
+        mouseGradient.addColorStop(0, 'rgba(201, 162, 39, 0.05)');
+        mouseGradient.addColorStop(0.5, 'rgba(201, 162, 39, 0.02)');
+        mouseGradient.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = mouseGradient;
+        this.ctx.beginPath();
+        this.ctx.arc(this.mouseX, this.mouseY, 150, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    }
+
+    animate(currentTime) {
+      requestAnimationFrame(this.animate.bind(this));
+
+      const elapsed = currentTime - this.lastTime;
+      if (elapsed < this.frameInterval) return;
+      this.lastTime = currentTime - (elapsed % this.frameInterval);
+
+      this.updatePhysics();
+      this.render();
+    }
+  }
+
+  class CursorGlow {
+    constructor() {
+      this.el = document.getElementById('cursor-glow');
+      if (!this.el) return;
+      this.glow = document.createElement('div');
+      this.glow.className = 'cursor-glow-inner';
+      this.glow.style.cssText = `
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s ease;
+        will-change: transform, left, top;
+      `;
+      this.el.appendChild(this.glow);
+      this.x = 0;
+      this.y = 0;
+      this.targetX = 0;
+      this.targetY = 0;
+      this.isMobile = window.innerWidth < 768;
+      if (!this.isMobile) {
+        this.bindEvents();
+        this.animate();
+      }
+    }
+
+    bindEvents() {
+      document.addEventListener('mousemove', (e) => {
+        this.targetX = e.clientX;
+        this.targetY = e.clientY;
+      }, { passive: true });
+      document.addEventListener('mouseleave', () => {
+        this.glow.style.opacity = '0';
+      }, { passive: true });
+      document.addEventListener('mouseenter', () => {
+        this.glow.style.opacity = '1';
+      }, { passive: true });
+    }
+
+    animate() {
+      requestAnimationFrame(this.animate.bind(this));
+      this.x += (this.targetX - this.x) * 0.1;
+      this.y += (this.targetY - this.y) * 0.1;
+      this.glow.style.left = `${this.x}px`;
+      this.glow.style.top = `${this.y}px`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new MouseTrailRenderer();
+    new InteractiveParticleSystem();
+    new CursorGlow();
+  });
+})();</script>  <div id="dynamic-bg" class="fixed inset-0 -z-10 overflow-hidden"> <div id="gradient-layer" class="absolute inset-0"></div> <canvas id="bg-particle-canvas" class="absolute inset-0"></canvas> <div id="parallax-container" class="absolute inset-0"> <div class="parallax-layer" data-depth="0.1" data-speed="0.5"> <div class="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.03)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.2" data-speed="1"> <div class="absolute top-1/4 -right-20 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(90,186,186,0.02)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.15" data-speed="0.75"> <div class="absolute bottom-20 left-1/4 w-64 h-64 rounded-full bg-[radial-gradient(circle,rgba(168,120,184,0.02)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.25" data-speed="1.5"> <div class="absolute top-1/2 right-1/3 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.025)_0%,transparent_70%)]"></div> </div> <div class="parallax-layer" data-depth="0.05" data-speed="0.25"> <div class="absolute -bottom-10 right-1/4 w-56 h-56 rounded-full bg-[radial-gradient(circle,rgba(107,74,138,0.03)_0%,transparent_70%)]"></div> </div> </div> </div> <script>(function(){const mode = "all";
+const particleDensity = 80;
+const enableParallax = true;
+
+  class GradientFlow {
+    constructor(el) {
+      this.el = el;
+      this.hue = 38;
+      this.animationId = 0;
+      this.init();
+    }
+
+    init() {
+      if (mode !== 'gradient' && mode !== 'all') return;
+
+      this.el.style.cssText = `
+        background: radial-gradient(ellipse at 20% 0%, rgba(201, 162, 39, 0.04) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 100%, rgba(107, 74, 138, 0.04) 0%, transparent 50%);
+        animation: gradientShift 90s ease-in-out infinite;
+      `;
+
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes gradientShift {
+          0%, 100% {
+            background-position: 0% 50%;
+            filter: hue-rotate(0deg);
+          }
+          25% {
+            background-position: 50% 100%;
+            filter: hue-rotate(5deg);
+          }
+          50% {
+            background-position: 100% 50%;
+            filter: hue-rotate(0deg);
+          }
+          75% {
+            background-position: 50% 0%;
+            filter: hue-rotate(-5deg);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  class CanvasBackground {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.particles = [];
+      this.maxParticles = 0;
+      this.animationId = 0;
+      this.isMobile = window.innerWidth < 768;
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.init();
+    }
+
+    init() {
+      if (mode !== 'particles' && mode !== 'all') return;
+
+      this.resize();
+      this.createParticles();
+      this.bindEvents();
+      this.animate();
+    }
+
+    resize() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
+
+    createParticles() {
+      this.particles = [];
+      this.maxParticles = this.isMobile ? Math.floor(particleDensity * 0.5) : particleDensity;
+      for (let i = 0; i < this.maxParticles; i++) {
+        this.particles.push(this.createParticle());
+      }
+    }
+
+    createParticle() {
+      return {
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.3,
+        speedY: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.4 + 0.1,
+        hue: 38 + Math.random() * 10 - 5
+      };
+    }
+
+    bindEvents() {
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          this.resize();
+          this.createParticles();
+        }, 250);
+      }, { passive: true });
+
+      document.addEventListener('mousemove', (e) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+      }, { passive: true });
+    }
+
+    animate = () => {
+      if (mode !== 'particles' && mode !== 'all') return;
+
+      this.animationId = requestAnimationFrame(this.animate);
+
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.particles.forEach((p, i) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        const dx = this.mouseX - p.x;
+        const dy = this.mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          const force = (150 - dist) / 150 * 0.02;
+          p.x -= dx * force;
+          p.y -= dy * force;
+        }
+
+        if (p.x < 0) p.x = this.canvas.width;
+        if (p.x > this.canvas.width) p.x = 0;
+        if (p.y < 0) p.y = this.canvas.height;
+        if (p.y > this.canvas.height) p.y = 0;
+
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = `hsla(${p.hue}, 60%, 65%, ${p.opacity})`;
+        this.ctx.fill();
+      });
+
+      for (let i = 0; i < this.particles.length; i++) {
+        for (let j = i + 1; j < this.particles.length; j++) {
+          const dx = this.particles[i].x - this.particles[j].x;
+          const dy = this.particles[i].y - this.particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 100) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+            this.ctx.strokeStyle = `rgba(201, 162, 39, ${0.1 * (1 - dist / 100)})`;
+            this.ctx.lineWidth = 0.5;
+            this.ctx.stroke();
+          }
+        }
+      }
+    };
+
+    destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  class ParallaxBackground {
+    constructor() {
+      this.layers = null;
+      this.animationId = 0;
+      if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
+
+      this.layers = document.querySelectorAll('.parallax-layer');
+      if (this.layers.length === 0) return;
+
+      this.bindEvents();
+      this.animate();
+    }
+
+    bindEvents() {
+      let lastY = 0;
+      window.addEventListener('scroll', () => {
+        lastY = window.scrollY;
+        this.update(lastY);
+      }, { passive: true });
+    }
+
+    update(scrollY) {
+      this.layers.forEach((layer) => {
+        const el = layer;
+        const depth = parseFloat(el.dataset.depth || '0.1');
+        const speed = parseFloat(el.dataset.speed || '1');
+        const movement = scrollY * depth * speed * 0.1;
+        el.style.transform = `translateY(${movement}px)`;
+      });
+    }
+
+    animate = () => {
+      if (!enableParallax || (mode !== 'parallax' && mode !== 'all')) return;
+      this.animationId = requestAnimationFrame(this.animate);
+    };
+
+    destroy() {
+      cancelAnimationFrame(this.animationId);
+    }
+  }
+
+  function initAll() {
+    const gradientLayer = document.getElementById('gradient-layer');
+    const canvas = document.getElementById('bg-particle-canvas');
+    const container = document.getElementById('parallax-container');
+
+    if (gradientLayer) new GradientFlow(gradientLayer);
+    if (canvas && mode !== 'parallax') new CanvasBackground(canvas);
+    if (container) new ParallaxBackground();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('astro:page-load', initAll);
+})();</script> <!-- 头部导航 --> <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#080808]/85 border-b border-[#1f1f1f]/60"> <div class="absolute inset-0 bg-gradient-to-b from-[#c9a227]/[0.02] to-transparent pointer-events-none"></div> <nav class="relative max-w-7xl mx-auto px-6 sm:px-8"> <div class="flex items-center justify-between h-[4.5rem]"> <a href="/" class="flex items-center gap-3 group"> <div class="relative"> <div class="w-10 h-10 rounded-full border border-[#c9a227]/40 flex items-center justify-center group-hover:border-[#d4af37]/70 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(201,162,39,0.2)]"> <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg> </div> <div class="absolute inset-0 rounded-full border border-[#c9a227]/20 scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div> </div> <div class="flex flex-col"> <span class="font-display text-xl text-[#d4af37] tracking-[0.2em]">灵墟</span> <span class="text-[10px] text-[#666666] tracking-widest hidden sm:block">失落修行文明档案</span> </div> </a> <div class="hidden lg:flex items-center gap-10"> <a href="/tian" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 天时 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/di" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 地理 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/xuan" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 玄学 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/huang" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 历史 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/yu" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 空间 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/zhou" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 时间 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/hong" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 洪荒 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a><a href="/huang-lost" class="relative py-2 text-sm font-medium tracking-wide transition-all duration-300 text-[#888888] hover:text-[#c9a227]"> 失落 <span class="absolute bottom-0 left-0 right-0 h-px bg-[#c9a227] transition-all duration-300 opacity-0 group-hover:opacity-50"></span>  </a> </div> <div class="flex items-center gap-4">  <button id="mobile-menu-btn" class="lg:hidden p-2 text-[#888888] hover:text-[#d4af37] transition-colors" aria-label="菜单"> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path> </svg> </button> </div> </div> <div id="mobile-menu" class="hidden lg:hidden pb-6"> <div class="flex flex-col gap-1"> <a href="/tian" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 天时 </a><a href="/di" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 地理 </a><a href="/xuan" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 玄学 </a><a href="/huang" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 历史 </a><a href="/yu" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 空间 </a><a href="/zhou" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 时间 </a><a href="/hong" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 洪荒 </a><a href="/huang-lost" class="px-4 py-3 rounded-lg text-sm font-medium transition-all text-[#888888] hover:text-[#c9a227] hover:bg-[#1a1a1a]/50"> 失落 </a> <div class="flex items-center gap-2 px-4 py-3 mt-2 text-xs text-[#555555] border-t border-[#2a2a2a] pt-4"> <span class="text-[#d4af37]">中</span> <span class="text-[#444444]">/</span> <span class="text-[#555555]">EN 暂未开放</span> </div> </div> </div> </nav> </header>  <!-- 主内容区 --> <main class="flex-1 relative z-20" data-page-transition data-astro-cid-37fxchfa>  <article class="pt-24 pb-16 px-4 sm:px-6 lg:px-8" data-astro-cid-kh7btl4r> <div class="max-w-3xl mx-auto" data-astro-cid-kh7btl4r> <header class="text-center mb-20">  <h2 class="text-3xl sm:text-4xl md:text-5xl font-display text-[#e8d48b] mb-6 tracking-wide"> 关于灵墟 </h2> <p class="text-[#888888] text-lg max-w-2xl mx-auto leading-relaxed"> 一个关于修行文明的档案项目 </p> <div class="gold-line mt-10 max-w-[200px] mx-auto opacity-40"></div> </header> <div class="mt-12 prose-lingxu" data-astro-cid-kh7btl4r> <h2 data-astro-cid-kh7btl4r>项目缘起</h2> <p data-astro-cid-kh7btl4r>
+灵墟诞生于对失落文明的好奇与敬畏。在中国悠久的历史中，
+          曾存在过一个与今天截然不同的世界——一个修行者能够以肉身通神的世界，
+          一个灵气充沛、人神共存的世界。
+</p> <p data-astro-cid-kh7btl4r>
+随着末法时代的来临，这个世界逐渐消亡。留下的，只有典籍中的只言片语，
+          民间传说中的零星痕迹，以及无数志怪小说中的文学想象。
+          灵墟试图在这些碎片中，重建那个失落世界的轮廓。
+</p> <h2 data-astro-cid-kh7btl4r>系统架构</h2> <p data-astro-cid-kh7btl4r>
+灵墟采用「天地玄黄，宇宙洪荒」八字作为核心框架，
+          将修行文明的全部知识体系归纳为八大模块：
+</p> <div class="modules-grid" data-astro-cid-kh7btl4r> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>天 · 天时</h3> <p data-astro-cid-kh7btl4r>天道运行之理，星辰变化之机，黄历节气之道</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>地 · 地理</h3> <p data-astro-cid-kh7btl4r>天地山川之形，风水龙脉之理，福地洞天之秘</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>玄 · 玄学</h3> <p data-astro-cid-kh7btl4r>易道玄微之机，卦象推演之妙，符箓阵法之秘</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>黄 · 历史</h3> <p data-astro-cid-kh7btl4r>千古兴亡之鉴，文明传承之脉，秘辛档案之库</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>宇 · 空间</h3> <p data-astro-cid-kh7btl4r>天地宇宙之构，多维空间之理，万界苍茫之景</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>宙 · 时间</h3> <p data-astro-cid-kh7btl4r>时间长河之流，轮回因果之链，纪年更迭之道</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>洪 · 洪荒</h3> <p data-astro-cid-kh7btl4r>神怪异兽之形，洪荒神话之源，万兽图腾之灵</p> </div> <div class="module-item" data-astro-cid-kh7btl4r> <h3 data-astro-cid-kh7btl4r>荒 · 失落</h3> <p data-astro-cid-kh7btl4r>失传秘术之库，失落文明之迹，远古记忆之痕</p> </div> </div> <h2 data-astro-cid-kh7btl4r>我们的方法</h2> <p data-astro-cid-kh7btl4r>
+灵墟不是玄学网站，也不是宗教团体。我们以学术的态度对待材料，
+          以文学的想象力填补空白。我们相信，在历史与幻想之间，
+          存在一个真实的空间——那是古人的精神世界，是他们理解宇宙、
+          生命、身心问题的方式。
+</p> <blockquote data-astro-cid-kh7btl4r>
+"我们不是要证明修行是真的，而是要理解为什么这么多古人会相信修行是真的。"
+</blockquote> <h2 data-astro-cid-kh7btl4r>内容来源</h2> <p data-astro-cid-kh7btl4r>
+灵墟的内容主要来源于：
+</p> <ul data-astro-cid-kh7btl4r> <li data-astro-cid-kh7btl4r>道教、佛教经典及相关注释</li> <li data-astro-cid-kh7btl4r>《黄帝内经》《山海经》《易经》等先秦两汉典籍</li> <li data-astro-cid-kh7btl4r>历代志怪小说、仙侠传记</li> <li data-astro-cid-kh7btl4r>近现代学者的研究成果</li> <li data-astro-cid-kh7btl4r>田野调查与口述传统</li> </ul> <h2 data-astro-cid-kh7btl4r>免责声明</h2> <p data-astro-cid-kh7btl4r>
+灵墟收录的内容仅供文化研究与欣赏之用。我们不提供任何形式的算命、
+          占卜、法事服务，也不鼓励任何形式的盲目修炼。
+          文中涉及的宗教内容，均作为文化遗产呈现，不代表本站立场。
+</p> <hr data-astro-cid-kh7btl4r> <h2 data-astro-cid-kh7btl4r>联系我们</h2> <p data-astro-cid-kh7btl4r>
+如有疑问或建议，欢迎通过 GitHub 提交 Issue。
+</p> </div> </div> </article>  </main> <!-- 页脚 --> <footer class="relative z-20 border-t border-[#1a1a1a] bg-[#050505]/90 backdrop-blur-sm"> <div class="absolute inset-0 bg-gradient-to-t from-[#080808] to-transparent pointer-events-none"></div> <div class="relative max-w-7xl mx-auto px-6 sm:px-8 py-16"> <div class="grid gap-12 md:grid-cols-3"> <div> <div class="flex items-center gap-3 mb-6"> <div class="w-10 h-10 rounded-full border border-[#c9a227]/30 flex items-center justify-center"> <svg class="w-5 h-5 text-[#c9a227]" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path> </svg> </div> <span class="font-display text-xl text-[#d4af37] tracking-[0.2em]">灵墟</span> </div> <p class="text-[#666666] text-sm leading-loose"> 一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁 </p> </div> <div> <h4 class="text-[#c9a227]/80 text-sm font-medium tracking-wider mb-6">探索</h4> <ul class="space-y-3"> <li><a href="/huang" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">历史</a></li> <li><a href="/xuan" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">玄学</a></li> <li><a href="/hong" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">洪荒</a></li> <li><a href="/huang-lost" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">失落</a></li> <li><a href="/yu" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">空间</a></li> </ul> </div> <div> <h4 class="text-[#c9a227]/80 text-sm font-medium tracking-wider mb-6">关于</h4> <ul class="space-y-3"> <li><a href="/intro" class="text-[#555555] hover:text-[#d4af37] transition-colors text-sm">项目介绍</a></li> </ul> <div class="mt-8 pt-6 border-t border-[#1a1a1a]"> <div class="flex items-center gap-2 text-xs text-[#444444]"> <a href="/" class="text-[#d4af37] hover:text-[#f0d78c] transition-colors">中</a> <span class="text-[#333333]">/</span> <a href="/en/" class="text-[#444444] hover:text-[#d4af37] transition-colors">EN</a> </div> </div> </div> </div> <div class="mt-16 pt-8"> <div class="gold-line mb-8 opacity-50"></div> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <p class="text-[#444444] text-xs tracking-wider">
+© 二〇二六 灵墟 · 末法时代·失落修行文明档案馆 </p> <p class="text-[#333333] text-xs tracking-wider">
+愿见者得度，闻者觉悟
+</p> </div> </div> </div> </footer> <!-- 动效控制器 -->  <!-- 页面过渡脚本 -->  </body> </html> 
