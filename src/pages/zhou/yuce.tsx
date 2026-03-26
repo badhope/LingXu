@@ -3,16 +3,9 @@
  */
 
 import Layout from '@/components/layout/Layout'
-import styles from '../tian/SubPage.module.scss'
+import styles from './index.module.scss'
 
 export default function YucePage() {
-  const prophecies = [
-    { name: '推背图', author: '袁天罡、李淳风', period: '唐代', desc: '预言自唐代以后的中国历史，共六十象' },
-    { name: '烧饼歌', author: '刘伯温', period: '明代', desc: '预言明代以后数百年国运' },
-    { name: '马前课', author: '诸葛亮', period: '三国', desc: '十四课预言，从三国到未来的历史' },
-    { name: '梅花诗', author: '邵雍', period: '北宋', desc: '以梅花为象，预言后世之事' },
-  ]
-
   return (
     <Layout title="预言">
       <div className={styles.container}>
@@ -25,13 +18,14 @@ export default function YucePage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>著名预言</h2>
           <div className={styles.cardGrid}>
-            {prophecies.map((p, i) => (
-              <div key={p.name} className={styles.card} style={{ animationDelay: `${i * 0.1}s` }}>
-                <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}>{p.name}</h3>
-                <p style={{ color: '#888', fontSize: '0.85rem', margin: '0.5rem 0' }}>{p.author} · {p.period}</p>
-                <p className={styles.cardDesc}>{p.desc}</p>
-              </div>
-            ))}
+            <div className={styles.card}>
+              <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}>推背图</h3>
+              <p className={styles.cardDesc}>袁天罡、李淳风著，预测历代国运</p>
+            </div>
+            <div className={styles.card}>
+              <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}>烧饼歌</h3>
+              <p className={styles.cardDesc}>刘伯温著，预言明朝以后大事</p>
+            </div>
           </div>
         </section>
       </div>
