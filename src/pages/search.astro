@@ -408,6 +408,7 @@ import { withBase } from '../lib/utils';
       }
 
       if (!query) {
+        if (!searchResults) return;
         searchResults.innerHTML = `
           <div class="results-placeholder">
             <p>输入关键词开始搜索</p>
@@ -427,6 +428,7 @@ import { withBase } from '../lib/utils';
       });
 
       if (filtered.length === 0) {
+        if (!searchResults) return;
         searchResults.innerHTML = `
           <div class="results-placeholder">
             <p>未找到与「${currentQuery}」相关的结果</p>
@@ -438,7 +440,7 @@ import { withBase } from '../lib/utils';
 
       const statsHtml = `<div class="results-stats">找到 <strong>${filtered.length}</strong> 个相关结果</div>`;
 
-      searchResults.innerHTML = statsHtml + filtered.map(item => `
+      if (searchResults) if (searchResults) searchResults.innerHTML = statsHtml + filtered.map(item => `
         <a href="${item.href}" class="result-item">
           <div class="result-module">${item.moduleName}</div>
           <h3 class="result-title">${highlightText(item.title, currentQuery)}</h3>

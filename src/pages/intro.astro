@@ -469,7 +469,16 @@ import { SITE_CONFIG } from '@lib/constants';
 
   <script>
     class StarsCanvas {
-      constructor(canvas) {
+      canvas: HTMLCanvasElement;
+      ctx: CanvasRenderingContext2D | null;
+      stars: any[];
+      shootingStars: any[];
+      maxStars: number;
+      animationId: number;
+      mouseX: number;
+      mouseY: number;
+
+      constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.stars = [];
@@ -491,7 +500,7 @@ import { SITE_CONFIG } from '@lib/constants';
       resize() {
         this.canvas.width = window.innerWidth * window.devicePixelRatio;
         this.canvas.height = window.innerHeight * window.devicePixelRatio;
-        this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        this.ctx!.scale(window.devicePixelRatio, window.devicePixelRatio);
       }
 
       createStars() {
@@ -539,7 +548,7 @@ import { SITE_CONFIG } from '@lib/constants';
       }
 
       animate() {
-        this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        this.ctx!.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
         this.stars.forEach(star => {
           star.alpha += star.alphaChange;
@@ -549,16 +558,16 @@ import { SITE_CONFIG } from '@lib/constants';
 
           const twinkle = Math.sin(Date.now() * star.twinkleSpeed) * 0.3 + 0.7;
 
-          this.ctx.beginPath();
-          this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          this.ctx.fillStyle = `rgba(232, 212, 139, ${star.alpha * twinkle})`;
-          this.ctx.fill();
+          this.ctx!.beginPath();
+          this.ctx!.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          this.ctx!.fillStyle = `rgba(232, 212, 139, ${star.alpha * twinkle})`;
+          this.ctx!.fill();
 
           if (star.radius > 1) {
-            this.ctx.beginPath();
-            this.ctx.arc(star.x, star.y, star.radius * 2, 0, Math.PI * 2);
-            this.ctx.fillStyle = `rgba(232, 212, 139, ${star.alpha * twinkle * 0.1})`;
-            this.ctx.fill();
+            this.ctx!.beginPath();
+            this.ctx!.arc(star.x, star.y, star.radius * 2, 0, Math.PI * 2);
+            this.ctx!.fillStyle = `rgba(232, 212, 139, ${star.alpha * twinkle * 0.1})`;
+            this.ctx!.fill();
           }
         });
 
@@ -569,7 +578,7 @@ import { SITE_CONFIG } from '@lib/constants';
 
           if (ss.alpha <= 0) return false;
 
-          const gradient = this.ctx.createLinearGradient(
+          const gradient = this.ctx!.createLinearGradient(
             ss.x, ss.y,
             ss.x - Math.cos(ss.angle) * ss.length,
             ss.y - Math.sin(ss.angle) * ss.length
@@ -577,16 +586,16 @@ import { SITE_CONFIG } from '@lib/constants';
           gradient.addColorStop(0, `rgba(232, 212, 139, ${ss.alpha})`);
           gradient.addColorStop(1, 'rgba(232, 212, 139, 0)');
 
-          this.ctx.beginPath();
-          this.ctx.moveTo(ss.x, ss.y);
-          this.ctx.lineTo(
+          this.ctx!.beginPath();
+          this.ctx!.moveTo(ss.x, ss.y);
+          this.ctx!.lineTo(
             ss.x - Math.cos(ss.angle) * ss.length,
             ss.y - Math.sin(ss.angle) * ss.length
           );
-          this.ctx.strokeStyle = gradient;
-          this.ctx.lineWidth = 2;
-          this.ctx.lineCap = 'round';
-          this.ctx.stroke();
+          this.ctx!.strokeStyle = gradient;
+          this.ctx!.lineWidth = 2;
+          this.ctx!.lineCap = 'round';
+          this.ctx!.stroke();
 
           return true;
         });
@@ -597,7 +606,7 @@ import { SITE_CONFIG } from '@lib/constants';
 
     const canvas = document.getElementById('stars-canvas');
     if (canvas) {
-      new StarsCanvas(canvas);
+      new StarsCanvas(canvas as HTMLCanvasElement);
     }
 
     const flipCard = document.getElementById('flipCard');

@@ -379,8 +379,8 @@ const navItems = [
       const x = ((e as MouseEvent).clientX - rect.left) / rect.width * 100;
       const y = ((e as MouseEvent).clientY - rect.top) / rect.height * 100;
       
-      item.style.setProperty('--ripple-x', `${x}%`);
-      item.style.setProperty('--ripple-y', `${y}%`);
+      (item as HTMLElement).style.setProperty('--ripple-x', `${x}%`);
+      (item as HTMLElement).style.setProperty('--ripple-y', `${y}%`);
       
       const ripple = item.querySelector('.nav-ripple::before') as HTMLElement;
       if (ripple) {

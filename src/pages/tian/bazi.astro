@@ -9,7 +9,7 @@ const celestialStems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', 
 const terrestrialBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 const zodiacAnimals = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
 
-const fiveElements = {
+const fiveElements: Record<string, { element: string; nature: string; position: string }> = {
   '甲': { element: '木', nature: '阳', position: '东方' },
   '乙': { element: '木', nature: '阴', position: '东方' },
   '丙': { element: '火', nature: '阳', position: '南方' },
@@ -22,7 +22,7 @@ const fiveElements = {
   '癸': { element: '水', nature: '阴', position: '北方' },
 };
 
-const heavenlyStems = celestialStems.map((stem, i) => ({
+const heavenlyStems = celestialStems.map((stem) => ({
   stem,
   element: fiveElements[stem].element,
   nature: fiveElements[stem].nature,
@@ -204,7 +204,7 @@ const earthlyBranches = terrestrialBranches.map((branch, i) => ({
         <div class="ref-table">
           <h3>十二地支</h3>
           <div class="branch-list">
-            {earthlyBranches.map((e, i) => (
+            {earthlyBranches.map((e) => (
               <span class={`branch-cell ${e.element}`}>{e.branch}<small>{e.animal}</small></span>
             ))}
           </div>

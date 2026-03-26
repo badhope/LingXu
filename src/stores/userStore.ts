@@ -48,7 +48,7 @@ interface UserStore {
 
 export const useUserStore = create<UserStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       bookmarks: [],
       history: [],
       preferences: {
@@ -60,7 +60,7 @@ export const useUserStore = create<UserStore>()(
       addBookmark: (bookmark) => {
         const newBookmark: Bookmark = {
           ...bookmark,
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
           createdAt: Date.now(),
         };
         set((state) => ({
@@ -85,7 +85,7 @@ export const useUserStore = create<UserStore>()(
       addHistory: (item) => {
         const newHistory: ReadingHistory = {
           ...item,
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
           timestamp: Date.now(),
         };
         set((state) => ({

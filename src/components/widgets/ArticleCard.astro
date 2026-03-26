@@ -199,18 +199,18 @@ const colors = colorMap[color] || colorMap.gold;
 
     element.addEventListener('mousedown', () => {
       isPressed = true;
-      element.style.transform = 'scale(0.98)';
+      (element as HTMLElement).style.transform = 'scale(0.98)';
     });
 
     element.addEventListener('mouseup', () => {
       isPressed = false;
-      element.style.transform = '';
+      (element as HTMLElement).style.transform = '';
     });
 
     element.addEventListener('mouseleave', () => {
       if (isPressed) {
         isPressed = false;
-        element.style.transform = '';
+        (element as HTMLElement).style.transform = '';
       }
     });
   });

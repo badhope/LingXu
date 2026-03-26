@@ -325,8 +325,8 @@ import { withBase } from '../lib/utils';
       const bookmarks = getBookmarks();
 
       if (bookmarks.length === 0) {
-        emptyState.style.display = 'block';
-        bookmarksList.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        if (bookmarksList) bookmarksList.style.display = 'none';
         return;
       }
 
