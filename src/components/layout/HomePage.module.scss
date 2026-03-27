@@ -540,3 +540,72 @@
     display: none;
   }
 }
+
+/* 额外特效样式 */
+
+/* 悬浮粒子 */
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(201, 162, 39, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleFloat 4s ease-in-out infinite;
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.5);
+  }
+}
+
+/* 玄幻标题特效 */
+.fantasyTitle {
+  display: flex;
+  justify-content: center;
+  gap: 0.2em;
+}
+
+.fantasyTitle .titleChar {
+  font-size: clamp(4rem, 15vw, 8rem);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  animation: fantasyGlow 3s ease-in-out infinite;
+}
+
+@keyframes fantasyGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(201, 162, 39, 0.5),
+      0 0 20px rgba(201, 162, 39, 0.3),
+      0 0 40px rgba(201, 162, 39, 0.2);
+  }
+  50% {
+    text-shadow: 
+      0 0 20px rgba(201, 162, 39, 0.8),
+      0 0 40px rgba(201, 162, 39, 0.5),
+      0 0 60px rgba(201, 162, 39, 0.3),
+      0 0 80px rgba(201, 162, 39, 0.1);
+  }
+}
+
+/* 卡片箭头 */
+.cardArrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #c9a227;
+  font-size: 1.2rem;
+}
+
+/* 悬浮符号 */
+.floatingSymbol {
+  pointer-events: none;
+}
