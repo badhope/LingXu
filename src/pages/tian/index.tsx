@@ -1,9 +1,9 @@
 /**
- * 灵墟 - 天时模块 - 简介页面
+ * 灵墟 - 天时模块 - 首页
  */
 
 import Layout from '@/components/layout/Layout'
-import styles from './SubPage.module.scss'
+import styles from './index.module.scss'
 
 export default function TianIndexPage() {
   return (
@@ -27,9 +27,10 @@ export default function TianIndexPage() {
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>子模块导航</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
+          <div className={styles.cardGrid}>
             <a href="/tian/xingxiu" className={styles.card}>⭐ 星宿</a>
-            <a href="/tian/yunshi" className={styles.card}>🔮 运势</a>
+            <a href="/tian/xunshi" className={styles.card}>🔮 云师</a>
+            <a href="/tian/yunshi" className={styles.card}>🌟 运势</a>
             <a href="/tian/jieqi" className={styles.card}>🌾 节气</a>
             <a href="/tian/zhanbu" className={styles.card}>🎴 占卜</a>
           </div>

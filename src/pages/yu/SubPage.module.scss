@@ -1,0 +1,483 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 2rem 4rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, rgba(240, 192, 64, 0.05) 0%, transparent 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(240, 192, 64, 0.1);
+}
+
+.icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: #e8d48b;
+  letter-spacing: 0.3em;
+  margin: 0 0 0.75rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #888;
+  letter-spacing: 0.2em;
+  margin: 0;
+}
+
+.section {
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  color: #c9a227;
+  letter-spacing: 0.15em;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.sectionDesc {
+  color: #888;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: rgba(26, 26, 46, 0.5);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  animation: fadeInUp 0.6s ease backwards;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(201, 162, 39, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.15);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.starName {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #c9a227;
+  letter-spacing: 0.1em;
+}
+
+.starIndex {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.cardBody {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.attribute {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: #666;
+  letter-spacing: 0.05em;
+}
+
+.value {
+  font-size: 1rem;
+  color: #e8d48b;
+}
+
+.cardDesc {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.6;
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.infoBox {
+  background: rgba(26, 26, 46, 0.3);
+  border: 1px solid rgba(201, 162, 39, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  
+  p {
+    color: #888;
+    line-height: 1.8;
+    margin: 0 0 1.5rem;
+  }
+}
+
+.timeTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timeRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(201, 162, 39, 0.05);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  
+  span:first-child {
+    color: #c9a227;
+    font-weight: 500;
+  }
+  
+  span:nth-child(2) {
+    color: #888;
+  }
+  
+  span:last-child {
+    color: #aaa;
+  }
+}
+
+.birthChart {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.birthItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+  background: rgba(26, 26, 46, 0.3);
+  border: 1px solid rgba(201, 162, 39, 0.1);
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(201, 162, 39, 0.3);
+    background: rgba(26, 26, 46, 0.5);
+  }
+}
+
+.birthYear {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.birthStar {
+  font-size: 1.1rem;
+  color: #c9a227;
+  font-weight: 500;
+}
+
+.toolSection {
+  margin-top: 3rem;
+}
+
+.toolBox {
+  background: rgba(26, 26, 46, 0.4);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.toolTitle {
+  font-size: 1.25rem;
+  color: #e8d48b;
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.inputLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(10, 10, 15, 0.5);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-radius: 8px;
+  color: #e8d48b;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #c9a227;
+    box-shadow: 0 0 20px rgba(201, 162, 39, 0.2);
+  }
+  
+  &::placeholder {
+    color: #555;
+  }
+}
+
+.select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(10, 10, 15, 0.5);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-radius: 8px;
+  color: #e8d48b;
+  font-size: 1rem;
+  cursor: pointer;
+  
+  option {
+    background: #1a1a2e;
+    color: #e8d48b;
+  }
+}
+
+.button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #c9a227 0%, #845c17 100%);
+  border: none;
+  border-radius: 8px;
+  color: #0a0a0f;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 20px rgba(201, 162, 39, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.resultBox {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(201, 162, 39, 0.05);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.resultTitle {
+  font-size: 1.25rem;
+  color: #c9a227;
+  margin: 0 0 1rem;
+}
+
+.resultContent {
+  font-size: 1.5rem;
+  color: #e8d48b;
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+}
+
+.resultDesc {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.divinationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  max-width: 400px;
+  margin: 0 auto 2rem;
+}
+
+.hexagram {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 26, 46, 0.5);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #c9a227;
+    background: rgba(26, 46, 26, 0.5);
+  }
+  
+  &.selected {
+    border-color: #c9a227;
+    box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+  }
+}
+
+.hexLine {
+  width: 60%;
+  height: 8px;
+  background: #c9a227;
+  border-radius: 4px;
+  margin: 2px 0;
+  
+  &.broken {
+    background: transparent;
+    border: 3px solid #c9a227;
+    border-radius: 0;
+    height: 2px;
+    position: relative;
+    
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 45%;
+      height: 3px;
+      background: #c9a227;
+      border-radius: 2px;
+    }
+    
+    &::before {
+      left: 5%;
+    }
+    
+    &::after {
+      right: 5%;
+    }
+  }
+}
+
+.hexagramName {
+  font-size: 1.25rem;
+  color: #e8d48b;
+  margin-top: 0.5rem;
+}
+
+.yaoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.yaoItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(26, 26, 46, 0.3);
+  border-radius: 8px;
+  
+  .yaoIndex {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(201, 162, 39, 0.2);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    color: #c9a227;
+  }
+  
+  .yaoName {
+    flex: 1;
+    color: #e8d48b;
+  }
+  
+  .yaoLine {
+    width: 50px;
+    height: 6px;
+    background: #c9a227;
+    border-radius: 3px;
+  }
+}
+
+.pairGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 100px 1rem 3rem;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeRow {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    text-align: center;
+  }
+  
+  .birthChart {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .pairGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .divinationGrid {
+    max-width: 280px;
+  }
+}

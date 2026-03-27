@@ -6,7 +6,7 @@
 
 import { useState } from 'react'
 import Layout from '@/components/layout/Layout'
-import styles from './index.module.scss'
+import styles from './SubPage.module.scss'
 
 export default function YunshiPage() {
   const [birthMonth, setBirthMonth] = useState('3')

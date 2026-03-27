@@ -3,7 +3,7 @@
  */
 
 import Layout from '@/components/layout/Layout'
-import styles from '../tian/index.module.scss'
+import styles from './SubPage.module.scss'
 
 export default function ShenshouPage() {
   const beasts = [

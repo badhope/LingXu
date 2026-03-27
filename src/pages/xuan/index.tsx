@@ -1,5 +1,5 @@
 /**
- * 灵墟 - 玄学模块 - 简介页面
+ * 灵墟 - 玄学模块 - 首页
  */
 
 import Layout from '@/components/layout/Layout'
@@ -16,8 +16,18 @@ export default function XuanIndexPage() {
         </header>
 
         <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>模块概述</h2>
+          <div className={styles.infoBox}>
+            <p>
+              玄学模块收录易经、八字、六爻、符箓四大主题。深入探索中华玄学的奥秘，
+              从易经六十四卦到八字命理，从六爻占卜到道家符箓，一应俱全。
+            </p>
+          </div>
+        </section>
+
+        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>子模块导航</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
+          <div className={styles.cardGrid}>
             <a href="/xuan/yijing" className={styles.card}>☰ 易经</a>
             <a href="/xuan/bazi" className={styles.card}>⏰ 八字</a>
             <a href="/xuan/liuyao" className={styles.card}>🔮 六爻</a>

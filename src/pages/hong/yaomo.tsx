@@ -3,7 +3,7 @@
  */
 
 import Layout from '@/components/layout/Layout'
-import styles from '../tian/index.module.scss'
+import styles from './SubPage.module.scss'
 
 export default function YaomoPage() {
   return (
@@ -23,7 +23,7 @@ export default function YaomoPage() {
               <p className={styles.cardDesc}>修炼千年的狐妖，可化人形</p>
             </div>
             <div className={styles.card}>
-              <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}牛魔王</h3>
+              <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}>牛魔王</h3>
               <p className={styles.cardDesc}>妖魔界的霸主之一</p>
             </div>
           </div>

@@ -1,5 +1,5 @@
 /**
- * 灵墟 - 皇陵模块 - 首页
+ * 灵墟 - 失落模块 - 首页
  */
 
 import Layout from '@/components/layout/Layout'
@@ -7,21 +7,31 @@ import styles from './index.module.scss'
 
 export default function HuangLostIndexPage() {
   return (
-    <Layout title="皇陵">
+    <Layout title="失落">
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.icon}>🏛️</div>
-          <h1 className={styles.title}>失落的皇陵</h1>
-          <p className={styles.subtitle}>神秘之地，探寻历史</p>
+          <h1 className={styles.title}>失落模块</h1>
+          <p className={styles.subtitle}>失传秘术，遗失宝藏</p>
         </header>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>皇陵概览</h2>
-          <div style={{ background: 'rgba(26,26,46,0.4)', border: '1px solid rgba(201,162,39,0.15)', borderRadius: '12px', padding: '1.5rem' }}>
-            <p style={{ color: '#888', lineHeight: 1.8 }}>
-              皇陵是古代帝王的陵墓，通常埋藏着大量的宝藏和文物。
-              许多皇陵因为年代久远而被遗忘，成为考古学家和探险家的目标。
+          <h2 className={styles.sectionTitle}>模块概述</h2>
+          <div className={styles.infoBox}>
+            <p>
+              失落模块收录末法时代逐渐消失的修仙遗产。从失传功法到古老丹方，从上古法宝到隐秘之地，
+              这些都是修仙文明曾经的辉煌见证。
             </p>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>子模块导航</h2>
+          <div className={styles.cardGrid}>
+            <a href="/huang-lost/gongfa" className={styles.card}>📖 功法</a>
+            <a href="/huang-lost/danyao" className={styles.card}>💊 丹药</a>
+            <a href="/huang-lost/fabao" className={styles.card}>💎 法宝</a>
+            <a href="/huang-lost/mishi" className={styles.card}>🗝️ 秘室</a>
           </div>
         </section>
       </div>
