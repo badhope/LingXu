@@ -6,13 +6,13 @@ import Layout from '@/components/layout/Layout'
 import styles from './SubPage.module.scss'
 
 export default function WenxianPage() {
-  const classics = [
-    { name: '道德经', author: '老子', period: '春秋', desc: '道家第一经典，阐述"道"与"德"的哲学思想' },
-    { name: '南华真经', author: '庄子', period: '战国', desc: '道家经典，想象奇特，意境深远' },
-    { name: '周易', author: '周文王', period: '商末周初', desc: '群经之首，设教之书' },
-    { name: '抱朴子', author: '葛洪', period: '东晋', desc: '修仙理论集大成之作' },
-    { name: '太平经', author: '于吉', period: '东汉', desc: '道教最早的理论著作' },
-    { name: '度人经', author: '元始天尊', period: '上古', desc: '道教重要经典' },
+  const books = [
+    { name: '《道藏》', type: '道教经典', desc: '道教经典总集，包含三洞四辅十二类，是修仙者的必修典籍。' },
+    { name: '《黄帝内经》', type: '医家经典', desc: '黄帝与岐伯论医之作，包含养生、修炼、治病之道。' },
+    { name: '《抱朴子》', type: '修仙指南', desc: '葛洪著，系统阐述了金丹大道的修炼方法。' },
+    { name: '《阴符经》', type: '奇书', desc: '字数最少但道理最深奥的奇书，三百字道尽天机。' },
+    { name: '《参同契》', type: '丹经', desc: '魏伯阳著，被称为"万古丹经王"，阐述内丹修炼。' },
+    { name: '《度人经》', type: '度化经', desc: '灵宝无量度人上品妙经，度化众生之法。' },
   ]
 
   return (
@@ -20,18 +20,34 @@ export default function WenxianPage() {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.icon}>📚</div>
-          <h1 className={styles.title}>古籍文献</h1>
-          <p className={styles.subtitle}>典籍传承</p>
+          <h1 className={styles.title}>历史文献</h1>
+          <p className={styles.subtitle}>典籍传承，智慧结晶</p>
         </header>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>经典著作</h2>
+          <h2 className={styles.sectionTitle}>文献概论</h2>
+          <div className={styles.infoBox}>
+            <p>
+              中华文明五千年来，留下了无数珍贵的文献典籍。这些典籍中，
+              既有治国平天下的大学问，也有长生不老修仙的秘法。
+              许多功法、丹方、法术都记载在这些典籍中，是修仙文明的重要传承。
+            </p>
+            <p>
+              可惜的是，末法时代，许多典籍已经失传。现存的文献，
+              大多是后人整理或抄录的版本，原版已经很难找到。
+              灵墟档案馆致力于收集和保护这些珍贵的文献典籍。
+            </p>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>著名典籍</h2>
           <div className={styles.cardGrid}>
-            {classics.map((classic, i) => (
-              <div key={classic.name} className={styles.card} style={{ animationDelay: `${i * 0.1}s` }}>
-                <h3 style={{ color: '#c9a227', marginBottom: '0.5rem' }}>{classic.name}</h3>
-                <p style={{ color: '#888', fontSize: '0.85rem', margin: '0.5rem 0' }}>{classic.author} · {classic.period}</p>
-                <p className={styles.cardDesc}>{classic.desc}</p>
+            {books.map((b, i) => (
+              <div key={b.name} className={styles.card}>
+                <h3 style={{ color: '#c9a227', margin: '0 0 0.25rem' }}>{b.name}</h3>
+                <p style={{ color: '#888', fontSize: '0.8rem', margin: '0 0 0.5rem' }}>{b.type}</p>
+                <p className={styles.cardDesc}>{b.desc}</p>
               </div>
             ))}
           </div>
