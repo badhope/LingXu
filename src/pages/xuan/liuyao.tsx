@@ -47,7 +47,7 @@ export default function LiuyaoPage() {
                   <div key={i} style={{
                     width: '60px', height: '60px',
                     borderRadius: '50%',
-                    background: c === 6 || c === 7 ? '#c9a227' : '#4ade80',
+                    background: c === 6 || c === 9 ? '#c9a227' : '#4ade80',
                     border: '2px solid #c9a227',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '0.9rem', fontWeight: 'bold', color: '#fff'

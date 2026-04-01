@@ -573,9 +573,9 @@ export default function HomePage() {
         {/* 底部快捷导航 */}
         <nav className={styles.quickNav}>
           {[
-            { href: '/search', icon: '🔍', text: '搜索' },
-            { href: '/bookmarks', icon: '📜', text: '收藏' },
-            { href: '/profile', icon: '👤', text: '我的' },
+            { href: '/tian', icon: '🌟', text: '天时' },
+            { href: '/xuan', icon: '☯', text: '玄学' },
+            { href: '/lishi', icon: '📜', text: '历史' },
             { href: '/about', icon: 'ℹ️', text: '关于' },
           ].map((link, i) => (
             <motion.div

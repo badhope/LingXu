@@ -193,7 +193,6 @@ export default function Layout({
             </p>
             <div className={styles.footerLinks}>
               <Link href="/about">关于</Link>
-              <Link href="/changelog">更新日志</Link>
               <a href="https://github.com/badhope/LingXu" target="_blank" rel="noopener noreferrer">
                 GitHub
               </a>
