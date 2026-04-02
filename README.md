@@ -1,212 +1,282 @@
-# 灵墟 · LingXu
+<!-- Powered by AI Agent -->
+<!-- Immersive Chinese Metaphysics Archive -->
+
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=50&duration=4000&pause=1000&color=c9a227&background=0F0F23&center=true&vCenter=true&multiline=true&width=900&height=100&lines=LingXu%20~%20Archive%20of%20Lost%20Cultivation" alt="LingXu - Archive of Lost Cultivation">
+</p>
+
+<p align="center">
+  <a href="https://github.com/badhope/LingXu">
+    <img src="https://img.shields.io/badge/Version-v2.0.0-c9a227?style=for-the-badge" alt="Version">
+  </a>
+  <a href="https://github.com/badhope/LingXu/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-gold?style=for-the-badge" alt="License">
+  </a>
+  <a href="https://badhope.github.io/LingXu">
+    <img src="https://img.shields.io/badge/Web-Online-green?style=for-the-badge" alt="Web">
+  </a>
+  <a href="https://github.com/badhope/LingXu/stargazers">
+    <img src="https://img.shields.io/github/stars/badhope/LingXu?style=for-the-badge&color=c9a227" alt="Stars">
+  </a>
+</p>
 
 <div align="center">
-  
-  ![灵墟 Logo](./docs/images/logo.png)
-  
-  **末法时代 · 失落修行文明档案馆**
-  
-  *Archive of a Lost Cultivation Civilization*
-  
-  [![GitHub](https://img.shields.io/badge/GitHub-badhope%2FLingXu-181717?style=flat&logo=github)](https://github.com/badhope/LingXu)
-  [![License](https://img.shields.io/badge/License-MIT-c9a227?style=flat)](./LICENSE)
-  [![Version](https://img.shields.io/badge/Version-2.0.0-c9a227?style=flat)](./CHANGELOG.md)
-  [![Stars](https://img.shields.io/github/stars/badhope/LingXu?style=flat&color=c9a227)](https://github.com/badhope/LingXu/stargazers)
-  
+
+```
+╔══════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║       ██╗   ██╗███╗   ███╗██████╗ ███████╗ ██████╗ ███╗   ██╗           ║
+║       ██║   ██║████╗ ████║██╔══██╗██╔════╝██╔═══██╗████╗  ██║           ║
+║       ██║   ██║██╔████╔██║██████╔╝█████╗  ██║   ██║██╔██╗ ██║           ║
+║       ╚██╗ ██╔╝██║╚██╔╝██║██╔═══╝ ██╔══╝  ██║   ██║██║╚██╗██║           ║
+║        ╚████╔╝ ██║ ╚═╝ ██║██║     ███████╗╚██████╔╝██║ ╚████║           ║
+║         ╚═══╝  ╚═╝     ╚═╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝           ║
+║                                                                                ║
+║                     灵墟 · Archive of Lost Cultivation                        ║
+║                                                                                ║
+║                    末法时代 · 失落修行文明档案馆                                 ║
+║                                                                                ║
+╚══════════════════════════════════════════════════════════════════════════════════════╝
+```
+
 </div>
 
 ---
 
-## 🌟 项目简介
+## 🎯 What is LingXu?
 
-**灵墟**是一个沉浸式的中国玄学文化数字档案，探索修行文明的兴衰变迁。
+**LingXu** (灵墟, "Spirit Ruins") is an immersive digital archive exploring **Chinese metaphysics** and the rise and fall of cultivation civilizations.
 
-公元2026年，末法时代。万年来灵气衰落，历史被封锁，世人忘却了那些曾是真实的奇人异事——老子飞升、庄子化蝶、列子御风...那些不是神话，而是真实存在的修行者。
+> *In the year 2026 of the final age,灵气 (spiritual energy) has declined for millennia. History is sealed. People have forgotten those real cultivators—Laozi flying to heaven, Zhuangzi transforming into a butterfly... These are not myths, but real cultivators who once existed.*
 
-灵墟档案馆致力于记录这些被遗忘的修行文明，探索天地玄黄、宇宙洪荒的奥秘。
-
-### ✨ 特色功能
-
-- 🌌 **沉浸式体验** - WebGL 3D 星空、粒子系统、水墨动态背景
-- ☯️ **玄学工具** - 易经八卦、八字命理、风水罗盘、符箓生成
-- 📜 **丰富内容** - 八大模块、数百个子页面、详尽解读
-- 🎮 **交互功能** - 每日签到、占卜大厅、修炼模拟器
-- 🌙 **神秘玄幻** - 仙侠风格界面，深邃的文化氛围
+> **灵墟档案馆** is dedicated to preserving these forgotten cultivation civilizations and exploring the mysteries of heaven and earth.
 
 ---
 
-## 🗺️ 八大模块
+## ✨ Key Features
 
-| 模块 | 描述 | 内容 |
-|------|------|------|
-| **天** | 天道运行，星辰变化 | 星宿、运势、节气、占卜 |
-| **地** | 山川地理，风水堪舆 | 风水、罗盘、龙脉、地理 |
-| **玄** | 易经八卦，符箓命理 | 易经、八字、占卜、符箓 |
-| **黄** | 千古兴亡，秘辛档案 | 朝代、人物、秘辛、文献 |
-| **宇** | 万界苍茫，空间层次 | 三界、洞天、维度、秘界 |
-| **宙** | 时间长河，轮回因果 | 轮回、因果、时光、预言 |
-| **洪** | 神怪异兽，洪荒神话 | 神兽、妖魔、传说、图腾 |
-| **荒** | 失传秘术，失落文明 | 功法、丹药、法宝、秘室 |
+| Feature | Description | Status |
+|---------|-------------|--------|
+| 🌌 **Immersive Experience** | WebGL 3D starfield, particle systems, ink-wash backgrounds | ✅ |
+| ☯️ **Metaphysics Tools** | Yijing divination, Bazi fortune-telling, Feng Shui compass, Talisman generation | ✅ |
+| 📜 **Rich Content** | Eight modules, hundreds of sub-pages, detailed interpretations | ✅ |
+| 🎮 **Interactive Features** | Daily check-in, divination hall, cultivation simulator | ✅ |
+| 🌙 **Mystical Design** | Xianxia-style interface, profound cultural atmosphere | ✅ |
+| 🎨 **3D Effects** | Three.js powered visualizations | ✅ |
 
 ---
 
-## 🚀 快速开始
+## 🗺️ Eight Modules
 
-### 在线访问
+| Module | Description | Content |
+|--------|-------------|---------|
+| ☁️ **天 (Heaven)** | Celestial operations, star changes | Constellations, fortune, solar terms, divination |
+| 🏔️ **地 (Earth)** | Geography, Feng Shui | Geomancy, compass, dragon veins, geography |
+| 🔮 **玄 (Mystery)** | Yijing, Ba Gua, talismans | I Ching, Bazi, divination, talismans |
+| 📜 **黄 (Yellow)** | Ancient history, secret archives | Dynasties, figures, secrets, documents |
+| 🌌 **宇 (Cosmos)** | Multi-layered realms | Three realms, cave heavens, dimensions |
+| ⏳ **宙 (Time)** | River of time, reincarnation | Reincarnation, karma, prophecy |
+| 🐉 **洪 (Flood)** | Mythical beasts, legends | Divine beasts, demons, legends, totems |
+| 🏛️ **荒 (Wasteland)** | Lost techniques, fallen civilization | Cultivation methods, elixirs, artifacts |
 
-[https://badhope.github.io/LingXu](https://badhope.github.io/LingXu)
+---
 
-### 本地运行
+## 🚀 Quick Start
+
+### 🌐 Online Access
+
+**Visit**: [https://badhope.github.io/LingXu](https://badhope.github.io/LingXu)
+
+### 🖥️ Local Development
 
 ```bash
-# 克隆仓库
+# Clone repository
 git clone https://github.com/badhope/LingXu.git
 cd LingXu
 
-# 安装依赖
+# Install dependencies
 pnpm install
 
-# 启动开发服务器
+# Start dev server
 pnpm dev
 
-# 构建静态网站
+# Build static site
 pnpm build
 
-# 导出静态文件
+# Export static files
 pnpm export
 ```
 
-### 技术栈
+---
 
-- **框架**: Next.js 14 (React 18)
-- **语言**: TypeScript 5
-- **样式**: Tailwind CSS + SCSS Modules
-- **动画**: Framer Motion
-- **3D 渲染**: Three.js + React Three Fiber
-- **状态管理**: Zustand
-- **图表**: ECharts
-- **农历计算**: lunar-javascript
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 14 (React 18) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS + SCSS Modules |
+| Animation | Framer Motion |
+| 3D Rendering | Three.js + React Three Fiber |
+| State | Zustand |
+| Charts | ECharts |
+| Calendar | lunar-javascript |
 
 ---
 
-## 📖 项目结构
+## 🎨 Design Philosophy
+
+### Visual Style
+
+| Element | Value |
+|--------|-------|
+| Primary Color | Gold (#c9a227) |
+| Secondary Color | Mystic Black (#1a1a2e) |
+| Accent | Glowing stars effect |
+| Atmosphere | Mysterious, profound, Xianxia-inspired |
+
+### Animation System
+
+| Type | Description |
+|------|-------------|
+| **Particle Systems** | Starfield, light particles, dragon-shaped particles |
+| **Orbital Systems** | Rotating orbits, symbol encirclement |
+| **Taiji Diagram** | Rotation, glow, interaction |
+| **Transitions** | Page transitions, element entrances |
+
+### Responsive Design
+
+| Platform | Experience |
+|---------|------------|
+| Desktop | Full experience |
+| Tablet | Adaptive layout |
+| Mobile | Simplified animations, touch optimization |
+
+---
+
+## 🌐 API Integration
+
+LingXu integrates multiple free APIs:
+
+| Type | API | Usage |
+|------|-----|-------|
+| Astronomy | NASA API | Daily astronomy images, star maps |
+| Weather | Qweather | Solar terms, weather queries |
+| Calendar | Public Calendar API | Holidays, lunar conversion |
+| Constellation | Built-in algorithms | Constellation calculation, fortune generation |
+
+> Note: Some features use local algorithms, no external API required
+
+---
+
+## 📂 Project Structure
 
 ```
 LingXu/
 ├── src/
-│   ├── components/          # 组件
-│   │   ├── background/      # 背景组件（星空、轨道）
-│   │   ├── interactive/     # 交互组件（太极、八卦）
-│   │   ├── layout/          # 布局组件
-│   │   └── splash/          # 启动页
-│   ├── hooks/               # 自定义 Hooks
-│   ├── lib/                 # 工具库
-│   │   ├── constants.ts     # 常量配置
-│   │   └── utils.ts         # 工具函数
-│   ├── pages/               # 页面路由
-│   │   ├── index.tsx        # 入口页
-│   │   ├── home.tsx         # 主页
-│   │   ├── tian.tsx         # 天时模块
-│   │   ├── di.tsx           # 地理模块
-│   │   ├── xuan.tsx         # 玄学模块
-│   │   ├── huang.tsx        # 历史模块
-│   │   ├── yu.tsx           # 空间模块
-│   │   ├── zhou.tsx         # 时间模块
-│   │   ├── hong.tsx         # 洪荒模块
-│   │   └── huang-lost.tsx   # 失落模块
-│   ├── stores/              # 状态管理
-│   └── styles/              # 全局样式
-├── public/                  # 静态资源
-├── docs/                    # 文档
-└── [配置文件]
+│   ├── components/          # Components
+│   │   ├── background/    # Background (starfield, orbits)
+│   │   ├── interactive/   # Interactive (Taiji, Ba Gua)
+│   │   ├── layout/        # Layout components
+│   │   └── splash/        # Splash screen
+│   ├── hooks/            # Custom hooks
+│   ├── lib/              # Utilities
+│   │   ├── constants.ts   # Constants
+│   │   └── utils.ts      # Helpers
+│   ├── pages/            # Route pages
+│   │   ├── index.tsx    # Entry
+│   │   ├── home.tsx      # Home
+│   │   ├── tian.tsx      # Heaven module
+│   │   ├── di.tsx        # Earth module
+│   │   ├── xuan.tsx      # Mystery module
+│   │   ├── huang.tsx     # History module
+│   │   ├── yu.tsx        # Space module
+│   │   ├── zhou.tsx      # Time module
+│   │   ├── hong.tsx      # Legends module
+│   │   └── huang-lost.tsx # Lost module
+│   ├── stores/           # State management
+│   └── styles/           # Global styles
+├── public/               # Static assets
+├── docs/                 # Documentation
+└── [config files]
 ```
 
 ---
 
-## 🎨 设计理念
+## 🤝 Contributing
 
-### 视觉风格
+All forms of contribution are welcome!
 
-- **主题色**: 金色 (#c9a227) + 玄色 (#1a1a2e)
-- **点缀**: 发光星辰效果
-- **氛围**: 神秘、深邃、仙侠
+### Ways to Contribute
 
-### 动画系统
+| Type | Description |
+|------|-------------|
+| 📝 **Content** | Add metaphysics knowledge, historical data, mythical stories |
+| 💻 **Code** | Fix bugs, add features, optimize performance |
+| 🎨 **Design** | Improve UI, add animations, design assets |
+| 🌐 **Translation** | Translate to other languages |
 
-- 粒子系统: 星空、光粒子、龙形粒子
-- 轨道系统: 旋转轨道、符号环绕
-- 太极图: 旋转、发光、交互
-- 过渡动画: 页面切换、元素入场
+### Contribution Process
 
-### 响应式设计
-
-- 桌面端: 完整体验
-- 平板端: 自适应布局
-- 移动端: 简化动画、触控优化
-
----
-
-## 🌐 API 集成
-
-灵墟整合了多个免费开源 API：
-
-| 类型 | API | 用途 |
-|------|-----|------|
-| 天文 | NASA API | 每日天文图片、星图数据 |
-| 天气 | 和风天气 | 节气、天气查询 |
-| 日历 | 公共日历 API | 节假日、农历转换 |
-| 星座 | 内置算法 | 星座计算、运势生成 |
-
-> 注：部分功能使用本地算法实现，无需外部 API
+1. Fork this repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push branch (`git push origin feature/amazing-feature`)
+5. Submit Pull Request
 
 ---
 
-## 🤝 参与贡献
+## 📄 License
 
-欢迎所有形式的贡献！
+This project is licensed under **MIT License** - see [LICENSE](LICENSE).
 
-### 贡献方式
-
-1. **内容贡献** - 添加玄学知识、历史资料、神话故事
-2. **代码贡献** - 修复 Bug、添加功能、优化性能
-3. **设计贡献** - 改进 UI、添加动画、设计素材
-4. **翻译贡献** - 翻译成其他语言
-
-### 贡献流程
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送分支 (`git push origin feature/amazing-feature`)
-5. 提交 Pull Request
+> ⚠️ **Disclaimer**:
+> - This project is for entertainment and learning purposes only
+> - Metaphysics content is from traditional culture and does not represent scientific views
+> - If there is any infringement, please contact the author for removal
 
 ---
 
-## 📄 许可证
+## 📞 Contact
 
-本项目基于 [MIT 许可证](./LICENSE) 开源。
-
-**注意**: 
-- 本项目仅供娱乐和学习，不构成任何形式的预测或建议
-- 玄学内容源自传统文化，不代表科学观点
-- 如有侵权，请联系作者删除
-
----
-
-## 📞 联系方式
-
-- **GitHub**: [https://github.com/badhope/LingXu](https://github.com/badhope/LingXu)
-- **问题反馈**: [Issues](https://github.com/badhope/LingXu/issues)
-- **功能建议**: [Discussions](https://github.com/badhope/LingXu/discussions)
+| Channel | Link |
+|---------|------|
+| 🐛 **Bug Reports** | [GitHub Issues](https://github.com/badhope/LingXu/issues) |
+| 💬 **Discussions** | [GitHub Discussions](https://github.com/badhope/LingXu/discussions) |
+| 🌐 **Homepage** | [https://badhope.github.io/LingXu](https://badhope.github.io/LingXu) |
 
 ---
 
-<div align="center">
-  
-  **愿你在灵墟中找到属于自己的修行之路**
-  
-  *May you find your own path of cultivation in LingXu*
-  
-  ![Star](https://img.shields.io/github/stars/badhope/LingXu?style=social)
-  
-</div>
+<p align="center">
+  <strong>🙏 May you find your own path of cultivation in LingXu 🙏</strong>
+</p>
+
+<p align="center">
+  <em>"愿你在灵墟中找到属于自己的修行之路"</em>
+</p>
+
+<p align="center">
+  <em>"May you find your own path of cultivation in LingXu"</em>
+</p>
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/badhope">LingXu Team</a>
+</p>
+
+---
+
+<p align="center">
+  <a href="https://github.com/badhope/LingXu">Home</a> •
+  <a href="https://github.com/badhope/LingXu/releases">Releases</a> •
+  <a href="https://github.com/badhope/LingXu/issues">Issues</a> •
+  <a href="https://github.com/badhope/LingXu/discussions">Discussions</a>
+</p>
+
+---
+
+<!-- MARKDOWN BADGES -->
+
+[version-shield]: https://img.shields.io/badge/Version-v2.0.0-c9a227?style=for-the-badge
+[license-shield]: https://img.shields.io/badge/License-MIT-gold?style=for-the-badge
+[web-shield]: https://img.shields.io/badge/Web-Online-green?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/badhope/LingXu?style=for-the-badge&color=c9a227
