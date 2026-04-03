@@ -1,30 +1,24 @@
 /**
- * 灵墟 - 主页
+ * 灵墟首页 - 移动端优化版
  */
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/router'
-import Layout from '@/components/layout/Layout'
-import HomePage from '@/components/layout/HeroSection'
-import { useAppStore } from '@/stores/appStore'
+import HeroSection from '@/components/layout/HeroSection'
+import styles from './home.module.scss'
 
-export default function Home() {
-  const router = useRouter()
-  const isSplashCompleted = useAppStore(state => state.isSplashCompleted)
-  
-  // 如果未完成启动，跳转到启动页
+export default function HomePage() {
+  // 预加载字体
   useEffect(() => {
-    if (!isSplashCompleted) {
-      router.replace('/')
-    }
-  }, [isSplashCompleted, router])
-  
+    // 预加载楷体字体
+    const link = document.createElement('link')
+    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&display=swap'
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+  }, [])
+
   return (
-    <Layout 
-      title="首页"
-      transparentNav
-    >
-      <HomePage />
-    </Layout>
+    <main className={styles.main}>
+      <HeroSection />
+    </main>
   )
 }

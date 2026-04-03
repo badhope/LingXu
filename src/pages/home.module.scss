@@ -1,0 +1,8 @@
+.main {
+  min-height: 100vh;
+  background: #0a0a0f;
+  
+  // 移动端优化
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}

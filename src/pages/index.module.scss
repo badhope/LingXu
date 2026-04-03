@@ -1,0 +1,70 @@
+// 启动画面样式
+
+.splash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0f;
+  z-index: 9999;
+}
+
+.splashRune {
+  font-size: 4rem;
+  color: #c9a227;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+  
+  span {
+    display: inline-block;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 3rem;
+  }
+}
+
+.splashTitle {
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 300;
+  font-family: "STKaiti", "KaiTi", "楷体", serif;
+  color: #c9a227;
+  letter-spacing: 0.3em;
+  margin: 0 0 1rem;
+  text-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+  
+  background: linear-gradient(
+    135deg,
+    #f0d78c 0%,
+    #c9a227 50%,
+    #f0d78c 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.splashSubtitle {
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  color: #888;
+  letter-spacing: 0.15em;
+  margin: 0 0 2rem;
+}
+
+.splashLoader {
+  width: 200px;
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    width: 150px;
+  }
+}

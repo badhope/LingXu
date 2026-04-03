@@ -1,80 +1,51 @@
 /**
- * 灵墟 - 增强版首页组件
- * 包含更多动画、特效和交互
+ * 灵墟 - 移动端优化版首页组件
+ * 优化：移动端适配、动画性能、古风效果
  */
 
 'use client'
 
-import { useEffect, useRef, useMemo, useState } from 'react'
+import { useEffect, useRef, useMemo, useState, useCallback } from 'react'
 import Link from 'next/link'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion'
 import { MAIN_MODULES, SITE_CONFIG } from '@/lib/constants'
 import { withBase } from '@/lib/utils'
 import styles from './HomePage.module.scss'
 
-// 装饰符号动画
-function FloatingSymbol({ symbol, delay }: { symbol: string; delay: number }) {
-  return (
-    <motion.span
-      className={styles.floatingSymbol}
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ 
-        opacity: [0.3, 0.8, 0.3],
-        scale: [1, 1.2, 1],
-        rotate: [0, 15, -15, 0]
-      }}
-      transition={{ 
-        duration: 4, 
-        delay, 
-        repeat: Infinity,
-        ease: "easeInOut"
-      }}
-      style={{ 
-        position: 'absolute',
-        fontSize: '1.5rem',
-        color: '#c9a227',
-        textShadow: '0 0 10px rgba(201,162,39,0.5)'
-      }}
-    >
-      {symbol}
-    </motion.span>
-  )
+// 检测设备性能
+function useDevicePerformance() {
+  const [isLowPerformance, setIsLowPerformance] = useState(false)
+  
+  useEffect(() => {
+    // 检测是否是移动设备
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    // 检测设备内存（如果可用）
+    const lowMemory = (navigator as any).deviceMemory ? (navigator as any).deviceMemory < 4 : false
+    // 检测硬件并发（如果可用）
+    const lowCores = (navigator as any).hardwareConcurrency ? (navigator as any).hardwareConcurrency < 4 : false
+    
+    setIsLowPerformance(isMobile || lowMemory || lowCores)
+  }, [])
+  
+  return isLowPerformance
 }
 
-// 玄幻标题组件
-function FantasyTitle({ text }: { text: string }) {
-  return (
-    <h1 className={styles.fantasyTitle}>
-      {text.split('').map((char, i) => (
-        <motion.span
-          key={i}
-          className={styles.titleChar}
-          initial={{ opacity: 0, y: -50, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          transition={{ 
-            duration: 0.8, 
-            delay: 0.3 + i * 0.15,
-            ease: [0.6, 0.01, -0.05, 0.9]
-          }}
-          style={{
-            display: 'inline-block',
-            textShadow: `
-              0 0 10px rgba(201,162,39,0.8),
-              0 0 20px rgba(201,162,39,0.5),
-              0 0 40px rgba(201,162,39,0.3),
-              0 0 80px rgba(201,162,39,0.1)
-            `
-          }}
-        >
-          {char}
-        </motion.span>
-      ))}
-    </h1>
-  )
+// 检测移动端
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+  
+  return isMobile
 }
 
-// 光粒子组件
-function LightParticle({ index }: { index: number }) {
+// 优化的光粒子组件 - 移动端减少数量
+function LightParticle({ index, isLowPerformance }: { index: number; isLowPerformance: boolean }) {
   const particleStyle = useMemo(() => ({
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
@@ -84,521 +55,508 @@ function LightParticle({ index }: { index: number }) {
     height: `${1 + Math.random() * 2}px`,
   }), [])
 
+  if (isLowPerformance) return null
+
   return <span className={styles.particle} style={particleStyle} />
 }
 
-// 模块卡片组件 - 增强版
+// 古风标题组件 - 篆书风格
+function AncientTitle({ isMobile }: { isMobile: boolean }) {
+  return (
+    <div className={styles.ancientTitleWrapper}>
+      {/* 环绕光环 */}
+      <motion.div 
+        className={styles.orbitRing}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      >
+        {['✦', '✧', '⚝', '❂', '✴', '❃'].map((symbol, i) => (
+          <span 
+            key={i} 
+            className={styles.orbitSymbol}
+            style={{ 
+              transform: `rotate(${i * 60}deg) translateX(${isMobile ? '120px' : '180px'}) rotate(-${i * 60}deg)` 
+            }}
+          >
+            {symbol}
+          </span>
+        ))}
+      </motion.div>
+      
+      {/* 朦胧烟雾效果 */}
+      <div className={styles.mistEffect}>
+        <motion.div 
+          className={styles.mistLayer}
+          animate={{ 
+            opacity: [0.1, 0.3, 0.1],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+        <motion.div 
+          className={styles.mistLayer}
+          animate={{ 
+            opacity: [0.1, 0.2, 0.1],
+            scale: [1.1, 1, 1.1]
+          }}
+          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+        />
+      </div>
+      
+      {/* 云朵装饰 */}
+      <div className={styles.cloudDecor}>
+        <motion.div 
+          className={styles.cloud}
+          animate={{ x: [0, 30, 0], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div 
+          className={styles.cloud}
+          animate={{ x: [0, -20, 0], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+        />
+      </div>
+      
+      {/* 主标题 - 古体字风格 */}
+      <motion.h1 
+        className={styles.ancientTitle}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
+        {/* 篆书风格字体 */}
+        <motion.span 
+          className={styles.ancientChar}
+          initial={{ opacity: 0, y: -50, filter: 'blur(20px)' }}
+          animate={{ 
+            opacity: 1, 
+            y: 0, 
+            filter: 'blur(0px)'
+          }}
+          transition={{ duration: 1.2, delay: 0.3 }}
+          whileHover={{ 
+            scale: 1.1,
+            textShadow: '0 0 60px rgba(201,162,39,1), 0 0 100px rgba(201,162,39,0.5)'
+          }}
+        >
+          靈
+        </motion.span>
+        <motion.span 
+          className={styles.ancientChar}
+          initial={{ opacity: 0, y: -50, filter: 'blur(20px)' }}
+          animate={{ 
+            opacity: 1, 
+            y: 0, 
+            filter: 'blur(0px)'
+          }}
+          transition={{ duration: 1.2, delay: 0.5 }}
+          whileHover={{ 
+            scale: 1.1,
+            textShadow: '0 0 60px rgba(201,162,39,1), 0 0 100px rgba(201,162,39,0.5)'
+          }}
+        >
+          墟
+        </motion.span>
+        
+        {/* 呼吸光晕 */}
+        <motion.div 
+          className={styles.breathGlow}
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3]
+          }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+      </motion.h1>
+      
+      {/* 副标题 */}
+      <motion.p 
+        className={styles.ancientSubtitle}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+      >
+        <motion.span
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          天地玄黄
+        </motion.span>
+        <span className={styles.separator}>·</span>
+        <motion.span
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+        >
+          宇宙洪荒
+        </motion.span>
+      </motion.p>
+    </div>
+  )
+}
+
+// 优化的模块卡片组件
 function ModuleCard({ 
   module, 
-  index 
+  index,
+  isMobile
 }: { 
   module: typeof MAIN_MODULES[number]
-  index: number 
+  index: number
+  isMobile: boolean
 }) {
   const [isHovered, setIsHovered] = useState(false)
   
   return (
     <motion.div
       className={styles.moduleCard}
-      initial={{ opacity: 0, y: 50, rotateX: -15 }}
-      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
       transition={{ 
-        delay: index * 0.1, 
-        duration: 0.6,
-        type: "spring",
-        stiffness: 100
+        delay: index * 0.08, 
+        duration: 0.5
       }}
-      whileHover={{ 
-        y: -15, 
-        boxShadow: `
-          0 30px 60px rgba(201, 162, 39, 0.3),
-          0 0 30px rgba(201, 162, 39, 0.2),
-          inset 0 0 30px rgba(201, 162, 39, 0.05)
-        `
-      }}
+      whileHover={!isMobile ? { 
+        y: -10, 
+        boxShadow: '0 20px 40px rgba(201, 162, 39, 0.2)'
+      } : {}}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
       <Link href={withBase(`/${module.id}`)} className={styles.cardLink}>
-        <motion.div 
-          className={styles.cardInner}
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          {/* 装饰边框 - 悬停时发光 */}
-          <motion.div 
-            className={styles.cardCorner}
-            style={{ color: module.color }}
-            animate={isHovered ? { scale: 1.2, opacity: 1 } : { scale: 1, opacity: 0.5 }}
-          >
-            ◆
-          </motion.div>
-          
-          {/* 字符带光晕效果 */}
+        <div className={styles.cardInner}>
+          {/* 字符 */}
           <motion.div 
             className={styles.cardChar}
             style={{ color: module.color }}
-            animate={isHovered ? { 
-              textShadow: `0 0 20px ${module.color}, 0 0 40px ${module.color}, 0 0 60px ${module.color}`
-            } : { 
-              textShadow: `0 0 10px ${module.color}` 
-            }}
+            animate={isHovered && !isMobile ? { 
+              scale: 1.1,
+              textShadow: `0 0 30px ${module.color}`
+            } : {}}
           >
             {module.char}
           </motion.div>
           
           {/* 信息 */}
           <div className={styles.cardInfo}>
-            <motion.h3 
-              className={styles.cardName}
-              style={{ color: module.color }}
-              whileHover={{ scale: 1.05 }}
-            >
+            <h3 className={styles.cardName} style={{ color: module.color }}>
               {module.name}
-            </motion.h3>
+            </h3>
             <p className={styles.cardPinyin}>{module.pinyin}</p>
           </div>
           
           {/* 描述 */}
           <p className={styles.cardDesc}>{module.description}</p>
           
-          {/* 底部装饰 */}
-          <div className={styles.cardDecor}>
-            <motion.span 
-              className={styles.cardLine} 
-              style={{ background: module.color }}
-              animate={isHovered ? { width: '100%' } : { width: '30%' }}
-              transition={{ duration: 0.3 }}
-            />
-            <motion.span 
-              className={styles.cardDot} 
-              style={{ background: module.color }}
-              animate={isHovered ? { scale: 1.5 } : { scale: 1 }}
-            >
-              ●
-            </motion.span>
-            <motion.span 
-              className={styles.cardLine} 
-              style={{ background: module.color }}
-              animate={isHovered ? { width: '100%' } : { width: '30%' }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-          
-          {/* 悬停时出现的箭头 */}
-          <motion.div
-            className={styles.cardArrow}
-            initial={{ opacity: 0, x: -10 }}
-            animate={isHovered ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            →
-          </motion.div>
-        </motion.div>
+          {/* 底部装饰线 */}
+          <motion.div 
+            className={styles.cardLine}
+            style={{ background: module.color }}
+            animate={isHovered && !isMobile ? { scaleX: 1 } : { scaleX: 0.3 }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
       </Link>
     </motion.div>
   )
 }
 
-// 彩蛋组件 - 点击出现特效
-function EasterEgg({ children }: { children: React.ReactNode }) {
-  const [clicks, setClicks] = useState<{x: number, y: number, symbol: string}[]>([])
-  
-  const symbols = ['✦', '❋', '✧', '◈', '❃', '⚝', '✴', '❂']
-  
-  const handleClick = (e: React.MouseEvent) => {
-    const symbol = symbols[Math.floor(Math.random() * symbols.length)]
-    setClicks([...clicks, { x: e.clientX, y: e.clientY, symbol }])
-    setTimeout(() => {
-      setClicks(prev => prev.slice(1))
-    }, 1000)
-  }
+// 墨迹装饰组件
+function InkDecor() {
+  return (
+    <div className={styles.inkDecor}>
+      {[...Array(5)].map((_, i) => (
+        <motion.div
+          key={i}
+          className={styles.inkSpot}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ 
+            opacity: [0.05, 0.1, 0.05],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ 
+            duration: 3 + i,
+            delay: i * 0.5,
+            repeat: Infinity
+          }}
+          style={{
+            left: `${10 + i * 20}%`,
+            top: `${20 + (i % 3) * 30}%`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// 香火烟雾效果
+function IncenseSmoke({ isLowPerformance }: { isLowPerformance: boolean }) {
+  if (isLowPerformance) return null
   
   return (
-    <div onClick={handleClick} style={{ position: 'relative' }}>
-      {children}
-      {clicks.map((click, i) => (
+    <div className={styles.incenseSmoke}>
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className={styles.smokeParticle}
+          initial={{ 
+            y: 0, 
+            opacity: 0,
+            x: (i - 4) * 30
+          }}
+          animate={{
+            y: -100,
+            opacity: [0, 0.3, 0],
+            x: (i - 4) * 30 + (Math.random() - 0.5) * 20
+          }}
+          transition={{
+            duration: 3,
+            delay: i * 0.3,
+            repeat: Infinity,
+            ease: "easeOut"
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// 烛光摇曳效果
+function CandleGlow({ isLowPerformance }: { isLowPerformance: boolean }) {
+  if (isLowPerformance) return null
+  
+  return (
+    <motion.div 
+      className={styles.candleGlow}
+      animate={{
+        boxShadow: [
+          '0 0 20px rgba(255, 180, 100, 0.3)',
+          '0 0 40px rgba(255, 180, 100, 0.5)',
+          '0 0 20px rgba(255, 180, 100, 0.3)'
+        ],
+        scale: [1, 1.05, 1]
+      }}
+      transition={{
+        duration: 1.5,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+  )
+}
+
+// 符文闪烁效果
+function RuneFlicker({ isLowPerformance }: { isLowPerformance: boolean }) {
+  const runes = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷']
+  
+  if (isLowPerformance) return null
+  
+  return (
+    <div className={styles.runeFlicker}>
+      {runes.map((rune, i) => (
         <motion.span
           key={i}
-          initial={{ opacity: 1, scale: 0, x: click.x, y: click.y }}
-          animate={{ 
-            opacity: 0, 
-            scale: 2, 
-            y: click.y - 100,
-            x: click.x + (Math.random() - 0.5) * 50
+          className={styles.rune}
+          animate={{
+            opacity: [0.1, 0.5, 0.1],
+            textShadow: [
+              '0 0 5px rgba(201,162,39,0.3)',
+              '0 0 15px rgba(201,162,39,0.6)',
+              '0 0 5px rgba(201,162,39,0.3)'
+            ]
           }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          style={{
-            position: 'fixed',
-            fontSize: '1.5rem',
-            color: '#c9a227',
-            pointerEvents: 'none',
-            zIndex: 9999
+          transition={{
+            duration: 2,
+            delay: i * 0.2,
+            repeat: Infinity
           }}
         >
-          {click.symbol}
+          {rune}
         </motion.span>
       ))}
     </div>
   )
 }
 
+// 移动端底部导航
+function MobileNav({ isVisible }: { isVisible: boolean }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.nav 
+          className={styles.mobileNav}
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          exit={{ y: 100 }}
+        >
+          <motion.button
+            className={styles.navToggle}
+            onClick={() => setIsExpanded(!isExpanded)}
+            whileTap={{ scale: 0.95 }}
+          >
+            <motion.span
+              animate={{ rotate: isExpanded ? 45 : 0 }}
+            >
+              +
+            </motion.span>
+          </motion.button>
+          
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div 
+                className={styles.navMenu}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+              >
+                {[
+                  { href: '/tian', icon: '☁️', text: '天' },
+                  { href: '/di', icon: '🏔️', text: '地' },
+                  { href: '/xuan', icon: '☯', text: '玄' },
+                  { href: '/huang', icon: '📜', text: '黄' },
+                ].map((link, i) => (
+                  <Link 
+                    key={link.href} 
+                    href={link.href} 
+                    className={styles.navItem}
+                    onClick={() => setIsExpanded(false)}
+                  >
+                    <motion.span
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                    >
+                      {link.icon}
+                    </motion.span>
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.nav>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isLowPerformance = useDevicePerformance()
+  const isMobile = useIsMobile()
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start'],
   })
   
-  // 弹簧动画
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 })
+  // 移动端禁用视差
+  const y = useTransform(scrollYProgress, [0, 1], isMobile ? ['0%', '0%'] : ['0%', '30%'])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   
-  // 视差效果
-  const y = useTransform(smoothProgress, [0, 1], ['0%', '50%'])
-  const opacity = useTransform(smoothProgress, [0, 0.5], [1, 0])
-  
-  // 装饰符号
-  const symbols = useMemo(() => 
-    ['☯', '⚝', '✧', '❂', '⬡', '☆', '✦', '◈', '❃', '⚹', '⟡', '⊛', '✴', '⬢', '❋', '✵'],
-    []
-  )
-  
-  // 玄幻标题
-  const fantasyChars = useMemo(() => ['灵', '墟'], [])
+  // 粒子数量根据性能调整
+  const particleCount = isLowPerformance ? 0 : (isMobile ? 15 : 30)
   
   return (
-    <EasterEgg>
-      <div ref={containerRef} className={styles.container}>
-        {/* Hero 区域 */}
-        <motion.section 
-          className={styles.heroSection} 
-          style={{ y, opacity }}
+    <div ref={containerRef} className={styles.container}>
+      {/* Hero 区域 */}
+      <motion.section 
+        className={styles.heroSection} 
+        style={{ y: isMobile ? 0 : y, opacity }}
+      >
+        {/* 墨迹装饰 */}
+        <InkDecor />
+        
+        {/* 符文闪烁 */}
+        <RuneFlicker isLowPerformance={isLowPerformance} />
+        
+        {/* 香火烟雾 */}
+        <IncenseSmoke isLowPerformance={isLowPerformance} />
+        
+        {/* 烛光 */}
+        <CandleGlow isLowPerformance={isLowPerformance} />
+        
+        {/* 光粒子 - 数量根据性能调整 */}
+        <div className={styles.lightParticles}>
+          {Array.from({ length: particleCount }).map((_, i) => (
+            <LightParticle key={i} index={i} isLowPerformance={isLowPerformance} />
+          ))}
+        </div>
+        
+        {/* 古风标题 */}
+        <AncientTitle isMobile={isMobile} />
+        
+        {/* 标语 */}
+        <motion.p 
+          className={styles.tagline}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
         >
-          {/* 装饰符号 - 背景动画 */}
-          <div className={styles.heroSymbols}>
-            {symbols.map((symbol, i) => (
-              <motion.span
-                key={i}
-                className={styles.heroSymbol}
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: [0.1, 0.3, 0.1],
-                  rotate: [0, 180, 360],
-                  scale: [1, 1.5, 1]
-                }}
-                transition={{ 
-                  duration: 10 + i * 2, 
-                  delay: i * 0.5,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                style={{
-                  position: 'absolute',
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  fontSize: `${0.5 + Math.random() * 1.5}rem`,
-                  color: '#c9a227',
-                }}
-              >
-                {symbol}
-              </motion.span>
-            ))}
-          </div>
-          
-          {/* 光粒子 */}
-          <div className={styles.lightParticles}>
-            {Array.from({ length: 50 }).map((_, i) => (
-              <LightParticle key={i} index={i} />
-            ))}
-          </div>
-          
-          {/* 主标题 - 玄幻效果 */}
-          <motion.div
-            className={styles.heroContent}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-            >
-              <h1 className={styles.mainTitle}>
-                {fantasyChars.map((char, i) => (
-                  <motion.span
-                    key={i}
-                    className={styles.titleChar}
-                    initial={{ opacity: 0, y: -100, filter: 'blur(20px)' }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: 0, 
-                      filter: 'blur(0px)',
-                      textShadow: [
-                        '0 0 10px rgba(201,162,39,0.5)',
-                        '0 0 30px rgba(201,162,39,0.8)',
-                        '0 0 50px rgba(201,162,39,0.5)',
-                        '0 0 30px rgba(201,162,39,0.8)'
-                      ]
-                    }}
-                    transition={{ 
-                      duration: 1.5, 
-                      delay: 0.5 + i * 0.3,
-                      textShadow: {
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }
-                    }}
-                    whileHover={{ 
-                      scale: 1.1,
-                      textShadow: '0 0 60px rgba(201,162,39,1)'
-                    }}
-                    style={{
-                      display: 'inline-block',
-                      cursor: 'default'
-                    }}
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-              </h1>
-            </motion.div>
-            
-            <motion.p 
-              className={styles.subtitle}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
-            >
-              <motion.span
-                animate={{ 
-                  opacity: [0.5, 1, 0.5],
-                  textShadow: ['0 0 5px #c9a227', '0 0 20px #c9a227', '0 0 5px #c9a227']
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                天地玄黄
-              </motion.span>
-              <span className={styles.separator}>·</span>
-              <motion.span
-                animate={{ 
-                  opacity: [0.5, 1, 0.5],
-                  textShadow: ['0 0 5px #c9a227', '0 0 20px #c9a227', '0 0 5px #c9a227']
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              >
-                宇宙洪荒
-              </motion.span>
-            </motion.p>
-            
-            <motion.p 
-              className={styles.tagline}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
-            >
-              {SITE_CONFIG.subtitle}
-            </motion.p>
-          </motion.div>
-          
-          {/* 滚动提示 - 弹跳动画 */}
+          {SITE_CONFIG.subtitle}
+        </motion.p>
+        
+        {/* 滚动提示 */}
+        {!isMobile && (
           <motion.div
             className={styles.scrollIndicator}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 2 }}
           >
             <motion.span 
-              className={styles.scrollText}
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              向下探索
-            </motion.span>
-            <motion.div 
-              className={styles.scrollIcon}
-              animate={{ y: [0, 10, 0] }}
+              animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M12 5v14M19 12l-7 7-7-7"/>
-              </svg>
-            </motion.div>
+              ↓
+            </motion.span>
           </motion.div>
-        </motion.section>
+        )}
+      </motion.section>
+      
+      {/* 模块导航区域 */}
+      <section className={styles.modulesSection}>
+        {/* 标题 */}
+        <motion.div
+          className={styles.sectionHeader}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <h2 className={styles.sectionTitle}>
+            八大修行模块
+          </h2>
+          <p className={styles.sectionSubtitle}>探索失落文明的奥秘</p>
+        </motion.div>
         
-        {/* 模块导航区域 */}
-        <section className={styles.modulesSection}>
-          {/* 装饰线 */}
-          <motion.div
-            className={styles.sectionDecor}
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
-            <div className={styles.decorLine} />
-            <motion.div 
-              className={styles.decorOrnament}
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            >
-              ✦
-            </motion.div>
-            <div className={styles.decorLine} />
-          </motion.div>
-          
-          {/* 标题 */}
-          <motion.div
-            className={styles.sectionHeader}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className={styles.sectionTitle}>
-              <motion.span 
-                className={styles.titlePrefix}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                ◇
-              </motion.span>
-              <span className={styles.titleText}>八大修行模块</span>
-              <motion.span 
-                className={styles.titleSuffix}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              >
-                ◇
-              </motion.span>
-            </h2>
-            <p className={styles.sectionSubtitle}>探索失落文明的奥秘</p>
-          </motion.div>
-          
-          {/* 模块网格 */}
-          <div className={styles.modulesGrid}>
-            {MAIN_MODULES.map((module, index) => (
-              <ModuleCard key={module.id} module={module} index={index} />
-            ))}
-          </div>
-          
-          {/* 诗句横幅 */}
-          <motion.div
-            className={styles.poemBanner}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-          >
-            <p className={styles.poemText}>
-              <motion.span
-                animate={{ 
-                  textShadow: ['0 0 5px #c9a227', '0 0 15px #c9a227', '0 0 5px #c9a227']
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                天行健，君子以自强不息
-              </motion.span>
-              <span className={styles.poemDivider}>｜</span>
-              <motion.span
-                animate={{ 
-                  textShadow: ['0 0 5px #c9a227', '0 0 15px #c9a227', '0 0 5px #c9a227']
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              >
-                地势坤，君子以厚德载物
-              </motion.span>
-            </p>
-          </motion.div>
-        </section>
-        
-        {/* 特色功能区域 */}
-        <section className={styles.featuresSection}>
-          <motion.div
-            className={styles.sectionHeader}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className={styles.sectionTitle}>
-              <span className={styles.titlePrefix}>◇</span>
-              <span className={styles.titleText}>核心功能</span>
-              <span className={styles.titleSuffix}>◇</span>
-            </h2>
-            <p className={styles.sectionSubtitle}>丰富的玄学工具与探索体验</p>
-          </motion.div>
-          
-          <div className={styles.featuresGrid}>
-            {[
-              { icon: '☰', title: '易经八卦', desc: '六十四卦详解，即时占卜' },
-              { icon: '☵', title: '八字命理', desc: '精准命盘分析，大运推演' },
-              { icon: '☲', title: '风水堪舆', desc: '罗盘定位，龙脉探查' },
-              { icon: '☯', title: '修炼模拟', desc: '境界提升，功法修炼' },
-              { icon: '✦', title: '星象观测', desc: '实时星图，星座运势' },
-              { icon: '◈', title: '占卜大厅', desc: '多种占卜方式，趋吉避凶' },
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                className={styles.featureCard}
-                initial={{ opacity: 0, y: 20, rotateX: -15 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ 
-                  y: -8,
-                  boxShadow: '0 20px 40px rgba(201,162,39,0.3)'
-                }}
-              >
-                <motion.span 
-                  className={styles.featureIcon}
-                  animate={{ 
-                    rotate: [0, 10, -10, 0],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  {feature.icon}
-                </motion.span>
-                <h3 className={styles.featureTitle}>{feature.title}</h3>
-                <p className={styles.featureDesc}>{feature.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-        
-        {/* 底部快捷导航 */}
-        <nav className={styles.quickNav}>
-          {[
-            { href: '/tian', icon: '🌟', text: '天时' },
-            { href: '/xuan', icon: '☯', text: '玄学' },
-            { href: '/lishi', icon: '📜', text: '历史' },
-            { href: '/about', icon: 'ℹ️', text: '关于' },
-          ].map((link, i) => (
-            <motion.div
-              key={link.href}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Link href={link.href} className={styles.quickLink}>
-                <motion.span 
-                  className={styles.linkIcon}
-                  whileHover={{ scale: 1.2, rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {link.icon}
-                </motion.span>
-                <span>{link.text}</span>
-              </Link>
-            </motion.div>
+        {/* 模块网格 - 移动端优化 */}
+        <div className={styles.modulesGrid}>
+          {MAIN_MODULES.map((module, index) => (
+            <ModuleCard 
+              key={module.id} 
+              module={module} 
+              index={index}
+              isMobile={isMobile}
+            />
           ))}
-        </nav>
-      </div>
-    </EasterEgg>
+        </div>
+        
+        {/* 诗句横幅 */}
+        <motion.div
+          className={styles.poemBanner}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <p className={styles.poemText}>
+            天行健，君子以自强不息 ｜ 地势坤，君子以厚德载物
+          </p>
+        </motion.div>
+      </section>
+      
+      {/* 移动端底部导航 */}
+      <MobileNav isVisible={isMobile} />
+    </div>
   )
 }
