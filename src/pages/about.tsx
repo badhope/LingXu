@@ -2,66 +2,84 @@
  * 灵墟 - 关于页面
  */
 
+'use client'
+
+import { motion } from 'framer-motion'
 import Layout from '@/components/layout/Layout'
 import styles from './About.module.scss'
 
-export default function AboutPage() {
+const TECHS = [
+  { name: 'Next.js 14', desc: 'React全栈框架', icon: '⚡' },
+  { name: 'TypeScript', desc: '类型安全', icon: '📘' },
+  { name: 'Framer Motion', desc: '动画库', icon: '✨' },
+  { name: 'SCSS Modules', desc: '样式方案', icon: '🎨' },
+]
+
+export default function About() {
   return (
     <Layout title="关于">
       <div className={styles.container}>
-        <header className={styles.header}>
+        {/* 头部 */}
+        <motion.header
+          className={styles.header}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          <div className={styles.icon}>📜</div>
           <h1 className={styles.title}>关于灵墟</h1>
           <p className={styles.subtitle}>末法时代 · 失落修行文明档案馆</p>
-        </header>
+        </motion.header>
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>项目介绍</h2>
-          <div className={styles.infoBox}>
+        {/* 项目简介 */}
+        <motion.section
+          className={styles.section}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+        >
+          <h2 className={styles.sectionTitle}>项目简介</h2>
+          <div className={styles.introCard}>
+            <p>灵墟是一个融合中华传统文化与现代 Web 技术的综合性文化展示平台。</p>
             <p>
-              灵墟是一个沉浸式的中国玄学文化数字档案，致力于探索中华修行文明的兴衰变迁。
-              在这里，你可以了解易经八卦、八字命理、风水堪舆等传统文化的奥秘。
+              项目涵盖八大核心模块：天时、地理、玄学、历史、宇宙、时空、洪荒与失落，
+              每个模块都包含丰富的子功能和交互式体验。
             </p>
+            <p>我们致力于通过现代技术手段，让更多人了解和传承中华优秀传统文化。</p>
           </div>
-        </section>
+        </motion.section>
 
-        <section className={styles.section}>
+        {/* 技术栈 */}
+        <motion.section
+          className={styles.section}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }}
+        >
           <h2 className={styles.sectionTitle}>技术栈</h2>
           <div className={styles.techGrid}>
-            <div className={styles.techItem}>
-              <h4>Next.js 14</h4>
-              <p>React 框架</p>
-            </div>
-            <div className={styles.techItem}>
-              <h4>TypeScript</h4>
-              <p>类型安全</p>
-            </div>
-            <div className={styles.techItem}>
-              <h4>Tailwind CSS</h4>
-              <p>样式设计</p>
-            </div>
-            <div className={styles.techItem}>
-              <h4>Framer Motion</h4>
-              <p>动画效果</p>
-            </div>
+            {TECHS.map((tech) => (
+              <div key={tech.name} className={styles.techCard}>
+                <div className={styles.techIcon}>{tech.icon}</div>
+                <h3 className={styles.techName}>{tech.name}</h3>
+                <p className={styles.techDesc}>{tech.desc}</p>
+              </div>
+            ))}
           </div>
-        </section>
+        </motion.section>
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>开源声明</h2>
-          <div className={styles.infoBox}>
-            <p>
-              本项目基于 MIT 许可证开源，你可以自由使用、修改和分发本项目的代码。
-              但请注意，玄学相关内容仅供娱乐，不构成任何形式的预测或建议。
-            </p>
+        {/* 开源协议 */}
+        <motion.section
+          className={styles.section}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7, ease: 'easeOut' }}
+        >
+          <h2 className={styles.sectionTitle}>开源协议</h2>
+          <div className={styles.licenseBox}>
+            <p>本项目采用 MIT 开源协议，欢迎贡献代码和建议</p>
           </div>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>联系方式</h2>
-          <div className={styles.contact}>
-            <p>GitHub: <a href="https://github.com/badhope/LingXu" target="_blank" rel="noopener noreferrer">badhope/LingXu</a></p>
-          </div>
-        </section>
+        </motion.section>
       </div>
     </Layout>
   )

@@ -7,6 +7,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Layout from '@/components/layout/Layout'
+import PageBackground from '@/components/layout/PageBackground'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
@@ -47,7 +48,8 @@ const SUB_MODULES = [
 export default function LishiIndexPage() {
   return (
     <Layout title="历史">
-      <div className={styles.container}>
+      <PageBackground colorRgb="255, 170, 102">
+        <div className={styles.container}>
         <div className={styles.topDecor}>
           <motion.div className={styles.decorLine} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.2 }} />
           <motion.span className={styles.decorSymbol} animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity }}>📜</motion.span>
@@ -96,7 +98,8 @@ export default function LishiIndexPage() {
             </motion.p>
           </div>
         </motion.section>
-      </div>
+        </div>
+      </PageBackground>
     </Layout>
   )
 }

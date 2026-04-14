@@ -6,12 +6,14 @@
 
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
+import PageBackground from '@/components/layout/PageBackground'
 import styles from './index.module.scss'
 
 export default function HongIndexPage() {
   return (
     <Layout title="洪荒">
-      <div className={styles.container}>
+      <PageBackground colorRgb="255, 102, 102">
+        <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.icon}>🐉</div>
           <h1 className={styles.title}>洪荒模块</h1>
@@ -37,7 +39,8 @@ export default function HongIndexPage() {
             <Link href="/hong/tushu" className={styles.card}>🔱 图腾</Link>
           </div>
         </section>
-      </div>
+        </div>
+      </PageBackground>
     </Layout>
   )
 }

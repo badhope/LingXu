@@ -6,12 +6,14 @@
 
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
+import PageBackground from '@/components/layout/PageBackground'
 import styles from './index.module.scss'
 
 export default function HuangLostIndexPage() {
   return (
     <Layout title="失落">
-      <div className={styles.container}>
+      <PageBackground colorRgb="170, 153, 136">
+        <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.icon}>🗝️</div>
           <h1 className={styles.title}>失落模块</h1>
@@ -37,7 +39,8 @@ export default function HuangLostIndexPage() {
             <Link href="/huang-lost/mishi" className={styles.card}>🚪 秘室</Link>
           </div>
         </section>
-      </div>
+        </div>
+      </PageBackground>
     </Layout>
   )
 }

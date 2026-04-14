@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import '@/styles/globals.css'
+import '@/styles/xianxia.scss'
 
 // 页面过渡配置
 const pageTransition = {
@@ -18,7 +19,7 @@ const pageTransition = {
     scale: 1,
     transition: { 
       duration: 0.5, 
-      ease: [0.6, 0.01, -0.05, 0.9] 
+      ease: 'easeOut' 
     }
   },
   exit: { 

@@ -6,12 +6,14 @@
 
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
+import PageBackground from '@/components/layout/PageBackground'
 import styles from './index.module.scss'
 
 export default function ZhouIndexPage() {
   return (
     <Layout title="时间">
-      <div className={styles.container}>
+      <PageBackground colorRgb="255, 136, 204">
+        <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.icon}>⏳</div>
           <h1 className={styles.title}>时间模块</h1>
@@ -37,7 +39,8 @@ export default function ZhouIndexPage() {
             <Link href="/zhou/yuce" className={styles.card}>🔮 预言</Link>
           </div>
         </section>
-      </div>
+        </div>
+      </PageBackground>
     </Layout>
   )
 }

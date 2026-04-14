@@ -6,12 +6,14 @@
 
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
+import PageBackground from '@/components/layout/PageBackground'
 import styles from './index.module.scss'
 
 export default function YuIndexPage() {
   return (
     <Layout title="空间">
-      <div className={styles.container}>
+      <PageBackground colorRgb="170, 136, 255">
+        <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.icon}>🌌</div>
           <h1 className={styles.title}>空间模块</h1>
@@ -37,7 +39,8 @@ export default function YuIndexPage() {
             <Link href="/yu/mijie" className={styles.card}>🗝️ 秘界</Link>
           </div>
         </section>
-      </div>
+        </div>
+      </PageBackground>
     </Layout>
   )
 }

@@ -1,0 +1,480 @@
+/* ==========================================================================
+   灵墟档案馆 - 沉浸式修仙风格设计系统
+   参考：国风仙侠游戏UI + 暗黑幻想设计 + 魔法粒子效果
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================================================
+   基础变量定义 - 仙侠调色板
+   ========================================================================== */
+
+:root {
+  --xian-gold: #c9a227;
+  --xian-gold-light: #e8d48b;
+  --xian-gold-dark: #8b6914;
+  --xian-gold-glow: rgba(201, 162, 39, 0.6);
+  
+  --xian-purple: #8b5cf6;
+  --xian-blue: #3b82f6;
+  --xian-cyan: #06b6d4;
+  --xian-red: #ef4444;
+  --xian-green: #10b981;
+  
+  --xian-dark-bg: #0a0a0f;
+  --xian-card-bg: rgba(20, 20, 35, 0.85);
+  --xian-border: rgba(201, 162, 39, 0.2);
+  --xian-border-strong: rgba(201, 162, 39, 0.4);
+  
+  --xian-shadow-glow: 0 0 30px rgba(201, 162, 39, 0.3);
+  --xian-shadow-strong: 0 0 60px rgba(201, 162, 39, 0.5);
+}
+
+/* ==========================================================================
+   云雾流动背景 - 沉浸式
+   ========================================================================== */
+
+.xian-cloud-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: 
+      radial-gradient(ellipse at 20% 80%, rgba(102, 204, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(201, 162, 39, 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 40% 40%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+    animation: cloudDrift 60s linear infinite;
+  }
+
+  &::after {
+    animation-direction: reverse;
+    animation-duration: 90s;
+  }
+}
+
+@keyframes cloudDrift {
+  from { transform: rotate(0deg) translate(0, 0); }
+  to { transform: rotate(360deg) translate(30px, 30px); }
+}
+
+/* ==========================================================================
+   魔法符文装饰 - 国风边框
+   ========================================================================== */
+
+.xian-rune-border {
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: '◇';
+    position: absolute;
+    color: var(--xian-gold);
+    opacity: 0.4;
+    font-size: 0.8rem;
+    animation: runeGlow 3s ease-in-out infinite;
+  }
+  
+  &::before {
+    top: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  &::after {
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 1.5s;
+  }
+}
+
+@keyframes runeGlow {
+  0%, 100% { opacity: 0.2; text-shadow: none; }
+  50% { opacity: 0.8; text-shadow: 0 0 20px var(--xian-gold-glow); }
+}
+
+/* ==========================================================================
+   仙侠卷轴卡片 - 展开动画
+   ========================================================================== */
+
+.xian-scroll-card {
+  position: relative;
+  background: linear-gradient(145deg, 
+    rgba(30, 30, 50, 0.9) 0%, 
+    rgba(15, 15, 25, 0.95) 100%);
+  border: 1px solid var(--xian-border);
+  border-radius: 4px;
+  padding: 2rem;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      var(--xian-gold) 20%, 
+      var(--xian-gold-light) 50%, 
+      var(--xian-gold) 80%, 
+      transparent 100%);
+    transform: scaleX(0);
+    transition: transform 0.6s ease;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+      var(--xian-gold) 0%, 
+      transparent 100%);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.6s ease 0.2s;
+  }
+  
+  &:hover {
+    transform: translateY(-8px);
+    border-color: var(--xian-border-strong);
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.5),
+      0 0 40px rgba(201, 162, 39, 0.15);
+    
+    &::before { transform: scaleX(1); }
+    &::after { transform: scaleY(1); }
+  }
+}
+
+/* ==========================================================================
+   剑光闪烁特效 - 标题
+   ========================================================================== */
+
+.xian-sword-title {
+  position: relative;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20%;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      var(--xian-gold-light), 
+      transparent);
+    animation: swordFlash 4s ease-in-out infinite;
+  }
+}
+
+@keyframes swordFlash {
+  0% { width: 0; opacity: 0; }
+  5% { opacity: 1; }
+  10% { width: 140%; }
+  15%, 100% { width: 0; opacity: 0; }
+}
+
+/* ==========================================================================
+   八卦/魔法阵旋转 - 悬停触发
+   ========================================================================== */
+
+.xian-magic-circle {
+  position: relative;
+  
+  &::before {
+    content: '☯';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 4rem;
+    color: var(--xian-gold);
+    opacity: 0;
+    transition: all 0.5s ease;
+    animation: magicRotate 10s linear infinite;
+    animation-play-state: paused;
+  }
+  
+  &:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.15;
+    animation-play-state: running;
+  }
+}
+
+@keyframes magicRotate {
+  from { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  to { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
+}
+
+/* ==========================================================================
+   竹简列表项 - 古风设计
+   ========================================================================== */
+
+.xian-bamboo-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(90deg, 
+    rgba(40, 35, 20, 0.6) 0%, 
+    rgba(30, 25, 15, 0.8) 100%);
+  border-left: 3px solid var(--xian-gold-dark);
+  border-right: 1px solid var(--xian-border);
+  position: relative;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  
+  &::before {
+    content: '◆';
+    color: var(--xian-gold);
+    font-size: 0.6rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    padding-left: 2rem;
+    background: linear-gradient(90deg, 
+      rgba(60, 50, 30, 0.7) 0%, 
+      rgba(40, 35, 25, 0.9) 100%);
+    border-left-color: var(--xian-gold);
+    box-shadow: -5px 0 30px rgba(201, 162, 39, 0.2);
+    
+    &::before {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+}
+
+/* ==========================================================================
+   仙力值/等级徽章 - 游戏UI风格
+   ========================================================================== */
+
+.xian-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: linear-gradient(135deg, 
+    rgba(201, 162, 39, 0.15) 0%, 
+    rgba(201, 162, 39, 0.05) 100%);
+  border: 1px solid var(--xian-border);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: var(--xian-gold-light);
+  letter-spacing: 0.1em;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.1), 
+      transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+/* ==========================================================================
+   境界突破 - 闪光动画
+   ========================================================================== */
+
+.xian-breakthrough {
+  animation: breakthrough 2s ease-out;
+}
+
+@keyframes breakthrough {
+  0% { filter: brightness(1); }
+  10% { filter: brightness(2) blur(2px); }
+  20% { filter: brightness(3) blur(4px); }
+  30% { filter: brightness(1.5) blur(2px); }
+  100% { filter: brightness(1); }
+}
+
+/* ==========================================================================
+   灵气流动 - 文字边缘光
+   ========================================================================== */
+
+.xian-spirit-text {
+  text-shadow: 
+    0 0 5px var(--xian-gold-glow),
+    0 0 10px var(--xian-gold-glow),
+    0 0 20px var(--xian-gold-glow);
+  animation: spiritPulse 3s ease-in-out infinite;
+}
+
+@keyframes spiritPulse {
+  0%, 100% { text-shadow: 0 0 5px var(--xian-gold-glow), 0 0 10px var(--xian-gold-glow); }
+  50% { text-shadow: 0 0 10px var(--xian-gold-glow), 0 0 20px var(--xian-gold-glow), 0 0 40px var(--xian-gold-glow); }
+}
+
+/* ==========================================================================
+   卷轴展开 - 入场动画
+   ========================================================================== */
+
+@keyframes scrollReveal {
+  0% { 
+    clip-path: inset(0 50% 0 50%); 
+    opacity: 0;
+  }
+  50% { opacity: 1; }
+  100% { 
+    clip-path: inset(0 0 0 0); 
+    opacity: 1;
+  }
+}
+
+.xian-scroll-reveal {
+  animation: scrollReveal 1s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+/* ==========================================================================
+   丹炉火焰 - 加载动画
+   ========================================================================== */
+
+.xian-cauldron {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  
+  &::before {
+    content: '🔥';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    animation: flameFlicker 0.5s ease-in-out infinite alternate;
+    filter: blur(1px);
+  }
+}
+
+@keyframes flameFlicker {
+  from { transform: translateX(-50%) scaleY(1) scaleX(1); }
+  to { transform: translateX(-50%) scaleY(1.15) scaleX(0.95); }
+}
+
+/* ==========================================================================
+   星光点点 - 鼠标跟随效果
+   ========================================================================== */
+
+.xian-star-trail {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: var(--xian-gold-light);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 10px var(--xian-gold-glow);
+  animation: starFade 1s ease-out forwards;
+}
+
+@keyframes starFade {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0); }
+}
+
+/* ==========================================================================
+   古籍引用框 - 泛黄纸张质感
+   ========================================================================== */
+
+.xian-ancient-quote {
+  position: relative;
+  padding: 2rem 3rem;
+  background: 
+    radial-gradient(ellipse at center, 
+      rgba(139, 109, 20, 0.08) 0%, 
+      transparent 70%),
+    linear-gradient(135deg, 
+      rgba(50, 40, 20, 0.5) 0%, 
+      rgba(30, 25, 15, 0.7) 100%);
+  border-top: 1px solid var(--xian-border);
+  border-bottom: 1px solid var(--xian-border);
+  
+  &::before,
+  &::after {
+    content: '━━━ ✧ ━━━';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--xian-gold);
+    opacity: 0.4;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+  }
+  
+  &::before { top: 0.5rem; }
+  &::after { bottom: 0.5rem; }
+}
+
+/* ==========================================================================
+   宗门/门派 标签
+   ========================================================================== */
+
+.xian-sect-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  border-radius: 2px;
+  font-weight: 500;
+  
+  &.sect-qingyun {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+  
+  &.sect-qishan {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  
+  &.sect-lanling {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  
+  &.sect-yaowang {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+}

@@ -1,0 +1,241 @@
+.nav {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.trigger {
+  position: relative;
+  width: 50px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(10, 10, 15, 0.95) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(15, 15, 25, 0.95) 100%);
+    border-color: rgba(201, 162, 39, 0.4);
+  }
+
+  &.active {
+    border-radius: 0;
+    border-right: none;
+  }
+}
+
+.triggerRune {
+  font-size: 20px;
+  color: #c9a227;
+  text-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+  line-height: 1;
+}
+
+.triggerText {
+  font-size: 12px;
+  color: rgba(201, 162, 39, 0.7);
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 2px;
+}
+
+.menu {
+  background: rgba(10, 10, 20, 0.98);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  padding: 1.5rem;
+  min-width: 280px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.menuHeader {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.menuBack {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  background: rgba(201, 162, 39, 0.1);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-radius: 6px;
+  color: #c9a227;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(201, 162, 39, 0.2);
+    border-color: rgba(201, 162, 39, 0.4);
+    padding-left: 1rem;
+  }
+}
+
+.menuTitle {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px;
+  color: #c9a227;
+  letter-spacing: 4px;
+  display: block;
+  text-align: center;
+}
+
+.modules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.module {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(201, 162, 39, 0.1);
+  }
+
+  &.active {
+    background: rgba(201, 162, 39, 0.15);
+    border-left: 2px solid #c9a227;
+  }
+}
+
+.moduleLink {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+}
+
+.moduleKey {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.5rem;
+  color: #c9a227;
+  font-weight: 500;
+  line-height: 1;
+  text-shadow: 0 0 15px rgba(201, 162, 39, 0.4);
+  min-width: 30px;
+}
+
+.moduleLabel {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.subModules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: 38px;
+}
+
+.subModule {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: rgba(201, 162, 39, 0.5);
+  padding: 2px 8px;
+  background: rgba(201, 162, 39, 0.05);
+  border-radius: 4px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #c9a227;
+    background: rgba(201, 162, 39, 0.15);
+    box-shadow: 0 0 10px rgba(201, 162, 39, 0.2);
+  }
+
+  &.subModuleActive {
+    color: #c9a227;
+    background: rgba(201, 162, 39, 0.2);
+    font-weight: 600;
+    box-shadow: 0 0 12px rgba(201, 162, 39, 0.25);
+  }
+}
+
+.subModuleDot {
+  font-size: 6px;
+  line-height: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.subModuleActive {
+  color: #c9a227;
+  background: rgba(201, 162, 39, 0.2);
+  text-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+}
+
+.menuFooter {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.15);
+  text-align: center;
+}
+
+.homeLink {
+  font-size: 12px;
+  color: rgba(201, 162, 39, 0.6);
+  text-decoration: none;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #c9a227;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav {
+    top: 80px;
+    transform: none;
+  }
+
+  .trigger {
+    width: 40px;
+    height: 60px;
+  }
+
+  .menu {
+    min-width: 240px;
+    padding: 1rem;
+  }
+
+  .modules {
+    gap: 0.5rem;
+  }
+
+  .module {
+    padding: 0.5rem;
+  }
+}

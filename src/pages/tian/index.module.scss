@@ -1,214 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap');
+
 .container {
   min-height: 100vh;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0f;
 }
 
-.hero {
+.particlesCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heroSection {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  background: 
+    radial-gradient(ellipse at center top, rgba(102, 204, 255, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 50%, rgba(201, 162, 39, 0.06) 0%, transparent 50%);
+}
+
+.heroContent {
   text-align: center;
-  padding: 4rem 2rem 3rem;
+  padding: 2rem;
 }
 
 .heroIcon {
-  font-size: 4rem;
+  font-size: 5rem;
+  color: #66ccff;
   margin-bottom: 1.5rem;
-  display: block;
+  filter: drop-shadow(0 0 20px rgba(102, 204, 255, 0.6));
+  user-select: none;
 }
 
-.heroTitle {
-  font-size: clamp(3rem, 8vw, 5rem);
-  font-weight: 300;
-  letter-spacing: 0.3em;
-  margin: 0 0 1rem;
-  background: linear-gradient(135deg, #f0d78c 0%, #c9a227 50%, #f0d78c 100%);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.4));
+.mainTitle {
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+  font-size: 9rem;
+  font-weight: normal;
+  color: #66ccff;
+  letter-spacing: 2rem;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 
+    0 0 30px rgba(102, 204, 255, 0.8),
+    0 0 60px rgba(102, 204, 255, 0.5),
+    0 0 100px rgba(102, 204, 255, 0.2);
+  user-select: none;
 }
 
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.heroSubtitle {
-  font-size: 1.25rem;
-  color: #c9a227;
-  letter-spacing: 0.2em;
-  margin: 0 0 1.5rem;
-}
-
-.heroTagline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  color: #888;
-  font-size: 0.95rem;
-  letter-spacing: 0.15em;
-}
-
-.dot {
-  color: rgba(201, 162, 39, 0.4);
-}
-
-.section {
-  margin: 3rem 0;
-}
-
-.sectionTitle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  font-size: 1.25rem;
-  color: #e8d48b;
-  letter-spacing: 0.2em;
-  margin-bottom: 1.5rem;
-  font-weight: 400;
-}
-
-.titleDecor {
-  color: rgba(201, 162, 39, 0.6);
-  font-size: 0.7em;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-.infoBox {
-  background: rgba(26, 26, 46, 0.6);
-  border: 1px solid rgba(201, 162, 39, 0.15);
-  border-radius: 12px;
-  padding: 2rem;
-}
-
-.infoBox p {
-  color: #a0a0a0;
-  line-height: 2;
+.subTitle {
+  font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5rem;
   margin: 0;
-  text-align: justify;
+  
+  span {
+    position: relative;
+    
+    &::before,
+    &::after {
+      content: '——';
+      margin: 0 1rem;
+      color: rgba(102, 204, 255, 0.5);
+    }
+  }
 }
 
-.cardGrid {
+.modulesSection {
+  padding: 4rem 2rem 8rem;
+  position: relative;
+  z-index: 2;
+}
+
+.modulesGrid {
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
 }
 
-.card {
+.moduleCard {
+  position: relative;
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.04) 0%, 
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.moduleLink {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1.5rem;
-  background: rgba(26, 26, 46, 0.5);
-  border: 1px solid rgba(201, 162, 39, 0.15);
-  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  cursor: pointer;
+  color: inherit;
+  height: 100%;
+  position: relative;
+  z-index: 2;
 }
 
-.card:hover {
-  border-color: rgba(201, 162, 39, 0.5);
-  box-shadow: 0 20px 40px rgba(201, 162, 39, 0.15), 0 0 20px rgba(201, 162, 39, 0.1);
+.moduleGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.card:active {
-  transform: scale(0.98);
+.moduleCard:hover .moduleGlow {
+  opacity: 1;
 }
 
-.cardChar {
-  font-size: 2.5rem;
+.moduleIcon {
+  font-size: 3.5rem;
   margin-bottom: 1rem;
+  user-select: none;
 }
 
-.cardName {
-  font-size: 1.1rem;
-  color: #e8d48b;
-  margin: 0 0 0.5rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+.moduleName {
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: 2.5rem;
+  font-weight: normal;
+  color: #ffffff;
+  margin: 0 0 0.8rem 0;
+  letter-spacing: 0.3rem;
 }
 
-.cardDesc {
-  font-size: 0.85rem;
-  color: #888;
-  margin: 0;
+.moduleDesc {
+  font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 1.5rem 0;
   text-align: center;
-  line-height: 1.6;
 }
 
-.poemBanner {
-  text-align: center;
-  padding: 2rem;
-  margin-top: 3rem;
-  border-top: 1px solid rgba(201, 162, 39, 0.1);
-}
-
-.poemText {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  color: #c9a227;
-  font-size: 0.95rem;
-  letter-spacing: 0.1em;
-  margin: 0;
-}
-
-.poemSep {
-  color: rgba(201, 162, 39, 0.4);
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
-  .hero {
-    padding: 2rem 1rem;
-  }
-
-  .heroTitle {
-    letter-spacing: 0.2em;
-  }
-
-  .heroTagline {
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .dot {
-    display: none;
-  }
-
-  .cardGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .poemText {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .poemSep {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .heroIcon,
-  .titleDecor,
-  .heroTitle {
-    animation: none;
-  }
+.moduleArrow {
+  font-size: 1.5rem;
+  color: rgba(102, 204, 255, 0.8);
+  margin-top: auto;
+  font-weight: bold;
 }

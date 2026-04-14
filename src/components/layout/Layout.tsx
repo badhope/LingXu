@@ -1,6 +1,24 @@
 /**
- * 灵墟 - 主布局组件
- * LingXu Main Layout
+ * ============================================================================
+ *                           灵墟档案馆 - 主布局组件
+ * ============================================================================
+ * 
+ * 【组件定位】
+ * 这是整个网站的"外壳"组件，所有页面都必须嵌套在这个组件里面
+ * 相当于给每一页套上统一的"包装"：背景 + 导航 + 返回键 + 页脚
+ * 
+ * 【技术栈】
+ * ✅ React + TypeScript       - 基础框架
+ * ✅ Next.js Head             - SEO 页面元信息
+ * ✅ Framer Motion            - 动画效果（返回键的淡入淡出）
+ * ✅ useRouter/usePathname    - 路由判断和页面跳转
+ * 
+ * 【核心功能】
+ * 1. 统一的史诗级星空背景
+ * 2. 左侧隐藏式导航目录
+ * 3. 子页面自动显示返回按钮
+ * 4. 全局统一的页脚
+ * 5. 页面 SEO 元标签注入
  */
 
 'use client'
@@ -8,16 +26,27 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SITE_CONFIG } from '@/lib/constants'
 import { withBase } from '@/lib/utils'
 import styles from './Layout.module.scss'
 
-// 背景组件
-import StarsBackground from '@/components/background/StarsBackground'
-import OrbitBackground from '@/components/background/OrbitBackground'
+// 🔄 组件依赖 - 史诗级Canvas星空背景
+import StarsBackground from '@/components/background/EpicBackground'
+// 🧭 组件依赖 - 左侧隐藏式导航菜单
+import HiddenNav from './HiddenNav'
 
+/**
+ * 【配置项】布局组件可接收的参数
+ * 
+ * @param children      - 必填：各个页面自己的内容（被套在中间）
+ * @param title         - 可选：页面标题，显示在浏览器标签上
+ * @param description   - 可选：页面描述，用于SEO
+ * @param showNav       - 可选：是否显示导航，默认true
+ * @param showFooter    - 可选：是否显示页脚，默认true
+ * @param transparentNav - 可选：导航透明模式（暂时没用）
+ */
 interface LayoutProps {
   children: React.ReactNode
   title?: string
@@ -35,11 +64,35 @@ export default function Layout({
   showFooter = true,
   transparentNav = false,
 }: LayoutProps) {
+  // ==================== 路由与状态 ====================
+  
+  // 🧭 获取当前路径（比如 /tian/xingxiu）
   const pathname = usePathname()
+  // 🔀 编程式跳转工具
+  const router = useRouter()
+  
+  // 📜 滚动状态 - 用户是否往下滚动了（暂时没用）
   const [isScrolled, setIsScrolled] = useState(false)
+  // 📱 移动端菜单开关（暂时没用）
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
-  // 滚动监听
+  // ==================== 智能返回键逻辑 ====================
+  
+  // 🔍 切割URL路径，判断当前页面层级
+  // 比如 /tian/xingxiu → ['tian', 'xingxiu'] → 长度2 → 是子页面
+  const pathSegments = pathname.split('/').filter(Boolean)
+  // ✅ true = 是子页面（需要显示返回键）
+  const isSubPage = pathSegments.length > 1
+  // 🎯 智能计算要返回的父级页面
+  // 比如在 /tian/xingxiu → 返回 /tian
+  const parentPath = isSubPage ? '/' + pathSegments[0] : '/home'
+  
+  // ==================== 事件监听 ====================
+  
+  /**
+   * 👀 滚动监听 - 检测用户是否滚动了页面
+   * 可以用来做滚动时的UI变化（比如导航栏变色）
+   */
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
@@ -49,24 +102,35 @@ export default function Layout({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
   
-  // 导航链接
+  // ==================== 配置常量 ====================
+  
+  /**
+   * 🧭 8大模块导航链接
+   * 天地玄黄，宇宙洪荒 - 对应中华传统文化的八个维度
+   */
   const navLinks = [
     { href: '/home', label: '首页' },
-    { href: '/tian', label: '天时' },
-    { href: '/di', label: '地理' },
-    { href: '/xuan', label: '玄学' },
-    { href: '/lishi', label: '历史' },
-    { href: '/yu', label: '空间' },
-    { href: '/zhou', label: '时间' },
-    { href: '/hong', label: '洪荒' },
-    { href: '/huang-lost', label: '失落' },
+    { href: '/tian', label: '天时' },      // 天象、星宿、运势
+    { href: '/di', label: '地理' },        // 风水、龙脉、罗盘
+    { href: '/xuan', label: '玄学' },      // 易经、八字、六爻
+    { href: '/lishi', label: '历史' },     // 朝代、人物、秘辛
+    { href: '/yu', label: '空间' },        // 三界、洞天、维度
+    { href: '/zhou', label: '时间' },      // 轮回、因果、预言
+    { href: '/hong', label: '洪荒' },      // 神兽、妖魔、传说
+    { href: '/huang-lost', label: '失落' }, // 功法、丹药、法宝
   ]
   
+  // 📄 SEO - 页面标题和描述
   const pageTitle = title ? `${title} | ${SITE_CONFIG.name}` : SITE_CONFIG.name
   const pageDescription = description || SITE_CONFIG.description
   
+  // ==================== 渲染结构 ====================
   return (
     <>
+      {/*
+       * 📋 HEAD 区域 - 浏览器和搜索引擎需要的元信息
+       * 这些不会显示在页面上，但非常重要！
+       */}
       <Head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -74,110 +138,81 @@ export default function Layout({
         <meta name="author" content={SITE_CONFIG.author} />
         <meta name="theme-color" content="#0a0a0f" />
         
-        {/* Open Graph */}
+        {/* Facebook/微信分享时显示的卡片信息 */}
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={SITE_CONFIG.url} />
         
-        {/* Twitter */}
+        {/* Twitter分享卡片 */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
         
-        {/* Favicon */}
+        {/* 图标 */}
         <link rel="icon" href={withBase('/favicon.ico')} />
         <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
         
-        {/* Preconnect */}
+        {/* 预连接字体服务器，加速字体加载 */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Head>
       
-      {/* 背景层 */}
+      {/*
+       * 🌌 背景层 - z-index: 0
+       * 整个网站最底层的史诗级星空动画
+       * 用 Canvas 绘制 400 颗星星 + 星云 + 鼠标视差
+       */}
       <div className={styles.backgroundLayer}>
         <StarsBackground />
-        <OrbitBackground />
       </div>
       
-      {/* 导航栏 */}
+      {/*
+       * 🧭 隐藏式导航目录 - z-index: 1000
+       * 在页面最左侧，点击"道"字展开全部导航
+       */}
+      {showNav && <HiddenNav />}
+      
+      {/*
+       * 🔙 子页面返回按钮 - z-index: 90
+       * 【智能】只有在子页面才显示！
+       * Framer Motion 做的动画：等0.3s后从左边滑入
+       * 位置：左侧居中，在导航按钮右边
+       */}
       <AnimatePresence>
-        {showNav && (
-          <motion.header
-            className={`${styles.header} ${isScrolled || !transparentNav ? styles.scrolled : ''}`}
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+        {isSubPage && (
+          <motion.button
+            // 入场动画：从左边-20位置滑入
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.3 }}
+            className={styles.backButton}
+            onClick={() => router.push(parentPath)}
+            // 悬停放大并右移
+            whileHover={{ scale: 1.05, x: 5 }}
+            // 点击缩小反馈
+            whileTap={{ scale: 0.95 }}
           >
-            <div className={styles.navContainer}>
-              {/* Logo */}
-              <Link href="/home" className={styles.logo}>
-                <span className={styles.logoChar}>灵</span>
-                <span className={styles.logoChar}>墟</span>
-              </Link>
-              
-              {/* 桌面导航 */}
-              <nav className={styles.desktopNav}>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`${styles.navLink} ${pathname === link.href ? styles.active : ''}`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-              
-              {/* 移动端菜单按钮 */}
-              <button
-                className={styles.menuButton}
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="菜单"
-              >
-                <span className={`${styles.menuIcon} ${mobileMenuOpen ? styles.open : ''}`} />
-              </button>
-              
-              {/* 移动端导航 */}
-              <AnimatePresence>
-                {mobileMenuOpen && (
-                  <motion.nav
-                    className={styles.mobileNav}
-                    initial={{ opacity: 0, x: '100%' }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: '100%' }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {navLinks.map((link, index) => (
-                      <motion.div
-                        key={link.href}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <Link
-                          href={link.href}
-                          className={`${styles.mobileNavLink} ${pathname === link.href ? styles.active : ''}`}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                      </motion.div>
-                    ))}
-                  </motion.nav>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.header>
+            <span className={styles.backIcon}>↞</span>
+            <span className={styles.backText}>返回</span>
+          </motion.button>
         )}
       </AnimatePresence>
       
-      {/* 主内容 */}
-      <main className={`${styles.main} ${!showNav ? styles.noNav : ''}`}>
+      {/*
+       * 📄 主内容区域
+       * 各个页面自己的内容都渲染在这里
+       * 如果有返回键，自动往左偏移让出空间
+       */}
+      <main className={`${styles.main} ${!showNav ? styles.noNav : ''} ${isSubPage ? styles.withBackButton : ''}`}>
         {children}
       </main>
       
-      {/* 页脚 */}
+      {/*
+       * 🦶 页脚 - 网站最底部
+       * 显示版权信息和链接
+       */}
       {showFooter && (
         <footer className={styles.footer}>
           <div className={styles.footerContent}>

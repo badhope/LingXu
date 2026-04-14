@@ -1,26 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap');
+
 .container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 120px 2rem 4rem;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0f;
+  padding: 2rem;
 }
 
 .header {
   text-align: center;
   margin-bottom: 4rem;
+  padding: 3rem 2rem;
+  background: radial-gradient(ellipse at center top, rgba(102, 204, 255, 0.1) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(102, 204, 255, 0.05) 0%, transparent 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(102, 204, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  user-select: none;
 }
 
 .title {
-  font-size: 2.5rem;
-  font-weight: 500;
-  color: #e8d48b;
-  letter-spacing: 0.3em;
-  margin: 0 0 1rem;
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: 3.5rem;
+  font-weight: normal;
+  color: #66ccff;
+  letter-spacing: 0.5em;
+  margin: 0 0 0.75rem;
+  text-shadow: 0 0 30px rgba(102, 204, 255, 0.6);
+  user-select: none;
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: #888;
-  letter-spacing: 0.2em;
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.3em;
   margin: 0;
 }
 
@@ -29,80 +49,93 @@
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
-  color: #c9a227;
-  letter-spacing: 0.15em;
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: 2rem;
+  font-weight: normal;
+  color: #66ccff;
+  letter-spacing: 0.2em;
   margin: 0 0 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+  border-bottom: 1px solid rgba(102, 204, 255, 0.2);
 }
 
-.infoBox {
-  background: rgba(26, 26, 46, 0.4);
-  border: 1px solid rgba(201, 162, 39, 0.15);
-  border-radius: 12px;
-  padding: 1.5rem;
-  
+.introCard {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(102, 204, 255, 0.15);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+
   p {
-    color: #888;
-    line-height: 1.8;
-    margin: 0;
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    color: #ccc;
+    line-height: 2;
+    margin: 0 0 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
 .techGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
 }
 
-.techItem {
-  padding: 1.5rem;
-  background: rgba(26, 26, 46, 0.3);
-  border: 1px solid rgba(201, 162, 39, 0.1);
-  border-radius: 12px;
+.techCard {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(102, 204, 255, 0.15);
+  border-radius: 16px;
+  padding: 1.25rem;
+  backdrop-filter: blur(10px);
   text-align: center;
-  
-  h4 {
-    color: #c9a227;
-    margin: 0 0 0.5rem;
-    font-size: 1rem;
-  }
-  
-  p {
-    color: #888;
-    font-size: 0.85rem;
-    margin: 0;
+  transition: all 0.4s ease;
+
+  &:hover {
+    border-color: rgba(102, 204, 255, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(102, 204, 255, 0.1);
   }
 }
 
-.contact {
-  background: rgba(26, 26, 46, 0.3);
-  border: 1px solid rgba(201, 162, 39, 0.1);
+.techIcon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.techName {
+  font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+  color: #66ccff;
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.techDesc {
+  font-family: 'ZCOOL XiaoWei', serif;
+  color: #888;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.licenseBox {
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.08) 0%, rgba(201, 162, 39, 0.02) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.25);
   border-radius: 12px;
   padding: 1.5rem;
-  
-  p {
-    color: #888;
-    margin: 0;
-    
-    a {
-      color: #c9a227;
-      text-decoration: none;
-      
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-}
+  backdrop-filter: blur(10px);
+  text-align: center;
 
-@media (max-width: 768px) {
-  .container {
-    padding: 100px 1rem 3rem;
-  }
-  
-  .title {
-    font-size: 1.75rem;
+  p {
+    color: #c9a227;
+    font-size: 1.1rem;
+    margin: 0;
   }
 }
