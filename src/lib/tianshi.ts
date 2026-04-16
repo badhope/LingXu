@@ -970,7 +970,7 @@ export function getUpcomingEvents(days: number = 7): XunshiEvent[] {
 
 // ==================== 导出 ====================
 
-export default {
+const TianshiLib = {
   JIEQI_DATA,
   XINGXIU_DATA,
   getCurrentJieqi,
@@ -985,3 +985,5 @@ export default {
   tarotZhanbu,
   getUpcomingEvents
 }
+
+export default TianshiLib

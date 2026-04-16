@@ -6,50 +6,55 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
-  { 
-    id: 'xingxiu', 
-    name: '星宿', 
-    icon: '⭐', 
+  {
+    id: 'xingxiu',
+    name: '星宿',
+    icon: '⭐',
     desc: '二十八星宿，三垣四象',
     href: '/tian/xingxiu',
-    color: '#f0c040'
+    color: '#66ccff',
   },
-  { 
-    id: 'yunshi', 
-    name: '运势', 
-    icon: '🌟', 
+  {
+    id: 'yunshi',
+    name: '运势',
+    icon: '🌟',
     desc: '每日运势，流年推演',
     href: '/tian/yunshi',
-    color: '#e879f9'
+    color: '#a78bfa',
   },
-  { 
-    id: 'jieqi', 
-    name: '节气', 
-    icon: '🌾', 
+  {
+    id: 'jieqi',
+    name: '节气',
+    icon: '🌾',
     desc: '二十四节气，养生之道',
     href: '/tian/jieqi',
-    color: '#4ade80'
+    color: '#22c55e',
   },
-  { 
-    id: 'zhanbu', 
-    name: '占卜', 
-    icon: '🎴', 
+  {
+    id: 'zhanbu',
+    name: '占卜',
+    icon: '🎴',
     desc: '铜钱卦象，预知吉凶',
     href: '/tian/zhanbu',
-    color: '#818cf8'
+    color: '#f59e0b',
   },
 ]
+
+const FADE_UP = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: 'easeOut' },
+}
 
 export default function TianIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // 星座连线动画
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -58,163 +63,170 @@ export default function TianIndexPage() {
 
     const dpr = window.devicePixelRatio || 1
     canvas.width = window.innerWidth * dpr
-    canvas.height = 300 * dpr
+    canvas.height = window.innerHeight * dpr
     ctx.scale(dpr, dpr)
 
-    interface Star {
-      x: number; y: number; size: number; alpha: number
-      speedX: number; speedY: number; twinkle: boolean
+    interface Particle {
+      x: number
+      y: number
+      size: number
+      vx: number
+      vy: number
+      life: number
+      maxLife: number
+      hue: number
     }
 
-    const stars: Star[] = Array.from({ length: 50 }, () => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * 300,
-      size: Math.random() * 2 + 1,
-      alpha: Math.random() * 0.5 + 0.3,
-      speedX: (Math.random() - 0.5) * 0.2,
-      speedY: (Math.random() - 0.5) * 0.2,
-      twinkle: Math.random() > 0.6
-    }))
+    const particles: Particle[] = []
+    const particleCount = 120
 
-    // 星座连线点
-    const constellationPoints = [
-      { x: 0.2, y: 0.5 }, { x: 0.3, y: 0.3 }, { x: 0.4, y: 0.4 },
-      { x: 0.5, y: 0.2 }, { x: 0.6, y: 0.35 }, { x: 0.7, y: 0.25 },
-      { x: 0.8, y: 0.45 }
-    ].map(p => ({ x: p.x * window.innerWidth, y: p.y * 300 }))
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 2 + 0.5,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        life: Math.random(),
+        maxLife: Math.random() * 100 + 100,
+        hue: 200 + Math.random() * 60,
+      })
+    }
 
     let animId: number
-    let time = 0
+    let mouseX = window.innerWidth / 2
+    let mouseY = window.innerHeight / 2
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX
+      mouseY = e.clientY
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
 
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      time += 0.02
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
 
-      // 绘制星空
-      stars.forEach(star => {
-        star.x += star.speedX
-        star.y += star.speedY
-        if (star.x < 0 || star.x > window.innerWidth) star.speedX *= -1
-        if (star.y < 0 || star.y > 300) star.speedY *= -1
-        if (star.twinkle) {
-          star.alpha = 0.3 + Math.sin(time * 2) * 0.3
+      particles.forEach((p, i) => {
+        p.x += p.vx
+        p.y += p.vy
+        p.life += 1
+
+        const dx = mouseX - p.x
+        const dy = mouseY - p.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < 180) {
+          p.vx -= dx * 0.0008
+          p.vy -= dy * 0.0008
         }
-        ctx.beginPath()
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(240, 192, 64, ${star.alpha})`
-        ctx.fill()
-      })
 
-      // 绘制星座连线
-      ctx.beginPath()
-      ctx.moveTo(constellationPoints[0].x, constellationPoints[0].y)
-      constellationPoints.forEach((p, i) => {
-        if (i > 0) ctx.lineTo(p.x, p.y)
-      })
-      ctx.strokeStyle = `rgba(240, 192, 64, ${0.15 + Math.sin(time) * 0.1})`
-      ctx.lineWidth = 1
-      ctx.stroke()
+        if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1
+        if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1
 
-      // 星座节点发光
-      constellationPoints.forEach((p, i) => {
-        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8 + Math.sin(time + i) * 3)
-        glow.addColorStop(0, `rgba(240, 192, 64, ${0.4 + Math.sin(time + i) * 0.2})`)
-        glow.addColorStop(1, 'transparent')
+        const alpha = 0.5 * (1 - Math.abs((p.life / p.maxLife - 0.5) * 2))
         ctx.beginPath()
-        ctx.arc(p.x, p.y, 8 + Math.sin(time + i) * 3, 0, Math.PI * 2)
-        ctx.fillStyle = glow
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, ${alpha * 0.6})`
         ctx.fill()
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j]
+          const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2)
+          if (d < 120) {
+            ctx.beginPath()
+            ctx.moveTo(p.x, p.y)
+            ctx.lineTo(p2.x, p2.y)
+            ctx.strokeStyle = `hsla(${p.hue}, 60%, 60%, ${0.15 * (1 - d / 120)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
       })
 
       animId = requestAnimationFrame(animate)
     }
+
     animate()
-    return () => cancelAnimationFrame(animId)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
   }, [])
 
   return (
-    <Layout title="天时">
-      {/* 顶部星空动画 */}
-      <div className={styles.heroArea}>
-        <canvas ref={canvasRef} className={styles.starCanvas} />
-        <div className={styles.heroOverlay}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+    <Layout title="天时" transparentNav>
+      <canvas ref={canvasRef} className={styles.particlesCanvas} />
+
+      <div className={styles.heroSection}>
+        <div className={styles.heroContent}>
+          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+            <motion.div
+              className={styles.heroIcon}
+              animate={{
+                scale: [1, 1.05, 1],
+                rotate: [0, 1, -1, 0],
+              }}
+              transition={{ duration: 6, repeat: Infinity }}
+            >
+              🌌
+            </motion.div>
             <h1 className={styles.mainTitle}>天时</h1>
-            <p className={styles.subTitle}>天道运行 · 星辰变化 · 观测天象 · 推演气运</p>
+            <p className={styles.subTitle}>
+              <span>天道运行 · 星辰变化 · 观测天象 · 推演气运</span>
+            </p>
           </motion.div>
         </div>
       </div>
 
-      <div className={styles.container}>
-        {/* 模块导航 */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>探索天机</h2>
-          <div className={styles.cardGrid}>
-            {SUB_MODULES.map((mod, i) => (
-              <motion.div
-                key={mod.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-              >
-                <Link href={mod.href} className={styles.card} style={{ '--accent': mod.color } as React.CSSProperties}>
-                  <span className={styles.cardIcon}>{mod.icon}</span>
-                  <h3 className={styles.cardName}>{mod.name}</h3>
-                  <p className={styles.cardDesc}>{mod.desc}</p>
-                  <div className={styles.cardArrow}>→</div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+      <div className={styles.modulesSection}>
+        <motion.h2
+          className={styles.sectionTitle}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          探索天机
+        </motion.h2>
 
-        {/* 天时文化介绍 */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>天时之道</h2>
-          <div className={styles.introGrid}>
+        <div className={styles.modulesGrid}>
+          {SUB_MODULES.map((mod, i) => (
             <motion.div
-              className={styles.introCard}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              key={mod.id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+              whileHover={{ scale: 1.02, y: -8 }}
             >
-              <h3>☁️ 天象观测</h3>
-              <p>自古以来，中华先民便通过观察天象来预测吉凶、指导农时。二十八星宿、紫微斗数、七政四余，皆是古人智慧的结晶。</p>
+              <Link href={mod.href} className={styles.moduleLink}>
+                <div
+                  className={styles.moduleCard}
+                  style={{ '--module-color': mod.color } as React.CSSProperties}
+                >
+                  <div className={styles.moduleGlow} />
+                  <motion.div
+                    className={styles.moduleIcon}
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, delay: i * 0.3, repeat: Infinity }}
+                  >
+                    {mod.icon}
+                  </motion.div>
+                  <h3 className={styles.moduleName}>{mod.name}</h3>
+                  <p className={styles.moduleDesc}>{mod.desc}</p>
+                  <motion.div
+                    className={styles.moduleArrow}
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    →
+                  </motion.div>
+                </div>
+              </Link>
             </motion.div>
-            <motion.div
-              className={styles.introCard}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h3>🌟 运势推演</h3>
-              <p>根据天干地支、五行生克，配合流年运势，可推演出一生的命运轨迹。知晓运势，方能趋吉避凶，把握时机。</p>
-            </motion.div>
-            <motion.div
-              className={styles.introCard}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h3>🌾 节气养生</h3>
-              <p>二十四节气是中华农耕文明的瑰宝。顺应节气，调养身心，是古人的养生智慧。不同节气，有不同的养生之道。</p>
-            </motion.div>
-            <motion.div
-              className={styles.introCard}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h3>🎴 占卜问卦</h3>
-              <p>占卜是人与天沟通的桥梁。通过卦象，可知过去未来，晓吉凶祸福。诚心问卜，自有天意指引。</p>
-            </motion.div>
-          </div>
-        </section>
+          ))}
+        </div>
       </div>
     </Layout>
   )

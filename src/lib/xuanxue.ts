@@ -754,7 +754,7 @@ function getLiunianDescription(gan: string, zhi: string): string {
 
 // ==================== 导出 ====================
 
-export default {
+const XuanxueLib = {
   TIANGAN,
   DIZHI,
   SHENGXIAO,
@@ -780,3 +780,5 @@ export default {
   generateFulu,
   calculateDayun
 }
+
+export default XuanxueLib

@@ -198,29 +198,35 @@
 
 .backButton {
   position: fixed;
-  top: 50%;
-  left: 70px;
-  transform: translateY(-50%);
-  z-index: 90;
+  top: 24px;
+  left: 24px;
+  z-index: 999;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.875rem 1.25rem;
-  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.8) 100%);
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.85) 100%);
   border: 1px solid rgba(201, 162, 39, 0.3);
-  border-radius: 12px;
+  border-radius: 10px;
   color: #c9a227;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.05em;
   cursor: pointer;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 
   &:hover {
-    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(10, 10, 15, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(10, 10, 15, 0.95) 100%);
     border-color: rgba(201, 162, 39, 0.5);
-    box-shadow: 0 8px 32px rgba(201, 162, 39, 0.2);
+    box-shadow: 0 8px 32px rgba(201, 162, 39, 0.25);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    top: 16px;
+    left: 16px;
+    padding: 0.6rem 0.875rem;
   }
 }
 
@@ -235,7 +241,10 @@
 
 .withBackButton {
   @media (min-width: 768px) {
-    padding-left: 180px;
+    padding-top: 40px;
+  }
+  @media (max-width: 768px) {
+    padding-top: 60px;
   }
 }
 

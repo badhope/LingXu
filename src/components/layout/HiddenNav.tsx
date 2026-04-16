@@ -207,6 +207,7 @@ export default function HiddenNav() {
                 animate={{ width: 'auto', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{ duration: 0.4, ease: 'easeInOut' }}
+                onWheel={(e) => e.stopPropagation()}
               >
                 {/*
                  * 📋 菜单头部

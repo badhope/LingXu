@@ -32,8 +32,10 @@ import { SITE_CONFIG } from '@/lib/constants'
 import { withBase } from '@/lib/utils'
 import styles from './Layout.module.scss'
 
-// 🔄 组件依赖 - 史诗级Canvas星空背景
-import StarsBackground from '@/components/background/EpicBackground'
+// 🔄 组件依赖 - WebGL史诗级星空背景
+import WebGLStarryBackground from '@/components/background/WebGLStarryBackground'
+// ✨ 组件依赖 - 仙气流光Canvas效果
+import ImmortalFlowCanvas from '@/components/effects/ImmortalFlowCanvas'
 // 🧭 组件依赖 - 左侧隐藏式导航菜单
 import HiddenNav from './HiddenNav'
 
@@ -159,13 +161,20 @@ export default function Layout({
       </Head>
       
       {/*
-       * 🌌 背景层 - z-index: 0
+       * 🌌 WebGL背景层 - z-index: 0
        * 整个网站最底层的史诗级星空动画
-       * 用 Canvas 绘制 400 颗星星 + 星云 + 鼠标视差
+       * WebGL实时渲染 3000 颗带深度星星 + 3层程序化星云 + 着色器特效
        */}
       <div className={styles.backgroundLayer}>
-        <StarsBackground />
+        <WebGLStarryBackground />
       </div>
+      
+      {/*
+       * ✨ 仙气流光层 - z-index: 1
+       * Canvas实时渲染仙气流光粒子
+       * 鼠标移动产生法力波纹和仙气粒子
+       */}
+      <ImmortalFlowCanvas />
       
       {/*
        * 🧭 隐藏式导航目录 - z-index: 1000
@@ -182,15 +191,15 @@ export default function Layout({
       <AnimatePresence>
         {isSubPage && (
           <motion.button
-            // 入场动画：从左边-20位置滑入
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.3 }}
+            // 入场动画：从上方-20位置滑入（符合左上角位置）
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
             className={styles.backButton}
             onClick={() => router.push(parentPath)}
-            // 悬停放大并右移
-            whileHover={{ scale: 1.05, x: 5 }}
+            // 悬停放大效果
+            whileHover={{ scale: 1.05 }}
             // 点击缩小反馈
             whileTap={{ scale: 0.95 }}
           >

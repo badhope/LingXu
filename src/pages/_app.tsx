@@ -9,6 +9,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import '@/styles/globals.css'
 import '@/styles/xianxia.scss'
+import '@/styles/xianxia-css3.scss'
+import PageTransitionShader from '@/components/effects/PageTransitionShader'
 
 // 页面过渡配置
 const pageTransition = {
@@ -33,29 +35,6 @@ const pageTransition = {
   }
 }
 
-// 过渡遮罩组件
-function TransitionOverlay() {
-  return (
-    <motion.div
-      initial={{ scaleY: 0 }}
-      animate={{ scaleY: 0 }}
-      exit={{ scaleY: 1 }}
-      transition={{ duration: 0.4, ease: 'easeInOut' }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)',
-        transformOrigin: 'bottom',
-        zIndex: 9999,
-        pointerEvents: 'none'
-      }}
-    />
-  )
-}
-
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -76,6 +55,8 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [router])
 
+  const transitionType = useState(() => Math.floor(Math.random() * 4))[0]
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -87,7 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         <Component {...pageProps} />
       </motion.div>
-      {isTransitioning && <TransitionOverlay />}
+      <PageTransitionShader active={isTransitioning} type={transitionType} />
     </AnimatePresence>
   )
 }

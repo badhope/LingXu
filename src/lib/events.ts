@@ -649,7 +649,7 @@ export function processEventChoice(
 
 // ==================== 导出 ====================
 
-export default {
+const EventsLib = {
   RANDOM_EVENTS,
   ACHIEVEMENTS,
   generateRandomEvent,
@@ -659,3 +659,5 @@ export default {
   checkAllAchievements,
   processEventChoice
 }
+
+export default EventsLib

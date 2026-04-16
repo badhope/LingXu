@@ -623,7 +623,7 @@ export function findNearestDili(latitude: number, longitude: number): DiliInfo {
 
 // ==================== 导出 ====================
 
-export default {
+const DiliLib = {
   TWENTY_FOUR_MOUNTAINS,
   LONGMAI_DATA,
   DILI_DATA,
@@ -637,3 +637,5 @@ export default {
   getDiliByProvince,
   findNearestDili
 }
+
+export default DiliLib

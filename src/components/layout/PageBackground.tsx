@@ -44,8 +44,8 @@ interface PageBackgroundProps {
 
 export default function PageBackground({
   children,
-  colorRgb = '201, 162, 39',
-  particleCount = 50,
+  colorRgb = '154, 123, 41',
+  particleCount = 30,
 }: PageBackgroundProps) {
   const particlesRef = useRef<HTMLCanvasElement>(null)
 

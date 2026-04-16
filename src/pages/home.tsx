@@ -28,10 +28,10 @@
 'use client'
 
 import { MAIN_MODULES } from '@/lib/constants'
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
+import XianxiaCard from '@/components/ui/XianxiaCard'
 import styles from './home.module.scss'
 
 /** 确定性伪随机（SSR/客户端一致，无 Hydration Mismatch） */
@@ -143,34 +143,22 @@ export default function HomePage() {
             <p className={styles.sectionSubtitle}>八字开启灵墟档案馆，探索失落的修行世界</p>
           </motion.div>
 
-          <div className={styles.modulesGrid}>
+          <div 
+            className={styles.modulesGrid}
+            style={{ 
+              perspective: '2000px',
+              transformStyle: 'preserve-3d'
+            }}
+          >
             {MAIN_MODULES.map((module, index) => (
-              <motion.div
+              <XianxiaCard
                 key={module.char}
-                className={styles.moduleCard}
-                initial={{ opacity: 0, y: 60, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.6, delay: index * 0.08 }}
-                whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
-              >
-                <Link href={'/' + module.id} className={styles.moduleLink}>
-                  <div className={styles.moduleGlow} style={{ background: `radial-gradient(circle at center, ${module.color}30 0%, transparent 70%)` }} />
-                  <div className={styles.moduleHeader}>
-                    <span className={styles.moduleIcon} style={{ textShadow: `0 0 20px ${module.color}` }}>{module.icon}</span>
-                    <span className={styles.modulePinyin}>{module.pinyin}</span>
-                  </div>
-                  <div className={styles.moduleKey}>{module.char}</div>
-                  <h3 className={styles.moduleTitle}>{module.name}</h3>
-                  <p className={styles.moduleDescription}>{module.description}</p>
-                  <div className={styles.moduleFeatures}>
-                    {module.subModules.map((f) => <span key={f} className={styles.moduleFeature}>{f}</span>)}
-                  </div>
-                  <div className={styles.moduleArrow}>
-                    <motion.span animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity, delay: index * 0.1 }}>→</motion.span>
-                  </div>
-                </Link>
-              </motion.div>
+                char={module.char}
+                title={module.name}
+                description={module.description}
+                href={'/' + module.id}
+                index={index}
+              />
             ))}
           </div>
         </section>
