@@ -30,8 +30,10 @@
 import { MAIN_MODULES } from '@/lib/constants'
 import { useEffect, useRef, useMemo } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import XianxiaCard from '@/components/ui/XianxiaCard'
+import SeoHead from '@/components/common/SeoHead'
 import styles from './home.module.scss'
 
 /** 确定性伪随机（SSR/客户端一致，无 Hydration Mismatch） */
@@ -80,6 +82,11 @@ export default function HomePage() {
 
   return (
     <Layout showNav={true} transparentNav={true} showFooter={true}>
+      <SeoHead
+        title="灵墟档案馆"
+        description="末法时代失落修行文明档案馆 - 收录中华玄学、历史、天文、地理等修真文化，探索天地玄黄宇宙洪荒的奥秘"
+        keywords="修仙,玄学,易经,八字,风水,星宿,历史,修真,传统文化,灵墟,末法时代"
+      />
       <div ref={containerRef} className={styles.container}>
         {/* Hero */}
         <motion.section className={styles.hero} style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}>
@@ -161,6 +168,39 @@ export default function HomePage() {
               />
             ))}
           </div>
+
+          {/* 🗺️ 新增: 快速入口区域 */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+            style={{ marginTop: '3rem' }}
+          >
+            <div className={styles.quickNavTitle}>⚡ 快速传送阵</div>
+            <div className={styles.quickNavGrid}>
+              <Link href="/map" className={styles.quickNavItem}>
+                <span className={styles.quickNavIcon}>🗺️</span>
+                <span>全站地图</span>
+                <span className={styles.quickNavDesc}>47 个页面</span>
+              </Link>
+              <Link href="/about" className={styles.quickNavItem}>
+                <span className={styles.quickNavIcon}>📖</span>
+                <span>关于灵墟</span>
+                <span className={styles.quickNavDesc}>档案馆介绍</span>
+              </Link>
+              <Link href="/tian/xingxiu" className={styles.quickNavItem}>
+                <span className={styles.quickNavIcon}>⭐</span>
+                <span>二十八星宿</span>
+                <span className={styles.quickNavDesc}>28星宿详解</span>
+              </Link>
+              <Link href="/di/fengshui" className={styles.quickNavItem}>
+                <span className={styles.quickNavIcon}>☯️</span>
+                <span>风水绝学</span>
+                <span className={styles.quickNavDesc}>15种形煞化解</span>
+              </Link>
+            </div>
+          </motion.div>
         </section>
       </div>
     </Layout>

@@ -12,6 +12,7 @@ import styles from './index.module.scss'
 
 const SUB_MODULES = [
   { id: 'yijing', name: '易经', icon: '☯', desc: '六十四卦，天人合一', href: '/xuan/yijing', color: '#c9a227' },
+  { id: 'tools', name: '工具', icon: '🔮', desc: '梅花易数，奇门遁甲', href: '/xuan/tools', color: '#d4af37', isNew: true },
   { id: 'bazi', name: '八字', icon: '❋', desc: '四柱命理，五行生克', href: '/xuan/bazi', color: '#ef4444' },
   { id: 'liuyao', name: '六爻', icon: '☲', desc: '铜钱起卦，预知吉凶', href: '/xuan/liuyao', color: '#8b5cf6' },
   { id: 'fulu', name: '符箓', icon: '⚡', desc: '道教符箓，祝由十三科', href: '/xuan/fulu', color: '#f97316' },
@@ -117,11 +118,22 @@ export default function XuanIndexPage() {
       animId = requestAnimationFrame(animate)
     }
 
+    let isMounted = true
     animate()
 
     return () => {
+      isMounted = false
       cancelAnimationFrame(animId)
       window.removeEventListener('mousemove', handleMouseMove)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
     }
   }, [])
 

@@ -1,711 +1,477 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface Dynasty {
+  id: number
+  name: string
+  era: string
+  years: number
+  kings: number
+  founder: string
+  capital: string
+  territory: string
+  population: string
+  destiny: number
+  achievement: number
+  feature: string
+  fall: string
+  majorEvent: string
+  detail: string
+  innovations: string[]
+  famousPeople: string[]
+  legacies: string[]
+  crises: string[]
+  color: string
+  icon: string
+}
+
+const DYNASTIES: Dynasty[] = [
+  {
+    id: 1,
+    name: '夏',
+    era: '约前2070-前1600',
+    years: 470,
+    kings: 17,
+    founder: '大禹',
+    capital: '阳城',
+    territory: '黄河中游',
+    population: '约200万',
+    destiny: 45,
+    achievement: 70,
+    feature: '治水定九州，世袭制开端',
+    fall: '夏桀无道，成汤革命',
+    majorEvent: '大禹治水、太康失国、少康中兴',
+    detail: '夏，中国历史上第一个世袭制王朝。大禹治水有功，受舜禅让而即位，国号曰夏。禹传子启，家天下自此始。夏后氏十七君，历四百七十年。夏之盛也，禹会诸侯于涂山，执玉帛者万国；夏之衰也，孔甲乱德，诸侯畔之。至于桀，不务德而武伤百姓，百姓弗堪。汤修德，诸侯皆归汤，汤遂率兵以伐夏桀。桀走鸣条，遂放而死。汤乃践天子位，代夏朝天下。夏虽亡，其九州之制，历法之传，子孙之祀，影响深远矣。',
+    innovations: ['世袭制代替禅让制', '九州分野制度', '夏历（农历）', '青铜器铸造', '奴隶制国家'],
+    famousPeople: ['大禹', '夏启', '后羿', '少康', '夏桀'],
+    legacies: ['农历沿用至今', '华夏民族雏形', '国家形态确立', '宗法制萌芽'],
+    crises: ['太康失国', '后羿代夏', '寒浞篡位', '夏桀暴政'],
+    color: '#78716c',
+    icon: '🏔️'
+  },
+  {
+    id: 2,
+    name: '商',
+    era: '前1600-前1046',
+    years: 554,
+    kings: 31,
+    founder: '成汤',
+    capital: '殷',
+    territory: '黄河中下游',
+    population: '约400万',
+    destiny: 55,
+    achievement: 80,
+    feature: '玄鸟生商，甲骨文、青铜器',
+    fall: '纣王暴虐，武王伐纣',
+    majorEvent: '景亳之命、盘庚迁殷、武丁中兴',
+    detail: '商，天命玄鸟，降而生商。成汤灭夏，定都于亳，国号曰商。后五迁其都，至盘庚迁于殷，后世称殷商。商王三十一世，历五百五十四年。商之盛也，武丁得傅说为相，国大治，鬼方三年乃克，四海来朝。商之亡也，纣资辨捷疾，闻见甚敏，材力过人，手格猛兽，知足以距谏，言足以饰非，矜人臣以能，高天下以声，以为皆出己之下。好酒淫乐，嬖于妇人，以酒为池，悬肉为林，使男女裸相逐其间，为长夜之饮。周武王率诸侯伐纣，战于牧野，纣师皆倒兵以战，纣走入，登鹿台，衣其宝玉衣，赴火而死。',
+    innovations: ['甲骨文', '成熟青铜器', '干支纪日', '商业贸易', '内外服制度'],
+    famousPeople: ['成汤', '伊尹', '盘庚', '武丁', '傅说', '妇好', '商纣'],
+    legacies: ['汉字系统成熟', '青铜文明顶峰', '商人商业传统', '六十甲子纪年'],
+    crises: ['九世之乱', '屡次迁都', '东夷叛乱', '纣王暴政'],
+    color: '#a8a29e',
+    icon: '🀄'
+  },
+  {
+    id: 3,
+    name: '周',
+    era: '前1046-前256',
+    years: 790,
+    kings: 36,
+    founder: '姬发',
+    capital: '镐京、洛邑',
+    territory: '华夏全境',
+    population: '约1500万',
+    destiny: 95,
+    achievement: 95,
+    feature: '周礼治天下，八百年最长',
+    fall: '礼崩乐坏，秦灭西周',
+    majorEvent: '武王伐纣、周公制礼、春秋五霸、战国七雄',
+    detail: '周，文王姬昌，积善累德，诸侯皆向之。武王姬发，观兵孟津，伐纣克殷，受命而王。周公相成王，制礼作乐，天下大服。周三十六王，历七百九十年，为历代享国最长者。周分西周、东周。西周都镐京，成康之治，刑错四十余年不用。幽王烽火戏诸侯，犬戎杀幽王于骊山之下。平王东迁洛邑，是为东周。王室既卑，诸侯力政，齐桓、晋文、秦穆、宋襄、楚庄迭兴，是为春秋五霸。及韩赵魏分晋，田氏代齐，万乘之国七，千乘之国五，敌侔争权，盖为战国。周赧王五十九年，秦灭西周，九鼎入秦。周虽亡，其礼乐文明，郁郁乎文哉，实为中华文明之根也。',
+    innovations: ['封建制（分封制）', '宗法制', '礼乐制度', '井田制', '雅言（官话）'],
+    famousPeople: ['周文王', '周武王', '周公旦', '姜太公', '孔子', '老子', '诸子百家'],
+    legacies: ['华夏文明主体', '姓氏大发展', '诸子百家思想', '伦理道德体系'],
+    crises: ['国人暴动', '幽王亡国', '平王东迁', '礼崩乐坏'],
+    color: '#fbbf24',
+    icon: '☯️'
+  },
+  {
+    id: 4,
+    name: '秦',
+    era: '前221-前207',
+    years: 14,
+    kings: 3,
+    founder: '嬴政',
+    capital: '咸阳',
+    territory: '天下一统',
+    population: '约2500万',
+    destiny: 20,
+    achievement: 100,
+    feature: '千古一帝，郡县制大一统',
+    fall: '严刑峻法，二世而亡',
+    majorEvent: '灭六国、书同文、筑长城、陈胜吴广起义',
+    detail: '秦，奋六世之余烈，振长策而御宇内。秦王嬴政，十七年间，灭六国，一海内，自以为德兼三皇，功过五帝，乃更号曰皇帝。废封建，置郡县，书同文，车同轨，度同制，行同伦，天下遂为一统。北击匈奴，筑长城万里；南征百越，置桂林象郡。收天下之兵，聚之咸阳，销以为钟鐻金人十二。然秦以暴虐为天下始，焚百家之言，以愚黔首；隳名城，杀豪杰，收天下之兵。始皇既殁，陈胜吴广斩木为兵，揭竿为旗，天下云集响应，赢粮而景从。楚虽三户，亡秦必楚。项羽破釜沉舟，九战九捷，坑秦卒二十万于新安。刘邦入咸阳，子婴素车白马降于道旁。秦三帝，十四年而亡。其亡也忽焉，然其创制立法，百代皆行秦政法。',
+    innovations: ['皇帝制度', '郡县制', '统一文字度量衡', '驰道网络', '重农抑商'],
+    famousPeople: ['秦始皇', '李斯', '王翦', '蒙恬', '赵高', '陈胜', '项羽'],
+    legacies: ['大一统观念', '中央集权制度', '汉族基本盘', '长城奇迹'],
+    crises: ['焚书坑儒', '大兴土木', '沙丘之变', '赵高乱政'],
+    color: '#1e293b',
+    icon: '⚔️'
+  },
+  {
+    id: 5,
+    name: '汉',
+    era: '前202-220',
+    years: 422,
+    kings: 29,
+    founder: '刘邦',
+    capital: '长安、洛阳',
+    territory: '609万平方公里',
+    population: '约6500万',
+    destiny: 90,
+    achievement: 98,
+    feature: '汉民族定名，虽远必诛',
+    fall: '宦官外戚，黄巾起义',
+    majorEvent: '文景之治、汉武盛世、昭宣中兴、光武中兴',
+    detail: '汉，高祖刘邦，提三尺剑，入关中，王汉中，五年而成帝业。汉承秦制，惩亡秦孤立之败，郡国并行。文景之治，轻徭薄赋，与民休息，京师之钱累巨万，贯朽而不可校；太仓之粟陈陈相因，充溢露积于外，至腐败不可食。武帝践祚，罢黜百家，独尊儒术；北击匈奴，封狼居胥；南诛两越，东灭朝鲜；西通西域，凿空丝绸之路。汉之威德，远播域外，凡日月所照，江河所至，皆为汉土。明犯强汉者，虽远必诛！昭宣中兴，汉家之治复盛。元成哀平，外戚用事，王莽篡汉，天下大乱。光武起于南阳，诛灭群雄，定都洛阳，是为东汉。明章之治，儒学最盛。桓灵以来，党锢之祸，宦官专政，黄巾既作，豪杰并起。曹丕受禅，汉遂亡。汉四百年，华夏之族，遂称汉人，永世不易。',
+    innovations: ['察举制', '丝绸之路', '独尊儒术', '太学制度', '冶铁技术'],
+    famousPeople: ['刘邦', '汉武帝', '卫青', '霍去病', '司马迁', '刘秀', '诸葛亮'],
+    legacies: ['汉民族得名', '儒家正统地位', '汉人自豪感', '大一统传统'],
+    crises: ['七国之乱', '巫蛊之祸', '王莽篡汉', '党锢之祸'],
+    color: '#ef4444',
+    icon: '🇨🇳'
+  },
+  {
+    id: 6,
+    name: '唐',
+    era: '618-907',
+    years: 289,
+    kings: 21,
+    founder: '李渊',
+    capital: '长安',
+    territory: '1237万平方公里',
+    population: '约8000万',
+    destiny: 85,
+    achievement: 100,
+    feature: '盛唐气象，万国来朝',
+    fall: '安史之乱，藩镇割据',
+    majorEvent: '贞观之治、永徽之治、开元盛世、安史之乱',
+    detail: '唐，高祖李渊，起于太原，代隋建唐。太宗李世民，济世安民，贞观之治，路不拾遗，夜不闭户，四夷君长请为天可汗。武曌称制，女主天下，贞观遗风。玄宗开元，励精图治，海内富安，行者虽万里不持寸兵。唐三彩流光溢彩，李杜文章光焰万丈，吴带当风，颜筋柳骨，丝绸之路驼铃声声，长安胡姬酒肆林立。九天阊阖开宫殿，万国衣冠拜冕旒。盛唐气象，至今使人神往。渔阳鼙鼓动地来，惊破霓裳羽衣曲。安史八年，大唐由盛转衰。藩镇割据，宦官专权，朋党之争，黄巢起义，唐室遂衰。天祐四年，朱温篡唐，唐遂亡。唐虽亡，盛唐之音，万国之忆，唐人之称，永存世间。',
+    innovations: ['科举制度成熟', '均田制', '租庸调制', '对外开放', '诗歌顶峰'],
+    famousPeople: ['唐太宗', '武则天', '唐玄宗', '李白', '杜甫', '魏征', '玄奘'],
+    legacies: ['唐人街遍天下', '唐诗宝库', '盛世典范', '东亚文化圈'],
+    crises: ['玄武门之变', '武后临朝', '安史之乱', '黄巢起义'],
+    color: '#f59e0b',
+    icon: '🐉'
+  },
+  {
+    id: 7,
+    name: '宋',
+    era: '960-1279',
+    years: 319,
+    kings: 18,
+    founder: '赵匡胤',
+    capital: '开封、临安',
+    territory: '280万平方公里',
+    population: '约1.2亿',
+    destiny: 60,
+    achievement: 95,
+    feature: '文人治国，文化经济顶峰',
+    fall: '崖山蹈海，蒙元灭宋',
+    majorEvent: '陈桥兵变、杯酒释兵权、王安石变法、崖山海战',
+    detail: '宋，太祖赵匡胤，陈桥兵变，黄袍加身，代周建宋。惩五代藩镇之弊，杯酒释兵权，以文治国，与士大夫共治天下。宋虽武事不振，然文化经济，登峰造极。华夏民族之文化，历数千载之演进，造极于赵宋之世。活字印刷，指南针用于航海，火药用于军事，三大发明改变世界。宋词婉约豪放，山水水墨意境，理学思想精深。东京梦华，商铺林立，夜市直至三更尽，才五更又复开张；临安繁盛，西湖歌舞，暖风熏得游人醉。靖康之耻，二帝北狩，宋室南渡，偏安江南。岳武穆北伐功亏一篑，文天祥留取丹心照汗青。崖山一战，陆秀夫负帝蹈海，十万军民同殉国难。宋虽亡，其文明之光，照耀千古。',
+    innovations: ['活字印刷', '指南针航海', '文官制度', '商品经济', '程朱理学'],
+    famousPeople: ['宋太祖', '王安石', '苏轼', '岳飞', '朱熹', '文天祥', '毕昇'],
+    legacies: ['文官政治传统', '宋词文学宝库', '三大发明西传', '市民文化兴起'],
+    crises: ['烛影斧声', '澶渊之盟', '靖康之耻', '崖山海战'],
+    color: '#3b82f6',
+    icon: '🎋'
+  },
+  {
+    id: 8,
+    name: '明',
+    era: '1368-1644',
+    years: 276,
+    kings: 16,
+    founder: '朱元璋',
+    capital: '南京、北京',
+    territory: '997万平方公里',
+    population: '约2亿',
+    destiny: 75,
+    achievement: 90,
+    feature: '天子守国门，君王死社稷',
+    fall: '李自成进京，崇祯自缢',
+    majorEvent: '洪武之治、永乐盛世、郑和下西洋、土木堡之变',
+    detail: '明，太祖朱元璋，淮右布衣，驱逐胡虏，恢复中华，立纲陈纪，救济斯民。废丞相，设内阁，皇帝亲掌六部。永乐迁都北京，天子守国门；修永乐大典，集古今图书；郑和下西洋，宣威海外，大小凡三十余国，涉沧溟十万余里。仁宣之治，吏治清明，百姓安居乐业。土木之变，英宗北狩，于谦守北京，社稷转危为安。弘治中兴，万历新政，明之国势，时起时伏。戚继光平倭寇，李时珍修本草，徐霞客游名山大川，阳明心学致良知。崇祯即位，励精图治，然内有流寇，外有满清，加之以天灾连年，臣僚党争，李自成果破京师，崇祯自缢于煤山，君王死社稷。明虽亡，其刚直之风，至今令人起敬。',
+    innovations: ['内阁制度', '八股取士', '郑和航海', '阳明心学', '白银货币化'],
+    famousPeople: ['朱元璋', '朱棣', '于谦', '王阳明', '戚继光', '李时珍', '崇祯帝'],
+    legacies: ['故宫紫禁城', '万里长城', '永乐大典', '气节精神'],
+    crises: ['靖难之役', '土木堡之变', '倭寇之患', '李自成起义'],
+    color: '#ef4444',
+    icon: '🏮'
+  }
+]
+
+const getDynastyStyle = (name: string) => {
+  if (name === '汉' || name === '唐') return { label: '盛世大朝' }
+  if (name === '秦' || name === '隋') return { label: '短命而强' }
+  return { label: '正统王朝' }
+}
 
 export default function ChaodaiPage() {
-  const dynasties = [
-    {
-      name: '夏',
-      era: '约前2070-前1600',
-      years: 470,
-      kings: 17,
-      founder: '大禹',
-      capital: '阳城',
-      territory: '黄河中游',
-      population: '约200万',
-      destiny: 45,
-      achievement: 70,
-      feature: '治水定九州，世袭制开端',
-      fall: '夏桀无道，成汤革命',
-      majorEvent: '大禹治水、太康失国、少康中兴',
-      color: '#78716c',
-      icon: '🏔️'
-    },
-    {
-      name: '商',
-      era: '前1600-前1046',
-      years: 554,
-      kings: 31,
-      founder: '成汤',
-      capital: '殷',
-      territory: '黄河中下游',
-      population: '约400万',
-      destiny: 55,
-      achievement: 80,
-      feature: '玄鸟生商，甲骨文、青铜器',
-      fall: '纣王暴虐，武王伐纣',
-      majorEvent: '景亳之命、盘庚迁殷、武丁中兴',
-      color: '#a8a29e',
-      icon: '🀄'
-    },
-    {
-      name: '周',
-      era: '前1046-前256',
-      years: 790,
-      kings: 36,
-      founder: '姬发',
-      capital: '镐京、洛邑',
-      territory: '华夏全境',
-      population: '约1500万',
-      destiny: 95,
-      achievement: 95,
-      feature: '周礼治天下，八百年最长',
-      fall: '礼崩乐坏，秦灭西周',
-      majorEvent: '武王伐纣、周公制礼、春秋五霸、战国七雄',
-      color: '#fbbf24',
-      icon: '☯️'
-    },
-    {
-      name: '秦',
-      era: '前221-前207',
-      years: 14,
-      kings: 3,
-      founder: '嬴政',
-      capital: '咸阳',
-      territory: '天下一统',
-      population: '约2500万',
-      destiny: 20,
-      achievement: 100,
-      feature: '千古一帝，郡县制大一统',
-      fall: '严刑峻法，二世而亡',
-      majorEvent: '灭六国、书同文、筑长城、陈胜吴广起义',
-      color: '#1e293b',
-      icon: '⚔️'
-    },
-    {
-      name: '汉',
-      era: '前202-220',
-      years: 422,
-      kings: 29,
-      founder: '刘邦',
-      capital: '长安、洛阳',
-      territory: '609万平方公里',
-      population: '约6500万',
-      destiny: 90,
-      achievement: 98,
-      feature: '汉民族定名，虽远必诛',
-      fall: '宦官外戚，黄巾起义',
-      majorEvent: '文景之治、汉武盛世、昭宣中兴、光武中兴',
-      color: '#ef4444',
-      icon: '🇨🇳'
-    },
-    {
-      name: '晋',
-      era: '266-420',
-      years: 154,
-      kings: 15,
-      founder: '司马炎',
-      capital: '洛阳、建康',
-      territory: '543万平方公里',
-      population: '约3500万',
-      destiny: 30,
-      achievement: 40,
-      feature: '三国归一统，门阀政治',
-      fall: '八王之乱，五胡乱华',
-      majorEvent: '太康之治、永嘉之乱、衣冠南渡',
-      color: '#6b7280',
-      icon: '🏛️'
-    },
-    {
-      name: '隋',
-      era: '581-618',
-      years: 37,
-      kings: 3,
-      founder: '杨坚',
-      capital: '大兴',
-      territory: '467万平方公里',
-      population: '约5000万',
-      destiny: 35,
-      achievement: 85,
-      feature: '开皇之治，大运河',
-      fall: '穷兵黩武，民变频发',
-      majorEvent: '灭陈、开科举、修运河、三征高句丽',
-      color: '#475569',
-      icon: '🚣'
-    },
-    {
-      name: '唐',
-      era: '618-907',
-      years: 289,
-      kings: 21,
-      founder: '李渊',
-      capital: '长安',
-      territory: '1237万平方公里',
-      population: '约8000万',
-      destiny: 85,
-      achievement: 100,
-      feature: '盛唐气象，万国来朝',
-      fall: '安史之乱，藩镇割据',
-      majorEvent: '贞观之治、永徽之治、开元盛世、安史之乱',
-      color: '#f59e0b',
-      icon: '🐉'
-    },
-    {
-      name: '宋',
-      era: '960-1279',
-      years: 319,
-      kings: 18,
-      founder: '赵匡胤',
-      capital: '开封、临安',
-      territory: '280万平方公里',
-      population: '约1.2亿',
-      destiny: 60,
-      achievement: 92,
-      feature: '文化造极，商品经济',
-      fall: '重文轻武，蒙元南侵',
-      majorEvent: '陈桥兵变、澶渊之盟、王安石变法、崖山海战',
-      color: '#3b82f6',
-      icon: '🎋'
-    },
-    {
-      name: '元',
-      era: '1271-1368',
-      years: 97,
-      kings: 11,
-      founder: '忽必烈',
-      capital: '大都',
-      territory: '1372万平方公里',
-      population: '约9000万',
-      destiny: 40,
-      achievement: 65,
-      feature: '世界帝国，行省制度',
-      fall: '民族压迫，红巾起义',
-      majorEvent: '崖山灭宋、四等人制、马可波罗来华',
-      color: '#1e3a8a',
-      icon: '🐴'
-    },
-    {
-      name: '明',
-      era: '1368-1644',
-      years: 276,
-      kings: 16,
-      founder: '朱元璋',
-      capital: '南京、北京',
-      territory: '997万平方公里',
-      population: '约2亿',
-      destiny: 70,
-      achievement: 88,
-      feature: '天子守国门，君王死社稷',
-      fall: '内忧外患，闯王进京',
-      majorEvent: '洪武之治、永乐盛世、仁宣之治、土木堡之变',
-      color: '#dc2626',
-      icon: '☀️'
-    },
-    {
-      name: '清',
-      era: '1636-1912',
-      years: 276,
-      kings: 12,
-      founder: '皇太极',
-      capital: '北京',
-      territory: '1316万平方公里',
-      population: '约4.5亿',
-      destiny: 55,
-      achievement: 75,
-      feature: '康乾盛世，版图奠定',
-      fall: '闭关锁国，辛亥革命',
-      majorEvent: '康乾盛世、鸦片战争、洋务运动、辛亥革命',
-      color: '#fcd34d',
-      icon: '🌊'
-    }
-  ]
+  const [filteredDynasties, setFilteredDynasties] = useState(DYNASTIES)
+  const [expandedDynasty, setExpandedDynasty] = useState<number | null>(null)
 
-  const eraDivision = [
-    { name: '上古三代', dynasties: ['夏', '商', '周'], years: 1814, color: '#78716c', feature: '分封制，礼乐文明' },
-    { name: '秦汉', dynasties: ['秦', '汉'], years: 436, color: '#ef4444', feature: '大一统，汉民族形成' },
-    { name: '魏晋南北朝', dynasties: ['晋'], years: 361, color: '#6b7280', feature: '大分裂，民族融合' },
-    { name: '隋唐', dynasties: ['隋', '唐'], years: 326, color: '#f59e0b', feature: '盛世顶峰，世界性帝国' },
-    { name: '宋辽金元', dynasties: ['宋', '元'], years: 408, color: '#3b82f6', feature: '民族政权并立' },
-    { name: '明清', dynasties: ['明', '清'], years: 552, color: '#dc2626', feature: '专制顶峰，近代前夜' }
-  ]
+  const handleDynastyFilter = useCallback((data: typeof DYNASTIES) => {
+    setFilteredDynasties(data)
+  }, [])
 
-  const historicalCycle = [
-    { phase: '大乱之后', feature: '人口锐减，土地荒芜，人心思定', color: '#475569' },
-    { phase: '休养生息', feature: '轻徭薄赋，无为而治，经济恢复', color: '#22c55e' },
-    { phase: '盛世顶峰', feature: '户口滋盛，仓库盈积，武功赫赫', color: '#f59e0b' },
-    { phase: '盛极而衰', feature: '土地兼并，吏治腐败，矛盾积累', color: '#f97316' },
-    { phase: '内忧外患', feature: '农民起义，藩镇割据，边患频仍', color: '#ef4444' },
-    { phase: '王朝灭亡', feature: '土崩瓦解，群雄逐鹿，胜者为王', color: '#7f1d1d' }
-  ]
-
-  const emperorsRanking = [
-    { name: '秦始皇 嬴政', dynasty: '秦', score: 98, feat: '统一六国，建立帝制', color: '#1e293b' },
-    { name: '汉武帝 刘彻', dynasty: '汉', score: 97, feat: '独尊儒术，开疆拓土', color: '#ef4444' },
-    { name: '唐太宗 李世民', dynasty: '唐', score: 97, feat: '贞观之治，天可汗', color: '#f59e0b' },
-    { name: '隋文帝 杨坚', dynasty: '隋', score: 92, feat: '统一分裂，开科举制', color: '#475569' },
-    { name: '宋太祖 赵匡胤', dynasty: '宋', score: 88, feat: '终结五代，文人政治', color: '#3b82f6' },
-    { name: '明太祖 朱元璋', dynasty: '明', score: 88, feat: '驱逐鞑虏，恢复中华', color: '#dc2626' },
-    { name: '汉武帝 刘邦', dynasty: '汉', score: 85, feat: '布衣天子，汉家基业', color: '#ef4444' },
-    { name: '康熙 玄烨', dynasty: '清', score: 85, feat: '平定三藩，统一台湾', color: '#fcd34d' }
-  ]
-
-  function getDestinyColor(years: number) {
-    if (years >= 300) return { color: '#22c55e', label: '长命王朝' }
-    if (years >= 200) return { color: '#06b6d4', label: '稳定王朝' }
-    if (years >= 100) return { color: '#f59e0b', label: '中等王朝' }
-    return { color: '#ef4444', label: '短命王朝' }
+  const dynastyFilters = {
+    searchKeys: ['name', 'founder', 'capital', 'feature', 'fall', 'detail', 'innovations', 'famousPeople'],
+    filterKeys: {},
+    sortOptions: [
+      { key: 'years', label: '国祚长短' },
+      { key: 'achievement', label: '历史功绩' },
+      { key: 'destiny', label: '气运指数' },
+      { key: 'name', label: '朝代名称' },
+    ],
   }
 
   return (
     <SubPageTemplate
-      title="王朝更迭"
-      subtitle="三皇五帝 · 夏商周秦 · 汉唐宋明 · 天命轮回"
-      icon="👑"
-      colorRgb="250, 204, 21"
+      title="历代王朝"
+      subtitle="二十四史 · 廿四朝 · 三千年王朝兴替"
+      icon="🏯"
+      colorRgb="245, 158, 11"
     >
-      <SubPageSection title="中华国运总览">
+      <SubPageSection title="王朝气运图">
         <InfoCard>
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '1.5rem',
-            textAlign: 'center'
+            display: 'flex',
+            alignItems: 'flex-end',
+            gap: '0.5rem',
+            height: '200px',
+            padding: '0 1rem'
           }}>
-            {[
-              { label: '主要王朝', count: '12', color: '#facc15', icon: '👑', desc: '夏商周到元明清' },
-              { label: '总计历时', count: '约4000', unit: '年', color: '#ef4444', icon: '⏳', desc: '从夏朝到辛亥革命' },
-              { label: '历代帝王', count: '197', color: '#a855f7', icon: '🏛️', desc: '正史记载正统帝王' },
-              { label: '治乱循环', count: '6', color: '#06b6d4', icon: '🔄', desc: '六次大统一周期' },
-            ].map((stat, i) => (
+            {DYNASTIES.map((d, i) => (
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={d.id}
+                initial={{ height: 0 }}
+                whileInView={{ height: `${d.years / 8}px` }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <motion.div
-                  animate={i === 1 ? {
-                    scale: [1, 1.05, 1],
-                    boxShadow: ['none', `0 0 30px ${stat.color}`, 'none']
-                  } : {}}
-                  transition={{ duration: 4, repeat: Infinity }}
-                  style={{
-                    width: '70px',
-                    height: '70px',
-                    borderRadius: '12px',
-                    background: `linear-gradient(135deg, ${stat.color}, ${stat.color}88)`,
-                    margin: '0 auto 1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '2.5rem'
-                  }}
-                >
-                  {stat.icon}
-                </motion.div>
-                <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: stat.color }}>
-                  {stat.count}{stat.unit || ''}
-                </div>
-                <div style={{ fontSize: '1rem', color: '#b89438', margin: '0.25rem 0' }}>{stat.label}</div>
-                <div style={{ color: 'rgba(180, 180, 190, 0.7)', fontSize: '0.8rem' }}>{stat.desc}</div>
-              </motion.div>
-            ))}
-          </div>
-        </InfoCard>
-      </SubPageSection>
-
-      <SubPageSection title="王朝分期总览">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '1rem'
-        }}>
-          {eraDivision.map((era, index) => (
-            <motion.div
-              key={era.name}
-              className="xian-submodule-card"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              style={{
-                borderLeft: `4px solid ${era.color}`
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                <h3 style={{ color: era.color, fontSize: '1.1rem' }}>{era.name}</h3>
-                <span style={{
-                  padding: '0.15rem 0.6rem',
-                  borderRadius: '12px',
-                  background: era.color + '20',
-                  color: era.color,
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold'
-                }}>
-                  {era.years}年
-                </span>
-              </div>
-              <p style={{
-                fontSize: '0.8rem',
-                color: 'rgba(180, 180, 190, 0.7)',
-                marginBottom: '0.75rem'
-              }}>
-                {era.feature}
-              </p>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {era.dynasties.map(d => (
-                  <span key={d} style={{
-                    padding: '0.1rem 0.5rem',
-                    borderRadius: '6px',
-                    background: era.color + '15',
-                    color: era.color,
-                    fontSize: '0.7rem',
-                    fontWeight: 'bold'
-                  }}>
-                    {d}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </SubPageSection>
-
-      <SubPageSection title="十二王朝气运详解">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '1.25rem'
-        }}>
-          {dynasties.map((dynasty, index) => (
-            <motion.div
-              key={dynasty.name}
-              className="xian-submodule-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.06 }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              style={{
-                border: `2px solid ${dynasty.color}40`,
-                borderTop: `3px solid ${dynasty.color}`
-              }}
-            >
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '0.75rem'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <motion.div
-                    animate={dynasty.achievement >= 95 ? {
-                      rotate: [0, 5, -5, 0],
-                      scale: [1, 1.1, 1]
-                    } : {}}
-                    transition={{ duration: 4, repeat: Infinity, delay: index * 0.2 }}
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '8px',
-                      background: `linear-gradient(135deg, ${dynasty.color}, ${dynasty.color}66)`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.5rem'
-                    }}
-                  >
-                    {dynasty.icon}
-                  </motion.div>
-                  <div>
-                    <h3 style={{
-                      fontSize: '1.25rem',
-                      fontWeight: 'bold',
-                      color: dynasty.color
-                    }}>
-                      {dynasty.name}
-                    </h3>
-                    <span style={{
-                      fontSize: '0.65rem',
-                      padding: '0.05rem 0.4rem',
-                      borderRadius: '10px',
-                      background: getDestinyColor(dynasty.years).color + '25',
-                      color: getDestinyColor(dynasty.years).color
-                    }}>
-                      {getDestinyColor(dynasty.years).label}
-                    </span>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: dynasty.achievement >= 90 ? '#fbbf24' : dynasty.achievement >= 80 ? '#a855f7' : '#6b7280'
-                  }}>
-                    {dynasty.achievement}
-                  </div>
-                  <div style={{ fontSize: '0.65rem', color: 'rgba(180, 180, 190, 0.5)' }}>
-                    功绩值
-                  </div>
-                </div>
-              </div>
-
-              <div style={{
-                fontSize: '0.7rem',
-                color: dynasty.color + '90',
-                marginBottom: '0.5rem',
-                textAlign: 'center',
-                padding: '0.3rem',
-                background: dynasty.color + '10',
-                borderRadius: '4px'
-              }}>
-                📅 {dynasty.era} · {dynasty.years}年 · {dynasty.kings}帝
-              </div>
-
-              <p style={{
-                fontSize: '0.75rem',
-                color: 'rgba(180, 180, 190, 0.8)',
-                lineHeight: 1.6,
-                marginBottom: '0.75rem',
-                textAlign: 'center',
-                fontStyle: 'italic'
-              }}>
-                「{dynasty.feature}」
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.68rem' }}>
-                <div>
-                  <span style={{ color: 'rgba(250, 204, 21, 0.6)' }}>👤</span>
-                  <span style={{ color: 'rgba(180, 180, 190, 0.7)', marginLeft: '0.2rem' }}>{dynasty.founder}</span>
-                </div>
-                <div>
-                  <span style={{ color: 'rgba(239, 68, 68, 0.6)' }}>🏛️</span>
-                  <span style={{ color: 'rgba(180, 180, 190, 0.7)', marginLeft: '0.2rem' }}>{dynasty.capital}</span>
-                </div>
-                <div>
-                  <span style={{ color: 'rgba(34, 197, 94, 0.6)' }}>👥</span>
-                  <span style={{ color: 'rgba(180, 180, 190, 0.7)', marginLeft: '0.2rem' }}>{dynasty.population}</span>
-                </div>
-                <div>
-                  <span style={{ color: 'rgba(6, 182, 212, 0.6)' }}>🗺️</span>
-                  <span style={{ color: 'rgba(180, 180, 190, 0.7)', marginLeft: '0.2rem' }}>{dynasty.territory}</span>
-                </div>
-              </div>
-
-              <div style={{ marginTop: '0.75rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem', fontSize: '0.6rem' }}>
-                    <span style={{ color: 'rgba(180, 180, 190, 0.5)' }}>国运</span>
-                    <span style={{ color: '#22c55e' }}>{dynasty.destiny}%</span>
-                  </div>
-                  <div style={{ height: '3px', background: 'rgba(180, 180, 190, 0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${dynasty.destiny}%` }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.05 + 0.3, duration: 0.8 }}
-                      style={{ height: '100%', background: '#22c55e' }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem', fontSize: '0.6rem' }}>
-                    <span style={{ color: 'rgba(180, 180, 190, 0.5)' }}>文治武功</span>
-                    <span style={{ color: '#f59e0b' }}>{dynasty.achievement}%</span>
-                  </div>
-                  <div style={{ height: '3px', background: 'rgba(180, 180, 190, 0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${dynasty.achievement}%` }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.05 + 0.4, duration: 0.8 }}
-                      style={{ height: '100%', background: '#f59e0b' }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(180, 180, 190, 0.1)' }}>
-                <div style={{ marginBottom: '0.4rem' }}>
-                  <span style={{ color: 'rgba(239, 68, 68, 0.7)', fontSize: '0.65rem' }}>💀 覆灭：</span>
-                  <span style={{ color: 'rgba(180, 180, 190, 0.7)', fontSize: '0.65rem' }}>{dynasty.fall}</span>
-                </div>
-                <div>
-                  <span style={{ color: 'rgba(6, 182, 212, 0.7)', fontSize: '0.65rem' }}>📜 大事件：</span>
-                  <span style={{ color: 'rgba(180, 180, 190, 0.7)', fontSize: '0.65rem' }}>{dynasty.majorEvent}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </SubPageSection>
-
-      <SubPageSection title="历代帝王TOP8">
-        <InfoCard>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '1.25rem'
-          }}>
-            {emperorsRanking.map((emperor, index) => (
-              <motion.div
-                key={emperor.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: i * 0.08, duration: 0.8 }}
+                title={`${d.name} · ${d.years}年`}
                 style={{
-                  padding: '1rem',
-                  borderRadius: '12px',
-                  background: `linear-gradient(135deg, ${emperor.color}15, transparent)`,
-                  border: `1px solid ${emperor.color}30`,
-                  position: 'relative'
-                }}
-              >
-                <div style={{
-                  position: 'absolute',
-                  top: '-10px',
-                  right: '-10px',
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                  background: index < 3 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : '#6b7280',
+                  flex: 1,
+                  background: d.color,
+                  borderRadius: '4px 4px 0 0',
                   display: 'flex',
-                  alignItems: 'center',
+                  alignItems: 'flex-end',
                   justifyContent: 'center',
-                  color: 'white',
+                  paddingBottom: '0.5rem',
+                  fontSize: '0.9rem',
                   fontWeight: 'bold',
-                  fontSize: '0.8rem',
-                  boxShadow: `0 2px 10px ${index < 3 ? '#fbbf24' : '#6b7280'}50`
-                }}>
-                  {index + 1}
-                </div>
-                <h4 style={{ color: emperor.color, marginBottom: '0.3rem', fontSize: '0.95rem' }}>
-                  {emperor.name}
-                </h4>
-                <div style={{
-                  fontSize: '0.7rem',
-                  color: 'rgba(180, 180, 190, 0.6)',
-                  marginBottom: '0.5rem'
-                }}>
-                  {emperor.dynasty}朝
-                </div>
-                <p style={{
-                  fontSize: '0.75rem',
-                  color: 'rgba(180, 180, 190, 0.8)',
-                  marginBottom: '0.5rem'
-                }}>
-                  {emperor.feat}
-                </p>
-                <div style={{ textAlign: 'right' }}>
-                  <span style={{
-                    fontSize: '1.25rem',
-                    fontWeight: 'bold',
-                    color: emperor.score >= 95 ? '#fbbf24' : emperor.score >= 90 ? '#a855f7' : '#06b6d4'
-                  }}>
-                    {emperor.score}
-                  </span>
-                  <span style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.5)', marginLeft: '0.25rem' }}>
-                    分
-                  </span>
-                </div>
+                  color: 'white',
+                  textShadow: '0 1px 3px rgba(0,0,0,0.5)',
+                  cursor: 'pointer',
+                  minWidth: '40px'
+                }}
+                onClick={() => setExpandedDynasty(expandedDynasty === d.id ? null : d.id)}
+              >
+                {d.name}
               </motion.div>
             ))}
           </div>
+          <div style={{ textAlign: 'center', marginTop: '1rem', color: 'rgba(180, 180, 190, 0.7)', fontSize: '0.875rem' }}>
+            柱高代表享国年数 · 点击可查看对应王朝详情
+          </div>
         </InfoCard>
       </SubPageSection>
 
-      <SubPageSection title="历史周期律">
-        <InfoCard>
-          <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '60%',
-              height: '2px',
-              background: 'linear-gradient(90deg, transparent, #facc15, #f59e0b, #ef4444, transparent)',
-              opacity: 0.3
-            }} />
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(6, 1fr)',
-              gap: '1rem',
-              position: 'relative',
-              zIndex: 1
-            }}>
-              {historicalCycle.map((cycle, index) => (
-                <motion.div
-                  key={cycle.phase}
-                  initial={{ opacity: 0, y: index % 2 === 0 ? -20 : 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.12 }}
-                  style={{
-                    padding: '1rem 0.75rem',
-                    borderRadius: '12px',
-                    background: `linear-gradient(180deg, ${cycle.color}20, transparent)`,
-                    borderTop: `3px solid ${cycle.color}`,
-                    textAlign: 'center'
-                  }}
+      <SubPageSection title="王朝兴衰录">
+        <FilterBar
+          data={DYNASTIES}
+          onFiltered={handleDynastyFilter}
+          options={dynastyFilters}
+          placeholder="搜索朝代名称、帝王、事件、制度..."
+        />
+        
+        <div style={{ marginTop: '1.5rem' }}>
+          <AnimatePresence>
+            {filteredDynasties.map((dynasty) => (
+              <motion.div key={dynasty.id} layout style={{ marginBottom: '1rem' }}>
+                <InfoCard
+                  title={`${dynasty.name}朝`}
+                  subtitle={`${dynasty.era} · 享国${dynasty.years}年 · ${dynasty.kings}帝`}
+                  glowColor={dynasty.color.replace('#', '')}
+                  glowIntensity={dynasty.achievement >= 95 ? 90 : 60}
+                  onClick={() => setExpandedDynasty(expandedDynasty === dynasty.id ? null : dynasty.id)}
                 >
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.05, 1]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
-                    style={{
-                      width: '45px',
-                      height: '45px',
-                      borderRadius: '50%',
-                      background: `radial-gradient(circle, ${cycle.color}, ${cycle.color}66)`,
-                      margin: '0 auto 0.75rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '0.9rem'
-                    }}
-                  >
-                    {index + 1}
-                  </motion.div>
-                  <h4 style={{ color: cycle.color, marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                    {cycle.phase}
-                  </h4>
-                  <p style={{
-                    fontSize: '0.7rem',
-                    color: 'rgba(180, 180, 190, 0.7)',
-                    lineHeight: 1.6
-                  }}>
-                    {cycle.feature}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </InfoCard>
-      </SubPageSection>
+                  <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr', gap: '1rem', alignItems: 'start' }}>
+                    <motion.div
+                      animate={dynasty.achievement >= 95 ? {
+                        scale: [1, 1.1, 1],
+                        boxShadow: [`0 0 15px ${dynasty.color}00`, `0 0 35px ${dynasty.color}`, `0 0 15px ${dynasty.color}00`]
+                      } : {}}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '12px',
+                        background: dynasty.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2rem'
+                      }}
+                    >
+                      {dynasty.icon}
+                    </motion.div>
+                    <div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '0.75rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.6)' }}>开朝</div>
+                          <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: dynasty.color }}>{dynasty.founder}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.6)' }}>都城</div>
+                          <div style={{ fontSize: '0.9rem' }}>{dynasty.capital}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.6)' }}>历史功绩</div>
+                          <ProgressBar value={dynasty.achievement} color={dynasty.color} height={6} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.6)' }}>王朝气运</div>
+                          <ProgressBar value={dynasty.destiny} color="#22c55e" height={6} />
+                        </div>
+                      </div>
+                      <p style={{ color: 'rgba(180, 180, 190, 0.9)', fontSize: '0.9rem', margin: 0 }}>
+                        {dynasty.feature}
+                      </p>
+                    </div>
+                  </div>
 
-      <SubPageSection title="廿五史通鉴">
-        <div className="xian-submodule-card" style={{
-          background: 'linear-gradient(135deg, rgba(250, 204, 21, 0.08), transparent)',
-          border: '1px solid rgba(250, 204, 21, 0.25)',
-          padding: '2rem',
-          textAlign: 'center'
-        }}>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            style={{
-              fontSize: '1.15rem',
-              color: 'rgba(180, 180, 190, 0.85)',
-              lineHeight: 2.2,
-              fontStyle: 'italic'
-            }}
-          >
-            「夏曰岁，商曰祀，周曰年，唐虞曰载。<br/>
-            古今多少事，都付笑谈中。<br/>
-            是非成败转头空，青山依旧在，几度夕阳红。」
-          </motion.p>
-          <div style={{ marginTop: '1.5rem', color: '#facc15', fontSize: '0.9rem' }}>
-            —— 廿五史 · 司马光
-          </div>
+                  <AnimatePresence>
+                    {expandedDynasty === dynasty.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ 
+                          borderTop: `1px solid ${dynasty.color}33`,
+                          marginTop: '1rem',
+                          paddingTop: '1rem'
+                        }}>
+                          <p style={{ 
+                            color: 'rgba(180, 180, 190, 0.9)', 
+                            fontSize: '0.9rem',
+                            lineHeight: 1.8,
+                            marginBottom: '1rem',
+                            textIndent: '2em'
+                          }}>
+                            {dynasty.detail}
+                          </p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+                            <div>
+                              <div style={{ color: dynasty.color, fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                💡 制度创新
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {dynasty.innovations.map((inno, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: `${dynasty.color}20`,
+                                    color: dynasty.color
+                                  }}>
+                                    {inno}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#22c55e', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                🌟 风云人物
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {dynasty.famousPeople.map((p, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(34, 197, 94, 0.15)',
+                                    color: '#22c55e'
+                                  }}>
+                                    {p}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                            <div>
+                              <div style={{ color: '#b89438', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                📜 历史遗产
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {dynasty.legacies.map((l, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(184, 148, 56, 0.15)',
+                                    color: '#b89438'
+                                  }}>
+                                    {l}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                ⚠️ 王朝危机
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {dynasty.crises.map((c, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(239, 68, 68, 0.15)',
+                                    color: '#ef4444'
+                                  }}>
+                                    {c}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div style={{ 
+                    textAlign: 'center', 
+                    marginTop: '0.75rem',
+                    color: `${dynasty.color}99`,
+                    fontSize: '0.8rem'
+                  }}>
+                    {expandedDynasty === dynasty.id ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </div>
+                </InfoCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </SubPageSection>
     </SubPageTemplate>

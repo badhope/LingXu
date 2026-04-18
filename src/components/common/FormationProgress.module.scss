@@ -1,0 +1,36 @@
+/* ==========================================================================
+   ⚡「阵法充能」进度条
+   ========================================================================== */
+
+.progressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    #c9a227 10%,
+    #e8d48b 50%,
+    #c9a227 90%,
+    transparent 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(201, 162, 39, 0.8),
+    0 0 30px rgba(201, 162, 39, 0.4);
+  transition: width 0.15s ease-out;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: #e8d48b;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(201, 162, 39, 1);
+  }
+}

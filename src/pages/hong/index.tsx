@@ -11,6 +11,7 @@ import PageBackground from '@/components/layout/PageBackground'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
+  { id: 'tools', name: '工具', icon: '🔮', desc: '山海经异兽图鉴，上古精怪录', href: '/hong/tools', color: '#d4af37', isNew: true },
   { id: 'chuanshuo', name: '传说', icon: '📖', desc: '上古神话，三皇五帝，开天辟地', href: '/hong/chuanshuo' },
   { id: 'shenshou', name: '神兽', icon: '🦅', desc: '青龙白虎，朱雀玄武，瑞兽祥禽', href: '/hong/shenshou' },
   { id: 'yaomo', name: '妖魔', icon: '👹', desc: '妖魔鬼怪，精怪异闻，山海奇谈', href: '/hong/yaomo' },

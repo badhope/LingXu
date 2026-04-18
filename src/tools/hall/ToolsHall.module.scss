@@ -1,0 +1,347 @@
+.hallContainer {
+  min-height: 100vh;
+  padding: 60px 40px;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #0d0b08 0%, #080705 100%);
+}
+
+.hallHeader {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.hallTitle {
+  color: #d4af37;
+  font-size: 42px;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+}
+
+.titleEmblem {
+  font-size: 48px;
+}
+
+.hallSubtitle {
+  color: #8b7355;
+  font-size: 18px;
+  margin: 0;
+}
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.toolCard {
+  position: relative;
+  background: linear-gradient(145deg, rgba(42, 34, 24, 0.8) 0%, rgba(26, 21, 16, 0.95) 100%);
+  border: 1px solid #3d3020;
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  transform-origin: center;
+  will-change: transform, box-shadow;
+
+  /* ✨ 呼吸光晕基础 */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    padding: 2px;
+    background: conic-gradient(
+      from 0deg,
+      transparent,
+      rgba(212, 175, 55, 0.3),
+      transparent,
+      rgba(212, 175, 55, 0.15),
+      transparent
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    animation: toolCardGlow 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* 顶部金光扫过 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    opacity: 0;
+    transition: left 0.6s ease, opacity 0.3s ease;
+  }
+
+  /* 悬停效果 */
+  &:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.4),
+      0 0 60px rgba(212, 175, 55, 0.15);
+
+    &::before {
+      left: 100%;
+      opacity: 1;
+    }
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  /* 点击反馈 */
+  &:active {
+    transform: translateY(-2px) scale(0.99);
+    transition: transform 0.1s ease;
+  }
+
+  &.comingSoon {
+    filter: grayscale(0.5);
+    cursor: default;
+
+    &::before {
+      background: linear-gradient(90deg, transparent, #6b7280, transparent);
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+/* 法器卡片呼吸光晕动画 */
+@keyframes toolCardGlow {
+  0%, 100% {
+    opacity: 0.3;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    filter: hue-rotate(10deg);
+  }
+}
+
+/* ==========================================================================
+   移动端响应式优化
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .toolsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 8px;
+  }
+
+  .toolCard {
+    padding: 24px 16px;
+    min-height: 60px;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .hallContainer {
+    padding: 40px 16px;
+  }
+
+  .hallTitle {
+    font-size: 32px;
+    gap: 8px;
+  }
+
+  .titleEmblem {
+    font-size: 36px;
+  }
+
+  .hallSubtitle {
+    font-size: 16px;
+  }
+}
+
+.readyBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.comingBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 12px;
+  background: rgba(107, 114, 128, 0.2);
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  color: #9ca3af;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.toolIcon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  width: 120px;
+  height: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolName {
+  font-size: 22px;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.toolDescription {
+  color: #8b7355;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.featureTag {
+  padding: 4px 10px;
+  background: rgba(92, 74, 45, 0.4);
+  border: 1px solid #5c4a2d;
+  border-radius: 12px;
+  color: #c9a96a;
+  font-size: 11px;
+}
+
+.toolHistory {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  background: rgba(42, 34, 24, 0.5);
+  border-left: 3px solid #d4af37;
+  border-radius: 0 8px 8px 0;
+  align-items: flex-start;
+}
+
+.historyIcon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.historyText {
+  color: #a88c5c;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .toolHistory {
+    padding: 8px 10px;
+  }
+
+  .historyText {
+    font-size: 11px;
+  }
+}
+
+.enterButton {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #5c4a2d 0%, #3d3020 100%);
+  border: 1px solid #8b7355;
+  color: #d4af37;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #6d5a3d 0%, #4d4030 100%);
+  }
+}
+
+.comingButton {
+  width: 100%;
+  padding: 14px;
+  background: rgba(107, 114, 128, 0.2);
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  color: #6b7280;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.hintBanner {
+  text-align: center;
+  margin-top: 50px;
+  padding: 16px 24px;
+  background: rgba(92, 74, 45, 0.2);
+  border: 1px dashed #5c4a2d;
+  border-radius: 12px;
+  color: #8b7355;
+  font-size: 14px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .hallContainer {
+    padding: 40px 20px;
+  }
+
+  .hallTitle {
+    font-size: 28px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .titleEmblem {
+    font-size: 36px;
+  }
+
+  .toolsGrid {
+    grid-template-columns: 1fr;
+  }
+}

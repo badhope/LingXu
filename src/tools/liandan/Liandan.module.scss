@@ -1,0 +1,480 @@
+.liandanContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.herbsPanel,
+.furnacePanel {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);
+}
+
+.panelTitle {
+  color: #10b981;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-family: 'Georgia', serif;
+  letter-spacing: 2px;
+}
+
+.herbsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.herbBtn {
+  padding: 10px 8px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+  color: #065f46;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &.selected {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.herbName {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.herbTier {
+  font-size: 10px;
+  opacity: 0.7;
+
+  &.上品 {
+    color: #f59e0b;
+  }
+
+  &.中品 {
+    color: #6b7280;
+  }
+}
+
+.selectedRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.selectedLabel {
+  color: #065f46;
+  font-size: 12px;
+}
+
+.selectedCount {
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #34d399;
+  margin: 0 0 10px 0;
+  font-size: 13px;
+}
+
+.elixirList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.elixirItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &.selected {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+  }
+}
+
+.elixirName {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.elixirMatch {
+  color: #6b7280;
+  font-size: 11px;
+  min-width: 35px;
+  text-align: center;
+}
+
+.elixirTier {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.refineButton {
+  flex: 1;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.resetButton {
+  padding: 14px 20px;
+  background: transparent;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  color: #6ee7b7;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.1);
+  }
+}
+
+.manualToggle {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  color: #34d399;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(16, 185, 129, 0.1);
+  }
+}
+
+.manualPanel {
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.manualHistory {
+  color: #6ee7b7;
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  line-height: 1.7;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.classics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.classicItem {
+  padding: 6px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 2px solid #10b981;
+  color: #6ee7b7;
+  font-size: 11px;
+  line-height: 1.6;
+  font-family: 'Georgia', serif;
+}
+
+.fireControls {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.fireBtn {
+  padding: 8px 12px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+
+  &.active {
+    font-weight: 600;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.furnaceWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.furnaceBody {
+  position: relative;
+  width: 200px;
+  margin-bottom: 20px;
+}
+
+.furnaceFlames {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  z-index: 0;
+}
+
+.flame {
+  width: 20px;
+  height: 40px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0.8;
+}
+
+.furnacePot {
+  position: relative;
+  width: 180px;
+  height: 150px;
+  margin: 0 auto;
+  transition: all 0.3s;
+}
+
+.potBody {
+  position: absolute;
+  bottom: 0;
+  width: 180px;
+  height: 120px;
+  background: linear-gradient(180deg, #4b5563 0%, #1f2937 50%, #111827 100%);
+  border-radius: 0 0 90px 90px;
+  border: 3px solid #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.potMark {
+  font-size: 48px;
+  color: #10b981;
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.potLid {
+  position: absolute;
+  top: -5px;
+  left: 20px;
+  width: 140px;
+  height: 35px;
+  background: linear-gradient(180deg, #6b7280 0%, #4b5563 100%);
+  border-radius: 70px 70px 0 0;
+  border: 3px solid #9ca3af;
+  border-bottom: none;
+}
+
+.progressSection {
+  margin-top: 20px;
+}
+
+.stageBar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stageDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #374151;
+  border: 2px solid #4b5563;
+
+  &.active {
+    background: #10b981;
+    border-color: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+  }
+}
+
+.stageInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stageName {
+  color: #10b981;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stageNote {
+  color: #065f46;
+  font-size: 12px;
+}
+
+.progressBar {
+  height: 8px;
+  background: #1f2937;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.resultCard {
+  padding: 20px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.successIcon,
+.failIcon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.resultTitle {
+  margin: 0 0 8px 0;
+  color: #10b981;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.resultName {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'Georgia', serif;
+}
+
+.resultEffect {
+  margin: 0;
+  color: #6ee7b7;
+  font-size: 13px;
+}
+
+.resultNote {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.emptyState {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  color: #065f46;
+  margin-bottom: 16px;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.tipsBox {
+  padding: 14px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 10px;
+  border-left: 3px solid #10b981;
+  margin-top: 16px;
+}
+
+.tipText {
+  margin: 0;
+  color: #6ee7b7;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.tipText strong {
+  color: #10b981;
+}
+
+@media (max-width: 768px) {
+  .liandanContainer {
+    padding: 16px;
+  }
+
+  .herbsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fireControls {
+    flex-wrap: wrap;
+  }
+}

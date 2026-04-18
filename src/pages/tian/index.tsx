@@ -9,9 +9,19 @@ import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
+import SeoHead from '@/components/common/SeoHead'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
+  {
+    id: 'tools',
+    name: '工具',
+    icon: '🔮',
+    desc: '观音灵签，时辰吉凶',
+    href: '/tian/tools',
+    color: '#d4af37',
+    isNew: true,
+  },
   {
     id: 'xingxiu',
     name: '星宿',
@@ -146,16 +156,32 @@ export default function TianIndexPage() {
       animId = requestAnimationFrame(animate)
     }
 
+    let isMounted = true
     animate()
 
     return () => {
+      isMounted = false
       cancelAnimationFrame(animId)
       window.removeEventListener('mousemove', handleMouseMove)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
     }
   }, [])
 
   return (
     <Layout title="天时" transparentNav>
+      <SeoHead
+        title="天时"
+        description="灵墟档案馆 - 天时模块，探索二十八星宿、三垣四象、每日运势、流年推演、二十四节气、铜钱占卜等天象奥秘"
+        keywords="星宿,运势,节气,占卜,星象,天文,黄道吉日"
+      />
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>

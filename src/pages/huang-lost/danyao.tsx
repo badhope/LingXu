@@ -1,298 +1,215 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import { useState, useCallback } from 'react'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface Pill {
+  name: string
+  grade: string
+  effect: string
+  successRate: number
+  time: string
+  desc: string
+  detail: string
+  materials: string[]
+  icon: string
+  color: string
+  taboo: string[]
+  effectValue: number
+  recipe: string[]
+}
+
+const PILLS: Pill[] = [
+  {
+    name: '九转金丹',
+    grade: '天级',
+    effect: '白日飞升',
+    successRate: 1,
+    time: '九九八十一年',
+    desc: '太上老君八卦炉中炼就，九转功成，霞举飞升。服之者立地成仙，与天地同寿，与日月同庚。',
+    detail: '九转金丹乃丹道至尊。一转二转洗髓伐毛，三转四转脱胎换骨，五转六转神凝气结，七转八转纯阳不漏，九转功成霞举飞升。此丹需先天一炁为引，太阳真火锻炼，历经九次炼化。每转需九年，九九八十一年方成。丹成之日，天地同贺，万仙来朝。服此丹者，立证金仙，永不轮回。',
+    materials: ['九转还魂草', '先天紫气', '太阳真火精华', '九转玉莲', '鸿蒙紫气'],
+    icon: '🌟',
+    color: '#fbbf24',
+    taboo: ['心术不正者', '无德者', '六根不净者'],
+    effectValue: 100,
+    recipe: ['子时起火', '午时退火', '寅时添柴', '九次封炉'],
+  },
+  {
+    name: '九转还魂丹',
+    grade: '天级',
+    effect: '起死回生',
+    successRate: 5,
+    time: '三十六年',
+    desc: '生死人而肉白骨，纵是魂飞魄散，只要一息尚存，亦可还魂阳间。真正的逆天之丹。',
+    detail: '还魂丹夺天地之造化，侵日月之玄机。阎王要你三更死，此丹留你到五更。哪怕是油尽灯枯，魂魄已入幽冥，只要肉身不腐，此丹便可招魂魄，续生机，死而复生。此丹逆天而行，必有天谴。炼此丹者，损自身阳寿，折自身功德。',
+    materials: ['幽冥草', '还魂花', '三生石粉', '孟婆汤引', '彼岸花'],
+    icon: '💫',
+    color: '#a78bfa',
+    taboo: ['不可救恶人', '不可滥用', '不可用于敛财'],
+    effectValue: 98,
+    recipe: ['子时炼魂', '以自身精血为引', '渡自身功德为祭', '以命换命'],
+  },
+  {
+    name: '筑基丹',
+    grade: '地级',
+    effect: '伐毛洗髓',
+    successRate: 30,
+    time: '三年',
+    desc: '修仙第一步，筑基之本。荡尽尘俗杂质，铸就仙骨道胎。一颗下肚，凡胎换仙根。',
+    detail: '筑基乃修仙之根基。万丈高楼平地起，筑基不牢，一切皆是虚妄。此丹荡尽凡胎杂质，化开周身经脉，铸就先天道体。凡人服之，可延寿五十载，增一甲子功力。筑基成功，则仙途坦荡，大道可期。',
+    materials: ['筑基草', '灵泉水', '百年朱果', '洗髓花', '炼体液'],
+    icon: '🔵',
+    color: '#3b82f6',
+    taboo: ['根基深厚者无需', '服丹后需静修百日', '不可与他丹同服'],
+    effectValue: 80,
+    recipe: ['文武火交替', '七七四十九天', '小火慢熬', '适时开炉'],
+  },
+  {
+    name: '聚灵丹',
+    grade: '地级',
+    effect: '灵力倍增',
+    successRate: 50,
+    time: '三月',
+    desc: '修炼辅助圣品，服之可聚天地灵气于一身，修炼速度倍增。宗门批量炼制的标准丹药。',
+    detail: '聚灵丹为修士日常修炼必备。灵气稀薄之地，灵气匮乏之时，一颗聚灵丹便是一条捷径。服之丹田气海扩充一倍，灵气凝聚速度加倍。修士苦修一日抵得十日之功。大宗门弟子月领十颗，常年服用，日积月累，功力日进千里。',
+    materials: ['聚灵草', '凝露花', '月光石粉', '聚气散', '凝神草'],
+    icon: '💠',
+    color: '#06b6d4',
+    effectValue: 70,
+    recipe: ['月华之夜炼', '吸收月之精华', '凝练灵气', '凝丹成型'],
+    taboo: ['不可过量服用', '丹田充盈者不宜', '瓶颈期慎用'],
+  },
+  {
+    name: '大还丹',
+    grade: '地级',
+    effect: '功力倍增',
+    successRate: 65,
+    time: '一月',
+    desc: '增功添寿之妙药，一颗可抵十年苦修。武林中人趋之若鹜的续命神丹。',
+    detail: '大还丹，还精补气还阳。武林中传说中的续命神丹。重伤垂死，一颗便有起死回生之效；油尽灯枯，一颗便有返老还童之功。江湖恩怨，续命十年。得一颗，延寿二十载。侠客岛主，少林方丈，无人不想得此丹。',
+    materials: ['千年山参王', '万年灵芝', '天山雪莲', '何首乌王', '熊胆'],
+    icon: '🔴',
+    color: '#ef4444',
+    taboo: ['未满三十岁者不宜', '女子需减量', '阳盛者忌'],
+    effectValue: 65,
+    recipe: ['慢火细熬', '九九八十一天', '适时添加药引', '密封存养'],
+  },
+]
+
+interface FlameLevel {
+  name: string
+  temp: string
+  usage: string
+  detail: string
+  color: string
+  key: string
+  effect: string[]
+}
+
+const FIRES: FlameLevel[] = [
+  {
+    name: '凡火',
+    temp: '几百度',
+    usage: '普通丹药',
+    detail: '凡人之火，柴火，炭火，油灯。凡俗丹药炼制所用。',
+    color: '#ef4444',
+    key: '武火急煎，文火慢熬',
+    effect: ['普通药材', '易于掌握', '随手可得'],
+  },
+  {
+    name: '地火',
+    temp: '数千度',
+    usage: '黄级玄级',
+    detail: '地脉之火，地肺之火。玄级以下丹师引地火，温度高，温度稳定。',
+    color: '#f97316',
+    key: '地肺之火，源源不断',
+    effect: ['温度稳定', '火力持久', '不需时时照看'],
+  },
+  {
+    name: '三昧真火',
+    temp: '万度',
+    usage: '地级丹药',
+    detail: '修士体内，精气神，三昧火。',
+    color: '#8b5cf6',
+    key: '修士精气神三昧火，炼精化气，炼气化神',
+    effect: ['炼化杂质', '药力精纯', '丹药品级高'],
+  },
+]
 
 export default function DanyaoPage() {
-  const pills = [
-    {
-      name: '九转金丹',
-      grade: '天级',
-      effect: '白日飞升',
-      successRate: 1,
-      time: '九九八十一年',
-      desc: '太上老君八卦炉中炼就，九转功成，霞举飞升。服之者立地成仙，与天地同寿，与日月同庚。',
-      materials: ['九转还魂草', '先天紫气', '太阳真火精华'],
-      icon: '🌟'
-    },
-    {
-      name: '九转还魂丹',
-      grade: '天级',
-      effect: '起死回生',
-      successRate: 5,
-      time: '三十六年',
-      desc: '生死人而肉白骨，纵是魂飞魄散，只要一息尚存，亦可还魂阳间。真正的逆天之丹。',
-      materials: ['幽冥草', '还魂花', '三生石粉'],
-      icon: '💫'
-    },
-    {
-      name: '筑基丹',
-      grade: '地级',
-      effect: '伐毛洗髓',
-      successRate: 30,
-      time: '三年',
-      desc: '修仙第一步，筑基之本。荡尽尘俗杂质，铸就仙骨道胎。一颗下肚，凡胎换仙根。',
-      materials: ['筑基草', '灵泉水', '百年朱果'],
-      icon: '🔵'
-    },
-    {
-      name: '聚灵丹',
-      grade: '地级',
-      effect: '灵力倍增',
-      successRate: 50,
-      time: '三月',
-      desc: '修炼辅助圣品，服之可聚天地灵气于一身，修炼速度倍增。宗门批量炼制的标准丹药。',
-      materials: ['聚灵草', '凝露花', '月光石粉'],
-      icon: '💠'
-    },
-    {
-      name: '大还丹',
-      grade: '玄级',
-      effect: '功力倍增',
-      successRate: 65,
-      time: '一月',
-      desc: '增功添寿之妙药，一颗可抵十年苦修。武林中人趋之若鹜的续命神丹。',
-      materials: ['山参王', '灵芝', '雪莲'],
-      icon: '🔴'
-    },
-    {
-      name: '小还丹',
-      grade: '黄级',
-      effect: '疗伤续命',
-      successRate: 85,
-      time: '七日',
-      desc: '入门级疗伤圣药，内外伤皆可治。行走江湖必备良品。',
-      materials: ['当归', '黄芪', '甘草'],
-      icon: '🟠'
-    }
-  ]
+  const [filteredPills, setFilteredPills] = useState(PILLS)
+  const [expandedPill, setExpandedPill] = useState<string | null>(null)
+  const [filteredFires, setFilteredFires] = useState(FIRES)
+  const [expandedFire, setExpandedFire] = useState<string | null>(null)
 
-  const getGradeStyle = (grade: string) => {
-    switch (grade) {
-      case '天级': return {
-        bg: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-        glow: '0 0 30px rgba(251, 191, 36, 0.6)',
-        border: '2px solid #fbbf24'
-      }
-      case '地级': return {
-        bg: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-        glow: '0 0 20px rgba(59, 130, 246, 0.5)',
-        border: '2px solid #3b82f6'
-      }
-      case '玄级': return {
-        bg: 'linear-gradient(135deg, #ef4444, #dc2626)',
-        glow: '0 0 15px rgba(239, 68, 68, 0.4)',
-        border: '2px solid #ef4444'
-      }
-      default: return {
-        bg: 'linear-gradient(135deg, #6b7280, #4b5563)',
-        glow: 'none',
-        border: '2px solid #6b7280'
-      }
-    }
+  const handlePillFilter = useCallback((data: typeof PILLS) => {
+    setFilteredPills(data)
+  }, [])
+
+  const handleFireFilter = useCallback((data: typeof FIRES) => {
+    setFilteredFires(data)
+  }, [])
+
+  const pillFilters = {
+    searchKeys: ['name', 'grade', 'effect', 'desc', 'detail', 'materials'],
+    filterKeys: {
+      grade: [...new Set(PILLS.map(p => p.grade))],
+    },
+    sortOptions: [
+      { key: 'effectValue', label: '药效排序' },
+      { key: 'successRate', label: '成功率排序' },
+      { key: 'name', label: '丹名排序' },
+    ],
+  }
+
+  const fireFilters = {
+    searchKeys: ['name', 'temp', 'usage', 'detail', 'effect'],
   }
 
   return (
     <SubPageTemplate
       title="丹药方术"
-      subtitle="九转金丹 · 白日飞升 · 仙丹妙药 · 生死人肉白骨"
+      subtitle="九转金丹 · 白日飞升"
       icon="💊"
-      colorRgb="168, 162, 158"
+      colorRgb="251, 191, 36"
     >
-      <SubPageSection title="炼丹房">
-        <InfoCard>
-          <div style={{ textAlign: 'center', padding: '2rem' }}>
-            <motion.div
-              animate={{
-                scale: [1, 1.05, 1],
-                rotate: [0, 2, -2, 0]
-              }}
-              transition={{ duration: 4, repeat: Infinity }}
-              style={{
-                fontSize: '6rem',
-                marginBottom: '1rem',
-                filter: 'drop-shadow(0 0 30px rgba(251, 191, 36, 0.5))'
-              }}
-            >
-              🏮
-            </motion.div>
-            <div style={{
-              fontSize: '1.25rem',
-              color: '#b89438',
-              fontStyle: 'italic'
-            }}>
-              金丹火候诀 —— 圣人传下丹方诀，便是凡人也升天
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '1.5rem',
-              marginTop: '2rem'
-            }}>
-              {[
-                { label: '天级丹方', value: '2', icon: '⭐' },
-                { label: '地级丹方', value: '2', icon: '💎' },
-                { label: '玄级丹方', value: '1', icon: '🔺' },
-                { label: '黄级丹方', value: '1', icon: '📜' }
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{stat.icon}</div>
-                  <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#b89438' }}>{stat.value}</div>
-                  <div style={{ color: 'rgba(180, 180, 190, 0.7)', fontSize: '0.875rem' }}>{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </InfoCard>
-      </SubPageSection>
-
       <SubPageSection title="丹方大全">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {pills.map((pill, index) => (
-            <motion.div
+        <FilterBar
+          data={PILLS}
+          onFiltered={handlePillFilter}
+          options={pillFilters}
+          placeholder="搜索丹药名称、品级、功效..."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          {filteredPills.map((pill) => (
+            <InfoCard
               key={pill.name}
-              className="xian-submodule-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.12 }}
-              whileHover={{ scale: 1.01 }}
-              style={{
-                border: getGradeStyle(pill.grade).border
-              }}
+              onClick={() => setExpandedPill(expandedPill === pill.name ? null : pill.name)}
+              glowIntensity={85}
+              glowColor={pill.color.replace('#', '')}
             >
-              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
-                <div style={{ flexShrink: 0 }}>
-                  <motion.div
-                    animate={{
-                      boxShadow: ['none', getGradeStyle(pill.grade).glow, 'none']
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    style={{
-                      width: '80px',
-                      height: '80px',
-                      borderRadius: '50%',
-                      background: getGradeStyle(pill.grade).bg,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '2.5rem'
-                    }}
-                  >
-                    {pill.icon}
-                  </motion.div>
-                  <div style={{
-                    textAlign: 'center',
-                    marginTop: '0.5rem',
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '1.75rem' }}>{pill.icon}</span>
+                  <span style={{ fontWeight: 'bold', color: pill.color, fontSize: '1.1rem' }}>{pill.name}</span>
+                  <span style={{
                     fontSize: '0.75rem',
-                    fontWeight: 'bold',
-                    padding: '0.2rem 0.5rem',
-                    borderRadius: '4px',
-                    background: getGradeStyle(pill.grade).bg,
-                    color: 'white'
+                    padding: '0.125rem 0.5rem',
+                    borderRadius: '999px',
+                    background: pill.color + '30',
+                    color: pill.color,
                   }}>
                     {pill.grade}
-                  </div>
+                  </span>
                 </div>
-
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '0.75rem'
-                  }}>
-                    <div>
-                      <span style={{ fontSize: '1.35rem', fontWeight: 'bold', color: '#b89438' }}>
-                        {pill.name}
-                      </span>
-                      <span style={{
-                        marginLeft: '1rem',
-                        fontSize: '0.8rem',
-                        color: '#4ade80'
-                      }}>
-                        ✨ {pill.effect}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p style={{
-                    color: 'rgba(180, 180, 190, 0.75)',
-                    fontSize: '0.85rem',
-                    lineHeight: 1.7,
-                    marginBottom: '1rem'
-                  }}>
-                    {pill.desc}
-                  </p>
-
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '1rem',
-                    fontSize: '0.8rem'
-                  }}>
-                    <div>
-                      <span style={{ color: 'rgba(180, 180, 190, 0.5)' }}>⏱️ 炼制时间: </span>
-                      <span style={{ color: '#60a5fa' }}>{pill.time}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'rgba(180, 180, 190, 0.5)' }}>🎯 成功率: </span>
-                      <span style={{ color: pill.successRate < 10 ? '#f87171' : pill.successRate < 50 ? '#fbbf24' : '#4ade80' }}>
-                        {pill.successRate}%
-                      </span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'rgba(180, 180, 190, 0.5)' }}>🧪 主药材: </span>
-                      <span style={{ color: '#a78bfa' }}>{pill.materials[0]}</span>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: '0.75rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {pill.materials.map((m, i) => (
-                      <span key={i} style={{
-                        fontSize: '0.7rem',
-                        padding: '0.15rem 0.5rem',
-                        background: 'rgba(168, 162, 158, 0.15)',
-                        borderRadius: '12px',
-                        color: 'rgba(180, 180, 190, 0.7)'
-                      }}>
-                        {m}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                {expandedPill === pill.name ? '▲' : '▼'}
               </div>
-            </motion.div>
+            </InfoCard>
           ))}
         </div>
-      </SubPageSection>
-
-      <SubPageSection title="炼丹心诀">
-        <InfoCard>
-          <div style={{ textAlign: 'center', padding: '1rem' }}>
-            <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 5, repeat: Infinity }}
-              style={{
-                fontSize: '1.35rem',
-                color: '#a8a29e',
-                fontStyle: 'italic',
-                lineHeight: 2
-              }}
-            >
-              八月十五中秋节，辰子三时直下泄<br />
-              温温铅鼎，光透帘帏<br />
-              药逢气类方成象，道在虚无合自然<br />
-              一粒灵丹吞入腹，始知我命不由天
-            </motion.div>
-          </div>
-        </InfoCard>
       </SubPageSection>
     </SubPageTemplate>
   )

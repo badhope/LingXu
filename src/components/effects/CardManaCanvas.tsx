@@ -82,9 +82,9 @@ export function useCardManaEffect() {
         p.life++
         p.angle += p.angleSpeed
 
-        const lifeRatio = p.life / p.maxLife
+        const lifeRatio = Math.min(1, p.life / p.maxLife)
         const fadeOut = 1 - lifeRatio
-        const currentSize = p.size * fadeOut
+        const currentSize = Math.max(0.1, p.size * fadeOut)
 
         const lifeProgress = lifeRatio < 0.25
           ? lifeRatio * 4
@@ -94,7 +94,8 @@ export function useCardManaEffect() {
         ctx.translate(p.x, p.y)
         ctx.rotate(p.angle)
 
-        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, currentSize * 1.5)
+        const gradientRadius = Math.max(0.1, currentSize * 1.5)
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, gradientRadius)
         gradient.addColorStop(0, `hsla(35, 35%, 40%, ${lifeProgress * 0.35})`)
         gradient.addColorStop(0.5, `hsla(35, 25%, 32%, ${lifeProgress * 0.15})`)
         gradient.addColorStop(1, 'hsla(35, 20%, 28%, 0)')
@@ -111,10 +112,25 @@ export function useCardManaEffect() {
       animationRef.current = requestAnimationFrame(update)
     }
 
+    let isMounted = true
     update()
 
     return () => {
+      isMounted = false
       cancelAnimationFrame(animationRef.current)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        const canvas = canvasRef.current
+        if (canvas) {
+          const ctx = canvas.getContext('2d')
+          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
+      
+      particlesRef.current = []
     }
   }, [])
 

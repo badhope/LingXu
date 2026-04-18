@@ -175,8 +175,24 @@ export default function ImmortalFlowCanvas() {
 
     return () => {
       cancelAnimationFrame(animationId)
+      
+      // ✅ 强制彻底清空Canvas - 解决"一半格子卡住"核心bug！
+      try {
+        const canvas = canvasRef.current
+        if (canvas) {
+          const ctx = canvas.getContext('2d')
+          if (ctx) {
+            ctx.globalCompositeOperation = 'source-over'
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+          }
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
+      
       window.removeEventListener('resize', resize)
-      canvas.removeEventListener('mousemove', handleMouseMove)
+      canvas?.removeEventListener('mousemove', handleMouseMove)
+      particlesRef.current = []
     }
   }, [])
 

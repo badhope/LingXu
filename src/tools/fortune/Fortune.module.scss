@@ -1,0 +1,337 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 2rem;
+    color: #d4af37;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.drawSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.signBucket {
+  position: relative;
+  width: 200px;
+  height: 260px;
+  cursor: pointer;
+  perspective: 1000px;
+  
+  &:hover .bucketBody {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.4);
+  }
+}
+
+.bucketBody {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #8b4513 0%, #5d2e0a 50%, #3d1f07 100%);
+  border-radius: 10px 10px 40px 40px;
+  position: relative;
+  transition: all 0.5s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 20px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 30px;
+    background: linear-gradient(90deg, #a0522d, #8b4513, #a0522d);
+    border-radius: 10px 10px 0 0;
+    border: 3px solid #d4af37;
+  }
+  
+  &::after {
+    content: '灵签';
+    color: #d4af37;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 8px;
+  }
+}
+
+.signSticks {
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  
+  .stick {
+    width: 8px;
+    height: 120px;
+    background: linear-gradient(180deg, #deb887, #d2b48c);
+    border-radius: 4px 4px 0 0;
+    transform-origin: bottom center;
+    
+    @for $i from 1 through 6 {
+      &:nth-child(#{$i}) {
+        transform: rotate(random(30) - 15 + deg);
+        animation: stickSwing 2s ease-in-out #{$i * 0.1}s infinite;
+      }
+    }
+  }
+}
+
+@keyframes stickSwing {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+.drawHint {
+  text-align: center;
+  color: #d4af37;
+  font-size: 1.1rem;
+  animation: hintPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.drawBtn {
+  padding: 16px 48px;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+  border: none;
+  border-radius: 50px;
+  color: #1a1510;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.resultCard {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.95) 0%, rgba(26, 21, 16, 0.98) 100%);
+  border: 2px solid #3d3020;
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    animation: cardGlow 6s linear infinite;
+  }
+}
+
+@keyframes cardGlow {
+  100% { transform: rotate(360deg); }
+}
+
+.levelBadge {
+  display: inline-block;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.resultTitle {
+  font-size: 1.8rem;
+  color: #d4af37;
+  margin-bottom: 8px;
+}
+
+.resultSubtitle {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.poem {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border-left: 3px solid #d4af37;
+  margin-bottom: 24px;
+  font-family: serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #e2d5b8;
+  letter-spacing: 2px;
+}
+
+.explanation {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.fortuneGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.fortuneItem {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  
+  .label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+  }
+  
+  .value {
+    color: #fff;
+    font-size: 0.875rem;
+  }
+}
+
+.luckyInfo {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  
+  .luckyItem {
+    text-align: center;
+    
+    .icon {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+    
+    .value {
+      font-size: 0.75rem;
+      color: #d4af37;
+    }
+  }
+}
+
+.shichenGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.shichenCard {
+  padding: 16px 12px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &[data-luck="吉"] {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.3);
+  }
+  
+  &[data-luck="凶"] {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+  }
+  
+  &[data-luck="平"] {
+    background: rgba(96, 165, 250, 0.1);
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+  
+  &.current {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  .animal {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+  
+  .name {
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  
+  .time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .luck {
+    font-size: 0.875rem;
+    font-weight: bold;
+    margin-top: 8px;
+    
+    &[data-luck="吉"] { color: #4ade80; }
+    &[data-luck="凶"] { color: #f87171; }
+    &[data-luck="平"] { color: #60a5fa; }
+  }
+}
+
+.currentShichen {
+  text-align: center;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  margin-bottom: 24px;
+  
+  span {
+    color: #d4af37;
+    font-weight: bold;
+  }
+}

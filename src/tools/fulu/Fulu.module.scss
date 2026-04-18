@@ -1,0 +1,384 @@
+.fuluContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.selectionPanel,
+.canvasPanel {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+}
+
+.panelTitle {
+  color: #ef4444;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-family: 'Georgia', serif;
+  letter-spacing: 2px;
+}
+
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.categoryBtn {
+  padding: 10px 8px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #991b1b;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &.active {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #ef4444;
+  }
+}
+
+.catName {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.catCount {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.templateList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.templateItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &.selected {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+  }
+}
+
+.tplName {
+  font-weight: 600;
+  font-size: 13px;
+  color: #fca5a5;
+  min-width: 60px;
+}
+
+.tplEffect {
+  flex: 1;
+  font-size: 11px;
+  color: #7f1d1d;
+}
+
+.tplDiff {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+
+  &.初阶 {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+
+  &.中阶 {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+  }
+
+  &.高阶 {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.drawButton {
+  flex: 1;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.resetButton {
+  padding: 14px 20px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
+}
+
+.toggleRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #f87171;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
+}
+
+.manualPanel,
+.sealsPanel {
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.manualHistory {
+  color: #fca5a5;
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  line-height: 1.7;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.classics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.classicItem {
+  padding: 6px 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 2px solid #ef4444;
+  color: #fca5a5;
+  font-size: 11px;
+  line-height: 1.6;
+  font-family: 'Georgia', serif;
+}
+
+.sealsPanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sealItem {
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.sealName {
+  display: block;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.sealPurpose {
+  display: block;
+  color: #991b1b;
+  font-size: 10px;
+}
+
+.canvasWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.fuluCanvas {
+  border-radius: 12px;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);
+}
+
+.drawingOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawProgressRing {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px));
+}
+
+.drawText {
+  color: #fca5a5;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.talismanInfo {
+  padding: 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 12px;
+  border-left: 3px solid #ef4444;
+}
+
+.fuluName {
+  margin: 0 0 6px 0;
+  color: #ef4444;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Georgia', serif;
+  text-align: center;
+}
+
+.fuluEffect {
+  margin: 0 0 12px 0;
+  color: #fca5a5;
+  font-size: 13px;
+  text-align: center;
+}
+
+.incantationBox {
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+}
+
+.incantationLabel {
+  margin: 0 0 6px 0;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.incantationText {
+  margin: 0;
+  color: #fca5a5;
+  font-size: 12px;
+  line-height: 1.7;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.emptyState {
+  width: 360px;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #991b1b;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.tipsBox {
+  padding: 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 10px;
+  border-left: 3px solid #ef4444;
+}
+
+.tipText {
+  margin: 0;
+  color: #fca5a5;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.tipText strong {
+  color: #ef4444;
+}
+
+@media (max-width: 768px) {
+  .fuluContainer {
+    padding: 16px;
+  }
+
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fuluCanvas,
+  .emptyState {
+    width: 280px;
+    height: 280px;
+  }
+
+  .sealsPanel {
+    grid-template-columns: 1fr;
+  }
+}

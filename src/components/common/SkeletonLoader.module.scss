@@ -1,0 +1,45 @@
+.skeletonBase {
+  background: linear-gradient(
+    90deg,
+    rgba(201, 162, 39, 0.08) 25%,
+    rgba(201, 162, 39, 0.15) 50%,
+    rgba(201, 162, 39, 0.08) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+.skeletonText {
+  border-radius: 4px;
+}
+
+.skeletonCard {
+  border-radius: 12px;
+}
+
+.skeletonCircle {
+  border-radius: 50%;
+}
+
+.skeletonImage {
+  border-radius: 8px 8px 0 0;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.cardSkeletonContainer {
+  background: rgba(10, 10, 15, 0.6);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pageSkeleton {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}

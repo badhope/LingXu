@@ -1,0 +1,338 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 2rem;
+    color: #d4af37;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.numberInput {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  
+  .inputGroup {
+    text-align: center;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.875rem;
+    }
+    
+    input {
+      width: 80px;
+      height: 60px;
+      text-align: center;
+      font-size: 1.5rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid #4a3a2a;
+      border-radius: 12px;
+      color: #d4af37;
+      outline: none;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: #d4af37;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      }
+    }
+  }
+  
+  .separator {
+    font-size: 2rem;
+    color: #d4af37;
+    padding-top: 24px;
+  }
+}
+
+.castBtn {
+  padding: 16px 48px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+  border: none;
+  border-radius: 50px;
+  color: #1a1510;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
+  }
+}
+
+.hexagramResult {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 32px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+.trigram {
+  text-align: center;
+}
+
+.trigramName {
+  font-size: 2rem;
+  color: #d4af37;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.trigramSymbol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  .line {
+    width: 80px;
+    height: 12px;
+    border-radius: 6px;
+    
+    &.yang {
+      background: linear-gradient(90deg, #ffd700, #ffed4a);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    }
+    
+    &.yin {
+      display: flex;
+      gap: 8px;
+      
+      &::before, &::after {
+        content: '';
+        width: 36px;
+        height: 12px;
+        background: linear-gradient(90deg, #6366f1, #818cf8);
+        border-radius: 6px;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+      }
+    }
+  }
+}
+
+.trigramInfo {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.separatorSymbol {
+  font-size: 3rem;
+  color: #d4af37;
+}
+
+.explanationCard {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.95) 0%, rgba(26, 21, 16, 0.98) 100%);
+  border: 2px solid #3d3020;
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.hexagramTitle {
+  font-size: 1.8rem;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.hexagramSubtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+}
+
+.judgment {
+  padding: 20px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid #d4af37;
+  margin-bottom: 20px;
+  font-family: serif;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #e2d5b8;
+  letter-spacing: 2px;
+}
+
+.imageText {
+  padding: 16px;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid #6366f1;
+  margin-bottom: 24px;
+  font-style: italic;
+  color: #a5b4fc;
+}
+
+.fortuneGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fortuneItem {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  
+  .label {
+    font-size: 0.75rem;
+    color: #d4af37;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .value {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+  }
+}
+
+.qimenGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 500px;
+  margin: 0 auto 32px;
+}
+
+.palaceCell {
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.9) 0%, rgba(26, 21, 16, 0.95) 100%);
+  border: 2px solid #3d3020;
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:nth-child(5) {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.5);
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+  }
+  
+  .palaceName {
+    font-size: 0.75rem;
+    color: #d4af37;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .star {
+    font-size: 0.7rem;
+    color: #4ade80;
+  }
+  
+  .door {
+    font-size: 0.7rem;
+    color: #60a5fa;
+  }
+  
+  .deity {
+    font-size: 0.65rem;
+    color: #f472b6;
+  }
+}
+
+.qimenControls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  
+  select {
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #4a3a2a;
+    border-radius: 8px;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    
+    &:focus {
+      border-color: #d4af37;
+    }
+  }
+}
+
+.palaceDetail {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  text-align: center;
+  
+  h4 {
+    color: #d4af37;
+    margin-bottom: 12px;
+  }
+  
+  .detailGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .detailItem {
+      text-align: center;
+      
+      .label {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .value {
+        font-size: 0.9rem;
+        color: #fff;
+      }
+    }
+  }
+}

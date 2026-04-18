@@ -131,7 +131,7 @@ export default function PageTransitionShader({
 
       renderer.render(scene, camera)
 
-      if (t < 1 || active) {
+      if (t < 1) {
         animationId = requestAnimationFrame(animate)
       }
     }

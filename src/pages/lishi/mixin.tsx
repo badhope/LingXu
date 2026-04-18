@@ -1,218 +1,177 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState, useCallback } from 'react'
 import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface SecretStory {
+  name: string
+  dynasty: string
+  category: string
+  credibility: number
+  summary: string
+  detail: string
+  evidence: string[]
+  viewpoint: string[]
+}
+
+const SECRET_STORIES: SecretStory[] = [
+  { name: '玄武门之变内情', dynasty: '唐朝', category: '宫廷政变', credibility: 90, summary: '李世民弑兄逼父，背后隐情鲜为人知', detail: '正史记载李建成庸劣无能，然而近年出土的李建成墓志及相关史料表明，建成实为有为之君。玄武门之变本质是关陇集团内部的权力重新分配，李世民得到了山东士族的强力支持。', evidence: ['李建成墓志', '敦煌文书', '温大雅《大唐创业起居注》'], viewpoint: ['正史美化太宗', '建成其实有才', '关陇内斗说'] },
+  { name: '烛影斧声', dynasty: '宋朝', category: '宫廷疑案', credibility: 75, summary: '太祖赵匡胤暴毙，太宗赵光义继位千古之谜', detail: '开宝九年十月壬午夜，太祖大病，召晋王赵光义议事。左右遥见烛光下光义时而离席，有逊避之状，又听见太祖引柱斧戳地，并大声说："好为之"。当夜太祖驾崩，宋皇后见光义愕然，连声呼"官家"。', evidence: ['《续湘山野录》', '《涑水记闻》', '金匮之盟疑点'], viewpoint: ['毒杀说', '自然死亡说', '篡位说'] },
+  { name: '建文帝下落', dynasty: '明朝', category: '帝王失踪', credibility: 85, summary: '靖难之役后朱允炆下落不明，六百年谜团', detail: '燕王朱棣攻入南京时，皇宫大火，建文帝不知所终。有说自焚死，有说出家为僧，有说逃亡海外。郑和下西洋的真实目的之一就是寻找建文帝下落。胡濙寻访十四年后深夜回京见朱棣，两人密谈至四更。', evidence: ['《明史》疑点', '胡濙传记载', '各地朱氏族谱'], viewpoint: ['出家说', '海外说', '自焚说', '隐居说'] },
+  { name: '雍正继位之谜', dynasty: '清朝', category: '皇位继承', credibility: 80, summary: '康熙传位遗诏真假，雍正是否篡位', detail: '康熙六十一年十一月，康熙畅春园驾崩，隆科多独宣遗诏，传位于四阿哥胤禛。历来有"传位十四子"被改为"传位于四子"之说。现存满汉合璧遗诏为雍正继位后所造，非康熙亲笔。', evidence: ['《康熙遗诏》满文部分缺字', '隆科多后被赐死', '年羹尧死因可疑'], viewpoint: ['合法继位说', '篡改遗诏说', '毒杀篡位说'] },
+  { name: '焚书坑儒真相', dynasty: '秦朝', category: '历史冤案', credibility: 85, summary: '秦始皇到底坑的是什么人？后世是否夸大', detail: '史记记载秦始皇坑杀"术士"四百六十余人，其中多为方士、侯生、卢生之徒。后世儒生将此事夸大为"焚书坑儒"，作为秦始皇暴政的铁证。实际上，焚书是李斯的建议，主要焚烧的是民间诸子书，官方藏书皆保留。', evidence: ['《史记·秦始皇本纪》原文', '出土秦简记载', '西汉前期文献'], viewpoint: ['坑术士说', '坑儒说', '后世夸大说'] },
+  { name: '武则天无字碑', dynasty: '唐朝', category: '帝王陵墓', credibility: 70, summary: '乾陵无字碑，武则天为何不书一字', detail: '乾陵无字碑，宋金以后始有游人题字。关于无字原因，历来众说纷纭。有说功高德大非文字所能表达；有说自知罪孽深重不书；有说让后人评说。实际上，中宗复位后不知如何称呼这位既是母后又是大周皇帝的女人。', evidence: ['无字碑唐宋题刻', '乾陵其他碑刻', '中宗朝政治'], viewpoint: ['功过留后人说', '中宗两难说', '自夸功德说'] },
+  { name: '荆轲刺秦真相', dynasty: '秦朝', category: '刺杀疑云', credibility: 75, summary: '荆轲刺秦王，是太子丹的计谋还是另有隐情', detail: '荆轲刺秦，图穷匕见，绕柱而走，千古流传。然而疑点重重：荆轲剑术何以如此之差？秦舞阳何以色变？夏无且何以恰好药囊击中荆轲？秦始皇拔剑何以群臣皆呼王负剑？整个事件更像是一场精心导演的戏剧。', evidence: ['《战国策》与《史记》差异', '出土燕国兵器', '秦国宫廷制度'], viewpoint: ['悲壮刺杀说', '早有预谋说', '荆轲故意失手说'] },
+  { name: '杨贵妃生死之谜', dynasty: '唐朝', category: '美人结局', credibility: 65, summary: '马嵬坡之变，杨贵妃真的死了吗', detail: '天宝十五载，安禄山叛乱，玄宗逃蜀，途经马嵬坡，禁军哗变，杀杨国忠，逼玄宗赐死杨贵妃。然杨贵妃墓中仅有香囊，不见尸骨。有说杨贵妃东渡日本，山口县至今有杨贵妃墓。', evidence: ['《旧唐书》《新唐书》差异', '日本杨贵妃遗迹', '正仓院唐代文物'], viewpoint: ['缢死说', '逃亡日本说', '女道士说'] },
+  { name: '西施下落', dynasty: '春秋', category: '美人结局', credibility: 70, summary: '吴越争霸后，西施的最终结局如何', detail: '西施以身许国，迷惑吴王，助越灭吴。功成之后，下落成谜。有说与范蠡泛舟五湖；有说被沉于江；有说归浣江终老。最早记载《墨子》曰"吴起之裂，其功也；西施之沉，其美也。"', evidence: ['《墨子》记载', '《吴越春秋》', '各地西施遗迹'], viewpoint: ['范蠡泛舟说', '沉江说', '终老故乡说'] },
+  { name: '徐福东渡', dynasty: '秦朝', category: '海外寻仙', credibility: 80, summary: '徐福率三千童男女最终去了哪里', detail: '秦始皇二十八年，齐人徐福上书言海中有三神山，于是遣徐福发童男女数千人，入海求仙人。徐福一去不返。有说去了日本，有说到了美洲。日本佐贺县金立神社至今奉祀徐福。', evidence: ['日本徐福神社', '弥生文化突现', '《史记》记载'], viewpoint: ['日本说', '美洲说', '海上遇难说'] },
+  { name: '李自成结局', dynasty: '明朝', category: '枭雄末路', credibility: 75, summary: '九宫山李自成是死是活', detail: '顺治二年五月，李自成率残部入湖北通山县九宫山，为地方武装所杀。然历来有出家为僧之说。湖南石门夹山寺奉天玉和尚，被认为就是李自成。', evidence: ['《明史》记载', '奉天玉和尚墓', '李自成余部动向'], viewpoint: ['九宫山死难说', '夹山出家说', '隐居说'] },
+  { name: '顺治出家', dynasty: '清朝', category: '帝王归宿', credibility: 70, summary: '顺治皇帝真的出家了吗', detail: '顺治十七年，董鄂妃薨，顺治悲痛欲绝，执意出家。正史记载次年顺治出痘驾崩，然民间盛传顺治五台山出家。康熙数次临幸五台山，据说就是为了见父亲。', evidence: ['《清实录》记载简略', '五台山相关遗迹', '吴梅村诗'], viewpoint: ['出痘驾崩说', '五台山出家说', '两者皆有可能说'] },
+]
+
+const DYNASTY_COLORS: Record<string, string> = {
+  '秦朝': '#ef4444',
+  '汉朝': '#22c55e',
+  '唐朝': '#f59e0b',
+  '宋朝': '#3b82f6',
+  '明朝': '#ec4899',
+  '清朝': '#8b5cf6',
+  '春秋': '#14b8a6',
+}
 
 export default function MixinPage() {
-  const gossips = [
-    {
-      title: '大禹三过家门而不入的真相',
-      truth: '🟡 真伪存疑',
-      confidence: 45,
-      sources: ['《竹书纪年》', '野史杂记', '民间传说'],
-      desc: '正史记载大禹治水公而忘私，但野史称其在台桑遇到涂山氏，生了启。所谓"三过家门"，实则是在外有情人，不敢回家。舜帝后来也因此事对大禹产生不满。',
-      explosion: '启的出生时间正好在大禹治水期间，说明并非没有回家！'
-    },
-    {
-      title: '范蠡与西施的最终结局',
-      truth: '🟢 大概率真',
-      confidence: 75,
-      sources: ['《越绝书》', '《吴越春秋》', '史记拾遗'],
-      desc: '正史记载西施被沉江，但诸多史料证明范蠡带西施泛舟五湖，定居陶地，改名陶朱公，成为一代商圣。西施终得善终。',
-      explosion: '山东定陶确有范蠡墓，当地世代供奉西施娘娘庙'
-    },
-    {
-      title: '秦始皇私生子之谜',
-      truth: '🔴 大概率假',
-      confidence: 80,
-      sources: ['《史记·吕不韦列传》', '汉代抹黑宣传'],
-      desc: '史记记载秦始皇是吕不韦之子，但从时间推算漏洞百出。子楚在位三年，嬴政十三岁继位，如果是早产儿，不可能健康成长且精力过人。这是汉代为了抹黑秦朝合法性的政治宣传。',
-      explosion: '秦昭王不可能让血统不明的王孙继承王位！'
-    },
-    {
-      title: '玄武门之变的真相',
-      truth: '🟢 正史掩盖',
-      confidence: 90,
-      sources: ['《旧唐书》', '《新唐书》', '敦煌残卷'],
-      desc: '李世民不仅是自卫，而是蓄谋已久。李建成并非史书记载那般昏庸无能，而是一位合格的储君。李世民亲手射杀大哥，尉迟恭杀四弟，然后软禁父皇，开创了盛世的血色开端。',
-      explosion: '李世民篡改史书第一人，开创了帝王干预修史的恶例'
-    },
-    {
-      title: '杨贵妃真的死在马嵬坡吗？',
-      truth: '🟡 真伪存疑',
-      confidence: 55,
-      sources: ['《旧唐书》', '《新唐书》', '日本传说'],
-      desc: '正史记载杨贵妃被缢死，但诸多疑点：尸体失踪，香囊犹在。日本山口县有杨贵妃墓，称其逃到日本，终老于此。鉴真东渡时，是否带了一位特殊的乘客？',
-      explosion: '日本山口县百万人自称是杨贵妃后裔！'
-    },
-    {
-      title: '建文帝下落之谜',
-      truth: '🟢 没有自焚',
-      confidence: 85,
-      sources: ['《明实录》', '《明史稿》', '胡濙密奏'],
-      desc: '建文帝没有自焚，而是从地道逃出，隐居西南。朱棣派胡濙暗访二十余年，终在永乐二十一年夜得到确切消息。二人深夜密谈至四更，朱棣从此放下心结。',
-      explosion: '胡濙回来时朱棣已经就寝，破例连夜召见，肯定不是死讯'
-    }
-  ]
+  const [filteredStories, setFilteredStories] = useState(SECRET_STORIES)
+  const [expandedStory, setExpandedStory] = useState<string | null>(null)
 
-  const getTruthStyle = (truth: string) => {
-    if (truth.includes('真') || truth.includes('正')) return { color: '#4ade80', bg: 'rgba(74, 222, 128, 0.15)' }
-    if (truth.includes('假')) return { color: '#f87171', bg: 'rgba(248, 113, 113, 0.15)' }
-    return { color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.15)' }
-  }
+  const handleFilter = useCallback((data: typeof SECRET_STORIES) => {
+    setFilteredStories(data)
+  }, [])
 
   return (
     <SubPageTemplate
       title="秘闻轶事"
-      subtitle="不为人知 · 宫闱秘事 · 野史杂谈 · 历史真相"
+      subtitle="千古之谜 · 野史杂记 · 宫闱秘事 · 独家解读"
       icon="🎭"
       colorRgb="255, 170, 102"
     >
-      <SubPageSection title="八卦总览">
+      <SubPageSection title="读史须知">
         <InfoCard>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '1.5rem',
-            textAlign: 'center'
-          }}>
-            {[
-              { label: '正史掩盖', count: '2件', color: '#4ade80', icon: '✅' },
-              { label: '真伪存疑', count: '2件', color: '#fbbf24', icon: '❓' },
-              { label: '以讹传讹', count: '1件', color: '#f87171', icon: '❌' }
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-              >
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{stat.icon}</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: stat.color }}>{stat.count}</div>
-                <div style={{ color: 'rgba(180, 180, 190, 0.7)', fontSize: '0.875rem' }}>{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
+          <p style={{ color: 'rgba(180, 180, 190, 0.75)', lineHeight: 1.8, marginBottom: '1rem' }}>
+            历史是任人打扮的小姑娘。正史多为胜利者书写，真相往往隐藏在字缝之间。读史不可尽信，不可不信，于无疑处存疑，于有疑处求证。
+          </p>
+          <p style={{ color: 'rgba(180, 180, 190, 0.75)', lineHeight: 1.8 }}>
+            凡秘闻轶事，多为宫闱深处，权力场上，不足为外人道之事。可信者十之三四，可疑者十之六七。姑妄言之，姑妄听之。
+          </p>
         </InfoCard>
       </SubPageSection>
 
-      <SubPageSection title="野史档案库">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {gossips.map((item, index) => (
+      {/* 🎭 十二大历史疑案 - 新增筛选功能 */}
+      <SubPageSection title={`千古之谜十二案 (${filteredStories.length}/${SECRET_STORIES.length})`}>
+        <FilterBar
+          data={SECRET_STORIES}
+          searchKeys={['name', 'dynasty', 'category', 'summary', 'detail', 'evidence']}
+          filterOptions={[
+            { key: 'dynasty', label: '朝代', allLabel: '全部朝代' },
+            { key: 'category', label: '类型', allLabel: '全部类型' },
+          ]}
+          onFiltered={handleFilter}
+          placeholder="搜索谜案名称、朝代、类型、内容..."
+        />
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: '1.25rem',
+          marginTop: '1rem',
+        }}>
+          {filteredStories.map((story, index) => (
             <motion.div
-              key={item.title}
+              key={story.name}
               className="xian-submodule-card"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.12 }}
+              transition={{ delay: index * 0.03 }}
               whileHover={{ y: -3 }}
+              onClick={() => setExpandedStory(expandedStory === story.name ? null : story.name)}
+              style={{ cursor: 'pointer' }}
             >
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '1rem'
-              }}>
-                <div>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '12px',
-                    ...getTruthStyle(item.truth)
-                  }}>
-                    {item.truth}
-                  </span>
-                  <h3 style={{
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold',
-                    color: '#f59e0b',
-                    marginTop: '0.75rem'
-                  }}>
-                    {item.title}
-                  </h3>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.5)' }}>可信度</div>
-                  <div style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    color: getTruthStyle(item.truth).color
-                  }}>
-                    {item.confidence}%
-                  </div>
-                </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <h3 style={{ color: '#ffaa66', margin: 0, fontSize: '1.05rem' }}>
+                  {story.name}
+                </h3>
+                <span style={{
+                  padding: '0.15rem 0.5rem',
+                  borderRadius: '10px',
+                  fontSize: '0.7rem',
+                  background: `${DYNASTY_COLORS[story.dynasty] || '#ffaa66'}15`,
+                  color: DYNASTY_COLORS[story.dynasty] || '#ffaa66',
+                }}>
+                  {story.dynasty}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+                <span style={{ color: 'rgba(255, 170, 102, 0.7)' }}>{story.category}</span>
+                <span style={{
+                  color: story.credibility >= 80
+                    ? '#22c55e'
+                    : story.credibility >= 70
+                      ? '#fbbf24'
+                      : '#f59e0b',
+                }}>
+                  可信度 {story.credibility}%
+                </span>
               </div>
 
               <p style={{
                 color: 'rgba(180, 180, 190, 0.75)',
                 fontSize: '0.85rem',
-                lineHeight: 1.7,
-                marginBottom: '1rem'
+                lineHeight: 1.6,
               }}>
-                {item.desc}
+                {story.summary}
               </p>
 
+              {/* 💫 展开详情 */}
               <motion.div
-                whileHover={{ scale: 1.02 }}
-                style={{
-                  padding: '0.75rem 1rem',
-                  background: 'rgba(251, 146, 60, 0.1)',
-                  borderRadius: '8px',
-                  borderLeft: '3px solid #fb923c',
-                  marginBottom: '1rem'
-                }}
+                initial={false}
+                animate={{ height: expandedStory === story.name ? 'auto' : 0, opacity: expandedStory === story.name ? 1 : 0 }}
+                style={{ overflow: 'hidden' }}
+                transition={{ duration: 0.3 }}
               >
-                <span style={{ color: '#fb923c', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                  💥 石破天惊：
-                </span>
-                <span style={{ color: 'rgba(251, 191, 36, 0.9)', fontSize: '0.85rem', marginLeft: '0.5rem' }}>
-                  {item.explosion}
-                </span>
+                <div style={{ paddingTop: '0.75rem', marginTop: '0.75rem', borderTop: '1px solid rgba(255, 170, 102, 0.1)' }}>
+                  <p style={{
+                    color: 'rgba(180, 180, 190, 0.65)',
+                    fontSize: '0.8rem',
+                    lineHeight: 1.7,
+                    marginBottom: '0.75rem',
+                    fontStyle: 'italic',
+                  }}>
+                    {story.detail}
+                  </p>
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <span style={{ color: '#22c55e', fontSize: '0.75rem' }}>📜 史料依据: </span>
+                    {story.evidence.map(s => (
+                      <span key={s} style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', margin: '0 0.2rem', borderRadius: '3px', background: 'rgba(34, 197, 94, 0.1)', color: 'rgba(34, 197, 94, 0.8)' }}>{s}</span>
+                    ))}
+                  </div>
+                  <div>
+                    <span style={{ color: '#8b5cf6', fontSize: '0.75rem' }}>💬 各派观点: </span>
+                    {story.viewpoint.map(s => (
+                      <span key={s} style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', margin: '0 0.2rem', borderRadius: '3px', background: 'rgba(139, 92, 246, 0.1)', color: 'rgba(139, 92, 246, 0.8)' }}>{s}</span>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
 
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.75rem', color: 'rgba(180, 180, 190, 0.5)' }}>
-                  📚 史料来源：
-                </span>
-                {item.sources.map((s, i) => (
-                  <span key={i} style={{
-                    fontSize: '0.7rem',
-                    padding: '0.15rem 0.5rem',
-                    borderRadius: '12px',
-                    background: 'rgba(255, 170, 102, 0.1)',
-                    color: 'rgba(255, 170, 102, 0.8)'
-                  }}>
-                    {s}
-                  </span>
-                ))}
+              <div style={{ textAlign: 'center', marginTop: '0.5rem', color: 'rgba(255, 170, 102, 0.4)', fontSize: '0.7rem' }}>
+                {expandedStory === story.name ? '▲ 收起详情' : '▼ 点击查看史料与观点'}
               </div>
             </motion.div>
           ))}
         </div>
-      </SubPageSection>
-
-      <SubPageSection title="史官曰">
-        <InfoCard>
-          <div style={{ textAlign: 'center', padding: '1rem' }}>
-            <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 5, repeat: Infinity }}
-              style={{
-                fontSize: '1.35rem',
-                color: '#f59e0b',
-                fontStyle: 'italic',
-                lineHeight: 2
-              }}
-            >
-              孔子作春秋，乱臣贼子惧<br />
-              然而春秋笔法，微言大义<br />
-              真相往往隐藏在字里行间<br />
-              尽信书则不如无书
-            </motion.div>
-          </div>
-        </InfoCard>
       </SubPageSection>
     </SubPageTemplate>
   )

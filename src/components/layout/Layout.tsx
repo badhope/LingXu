@@ -23,10 +23,10 @@
 
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, ReactNode } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SITE_CONFIG } from '@/lib/constants'
 import { withBase } from '@/lib/utils'
@@ -50,12 +50,13 @@ import HiddenNav from './HiddenNav'
  * @param transparentNav - 可选：导航透明模式（暂时没用）
  */
 interface LayoutProps {
-  children: React.ReactNode
+  children: ReactNode
   title?: string
   description?: string
   showNav?: boolean
   showFooter?: boolean
   transparentNav?: boolean
+  parentPath?: string
 }
 
 export default function Layout({
@@ -65,13 +66,21 @@ export default function Layout({
   showNav = true,
   showFooter = true,
   transparentNav = false,
+  parentPath: customParentPath,
 }: LayoutProps) {
   // ==================== 路由与状态 ====================
   
   // 🧭 获取当前路径（比如 /tian/xingxiu）
-  const pathname = usePathname()
-  // 🔀 编程式跳转工具
+  // 🔀 编程式跳转工具 + 路径获取
   const router = useRouter()
+  const pathname = router.pathname
+
+  // ==================== ✅ 终极特效残留清除 - 绝杀！ ====================
+  useEffect(() => {
+    const { destroyAllCanvasOnPage } = require('@/lib/utils')
+    router.events.on('routeChangeStart', destroyAllCanvasOnPage)
+    return () => router.events.off('routeChangeStart', destroyAllCanvasOnPage)
+  }, [router])
   
   // 📜 滚动状态 - 用户是否往下滚动了（暂时没用）
   const [isScrolled, setIsScrolled] = useState(false)
@@ -85,9 +94,8 @@ export default function Layout({
   const pathSegments = pathname.split('/').filter(Boolean)
   // ✅ true = 是子页面（需要显示返回键）
   const isSubPage = pathSegments.length > 1
-  // 🎯 智能计算要返回的父级页面
-  // 比如在 /tian/xingxiu → 返回 /tian
-  const parentPath = isSubPage ? '/' + pathSegments[0] : '/home'
+  // 🎯 返回目标优先级：用户指定 > 全站地图 /map
+  const parentPath = customParentPath ?? '/map'
   
   // ==================== 事件监听 ====================
   
@@ -97,7 +105,7 @@ export default function Layout({
    */
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      setIsScrolled(window.scrollY > 300)
     }
     
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -183,28 +191,24 @@ export default function Layout({
       {showNav && <HiddenNav />}
       
       {/*
-       * 🔙 子页面返回按钮 - z-index: 90
-       * 【智能】只有在子页面才显示！
-       * Framer Motion 做的动画：等0.3s后从左边滑入
-       * 位置：左侧居中，在导航按钮右边
+       * 🔙 子页面返回按钮 - z-index: 950
+       * ⚠️ 无退场动画！避免与Canvas清理时序冲突造成特效残留！
+       * 位置：左上角固定
        */}
       <AnimatePresence>
         {isSubPage && (
           <motion.button
-            // 入场动画：从上方-20位置滑入（符合左上角位置）
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
             className={styles.backButton}
             onClick={() => router.push(parentPath)}
-            // 悬停放大效果
             whileHover={{ scale: 1.05 }}
-            // 点击缩小反馈
             whileTap={{ scale: 0.95 }}
           >
-            <span className={styles.backIcon}>↞</span>
-            <span className={styles.backText}>返回</span>
+            <span className={styles.backIcon}>←</span>
+            <span className={styles.backText}>返回地图</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -217,6 +221,26 @@ export default function Layout({
       <main className={`${styles.main} ${!showNav ? styles.noNav : ''} ${isSubPage ? styles.withBackButton : ''}`}>
         {children}
       </main>
+
+      {/*
+       * ⬆️ 回到顶部按钮
+       * 滚动超过 300px 时自动显示
+       */}
+      <AnimatePresence>
+        {isScrolled && (
+          <motion.button
+            className={styles.scrollTop}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+            title="御剑飞升（回到顶部）"
+          >
+            ↟
+          </motion.button>
+        )}
+      </AnimatePresence>
       
       {/*
        * 🦶 页脚 - 网站最底部

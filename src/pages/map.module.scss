@@ -1,0 +1,173 @@
+@use '@/styles/design-tokens' as *;
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0a14 0%, #0d0d1a 50%, #0a0a14 100%);
+  padding: 6rem 2rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   头部
+   ========================================================================== */
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: #c9a227;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, #c9a227 0%, #e8d48b 50%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--fs-base);
+}
+
+/* ==========================================================================
+   筛选器包装
+   ========================================================================== */
+
+.filterWrapper {
+  margin-bottom: 2rem;
+}
+
+.resultCount {
+  text-align: right;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--fs-small);
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   卡片网格
+   ========================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  display: block;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.12);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    border-color: rgba(201, 162, 39, 0.3);
+    background: linear-gradient(135deg, rgba(30, 30, 45, 0.7) 0%, rgba(20, 20, 30, 0.9) 100%);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(201, 162, 39, 0.05);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.moduleIcon {
+  font-size: 1.5rem;
+}
+
+.moduleBadge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.pageName {
+  color: var(--text-primary);
+  font-size: var(--fs-subtitle);
+  margin-bottom: 0.5rem;
+}
+
+.pageDesc {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  padding: 0.15rem 0.45rem;
+  background: rgba(201, 162, 39, 0.08);
+  color: rgba(201, 162, 39, 0.7);
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.08);
+}
+
+.categoryBadge {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.75rem;
+}
+
+.goBtn {
+  color: rgba(201, 162, 39, 0.6);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  .card:hover & {
+    color: #c9a227;
+    transform: translateX(2px);
+  }
+}
+
+/* ==========================================================================
+   空状态
+   ========================================================================== */
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 5rem 1rem 2rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

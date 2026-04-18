@@ -32,7 +32,7 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import styles from './HiddenNav.module.scss'
 
 /**
@@ -107,10 +107,10 @@ export default function HiddenNav() {
   //  菜单是否展开
   const [isExpanded, setIsExpanded] = useState(false)
   
-  // 🧭 我现在在哪一页？比如：/tian/xingxiu
-  const pathname = usePathname()
   // 🔀 跳转工具
   const router = useRouter()
+  // 🧭 我现在在哪一页？比如：/tian/xingxiu
+  const pathname = router.pathname
 
   // ==================== 智能判断 ====================
   

@@ -275,6 +275,7 @@ export default function WebGLStarryBackground() {
     window.addEventListener('resize', handleResize)
 
     let time = 0
+    let animationId: number
     const animate = () => {
       time += 0.016
 
@@ -296,7 +297,7 @@ export default function WebGLStarryBackground() {
       stars.rotation.x += 0.00004
 
       renderer.render(scene, camera)
-      requestAnimationFrame(animate)
+      animationId = requestAnimationFrame(animate)
     }
 
     animate()
@@ -304,6 +305,7 @@ export default function WebGLStarryBackground() {
     const container = containerRef.current
 
     return () => {
+      cancelAnimationFrame(animationId)
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('resize', handleResize)
       container?.removeChild(renderer.domElement)

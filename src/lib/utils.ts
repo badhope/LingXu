@@ -50,6 +50,100 @@ export function shuffle<T>(arr: T[]): T[] {
   return result
 }
 
+/* ==========================================================================
+   ✅ 灵墟标准防泄漏工具库 - 解决Canvas特效残留核心问题
+   所有Canvas/WebGL/动画组件必须复用此标准！
+   ========================================================================== */
+
+/**
+ * 标准Canvas 2D 强制销毁清理
+ * 解决：点击返回一半格子卡在页面上
+ */
+export function destroyCanvas2D(canvas: HTMLCanvasElement | null): void {
+  if (!canvas) return
+  try {
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.globalCompositeOperation = 'source-over'
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+    canvas.width = 0
+    canvas.height = 0
+  } catch (e) {}
+}
+
+/**
+ * 标准WebGL强制销毁清理
+ * 解决：WebGL显存像素残留
+ */
+export function destroyCanvasWebGL(canvas: HTMLCanvasElement | null): void {
+  if (!canvas) return
+  try {
+    const gl = canvas.getContext('webgl') || canvas.getContext('webgl2')
+    if (gl) {
+      gl.clearColor(0, 0, 0, 0)
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+      gl.finish()
+    }
+  } catch (e) {}
+}
+
+/**
+ * 暴力全局清理 - 路由跳转前调用
+ * 绝杀：清空页面上所有Canvas，不管是谁创建的
+ */
+export function destroyAllCanvasOnPage(): void {
+  document.querySelectorAll('canvas').forEach(canvas => {
+    try {
+      const ctx2d = canvas.getContext('2d')
+      if (ctx2d) ctx2d.clearRect(0, 0, canvas.width, canvas.height)
+      const gl = canvas.getContext('webgl') || canvas.getContext('webgl2')
+      if (gl) {
+        gl.clearColor(0, 0, 0, 0)
+        gl.clear(gl.COLOR_BUFFER_BIT)
+      }
+    } catch (e) {}
+  })
+}
+
+/**
+ * 标准动画清理套装
+ * isMounted守卫 + RAF取消 + 事件移除
+ * 使用方式：
+ * const cleanup = createAnimationCleanup()
+ * // ... 在动画循环开头检查
+ * if (!cleanup.isMounted) return
+ * // ... 卸载时调用
+ * cleanup.destroy()
+ */
+export function createAnimationCleanup() {
+  const state = { isMounted: true, rafIds: [] as number[], timers: [] as NodeJS.Timeout[] }
+  
+  return {
+    get isMounted() { return state.isMounted },
+    
+    raf: (cb: FrameRequestCallback) => {
+      const id = requestAnimationFrame(cb)
+      state.rafIds.push(id)
+      return id
+    },
+    
+    timer: (cb: () => void, ms: number) => {
+      const t = setTimeout(cb, ms)
+      state.timers.push(t)
+      return t
+    },
+    
+    destroy: () => {
+      state.isMounted = false
+      state.rafIds.forEach(id => cancelAnimationFrame(id))
+      state.timers.forEach(t => clearTimeout(t))
+      state.rafIds = []
+      state.timers = []
+    }
+  }
+}
+
 // 格式化日期
 export function formatDate(date: Date | string | number, format: string = 'YYYY-MM-DD'): string {
   const d = new Date(date)

@@ -117,11 +117,22 @@ export default function YuIndexPage() {
       animId = requestAnimationFrame(animate)
     }
 
+    let isMounted = true
     animate()
 
     return () => {
+      isMounted = false
       cancelAnimationFrame(animId)
       window.removeEventListener('mousemove', handleMouseMove)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
     }
   }, [])
 

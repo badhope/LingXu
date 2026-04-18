@@ -11,6 +11,7 @@ import Layout from '@/components/layout/Layout'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
+  { id: 'tools', name: '工具', icon: '🔧', desc: '阳宅风水模拟器，龙脉探测', href: '/di/tools', color: '#d4af37', isNew: true },
   { id: 'fengshui', name: '风水', icon: '🏔️', desc: '阴阳宅风水，堪舆布局，寻龙点穴', href: '/di/fengshui', color: '#22c55e' },
   { id: 'luopan', name: '罗盘', icon: '🧭', desc: '风水罗盘，定方位知吉凶，辨阴阳', href: '/di/luopan', color: '#eab308' },
   { id: 'longmai', name: '龙脉', icon: '🐉', desc: '中华龙脉，山水灵气，洞天福地', href: '/di/longmai', color: '#f97316' },
@@ -117,11 +118,22 @@ export default function DiIndexPage() {
       animId = requestAnimationFrame(animate)
     }
 
+    let isMounted = true
     animate()
 
     return () => {
+      isMounted = false
       cancelAnimationFrame(animId)
       window.removeEventListener('mousemove', handleMouseMove)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
     }
   }, [])
 

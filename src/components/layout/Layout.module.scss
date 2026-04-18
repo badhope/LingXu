@@ -100,13 +100,16 @@
 
 .menuButton {
   display: none;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   background: transparent;
   border: 1px solid rgba(201, 162, 39, 0.3);
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   position: relative;
+  padding: 0;
   
   @media (max-width: 1024px) {
     display: flex;
@@ -175,7 +178,9 @@
 }
 
 .mobileNavLink {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
   padding: 1rem 1.5rem;
   color: #a8a8a8;
   text-decoration: none;
@@ -204,7 +209,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  min-height: 52px;
+  min-width: 88px;
+  padding: 0 20px;
   background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.85) 100%);
   border: 1px solid rgba(201, 162, 39, 0.3);
   border-radius: 10px;
@@ -226,7 +233,8 @@
   @media (max-width: 768px) {
     top: 16px;
     left: 16px;
-    padding: 0.6rem 0.875rem;
+    min-height: 56px;
+    padding: 0 20px;
   }
 }
 
@@ -241,10 +249,10 @@
 
 .withBackButton {
   @media (min-width: 768px) {
-    padding-top: 40px;
+    padding-top: 80px;
   }
   @media (max-width: 768px) {
-    padding-top: 60px;
+    padding-top: 80px;
   }
 }
 
@@ -339,5 +347,44 @@
   .footerLinks {
     flex-wrap: wrap;
     gap: 1rem;
+  }
+}
+
+/* ==========================================================================
+   ⬆️ 回到顶部按钮 - 「御剑飞升」
+   ========================================================================== */
+
+.scrollTop {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 998;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.9) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 50%;
+  color: #c9a227;
+  font-size: 1.5rem;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(15, 15, 25, 0.95) 100%);
+    border-color: rgba(201, 162, 39, 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(201, 162, 39, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
   }
 }

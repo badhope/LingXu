@@ -52,13 +52,19 @@ export default function PageBackground({
   useEffect(() => {
     const canvas = particlesRef.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { alpha: true })
     if (!ctx) return
 
+    let animId: number
+    let isMounted = true
+
     const dpr = window.devicePixelRatio || 1
-    canvas.width = window.innerWidth * dpr
-    canvas.height = window.innerHeight * dpr
-    ctx.scale(dpr, dpr)
+
+    const resize = () => {
+      canvas.width = window.innerWidth * dpr
+      canvas.height = window.innerHeight * dpr
+      ctx.scale(dpr, dpr)
+    }
 
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * window.innerWidth,
@@ -70,34 +76,61 @@ export default function PageBackground({
     }))
 
     let time = 0
-    let animId: number
 
     const animate = () => {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-      time += 0.01
+      if (!isMounted || !canvas || !ctx) return
+      
+      try {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+        time += 0.01
 
-      particles.forEach((p) => {
-        p.x += Math.cos(p.angle) * p.speed
-        p.y += Math.sin(p.angle) * p.speed
+        particles.forEach((p) => {
+          p.x += Math.cos(p.angle) * p.speed
+          p.y += Math.sin(p.angle) * p.speed
 
-        if (p.x < 0) p.x = window.innerWidth
-        if (p.x > window.innerWidth) p.x = 0
-        if (p.y < 0) p.y = window.innerHeight
-        if (p.y > window.innerHeight) p.y = 0
+          if (p.x < 0) p.x = window.innerWidth
+          if (p.x > window.innerWidth) p.x = 0
+          if (p.y < 0) p.y = window.innerHeight
+          if (p.y > window.innerHeight) p.y = 0
 
-        const pulse = 0.7 + Math.sin(time * 2 + p.x * 0.01) * 0.3
+          const pulse = 0.7 + Math.sin(time * 2 + p.x * 0.01) * 0.3
 
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.radius * pulse, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${colorRgb}, ${p.alpha * pulse})`
-        ctx.fill()
-      })
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, p.radius * pulse, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(${colorRgb}, ${p.alpha * pulse})`
+          ctx.fill()
+        })
+      } catch (e) {
+        return
+      }
 
       animId = requestAnimationFrame(animate)
     }
 
+    resize()
+    window.addEventListener('resize', resize, { passive: true })
+
     animate()
-    return () => cancelAnimationFrame(animId)
+
+    return () => {
+      isMounted = false
+      cancelAnimationFrame(animId)
+      
+      // ✅ 强制彻底清理Canvas - 解决返回跳转残留核心！
+      try {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        const gl = canvas.getContext('webgl') || canvas.getContext('webgl2')
+        if (gl) {
+          gl.clearColor(0, 0, 0, 0)
+          gl.clear(gl.COLOR_BUFFER_BIT)
+          gl.finish()
+        }
+        canvas.width = 0
+        canvas.height = 0
+      } catch (e) {}
+      
+      window.removeEventListener('resize', resize)
+    }
   }, [colorRgb, particleCount])
 
   return (

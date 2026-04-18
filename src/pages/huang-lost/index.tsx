@@ -132,12 +132,23 @@ export default function HuangLostIndexPage() {
       animationId = requestAnimationFrame(animate)
     }
 
+    let isMounted = true
     animate()
 
     return () => {
+      isMounted = false
+      cancelAnimationFrame(animationId)
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('resize', handleResize)
-      cancelAnimationFrame(animationId)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
     }
   }, [])
 

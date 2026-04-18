@@ -11,27 +11,21 @@ import '@/styles/globals.css'
 import '@/styles/xianxia.scss'
 import '@/styles/xianxia-css3.scss'
 import PageTransitionShader from '@/components/effects/PageTransitionShader'
+import FormationProgress from '@/components/common/FormationProgress'
 
-// 页面过渡配置
 const pageTransition = {
   initial: { opacity: 0, y: 20, scale: 0.98 },
   enter: { 
     opacity: 1, 
     y: 0, 
     scale: 1,
-    transition: { 
-      duration: 0.5, 
-      ease: 'easeOut' 
-    }
+    transition: { duration: 0.5, ease: 'easeOut' }
   },
   exit: { 
     opacity: 0, 
     y: -20, 
     scale: 0.98,
-    transition: { 
-      duration: 0.3, 
-      ease: 'easeInOut' 
-    }
+    transition: { duration: 0.3, ease: 'easeInOut' }
   }
 }
 
@@ -39,10 +33,9 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const [isTransitioning, setIsTransitioning] = useState(false)
 
-  // 页面切换时的处理
   useEffect(() => {
     const handleStart = () => setIsTransitioning(true)
-    const handleComplete = () => setIsTransitioning(false)
+    const handleComplete = () => setTimeout(() => setIsTransitioning(false), 300)
 
     router.events.on('routeChangeStart', handleStart)
     router.events.on('routeChangeComplete', handleComplete)
@@ -58,17 +51,22 @@ export default function App({ Component, pageProps }: AppProps) {
   const transitionType = useState(() => Math.floor(Math.random() * 4))[0]
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={router.pathname}
-        initial="initial"
-        animate="enter"
-        exit="exit"
-        variants={pageTransition}
-      >
-        <Component {...pageProps} />
-      </motion.div>
+    <>
+      <FormationProgress />
+      
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={router.pathname}
+          initial="initial"
+          animate="enter"
+          exit="exit"
+          variants={pageTransition}
+        >
+          <Component {...pageProps} />
+        </motion.div>
+      </AnimatePresence>
+      
       <PageTransitionShader active={isTransitioning} type={transitionType} />
-    </AnimatePresence>
+    </>
   )
 }

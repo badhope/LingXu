@@ -1,0 +1,637 @@
+.baguaContainer {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 30px;
+  padding: 40px;
+  min-height: 600px;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(30, 58, 38, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(180, 140, 60, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #0d110c 0%, #080a07 100%);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.castingArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.title {
+  color: #d4af37;
+  font-size: 28px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.titleIcon {
+  font-size: 32px;
+}
+
+.coinsPlate {
+  width: 360px;
+  height: 280px;
+  background: 
+    radial-gradient(ellipse at center, 
+      rgba(92, 74, 45, 0.6) 0%, 
+      rgba(61, 48, 32, 0.8) 50%, 
+      #1a1510 100%);
+  border-radius: 50%;
+  border: 4px solid #5c4a2d;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    inset 0 0 80px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 15px;
+    border-radius: 50%;
+    border: 2px dashed rgba(212, 175, 55, 0.2);
+    pointer-events: none;
+  }
+}
+
+.plateInner {
+  display: flex;
+  gap: 20px;
+  perspective: 800px;
+}
+
+.coin {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.5),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.coinChar {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-family: serif;
+}
+
+.controlButtons {
+  display: flex;
+  gap: 16px;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  border: none;
+  color: #1a1510;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 20px rgba(212, 175, 55, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+.secondaryButton {
+  background: rgba(92, 74, 45, 0.6);
+  border: 1px solid #5c4a2d;
+  color: #c9a96a;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(92, 74, 45, 0.8);
+    border-color: #8b7355;
+  }
+}
+
+.progressBar {
+  display: flex;
+  gap: 12px;
+  padding: 16px 32px;
+  background: rgba(26, 21, 16, 0.8);
+  border-radius: 30px;
+  border: 1px solid #3d3020;
+}
+
+.progressDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3d3020;
+  border: 1px solid #5c4a2d;
+  transition: all 0.3s ease;
+
+  &.completed {
+    background: #22c55e;
+    border-color: #4ade80;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+  }
+}
+
+.yaoDisplay {
+  background: linear-gradient(135deg, rgba(26, 21, 16, 0.95) 0%, rgba(13, 10, 7, 0.98) 100%);
+  border: 1px solid #3d3020;
+  border-radius: 16px;
+  padding: 24px;
+  height: fit-content;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+  h3 {
+    color: #d4af37;
+    margin: 0 0 20px 0;
+    font-size: 18px;
+  }
+}
+
+.yaoStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.yaoLine {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  background: rgba(61, 48, 32, 0.4);
+  border-radius: 8px;
+}
+
+.yaoPosition {
+  color: #8b7355;
+  font-size: 12px;
+  width: 24px;
+  text-align: center;
+}
+
+.yaoSymbol {
+  flex: 1;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.changingMark {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+.yaoEmpty {
+  flex: 1;
+  color: #5c4a2d;
+  font-size: 24px;
+  letter-spacing: 4px;
+}
+
+.resultModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 40px;
+  backdrop-filter: blur(4px);
+}
+
+.resultContent {
+  background: 
+    linear-gradient(135deg, #2a2218 0%, #1a1510 50%, #0d0a07 100%);
+  border: 2px solid #5c4a2d;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 20px 80px rgba(0, 0, 0, 0.8),
+    0 0 60px rgba(212, 175, 55, 0.1);
+}
+
+.hexagramHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #3d3020;
+}
+
+.hexagramSymbol {
+  font-size: 80px;
+  line-height: 1;
+  color: #d4af37;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+}
+
+.hexagramHeader h2 {
+  color: #fbbf24;
+  font-size: 28px;
+  margin: 0 0 8px 0;
+}
+
+.hexagramCategory {
+  color: #8b7355;
+  font-size: 14px;
+  margin: 0;
+}
+
+.hexagramJudgment,
+.hexagramImage {
+  margin-bottom: 24px;
+
+  h4 {
+    color: #c9a96a;
+    font-size: 16px;
+    margin: 0 0 12px 0;
+  }
+
+  p {
+    color: #e5d9b6;
+    line-height: 1.8;
+    margin: 0;
+    padding: 16px;
+    background: rgba(61, 48, 32, 0.4);
+    border-radius: 8px;
+    border-left: 3px solid #d4af37;
+  }
+}
+
+.linesContainer {
+  h4 {
+    color: #c9a96a;
+    font-size: 16px;
+    margin: 0 0 16px 0;
+  }
+}
+
+.lineItem {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: rgba(61, 48, 32, 0.3);
+  border-radius: 8px;
+  align-items: baseline;
+
+  &:hover {
+    background: rgba(61, 48, 32, 0.5);
+  }
+}
+
+.stepHint {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+  border-left: 3px solid #22c55e;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  color: #86efac;
+  font-size: 14px;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+.helpToggle {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.15) 100%);
+  border: 1px solid #3b82f6;
+  color: #93c5fd;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.25) 100%);
+  }
+}
+
+.helpCard {
+  margin-top: 12px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1px solid #3b82f6;
+  border-radius: 10px;
+  padding: 16px;
+  overflow: hidden;
+
+  h4 {
+    color: #60a5fa;
+    margin: 0 0 12px 0;
+    font-size: 15px;
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 22px;
+    color: #bfdbfe;
+    font-size: 13px;
+    line-height: 1.8;
+
+    li {
+      margin-bottom: 6px;
+
+      strong {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.yaoLegend {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(59, 130, 246, 0.3);
+
+  h5 {
+    color: #93c5fd;
+    margin: 0 0 10px 0;
+    font-size: 13px;
+  }
+}
+
+.legendRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.changingAnalysis {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(59, 130, 246, 0.2);
+
+  h4 {
+    color: #60a5fa;
+    margin: 0 0 16px 0;
+    font-size: 15px;
+  }
+}
+
+.ruleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.ruleCard {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+
+  h5 {
+    color: #93c5fd;
+    margin: 0 0 6px 0;
+    font-size: 13px;
+  }
+
+  p {
+    color: #bfdbfe;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+
+.methodology {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(59, 130, 246, 0.2);
+
+  h4 {
+    color: #60a5fa;
+    margin: 0 0 16px 0;
+    font-size: 15px;
+  }
+}
+
+.methodItem {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.methodNum {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 18px;
+  min-width: 28px;
+  font-family: 'Georgia', serif;
+}
+
+.methodItem h5 {
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}
+
+.methodItem p {
+  color: #94a3b8;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .stepHint {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .helpCard {
+    padding: 12px;
+  }
+
+  .helpCard ol {
+    padding-left: 18px;
+    font-size: 12px;
+  }
+
+  .legendRow {
+    grid-template-columns: 1fr;
+  }
+
+  .ruleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .methodItem {
+    gap: 10px;
+  }
+}
+
+.lineNumber {
+  color: #d4af37;
+  font-weight: 600;
+  width: 28px;
+  font-size: 13px;
+}
+
+.lineText {
+  color: #d9c7a8;
+  line-height: 1.6;
+}
+
+.modalButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.resetButton {
+  padding: 14px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border: 1px solid #22c55e;
+  color: white;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #34d16e 0%, #22c55e 100%);
+    transform: translateY(-1px);
+  }
+}
+
+.closeButton {
+  padding: 14px;
+  background: linear-gradient(135deg, #5c4a2d 0%, #3d3020 100%);
+  border: 1px solid #8b7355;
+  color: #d4af37;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #6d5a3d 0%, #4d4030 100%);
+  }
+}
+
+@media (max-width: 900px) {
+  .baguaContainer {
+    grid-template-columns: 1fr;
+    padding: 20px 15px;
+    gap: 20px;
+  }
+
+  .resultContent {
+    margin: 20px;
+    padding: 24px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+
+  .modalButtons {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .baguaContainer {
+    padding: 15px 10px;
+  }
+
+  .coinsArea {
+    padding: 20px;
+  }
+
+  .coin {
+    width: 70px;
+    height: 70px;
+    font-size: 18px;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .yaoDisplay h3 {
+    font-size: 16px;
+  }
+
+  .yaoLine {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .hexagramSymbol {
+    font-size: 50px;
+  }
+
+  .hexagramHeader h2 {
+    font-size: 20px;
+  }
+
+  .resultContent {
+    margin: 10px;
+    padding: 20px 15px;
+  }
+
+  .hexagramJudgment,
+  .hexagramImage {
+    h4 {
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .lineItem {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

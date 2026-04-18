@@ -1,8 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import Layout from './Layout'
 import PageBackground from './PageBackground'
+import SeoHead from '@/components/common/SeoHead'
 import styles from './SubPageTemplate.module.scss'
 
 interface SubPageTemplateProps {
@@ -22,24 +25,18 @@ export default function SubPageTemplate({
 }: SubPageTemplateProps) {
   return (
     <Layout title={title}>
+      <SeoHead title={title} description={subtitle} />
       <PageBackground colorRgb={colorRgb}>
         <div className={styles.container}>
           <motion.div
             className={styles.header}
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
           >
-            <motion.div
-              className={styles.icon}
-              animate={{
-                rotate: [0, 3, -3, 0],
-                scale: [1, 1.05, 1],
-              }}
-              transition={{ duration: 5, repeat: Infinity }}
-            >
+            <div className={styles.icon}>
               {icon}
-            </motion.div>
+            </div>
             <h1 className={styles.title}>
               {title}
             </h1>
@@ -56,7 +53,8 @@ export default function SubPageTemplate({
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            style={{ willChange: 'transform, opacity' }}
           >
             {children}
           </motion.div>
@@ -83,14 +81,63 @@ export function SubPageSection({
   )
 }
 
-export function InfoCard({ children, className }: { children: React.ReactNode; className?: string }) {
+interface InfoCardProps {
+  children: React.ReactNode
+  className?: string
+  onClick?: () => void
+  title?: string
+  subtitle?: string
+  glowIntensity?: number
+  glowColor?: string
+}
+
+export function InfoCard({
+  children,
+  className,
+  onClick,
+  title,
+  subtitle,
+  glowIntensity = 50,
+  glowColor = '154, 123, 41',
+}: InfoCardProps) {
   return (
     <motion.div
       className={`${styles.infoCard} ${className || ''}`}
+      style={{
+        boxShadow: onClick ? `0 0 ${glowIntensity / 2}px rgba(${glowColor}, ${glowIntensity / 200})` : undefined,
+        cursor: onClick ? 'pointer' : undefined,
+      }}
+      onClick={onClick}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={onClick ? {
+        scale: 1.02,
+        boxShadow: `0 0 ${glowIntensity}px rgba(${glowColor}, ${glowIntensity / 100})`,
+      } : undefined}
       viewport={{ once: true }}
+      transition={{ duration: 0.3 }}
     >
+      {title && (
+        <>
+          <h3 style={{
+            fontSize: '1.25rem',
+            fontWeight: 700,
+            marginBottom: '0.5rem',
+            color: 'rgb(251, 191, 36)',
+          }}>
+            {title}
+          </h3>
+          {subtitle && (
+            <p style={{
+              fontSize: '0.85rem',
+              opacity: 0.7,
+              marginBottom: '1rem',
+            }}>
+              {subtitle}
+            </p>
+          )}
+        </>
+      )}
       {children}
     </motion.div>
   )
@@ -145,3 +192,5 @@ export function CardGrid({ children, className }: { children: React.ReactNode; c
     </div>
   )
 }
+
+export { SkeletonCard, SkeletonGrid } from '@/components/common/Skeleton'

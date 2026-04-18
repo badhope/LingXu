@@ -11,6 +11,7 @@ import Layout from '@/components/layout/Layout'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
+  { id: 'tools', name: '工具', icon: '🔮', desc: '历史时间轴，人物关系图谱', href: '/lishi/tools', color: '#d4af37', isNew: true },
   { id: 'chaodai', name: '朝代', icon: '🏛️', desc: '夏商周秦汉，魏晋南北朝，隋唐宋', href: '/lishi/chaodai', color: '#a16207' },
   { id: 'renwu', name: '人物', icon: '👑', desc: '帝王将相，诸子百家，英雄豪杰', href: '/lishi/renwu', color: '#854d0e' },
   { id: 'wenxian', name: '文献', icon: '📜', desc: '四书五经，二十四史，百家典籍', href: '/lishi/wenxian', color: '#ca8a04' },
@@ -132,12 +133,23 @@ export default function LishiIndexPage() {
       animationId = requestAnimationFrame(animate)
     }
 
+    let isMounted = true
     animate()
 
     return () => {
+      isMounted = false
+      cancelAnimationFrame(animationId)
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('resize', handleResize)
-      cancelAnimationFrame(animationId)
+      
+      // ✅ 标准Canvas防泄漏
+      try {
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      } catch (e) {}
     }
   }, [])
 
