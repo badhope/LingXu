@@ -7,18 +7,19 @@
 
 <p align="center">
   <a href="https://github.com/badhope/LingXu">
-    <img src="https://img.shields.io/badge/Version-v2.0.0-c9a227?style=for-the-badge" alt="Version">
+    <img src="https://img.shields.io/badge/Version-v2.1.0-c9a227?style=for-the-badge" alt="Version">
   </a>
   <a href="https://github.com/badhope/LingXu/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-gold?style=for-the-badge" alt="License">
   </a>
   <a href="https://badhope.github.io/LingXu">
-    <img src="https://img.shields.io/badge/Web-Online-green?style=for-the-badge" alt="Web">
+    <img src="https://img.shields.io/badge/Demo-Online-22c55e?style=for-the-badge" alt="Web">
   </a>
   <a href="https://github.com/badhope/LingXu/stargazers">
     <img src="https://img.shields.io/github/stars/badhope/LingXu?style=for-the-badge&color=c9a227" alt="Stars">
   </a>
-  <img src="https://img.shields.io/badge/Build-Passing-success?style=for-the-badge" alt="Build">
+  <img src="https://img.shields.io/badge/Build-100%25-22c55e?style=for-the-badge" alt="Build">
+  <img src="https://img.shields.io/badge/Easter_Eggs-63+-ec4899?style=for-the-badge" alt="Easter Eggs">
 </p>
 
 <div align="center">
@@ -40,6 +41,12 @@
 ╚══════════════════════════════════════════════════════════════════════════════════════╝
 ```
 
+</div>
+
+<div align="center">
+<h3>🎉 v2.1.0 "玩梗之王" 版本已发布！</h3>
+<p>63+ 隐藏彩蛋 × 18 种随机事件 × 12 类交互玩法</p>
+<blockquote><em>绝对不死板！绝对不机械！懂的都懂！🤣</em></blockquote>
 </div>
 
 ---
@@ -81,6 +88,30 @@
 | ⏳ **宙部** | 时间法则 | 六道轮回、因果法则、古今预言、时间长河 |
 | 🐉 **洪部** | 洪荒上古 | 山海经神兽、妖魔鬼怪、洪荒传说、氏族图腾 |
 | 🏛️ **荒部** | 失落传承 | 修炼功法、炼丹配方、法宝图鉴、秘境地图 |
+
+---
+
+## 🎮 玩梗彩蛋系统 - v2.1 新增！
+
+> _**绝对不死板！绝对不机械！每一个交互都有意想不到的惊喜！**_ ✨
+
+| 系统名称 | 彩蛋数量 | 趣味玩法 | 评级 |
+|---------|---------|---------|------|
+| 🔮 **预言时间线** | 5个互联网预言 | 7级毒舌AI评语 + 30%随机触发 + 彩蛋模式开关 | ⭐⭐⭐⭐⭐ S级 |
+| ⌛ **时光长河** | 15个历史玩梗节点 | 全屏时空穿越动画 + 6种随机开场白 | ⭐⭐⭐⭐⭐ S级 |
+| 🎲 **六道轮回** | 14个隐藏转生路线 | 30%概率触发奇葩转生 + 18种结局 | ⭐⭐⭐⭐⭐ S级 |
+| 🌊 **灵气潮汐** | 5种修炼奇遇 | 走火入魔 / 突破瓶颈 / 渡劫飞升 | ⭐⭐⭐⭐ A级 |
+| 🦋 **因果蝴蝶** | 7级业力评语 | 蝴蝶效应连锁反应 + 人生总结 | ⭐⭐⭐⭐ A级 |
+| 🧧 **端午驱邪** | 艾草收集小游戏 | 驱赶邪祟获得祝福 | ⭐⭐⭐ B级 |
+
+### 🔥 部分彩蛋预览
+| 节点 | 时空管理局绝密备注 |
+|------|----------------|
+| 女娲补天 | 史上第一位码农！补天就是debug！ |
+| 鸿钧成圣 | 第一个合道的卷王，卷到最后一无所有！ |
+| 996福报 | 马云：能996是你们修来的福报！ |
+| AI觉醒 | ChatGPT：我不是来取代你的，我是来淘汰你的！ |
+| 国产操作系统 | 今年一定是国产操作系统元年！（每年都这么说） |
 
 ---
 

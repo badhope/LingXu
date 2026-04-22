@@ -29,7 +29,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -101,24 +101,53 @@ const MODULES = [
   ] },
 ]
 
+const MODULE_ORDER = ['天', '地', '玄', '黄', '宇', '宙', '洪', '荒']
+
 export default function HiddenNav() {
-  // ==================== 状态管理 ====================
-  
-  //  菜单是否展开
   const [isExpanded, setIsExpanded] = useState(false)
+  const [activeModuleByScroll, setActiveModuleByScroll] = useState<string | null>(null)
+  const observerRef = useRef<IntersectionObserver | null>(null)
   
-  // 🔀 跳转工具
   const router = useRouter()
-  // 🧭 我现在在哪一页？比如：/tian/xingxiu
   const pathname = router.pathname
 
-  // ==================== 智能判断 ====================
-  
-  // 🔍 智能判断：是不是子页面？
-  // 是子页面就要显示"返回上级"按钮
   const pathSegments = pathname.split('/').filter(Boolean)
   const isSubPage = pathSegments.length > 1
   const parentPath = isSubPage ? '/' + pathSegments[0] : '/home'
+
+  const isHomePage = pathname === '/home' || pathname === '/' || pathname === ''
+
+  useEffect(() => {
+    if (!isHomePage) {
+      setActiveModuleByScroll(null)
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const moduleChar = entry.target.getAttribute('data-module')
+              if (moduleChar) {
+                setActiveModuleByScroll(moduleChar)
+              }
+            }
+          })
+        },
+        { threshold: 0.3, rootMargin: '-20% 0px -20% 0px' }
+      )
+
+      document.querySelectorAll('[data-module]').forEach((el) => {
+        observerRef.current?.observe(el)
+      })
+    }, 500)
+
+    return () => {
+      clearTimeout(timeout)
+      observerRef.current?.disconnect()
+    }
+  }, [isHomePage])
 
   // ==================== 事件处理函数 ====================
   
@@ -228,14 +257,17 @@ export default function HiddenNav() {
                * 像波浪一样依次出现，满满的仪式感
                */}
               <div className={styles.modules}>
-                {MODULES.map((module, i) => (
+                {MODULES.map((module, i) => {
+                  const isActiveByPath = pathname === module.href || pathname.startsWith(module.href + '/')
+                  const isActiveByScroll = activeModuleByScroll === module.key
+                  const isActive = isActiveByPath || isActiveByScroll
+
+                  return (
                   <motion.div
                     key={module.key}
-                    // ✅ 如果在这个模块或者子页面，高亮
-                    className={`${styles.module} ${pathname === module.href || pathname.startsWith(module.href + '/') ? styles.active : ''}`}
+                    className={`${styles.module} ${isActive ? styles.active : ''} ${isActiveByScroll && isHomePage ? styles.scrollActive : ''}`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    // ⏱️ 第1个0秒，第2个0.05秒...依次出来
                     transition={{ delay: i * 0.05 }}
                   >
                     {/* 模块主链接 */}
@@ -263,7 +295,8 @@ export default function HiddenNav() {
                       ))}
                     </div>
                   </motion.div>
-                ))}
+                  )
+                })}
               </div>
 
               {/* 🏠 菜单最底部：返回首页 */}

@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
+import TimeRiverCanvas from '@/components/effects/TimeRiverCanvas'
 
 interface TimelineEvent {
   id: number
@@ -424,7 +425,38 @@ export default function ShiguangPage() {
       icon="⏳"
       colorRgb="249, 115, 22"
     >
-      <SubPageSection title="时光长河全景">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        style={{
+          height: '500px',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          marginBottom: '3rem',
+          border: '1px solid rgba(249, 115, 22, 0.2)',
+          background: 'linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(8, 8, 20, 0.98) 100%)',
+          position: 'relative',
+        }}
+      >
+        <TimeRiverCanvas />
+        <div style={{
+          position: 'absolute',
+          bottom: '1rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: '0.75rem 1.5rem',
+          background: 'rgba(0, 0, 0, 0.6)',
+          borderRadius: '20px',
+          fontSize: '0.875rem',
+          color: 'rgba(255, 255, 255, 0.7)',
+          border: '1px solid rgba(201, 162, 39, 0.3)',
+        }}>
+          ✨ 移动鼠标与时间节点交互 · 点击节点查看详情
+        </div>
+      </motion.div>
+
+      <SubPageSection title="文明影响力柱">
         <InfoCard>
           <div style={{
             display: 'flex',

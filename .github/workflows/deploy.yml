@@ -1,21 +1,30 @@
-name: 🚀 灵墟自动部署
+name: 🚀 灵墟档案馆 - 自动部署
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    name: 构建并部署
-    
+    name: 🔨 构建并检查
     steps:
       - name: 📥 检出代码
         uses: actions/checkout@v4
 
-      - name: 🟢 安装Node.js
+      - name: 🟢 安装 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -24,22 +33,63 @@ jobs:
       - name: 📦 安装依赖
         run: npm ci
 
-      - name: 🔍 代码检查
+      - name: 🔍 代码质量检查
         run: npm run lint
+        continue-on-error: false
 
-      - name: 🏗️ 构建生产版本
+      - name: 🏗️ TypeScript 类型检查
+        run: npx tsc --noEmit
+        continue-on-error: false
+
+      - name: ⚡ 构建生产版本
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.SITE_URL }}
-          
+          NEXT_PUBLIC_BASE_PATH: /LingXu
+        continue-on-error: false
+
       - name: ✅ 构建验证
         run: |
+          echo "========================================"
+          echo "✅ 代码质量：100% 通过"
+          echo "✅ 类型安全：100% 无错误"
           echo "✅ 构建成功！"
-          ls -la .next/
-          
-      - name: 📢 部署完成通知
+          echo "========================================"
+          echo "📦 构建产物大小："
+          du -sh .next/
+
+      - name: ⚙️ 配置 Next.js 静态导出
+        run: |
+          echo "\n\n/** @type {import('next').NextConfig} */
+          const nextConfig = {
+            output: 'export',
+            basePath: '/LingXu',
+            images: { unoptimized: true },
+            trailingSlash: true,
+          }
+          module.exports = nextConfig" > next.config.temp.js
+
+      - name: 📤 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    name: 🚀 部署到 GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 🌐 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 🎉 部署完成通知
         run: |
           echo "========================================"
-          echo "🎉 灵墟档案馆部署完成！"
-          echo "🌐 访问地址：你的域名"
+          echo "🎉 灵墟档案馆 v2.1.0 部署完成！"
+          echo "🌐 访问地址：${{ steps.deployment.outputs.page_url }}"
+          echo "🥚 彩蛋数量：63+ 个隐藏彩蛋"
+          echo "🎮 交互玩法：18 种随机事件"
           echo "========================================"

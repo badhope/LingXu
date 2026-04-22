@@ -20,6 +20,16 @@ export default function XianxiaCard({
   href,
   index = 0,
 }: XianxiaCardProps) {
+  const moduleMap: Record<string, string> = {
+    '天': '天',
+    '地': '地',
+    '玄': '玄',
+    '黄': '黄',
+    '宇': '宇',
+    '宙': '宙',
+    '洪': '洪',
+    '荒': '荒',
+  }
   const {
     canvasRef,
     handleMouseMove,
@@ -46,6 +56,7 @@ export default function XianxiaCard({
       <motion.a
         ref={cardRef}
         className="xian-perspective"
+        data-module={moduleMap[char]}
         initial={{ opacity: 0, y: 50, rotateX: -15 }}
         whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
         viewport={{ once: true, margin: '-100px' }}

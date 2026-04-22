@@ -138,6 +138,36 @@
     background: rgba(201, 162, 39, 0.15);
     border-left: 3px solid #c9a227;
   }
+
+  &.scrollActive {
+    animation: scrollHighlight 1.5s ease-in-out infinite;
+    
+    .moduleKey {
+      animation: modulePulse 1.5s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes scrollHighlight {
+  0%, 100% {
+    background: rgba(201, 162, 39, 0.15);
+    box-shadow: 0 0 10px rgba(201, 162, 39, 0.2);
+  }
+  50% {
+    background: rgba(201, 162, 39, 0.25);
+    box-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
+  }
+}
+
+@keyframes modulePulse {
+  0%, 100% {
+    transform: scale(1);
+    text-shadow: 0 0 15px rgba(201, 162, 39, 0.4);
+  }
+  50% {
+    transform: scale(1.15);
+    text-shadow: 0 0 25px rgba(201, 162, 39, 0.8), 0 0 50px rgba(201, 162, 39, 0.4);
+  }
 }
 
 .moduleLink {

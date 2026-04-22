@@ -10,7 +10,23 @@ export default function Document() {
       <Head>
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#0a0a0f" />
-        {/* manifest.json 路径：dev 环境用根路径，生产环境用 /LingXu/ */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap"
+          rel="stylesheet"
+        />
+        <noscript>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap"
+            rel="stylesheet"
+          />
+        </noscript>
         <link
           rel="manifest"
           href={process.env.NODE_ENV === 'production' ? '/LingXu/manifest.json' : '/manifest.json'}

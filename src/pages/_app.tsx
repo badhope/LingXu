@@ -11,6 +11,7 @@ import '@/styles/globals.css'
 import '@/styles/xianxia.scss'
 import '@/styles/xianxia-css3.scss'
 import PageTransitionShader from '@/components/effects/PageTransitionShader'
+import MouseTrailEffect from '@/components/effects/MouseTrailEffect'
 import FormationProgress from '@/components/common/FormationProgress'
 
 const pageTransition = {
@@ -53,6 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <FormationProgress />
+      <MouseTrailEffect />
       
       <AnimatePresence mode="wait" initial={false}>
         <motion.div

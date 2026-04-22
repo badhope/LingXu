@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styles from './FilterBar.module.scss'
 
 interface FilterKeyConfig<T> {
@@ -62,6 +62,9 @@ export default function FilterBar<T extends Record<string, any>>(_props: FilterB
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
   const [sortKey, setSortKey] = useState<string>('__default__')
 
+  const onFilteredRef = useRef(onFiltered)
+  onFilteredRef.current = onFiltered
+
   useEffect(() => {
     let result = [...data]
 
@@ -108,8 +111,8 @@ export default function FilterBar<T extends Record<string, any>>(_props: FilterB
       }
     }
 
-    onFiltered(result)
-  }, [searchTerm, activeFilters, sortKey, data, searchKeys, sortOptions, onFiltered])
+    onFilteredRef.current(result)
+  }, [searchTerm, activeFilters, sortKey, data, searchKeys, sortOptions])
 
   const handleFilterChange = (key: string, value: string) => {
     setActiveFilters(prev => ({

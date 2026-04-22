@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
+import SixPathsWheel from '@/components/effects/SixPathsWheel'
 
 interface SixPath {
   id: number
@@ -240,6 +241,30 @@ export default function LunhuiPage() {
       icon="🔄"
       colorRgb="239, 68, 68"
     >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        style={{
+          padding: '2rem',
+          borderRadius: '16px',
+          marginBottom: '3rem',
+          border: '1px solid rgba(239, 68, 68, 0.2)',
+          background: 'linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(8, 8, 20, 0.98) 100%)',
+        }}
+      >
+        <h3 style={{
+          fontSize: '1.5rem',
+          color: '#ef4444',
+          fontFamily: '"Noto Serif SC", serif',
+          marginBottom: '2rem',
+          textAlign: 'center',
+        }}>
+          ☸️ 六道轮回转生盘
+        </h3>
+        <SixPathsWheel />
+      </motion.div>
+
       <SubPageSection title="六道轮回图">
         <InfoCard>
           <div style={{

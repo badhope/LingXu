@@ -49,6 +49,7 @@ export function useCardManaEffect() {
   }, [])
 
   useEffect(() => {
+    // ✅ ESLint安全模式：在effect开始时复制ref引用
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -121,7 +122,6 @@ export function useCardManaEffect() {
       
       // ✅ 标准Canvas防泄漏
       try {
-        const canvas = canvasRef.current
         if (canvas) {
           const ctx = canvas.getContext('2d')
           if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height)

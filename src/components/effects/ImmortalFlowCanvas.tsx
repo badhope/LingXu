@@ -153,12 +153,12 @@ export default function ImmortalFlowCanvas() {
         r.radius += 1.2
         r.alpha -= 0.008
 
-        if (r.alpha <= 0) return false
+        if (r.alpha <= 0.01) return false
 
         ctx.beginPath()
-        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2)
-        ctx.strokeStyle = `hsla(${r.hue}, 40%, 45%, ${r.alpha})`
-        ctx.lineWidth = 1 + (1 - r.radius / r.maxRadius) * 1.5
+        ctx.arc(r.x, r.y, Math.max(0.5, r.radius), 0, Math.PI * 2)
+        ctx.strokeStyle = `hsla(${r.hue}, 40%, 45%, ${Math.max(0, r.alpha)})`
+        ctx.lineWidth = Math.max(0.1, 1 + (1 - r.radius / r.maxRadius) * 1.5)
         ctx.stroke()
 
         return true
@@ -178,7 +178,6 @@ export default function ImmortalFlowCanvas() {
       
       // ✅ 强制彻底清空Canvas - 解决"一半格子卡住"核心bug！
       try {
-        const canvas = canvasRef.current
         if (canvas) {
           const ctx = canvas.getContext('2d')
           if (ctx) {

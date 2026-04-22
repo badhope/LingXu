@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
+import KarmaButterflyEffect from '@/components/effects/KarmaButterflyEffect'
 
 interface Karma {
   id: number
@@ -246,6 +247,30 @@ export default function YinguoPage() {
       icon="⚖️"
       colorRgb="236, 72, 153"
     >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        style={{
+          padding: '2rem',
+          borderRadius: '16px',
+          marginBottom: '3rem',
+          border: '1px solid rgba(139, 92, 246, 0.3)',
+          background: 'linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(8, 8, 20, 0.98) 100%)',
+        }}
+      >
+        <h3 style={{
+          fontSize: '1.5rem',
+          color: '#8b5cf6',
+          fontFamily: '"Noto Serif SC", serif',
+          marginBottom: '1.5rem',
+          textAlign: 'center',
+        }}>
+          🦋 蝴蝶效应 - 业力涟漪
+        </h3>
+        <KarmaButterflyEffect />
+      </motion.div>
+
       <SubPageSection title="业力天平">
         <InfoCard>
           <div style={{
