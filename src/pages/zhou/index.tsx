@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import { FadeIn } from '@/components/ui/Animated'
 import TimeRiverCanvas from '@/components/effects/TimeRiverCanvas'
 import SixPathsWheel from '@/components/effects/SixPathsWheel'
 import KarmaButterflyEffect from '@/components/effects/KarmaButterflyEffect'
@@ -78,12 +79,6 @@ const EFFECT_SYSTEMS = [
   },
 ]
 
-const FADE_UP = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
-
 const ComponentMap: Record<string, React.ComponentType> = {
   AuraTideSystem,
   JuneFortunePanel,
@@ -100,11 +95,12 @@ export default function ZhouIndexPage() {
   const ActiveComponent = ComponentMap[activeSystem] || AuraTideSystem
 
   return (
-    <Layout>
+    <SubPageTemplate title="周流" colorRgb="139, 92, 246">
       <div className={styles.container}>
         <motion.div
-          {...FADE_UP}
-          transition={{ delay: 0.1 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
           className={styles.header}
         >
           <h1 className={styles.title}>
@@ -203,6 +199,6 @@ export default function ZhouIndexPage() {
           </div>
         </motion.div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

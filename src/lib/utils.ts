@@ -55,38 +55,7 @@ export function shuffle<T>(arr: T[]): T[] {
    所有Canvas/WebGL/动画组件必须复用此标准！
    ========================================================================== */
 
-/**
- * 标准Canvas 2D 强制销毁清理
- * 解决：点击返回一半格子卡在页面上
- */
-export function destroyCanvas2D(canvas: HTMLCanvasElement | null): void {
-  if (!canvas) return
-  try {
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.globalCompositeOperation = 'source-over'
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-    }
-    canvas.width = 0
-    canvas.height = 0
-  } catch (e) {}
-}
 
-/**
- * 标准WebGL强制销毁清理
- * 解决：WebGL显存像素残留
- */
-export function destroyCanvasWebGL(canvas: HTMLCanvasElement | null): void {
-  if (!canvas) return
-  try {
-    const gl = canvas.getContext('webgl') || canvas.getContext('webgl2')
-    if (gl) {
-      gl.clearColor(0, 0, 0, 0)
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-      gl.finish()
-    }
-  } catch (e) {}
-}
 
 /**
  * 暴力全局清理 - 路由跳转前调用
@@ -106,62 +75,7 @@ export function destroyAllCanvasOnPage(): void {
   })
 }
 
-/**
- * 标准动画清理套装
- * isMounted守卫 + RAF取消 + 事件移除
- * 使用方式：
- * const cleanup = createAnimationCleanup()
- * // ... 在动画循环开头检查
- * if (!cleanup.isMounted) return
- * // ... 卸载时调用
- * cleanup.destroy()
- */
-export function createAnimationCleanup() {
-  const state = { isMounted: true, rafIds: [] as number[], timers: [] as NodeJS.Timeout[] }
-  
-  return {
-    get isMounted() { return state.isMounted },
-    
-    raf: (cb: FrameRequestCallback) => {
-      const id = requestAnimationFrame(cb)
-      state.rafIds.push(id)
-      return id
-    },
-    
-    timer: (cb: () => void, ms: number) => {
-      const t = setTimeout(cb, ms)
-      state.timers.push(t)
-      return t
-    },
-    
-    destroy: () => {
-      state.isMounted = false
-      state.rafIds.forEach(id => cancelAnimationFrame(id))
-      state.timers.forEach(t => clearTimeout(t))
-      state.rafIds = []
-      state.timers = []
-    }
-  }
-}
 
-// 格式化日期
-export function formatDate(date: Date | string | number, format: string = 'YYYY-MM-DD'): string {
-  const d = new Date(date)
-  const year = d.getFullYear()
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  const hour = String(d.getHours()).padStart(2, '0')
-  const minute = String(d.getMinutes()).padStart(2, '0')
-  const second = String(d.getSeconds()).padStart(2, '0')
-  
-  return format
-    .replace('YYYY', String(year))
-    .replace('MM', month)
-    .replace('DD', day)
-    .replace('HH', hour)
-    .replace('mm', minute)
-    .replace('ss', second)
-}
 
 // 获取农历日期（简化版，完整版需要 lunar-javascript 库）
 export function getLunarDate(date: Date = new Date()): { year: number; month: number; day: number; monthName: string } {
@@ -282,31 +196,6 @@ export function randomGua(): { num: number; name: string; meaning: string } {
     { num: 8, name: '比', meaning: '亲密团结，携手共进' },
   ]
   return randomChoice(gua)
-}
-
-// 检测设备类型
-export function detectDevice(): 'mobile' | 'tablet' | 'desktop' {
-  if (typeof window === 'undefined') return 'desktop'
-  
-  const width = window.innerWidth
-  if (width < 768) return 'mobile'
-  if (width < 1024) return 'tablet'
-  return 'desktop'
-}
-
-// 检测是否支持 WebGL
-export function isWebGLSupported(): boolean {
-  if (typeof window === 'undefined') return false
-  
-  try {
-    const canvas = document.createElement('canvas')
-    return !!(
-      window.WebGLRenderingContext &&
-      (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
-    )
-  } catch (e) {
-    return false
-  }
 }
 
 // 平滑滚动到元素

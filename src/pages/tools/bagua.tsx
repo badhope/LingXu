@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import CoinCasting from '@/tools/bagua/CoinCasting'
 
 export default function BaguaPage() {
   return (
-    <Layout title="八卦占卜" transparentNav parentPath="/tools">
+    <SubPageTemplate title="八卦占卜" colorRgb="212, 175, 55">
       <CoinCasting />
-    </Layout>
+    </SubPageTemplate>
   )
 }

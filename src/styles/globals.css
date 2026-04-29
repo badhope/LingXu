@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* ==========================================
    全局字体引入
    ========================================== */
@@ -9,41 +11,45 @@
 @import "tailwindcss";
 
 /* ==========================================
-   CSS 变量
+   CSS 变量 - 正宗米黄羊皮卷主题
    ========================================== */
 :root {
-  /* 主色 */
-  --color-gold: #c9a227;
-  --color-gold-light: #f0d78c;
-  --color-gold-dark: #845c17;
+  /* 主色 - 深空蓝金 */
+  --color-gold: #fbbf24;
+  --color-gold-light: #fcd34d;
+  --color-gold-dark: #d97706;
   
-  /* 玄色 */
-  --color-xuan: #1a1a2e;
-  --color-xuan-light: #393a4a;
-  --color-xuan-dark: #0a0a0f;
+  /* 深空四色背景系统 */
+  --space-1: #1e293b;  /* 最亮 - 石板蓝 */
+  --space-2: #0f172a;  /* 深海军蓝 */
+  --space-3: #020617;  /* 深空黑 */
+  --space-4: #000510;  /* 宇宙黑 */
   
-  /* 文字 */
-  --color-text-primary: #e8d48b;
-  --color-text-secondary: #a8a8a8;
-  --color-text-muted: #666666;
+  /* 文字 - 纯白系统（黑暗背景下对比度爆炸） */
+  --color-text-primary: #f8fafc;    /* 主文字 - 纯白 */
+  --color-text-secondary: #e2e8f0;  /* 次要文字 - 浅灰 */
+  --color-text-muted: #94a3b8;      /* 辅助文字 - 中灰 */
   
-  /* 边框 */
-  --color-border: rgba(201, 162, 39, 0.2);
-  --color-border-hover: rgba(201, 162, 39, 0.5);
+  /* 边框 - 蓝金 */
+  --color-border: rgba(251, 191, 36, 0.15);
+  --color-border-hover: rgba(251, 191, 36, 0.3);
   
-  /* 背景 */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: rgba(26, 26, 46, 0.6);
+  /* 背景 - 卡片毛玻璃 */
+  --bg-primary: var(--space-2);
+  --bg-secondary: var(--space-1);
+  --bg-card: rgba(30, 41, 59, 0.6);
   
-  /* 发光 */
-  --glow-gold: 0 0 20px rgba(201, 162, 39, 0.5);
-  --glow-gold-strong: 0 0 40px rgba(201, 162, 39, 0.8);
+  /* 阴影 - 深空投影 */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.4);
   
-  /* 动画时长 */
-  --duration-fast: 0.2s;
-  --duration-normal: 0.4s;
-  --duration-slow: 0.8s;
+  /* 动画时长 - 极速响应 */
+  --duration-fast: 0.08s;
+  --duration-normal: 0.15s;
+  --duration-slow: 0.25s;
+  
+  /* 字体再放大 25% */
+  font-size: 20px;
 }
 
 /* ==========================================
@@ -53,12 +59,67 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
+html, body, #__next {
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg-primary);
+  background-color: #0f172a !important;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, #1e293b 0%, #0f172a 40%, #020617 100%) !important;
+  background-attachment: fixed !important;
+  background-size: 100vw 100vh !important;
   color: var(--color-text-primary);
   min-height: 100vh;
+  min-width: 100%;
   overflow-x: hidden;
+  position: relative;
+}
+
+html::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+
+html::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(251, 191, 36, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 30%, rgba(129, 140, 248, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+* {
+  background-color: transparent;
+}
+
+div[class*="container"],
+div[class*="page"],
+div[class*="wrapper"],
+main,
+section {
+  background: transparent !important;
+}
+
+div[style*="background: #0"],
+div[style*="background: #1"],
+div[style*="background-color: #0"],
+div[style*="background-color: #1"] {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.35) 100%) !important;
 }
 
 /* 古体字字体 */

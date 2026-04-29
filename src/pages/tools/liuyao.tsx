@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import LiuyaoCast from '@/tools/liuyao/LiuyaoCast'
 
 export default function LiuyaoPage() {
   return (
-    <Layout title="六爻断事" transparentNav parentPath="/tools">
+    <SubPageTemplate title="六爻起卦" colorRgb="168, 85, 247">
       <LiuyaoCast />
-    </Layout>
+    </SubPageTemplate>
   )
 }

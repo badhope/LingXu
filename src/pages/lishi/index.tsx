@@ -7,7 +7,9 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { FadeIn } from '@/components/ui/Animated'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
@@ -17,12 +19,6 @@ const SUB_MODULES = [
   { id: 'wenxian', name: '文献', icon: '📜', desc: '四书五经，二十四史，百家典籍', href: '/lishi/wenxian', color: '#ca8a04' },
   { id: 'mixin', name: '秘辛', icon: '🔍', desc: '历史谜团，宫廷秘闻，未解之谜', href: '/lishi/mixin', color: '#713f12' },
 ]
-
-const FADE_UP = {
-  initial: { opacity: 0, y: 40 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
 
 export default function LishiIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -154,12 +150,12 @@ export default function LishiIndexPage() {
   }, [])
 
   return (
-    <Layout title="历史" transparentNav>
+    <SubPageTemplate title="历史" colorRgb="212, 175, 55">
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
               className={styles.heroIcon}
               animate={{
@@ -222,6 +218,6 @@ export default function LishiIndexPage() {
           以史为镜，可以知兴替；以人为镜，可以明得失
         </motion.div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

@@ -1,9 +1,21 @@
 'use client'
 
-import { useCardManaEffect } from '@/components/effects/CardManaCanvas'
+import React, { memo, useRef } from 'react'
 import Link from 'next/link'
-import { useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useCardManaEffect } from '@/components/effects/CardManaCanvas'
+import { COLORS, SPACING, RADIUS, alpha } from '@/styles/tokens'
+
+const MODULE_MAP: Record<string, string> = {
+  '天': '天',
+  '地': '地',
+  '玄': '玄',
+  '黄': '黄',
+  '宇': '宇',
+  '宙': '宙',
+  '洪': '洪',
+  '荒': '荒',
+}
 
 interface XianxiaCardProps {
   char: string
@@ -13,23 +25,13 @@ interface XianxiaCardProps {
   index?: number
 }
 
-export default function XianxiaCard({
+const XianxiaCard = memo(function XianxiaCard({
   char,
   title,
   description,
   href,
   index = 0,
 }: XianxiaCardProps) {
-  const moduleMap: Record<string, string> = {
-    '天': '天',
-    '地': '地',
-    '玄': '玄',
-    '黄': '黄',
-    '宇': '宇',
-    '宙': '宙',
-    '洪': '洪',
-    '荒': '荒',
-  }
   const {
     canvasRef,
     handleMouseMove,
@@ -56,7 +58,7 @@ export default function XianxiaCard({
       <motion.a
         ref={cardRef}
         className="xian-perspective"
-        data-module={moduleMap[char]}
+        data-module={MODULE_MAP[char]}
         initial={{ opacity: 0, y: 50, rotateX: -15 }}
         whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
         viewport={{ once: true, margin: '-100px' }}
@@ -78,10 +80,10 @@ export default function XianxiaCard({
           className="xian-card xian-card-glow xian-border-animate"
           style={{
             position: 'relative',
-            padding: '2rem',
-            borderRadius: '16px',
+            padding: SPACING['3xl'],
+            borderRadius: RADIUS.xl,
             background: 'linear-gradient(145deg, rgba(15, 15, 25, 0.9) 0%, rgba(8, 8, 15, 0.95) 100%)',
-            border: '1px solid rgba(212, 175, 55, 0.15)',
+            border: `1px solid ${alpha(COLORS.gold, 0.15)}`,
             overflow: 'hidden',
           }}
         >
@@ -95,7 +97,7 @@ export default function XianxiaCard({
               width: '100%',
               height: '100%',
               pointerEvents: 'none',
-              borderRadius: '16px',
+              borderRadius: RADIUS.xl,
               zIndex: 1,
             }}
           />
@@ -106,7 +108,7 @@ export default function XianxiaCard({
               style={{
                 fontSize: '3.5rem',
                 fontWeight: 700,
-                marginBottom: '0.5rem',
+                marginBottom: SPACING.sm,
                 fontFamily: '"Noto Serif SC", serif',
               }}
             >
@@ -118,7 +120,7 @@ export default function XianxiaCard({
               style={{
                 fontSize: '1.25rem',
                 fontWeight: 600,
-                marginBottom: '0.5rem',
+                marginBottom: SPACING.sm,
                 fontFamily: '"Noto Serif SC", serif',
               }}
             >
@@ -139,8 +141,8 @@ export default function XianxiaCard({
           <div
             style={{
               position: 'absolute',
-              top: '1rem',
-              right: '1rem',
+              top: SPACING.lg,
+              right: SPACING.lg,
               fontSize: '1.5rem',
               opacity: 0.3,
               transition: 'opacity 0.3s ease, transform 0.3s ease',
@@ -153,4 +155,8 @@ export default function XianxiaCard({
       </motion.a>
     </Link>
   )
-}
+})
+
+XianxiaCard.displayName = 'XianxiaCard'
+
+export default XianxiaCard

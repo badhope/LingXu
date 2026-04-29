@@ -1,9 +1,7 @@
-name: 🚀 灵墟档案馆 - 自动部署
+name: 🚀 部署到 GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
     branches: [ main, master ]
   workflow_dispatch:
 
@@ -17,79 +15,72 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  quality-check:
+    name: 🔍 代码质量检查
     runs-on: ubuntu-latest
-    name: 🔨 构建并检查
     steps:
-      - name: 📥 检出代码
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 🟢 安装 Node.js
+      - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: 📦 安装依赖
+      - name: 安装依赖
         run: npm ci
 
-      - name: 🔍 代码质量检查
-        run: npm run lint
-        continue-on-error: false
-
-      - name: 🏗️ TypeScript 类型检查
+      - name: TypeScript 类型检查
         run: npx tsc --noEmit
-        continue-on-error: false
 
-      - name: ⚡ 构建生产版本
+      - name: ESLint 代码检查
+        run: npx next lint
+
+  build:
+    name: 📦 构建静态站点
+    runs-on: ubuntu-latest
+    needs: quality-check
+    environment:
+      name: github-pages
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 构建静态站点
         run: npm run build
         env:
-          NEXT_PUBLIC_BASE_PATH: /LingXu
-        continue-on-error: false
+          NEXT_PUBLIC_BASE_PATH: '/LingXu'
+          NODE_ENV: 'production'
 
-      - name: ✅ 构建验证
-        run: |
-          echo "========================================"
-          echo "✅ 代码质量：100% 通过"
-          echo "✅ 类型安全：100% 无错误"
-          echo "✅ 构建成功！"
-          echo "========================================"
-          echo "📦 构建产物大小："
-          du -sh .next/
+      - name: 创建 .nojekyll
+        run: touch out/.nojekyll
 
-      - name: ⚙️ 配置 Next.js 静态导出
-        run: |
-          echo "\n\n/** @type {import('next').NextConfig} */
-          const nextConfig = {
-            output: 'export',
-            basePath: '/LingXu',
-            images: { unoptimized: true },
-            trailingSlash: true,
-          }
-          module.exports = nextConfig" > next.config.temp.js
+      - name: 创建 404.html (SPA 路由)
+        run: cp out/index.html out/404.html
 
-      - name: 📤 上传构建产物
+      - name: 上传构建产物
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
 
   deploy:
-    needs: build
+    name: 🌐 部署到 GitHub Pages
     runs-on: ubuntu-latest
-    name: 🚀 部署到 GitHub Pages
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: 🌐 部署到 GitHub Pages
+      - name: 部署
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: 🎉 部署完成通知
-        run: |
-          echo "========================================"
-          echo "🎉 灵墟档案馆 v2.1.0 部署完成！"
-          echo "🌐 访问地址：${{ steps.deployment.outputs.page_url }}"
-          echo "🥚 彩蛋数量：63+ 个隐藏彩蛋"
-          echo "🎮 交互玩法：18 种随机事件"
-          echo "========================================"

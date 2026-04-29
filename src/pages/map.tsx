@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
 import styles from './map.module.scss'
 
@@ -114,7 +114,7 @@ export default function SiteMapPage() {
   }, [])
 
   return (
-    <Layout title="全站地图" showNav transparentNav={false}>
+    <SubPageTemplate title="全站地图" colorRgb="139, 92, 246">
       <div className={styles.container}>
         <div className={styles.header}>
           <motion.h1
@@ -209,6 +209,6 @@ export default function SiteMapPage() {
           </div>
         )}
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

@@ -30,20 +30,20 @@ const SIX_PATHS = [
 ]
 
 const EASTER_EGG_PATHS = [
-  { name: '键盘侠道', icon: '⌨️', color: '#64748b', condition: s => s > 45 && s < 55, description: '嘴炮无敌，现实唯唯诺诺，网络重拳出击' },
-  { name: '社畜道', icon: '💼', color: '#3b82f6', condition: s => s > 40 && s < 50, description: '996福报，老板画饼，内卷至死' },
-  { name: '肥宅快乐道', icon: '🍕', color: '#f97316', condition: s => s > 35 && s < 45, description: '可乐薯片游戏机，外卖wifi葛优躺' },
-  { name: '猫主子道', icon: '🐱', color: '#ec4899', condition: s => s > 60 && s < 70, description: '前世救过人，今生当主子，铲屎官伺候' },
-  { name: '单身狗道', icon: '🐕', color: '#a855f7', condition: s => s > 50 && s < 60, description: '注孤生，狗粮管饱，柠檬树下你和我' },
-  { name: '程序猿道', icon: '🦍', color: '#06b6d4', condition: s => s > 55 && s < 65, description: '头发掉光，debug到天亮，产品经理天敌' },
-  { name: '干饭人道', icon: '🍜', color: '#84cc16', condition: s => s > 48 && s < 58, description: '干啥啥不行，干饭第一名' },
-  { name: '躺平道', icon: '🛌', color: '#7c3aed', condition: s => s > 52 && s < 57, description: '不婚不育不买房，佛系人生赢家' },
-  { name: '柠檬精道', icon: '🍋', color: '#eab308', condition: s => s > 25 && s < 35, description: '酸！都可以酸！凭啥他比我好' },
-  { name: '鸽子道', icon: '🕊️', color: '#0ea5e9', condition: s => s > 58 && s < 63, description: '咕咕咕，下次一定！' },
-  { name: '摸鱼道', icon: '🐟', color: '#14b8a6', condition: s => s > 42 && s < 52, description: '上班8小时，7小时在厕所' },
-  { name: '修真小说主角道', icon: '⚡', color: '#f43f5e', condition: s => s === 69, description: '莫欺少年穷！三天之后杀你全家！' },
-  { name: '氪金玩家道', icon: '💎', color: '#06b6d4', condition: s => s > 80 && s < 85, description: '首充6元吊打全区，VIP15为所欲为' },
-  { name: '韭菜道', icon: '🌱', color: '#22c55e', condition: s => s > 20 && s < 30, description: '追涨杀跌，接盘侠，镰刀最爱' },
+  { name: '键盘侠道', icon: '⌨️', color: '#64748b', condition: (s: number) => s > 45 && s < 55, description: '嘴炮无敌，现实唯唯诺诺，网络重拳出击' },
+  { name: '社畜道', icon: '💼', color: '#3b82f6', condition: (s: number) => s > 40 && s < 50, description: '996福报，老板画饼，内卷至死' },
+  { name: '肥宅快乐道', icon: '🍕', color: '#f97316', condition: (s: number) => s > 35 && s < 45, description: '可乐薯片游戏机，外卖wifi葛优躺' },
+  { name: '猫主子道', icon: '🐱', color: '#ec4899', condition: (s: number) => s > 60 && s < 70, description: '前世救过人，今生当主子，铲屎官伺候' },
+  { name: '单身狗道', icon: '🐕', color: '#a855f7', condition: (s: number) => s > 50 && s < 60, description: '注孤生，狗粮管饱，柠檬树下你和我' },
+  { name: '程序猿道', icon: '🦍', color: '#06b6d4', condition: (s: number) => s > 55 && s < 65, description: '头发掉光，debug到天亮，产品经理天敌' },
+  { name: '干饭人道', icon: '🍜', color: '#84cc16', condition: (s: number) => s > 48 && s < 58, description: '干啥啥不行，干饭第一名' },
+  { name: '躺平道', icon: '🛌', color: '#7c3aed', condition: (s: number) => s > 52 && s < 57, description: '不婚不育不买房，佛系人生赢家' },
+  { name: '柠檬精道', icon: '🍋', color: '#eab308', condition: (s: number) => s > 25 && s < 35, description: '酸！都可以酸！凭啥他比我好' },
+  { name: '鸽子道', icon: '🕊️', color: '#0ea5e9', condition: (s: number) => s > 58 && s < 63, description: '咕咕咕，下次一定！' },
+  { name: '摸鱼道', icon: '🐟', color: '#14b8a6', condition: (s: number) => s > 42 && s < 52, description: '上班8小时，7小时在厕所' },
+  { name: '修真小说主角道', icon: '⚡', color: '#f43f5e', condition: (s: number) => s === 69, description: '莫欺少年穷！三天之后杀你全家！' },
+  { name: '氪金玩家道', icon: '💎', color: '#06b6d4', condition: (s: number) => s > 80 && s < 85, description: '首充6元吊打全区，VIP15为所欲为' },
+  { name: '韭菜道', icon: '🌱', color: '#22c55e', condition: (s: number) => s > 20 && s < 30, description: '追涨杀跌，接盘侠，镰刀最爱' },
 ]
 
 const KARMA_QUESTIONS = [

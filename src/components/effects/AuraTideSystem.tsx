@@ -242,10 +242,10 @@ export default function AuraTideSystem() {
                 color: auraLevel.color,
                 textShadow: `0 0 20px ${auraLevel.color}80`,
               }}>
-                {formatTime(currentTime)}
+                {currentTime && formatTime(currentTime)}
               </div>
               <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.875rem' }}>
-                {currentTime.toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                {currentTime?.toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </div>
             </div>
 

@@ -74,7 +74,7 @@ export default function FilterBar<T extends Record<string, any>>(_props: FilterB
         searchKeys.some(key => {
           const value = item[key as keyof T]
           if (Array.isArray(value)) {
-            return value.some(v => String(v).toLowerCase().includes(term))
+            return value.some((v: unknown) => String(v).toLowerCase().includes(term))
           }
           return String(value).toLowerCase().includes(term)
         })

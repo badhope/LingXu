@@ -6,12 +6,9 @@ import { createRoot } from 'react-dom/client'
 interface Particle {
   x: number
   y: number
-  vx: number
-  vy: number
   life: number
   maxLife: number
   size: number
-  hue: number
 }
 
 export default function MouseTrailEffect() {
@@ -20,12 +17,21 @@ export default function MouseTrailEffect() {
   const mouseRef = useRef({ x: 0, y: 0 })
   const animationRef = useRef<number>(0)
   const lastEmitRef = useRef(0)
+  const enabledRef = useRef(true)
+
+  const [enabled, setEnabled] = useState(true)
 
   useEffect(() => {
+    if (!enabled) {
+      enabledRef.current = false
+      return
+    }
+    enabledRef.current = true
+
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { alpha: true })
     if (!ctx) return
 
     const resizeCanvas = () => {
@@ -34,79 +40,86 @@ export default function MouseTrailEffect() {
     }
 
     resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
+    window.addEventListener('resize', resizeCanvas, { passive: true })
 
     const handleMouseMove = (e: MouseEvent) => {
-      const now = Date.now()
+      if (!enabledRef.current) return
+
+      const now = performance.now()
       const dx = e.clientX - mouseRef.current.x
       const dy = e.clientY - mouseRef.current.y
       const speed = Math.sqrt(dx * dx + dy * dy)
 
       mouseRef.current = { x: e.clientX, y: e.clientY }
 
-      if (now - lastEmitRef.current > 16 && speed > 2) {
+      if (now - lastEmitRef.current > 24 && speed > 5) {
         lastEmitRef.current = now
-        
-        for (let i = 0; i < 2; i++) {
-          particlesRef.current.push({
-            x: e.clientX + (Math.random() - 0.5) * 10,
-            y: e.clientY + (Math.random() - 0.5) * 10,
-            vx: (Math.random() - 0.5) * 2 + dx * 0.05,
-            vy: (Math.random() - 0.5) * 2 + dy * 0.05,
-            life: 1,
-            maxLife: 60 + Math.random() * 40,
-            size: 2 + Math.random() * 4,
-            hue: 35 + Math.random() * 15,
-          })
-        }
 
-        if (particlesRef.current.length > 100) {
-          particlesRef.current = particlesRef.current.slice(-100)
+        particlesRef.current.push({
+          x: e.clientX,
+          y: e.clientY,
+          life: 1,
+          maxLife: 25 + Math.random() * 15,
+          size: 1.5 + Math.random() * 2,
+        })
+
+        if (particlesRef.current.length > 32) {
+          particlesRef.current = particlesRef.current.slice(-32)
         }
       }
     }
 
+    let frameCount = 0
     const animate = () => {
+      if (!enabledRef.current) return
+
+      frameCount++
+
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      particlesRef.current = particlesRef.current.filter((p) => {
+      const len = particlesRef.current.length
+      for (let i = len - 1; i >= 0; i--) {
+        const p = particlesRef.current[i]
         p.life -= 1 / p.maxLife
-        if (p.life <= 0.01) return false
 
-        p.x += p.vx
-        p.y += p.vy
-        p.vx *= 0.98
-        p.vy *= 0.98
-        p.vy -= 0.02
+        if (p.life <= 0.02) {
+          particlesRef.current.splice(i, 1)
+          continue
+        }
 
-        const alpha = Math.max(0, p.life * 0.8)
-        const size = Math.max(0.1, p.size * p.life)
+        const alpha = p.life * 0.6
+        const size = p.size * p.life
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, size, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${alpha})`
+        ctx.fillStyle = `rgba(201, 162, 39, ${alpha})`
         ctx.fill()
-
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, size * 2, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(${p.hue}, 70%, 50%, ${alpha * 0.3})`
-        ctx.fill()
-
-        return p.life > 0
-      })
+      }
 
       animationRef.current = requestAnimationFrame(animate)
     }
 
     animate()
-    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
       window.removeEventListener('mousemove', handleMouseMove)
       cancelAnimationFrame(animationRef.current)
     }
+  }, [enabled])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === 't') {
+        setEnabled(prev => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
+
+  if (!enabled) return null
 
   return (
     <canvas
@@ -119,6 +132,7 @@ export default function MouseTrailEffect() {
         height: '100vh',
         pointerEvents: 'none',
         zIndex: 9999,
+        willChange: 'transform',
       }}
     />
   )

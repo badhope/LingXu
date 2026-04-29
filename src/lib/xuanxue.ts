@@ -220,8 +220,8 @@ function calculateDayMasterStrength(
   wuxingCount: Record<string, number>,
   dayMasterWuxing: string
 ): string {
-  const wuxingSheng = { '木': '水', '火': '木', '土': '火', '金': '土', '水': '金' }
-  const wuxingKe = { '木': '金', '火': '水', '土': '木', '金': '火', '水': '土' }
+  const wuxingSheng: Record<string, string> = { '木': '水', '火': '木', '土': '火', '金': '土', '水': '金' }
+  const wuxingKe: Record<string, string> = { '木': '金', '火': '水', '土': '木', '金': '火', '水': '土' }
   
   const shengWo = wuxingSheng[dayMasterWuxing]
   const woSheng = getWoSheng(dayMasterWuxing)
@@ -266,7 +266,7 @@ function analyzePattern(
     return '比劫格'
   }
   
-  const shengWo = { '木': '水', '火': '木', '土': '火', '金': '土', '水': '金' }
+  const shengWo: Record<string, string> = { '木': '水', '火': '木', '土': '火', '金': '土', '水': '金' }
   if (maxWuxing === shengWo[dayMasterWuxing]) {
     return '印格'
   }
@@ -350,7 +350,7 @@ export function castLiuyao(): number[] {
   const yao: number[] = []
   for (let i = 0; i < 6; i++) {
     const coins = Array.from({ length: 3 }, () => Math.random() > 0.5 ? 1 : 0)
-    const sum = coins.reduce((a, b) => a + b, 0)
+    const sum = coins.reduce((a: number, b: number) => a + b, 0)
     if (sum === 0) yao.push(6)
     else if (sum === 3) yao.push(9)
     else if (sum === 1) yao.push(7)

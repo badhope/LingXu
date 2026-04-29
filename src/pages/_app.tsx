@@ -1,6 +1,6 @@
 /**
- * 灵墟 - App 入口（增强版）
- * 页面过渡动画 + 全局状态
+ * 灵墟 - App 入口（超级智能体增强版）
+ * 错误边界 + SEO + 性能监控 + 特效 + 全局状态
  */
 
 import type { AppProps } from 'next/app'
@@ -11,22 +11,27 @@ import '@/styles/globals.css'
 import '@/styles/xianxia.scss'
 import '@/styles/xianxia-css3.scss'
 import PageTransitionShader from '@/components/effects/PageTransitionShader'
-import MouseTrailEffect from '@/components/effects/MouseTrailEffect'
+import { PerformanceMonitor } from '@/lib/analytics'
+import { SEO } from '@/components/common/SEO'
+import { ErrorBoundary, GlobalErrorHandler } from '@/components/common/ErrorBoundary'
+import { MouseTrailAdvanced, CardHoverGlow, ParallaxMouse } from '@/components/effects/MouseEffects'
 import FormationProgress from '@/components/common/FormationProgress'
+import { KeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import Layout from '@/components/layout/Layout'
 
 const pageTransition = {
-  initial: { opacity: 0, y: 20, scale: 0.98 },
+  initial: { opacity: 0, y: 12, scale: 0.985 },
   enter: { 
     opacity: 1, 
     y: 0, 
     scale: 1,
-    transition: { duration: 0.5, ease: 'easeOut' }
+    transition: { duration: 0.35, ease: 'easeOut' }
   },
   exit: { 
     opacity: 0, 
-    y: -20, 
-    scale: 0.98,
-    transition: { duration: 0.3, ease: 'easeInOut' }
+    y: -8, 
+    scale: 0.99,
+    transition: { duration: 0.2, ease: 'easeInOut' }
   }
 }
 
@@ -53,20 +58,28 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <SEO />
+      <GlobalErrorHandler />
+      <PerformanceMonitor />
+      <KeyboardShortcuts />
       <FormationProgress />
-      <MouseTrailEffect />
+      <MouseTrailAdvanced />
+      <CardHoverGlow />
+      <ParallaxMouse />
       
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={router.pathname}
-          initial="initial"
-          animate="enter"
-          exit="exit"
-          variants={pageTransition}
-        >
-          <Component {...pageProps} />
-        </motion.div>
-      </AnimatePresence>
+      <ErrorBoundary>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={router.pathname}
+            initial="initial"
+            animate="enter"
+            exit="exit"
+            variants={pageTransition}
+          >
+            <Component {...pageProps} />
+          </motion.div>
+        </AnimatePresence>
+      </ErrorBoundary>
       
       <PageTransitionShader active={isTransitioning} type={transitionType} />
     </>

@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import XingxiuPanel from '@/tools/xingxiu/XingxiuPanel'
 
 export default function XingxiuPage() {
   return (
-    <Layout title="星象观测" transparentNav parentPath="/tools">
+    <SubPageTemplate title="星宿运势" colorRgb="59, 130, 246">
       <XingxiuPanel />
-    </Layout>
+    </SubPageTemplate>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import MeihuaPanel from '@/tools/divination/MeihuaPanel'
 import QimenPanel from '@/tools/divination/QimenPanel'
 import styles from '@/pages/xuan/index.module.scss'
@@ -15,7 +15,7 @@ export default function XuanToolsPage() {
   const [activeTool, setActiveTool] = useState('meihua')
 
   return (
-    <Layout title="玄部工具 - 卜筮占验" parentPath="/xuan">
+    <SubPageTemplate title="玄学工具" colorRgb="212, 175, 55">
       <div className={styles.toolbar} style={{ marginBottom: 24 }}>
         {TOOLS.map((tool) => (
           <button
@@ -31,6 +31,6 @@ export default function XuanToolsPage() {
 
       {activeTool === 'meihua' && <MeihuaPanel />}
       {activeTool === 'qimen' && <QimenPanel />}
-    </Layout>
+    </SubPageTemplate>
   )
 }

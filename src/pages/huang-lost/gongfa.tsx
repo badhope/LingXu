@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
 
 interface CultivationTier {
@@ -263,6 +263,41 @@ export default function GongfaPage() {
   const [expandedTier, setExpandedTier] = useState<string | null>(null)
   const [filteredTechniques, setFilteredTechniques] = useState(CLASSIC_TECHNIQUES)
   const [expandedTechnique, setExpandedTechnique] = useState<string | null>(null)
+  const [selectedTechnique, setSelectedTechnique] = useState<Technique | null>(null)
+  const [practicing, setPracticing] = useState(false)
+  const [practiceProgress, setPracticeProgress] = useState(0)
+  const [practiceLevel, setPracticeLevel] = useState(0)
+  const [insights, setInsights] = useState<string[]>([])
+
+  const startPractice = useCallback((technique: Technique) => {
+    setSelectedTechnique(technique)
+    setPracticing(true)
+    setPracticeProgress(0)
+    setPracticeLevel(1)
+    setInsights([])
+
+    let progress = 0
+    let level = 1
+    const insightTexts = technique.steps
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 2 + 0.5
+      if (progress >= 100 && level < 5) {
+        progress = 0
+        level++
+        setInsights(prev => [...prev, `✨ 悟道境界 ${level}: ${insightTexts[level - 1]}`])
+      }
+      if (level >= 5 && progress >= 100) {
+        clearInterval(interval)
+        setPracticeProgress(100)
+        setInsights(prev => [...prev, `🎉 ${technique.name} 修炼圆满！功参造化！`])
+        setTimeout(() => setPracticing(false), 1500)
+        return
+      }
+      setPracticeProgress(Math.min(progress, 100))
+      setPracticeLevel(level)
+    }, 50)
+  }, [])
 
   const handleTierFilter = useCallback((data: typeof CULTIVATION_TIERS) => {
     setFilteredTiers(data)
@@ -553,7 +588,125 @@ export default function GongfaPage() {
         </div>
       </SubPageSection>
 
-      <SubPageSection title="六大门派镇派神功">
+      <SubPageSection title="🧘 功法修炼室">
+        <InfoCard glowIntensity={80} glowColor="110, 231, 183">
+          <div style={{ padding: '2rem' }}>
+            {!practicing ? (
+              <div>
+                <h3 style={{ textAlign: 'center', marginBottom: '2rem', color: '#6ee7b7' }}>选择一部功法开始修炼</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '1rem',
+                  maxWidth: 800,
+                  margin: '0 auto'
+                }}>
+                  {CLASSIC_TECHNIQUES.slice(0, 6).map((tech) => (
+                    <motion.div
+                      key={tech.name}
+                      whileHover={{ scale: 1.02, y: -3 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => startPractice(tech)}
+                      style={{
+                        padding: '1.2rem',
+                        borderRadius: '12px',
+                        background: `linear-gradient(135deg, ${tech.color}15, rgba(30, 30, 40, 0.8))`,
+                        border: `1px solid ${tech.color}40`,
+                        cursor: 'pointer',
+                        textAlign: 'center'
+                      }}
+                    >
+                      <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{tech.icon}</div>
+                      <div style={{
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        color: tech.color,
+                        marginBottom: '0.3rem'
+                      }}>
+                        {tech.name}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', opacity: 0.6 }}>{tech.sect} · {tech.grade}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center' }}>
+                <motion.div
+                  animate={{ rotate: practiceLevel * 60 }}
+                  transition={{ duration: 1, type: 'spring' }}
+                  style={{ fontSize: '4rem', marginBottom: '1rem' }}
+                >
+                  {selectedTechnique?.icon}
+                </motion.div>
+                <h3 style={{ marginBottom: '0.5rem', color: selectedTechnique?.color }}>
+                  正在修炼：{selectedTechnique?.name}
+                </h3>
+                <div style={{
+                  display: 'inline-block',
+                  padding: '0.2rem 0.8rem',
+                  borderRadius: '15px',
+                  background: `${selectedTechnique?.color}20`,
+                  color: selectedTechnique?.color,
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  marginBottom: '1.5rem'
+                }}>
+                  第 {practiceLevel} / 5 重境界
+                </div>
+
+                <div style={{ maxWidth: 500, margin: '0 auto 1.5rem' }}>
+                  <div style={{
+                    width: '100%',
+                    height: '8px',
+                    background: 'rgba(180, 180, 190, 0.1)',
+                    borderRadius: '4px',
+                    overflow: 'hidden'
+                  }}>
+                    <motion.div
+                      style={{
+                        height: '100%',
+                        background: `linear-gradient(90deg, ${selectedTechnique?.color}, ${selectedTechnique?.color}88)`,
+                        borderRadius: '4px',
+                        width: `${practiceProgress}%`
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{
+                  maxWidth: 500,
+                  margin: '0 auto',
+                  textAlign: 'left',
+                  maxHeight: 200,
+                  overflowY: 'auto',
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '8px',
+                  padding: '1rem'
+                }}>
+                  {insights.map((msg, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      style={{
+                        padding: '0.5rem',
+                        fontSize: '0.85rem',
+                        color: 'rgba(180, 180, 190, 0.9)',
+                        borderBottom: '1px solid rgba(180, 180, 190, 0.1)'
+                      }}
+                    >
+                      {msg}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="📜 六大门派镇派神功">
         <FilterBar
           data={CLASSIC_TECHNIQUES}
           onFiltered={handleTechniqueFilter}

@@ -10,53 +10,61 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Home from './home'
 import styles from './index.module.scss'
 
-// Bagua SVG 组件（确定性渲染，无 Hydration 问题）
-const BaguaSVG = () => (
-  <svg viewBox="0 0 200 200" className={styles.baguaSvg}>
-    <defs>
-      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-        <feMerge>
-          <feMergeNode in="coloredBlur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-      <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#f4e4a6" />
-        <stop offset="50%" stopColor="#c9a227" />
-        <stop offset="100%" stopColor="#8b7355" />
-      </linearGradient>
-      <radialGradient id="centerGradient">
-        <stop offset="0%" stopColor="rgba(201, 162, 39, 0.3)" />
-        <stop offset="100%" stopColor="transparent" />
-      </radialGradient>
-    </defs>
+// Bagua SVG 组件 - 客户端动态渲染消除 Hydration 警告
+const BaguaSVG = () => {
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-    <circle cx="100" cy="100" r="95" fill="none" stroke="url(#goldGradient)" strokeWidth="1.5" opacity="0.3" />
-    <circle cx="100" cy="100" r="80" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.4" />
-    <circle cx="100" cy="100" r="65" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.5" />
+  return (
+    <svg viewBox="0 0 200 200" className={styles.baguaSvg} suppressHydrationWarning>
+      <defs>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fcd34d" />
+          <stop offset="50%" stopColor="#fbbf24" />
+          <stop offset="100%" stopColor="#d97706" />
+        </linearGradient>
+        <radialGradient id="centerGradient">
+          <stop offset="0%" stopColor="rgba(251, 191, 36, 0.4)" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+      </defs>
 
-    <g stroke="url(#goldGradient)" strokeWidth="2" filter="url(#glow)">
-      <text x="100" y="18" fill="#c9a227" fontSize="14" textAnchor="middle">☰</text>
-      <text x="162" y="42" fill="#c9a227" fontSize="14" textAnchor="middle">☴</text>
-      <text x="182" y="105" fill="#c9a227" fontSize="14" textAnchor="middle">☲</text>
-      <text x="162" y="168" fill="#c9a227" fontSize="14" textAnchor="middle">☶</text>
-      <text x="100" y="190" fill="#c9a227" fontSize="14" textAnchor="middle">☷</text>
-      <text x="38" y="168" fill="#c9a227" fontSize="14" textAnchor="middle">☳</text>
-      <text x="18" y="105" fill="#c9a227" fontSize="14" textAnchor="middle">☵</text>
-      <text x="38" y="42" fill="#c9a227" fontSize="14" textAnchor="middle">☱</text>
-    </g>
+      <circle cx="100" cy="100" r="95" fill="none" stroke="url(#goldGradient)" strokeWidth="1.5" opacity="0.4" />
+      <circle cx="100" cy="100" r="80" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.5" />
+      <circle cx="100" cy="100" r="65" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.6" />
 
-    <circle cx="100" cy="100" r="40" fill="url(#centerGradient)" filter="url(#glow)" />
+      <g stroke="url(#goldGradient)" strokeWidth="2" filter="url(#glow)">
+        <text x="100" y="18" fill="#fbbf24" fontSize="14" textAnchor="middle">☰</text>
+        <text x="162" y="42" fill="#fbbf24" fontSize="14" textAnchor="middle">☴</text>
+        <text x="182" y="105" fill="#fbbf24" fontSize="14" textAnchor="middle">☲</text>
+        <text x="162" y="168" fill="#fbbf24" fontSize="14" textAnchor="middle">☶</text>
+        <text x="100" y="190" fill="#fbbf24" fontSize="14" textAnchor="middle">☷</text>
+        <text x="38" y="168" fill="#fbbf24" fontSize="14" textAnchor="middle">☳</text>
+        <text x="18" y="105" fill="#fbbf24" fontSize="14" textAnchor="middle">☵</text>
+        <text x="38" y="42" fill="#fbbf24" fontSize="14" textAnchor="middle">☱</text>
+      </g>
 
-    <g transform="translate(100, 100)">
-      <path d="M-40,0 A40,40 0 0,1 0,-40 A20,20 0 0,1 0,0 A20,20 0 0,0 0,40 A40,40 0 0,1 -40,0 Z" fill="#0a0a0f" />
-      <path d="M40,0 A40,40 0 0,1 0,40 A20,20 0 0,1 0,0 A20,20 0 0,0 0,-40 A40,40 0 0,1 40,0 Z" fill="#c9a227" />
-      <circle cx="0" cy="-20" r="8" fill="#0a0a0f" />
-      <circle cx="0" cy="20" r="8" fill="#c9a227" />
-    </g>
-  </svg>
-)
+      <circle cx="100" cy="100" r="40" fill="url(#centerGradient)" filter="url(#glow)" />
+
+      <g transform="translate(100, 100)">
+        <path d="M-40,0 A40,40 0 0,1 0,-40 A20,20 0 0,1 0,0 A20,20 0 0,0 0,40 A40,40 0 0,1 -40,0 Z" fill="#0f172a" />
+        <path d="M40,0 A40,40 0 0,1 0,40 A20,20 0 0,1 0,0 A20,20 0 0,0 0,-40 A40,40 0 0,1 40,0 Z" fill="#fbbf24" />
+        <circle cx="0" cy="-20" r="8" fill="#1e293b" stroke="#94a3b8" strokeWidth="1" />
+        <circle cx="0" cy="20" r="8" fill="#fbbf24" />
+      </g>
+    </svg>
+  )
+}
 
 // 确定性粒子数据（SSR/客户端一致，无 Hydration Mismatch）
 function seededRandom(seed: number): number {
@@ -132,9 +140,9 @@ export default function IndexPage() {
                   width: `${p.size}px`,
                   height: `${p.size}px`,
                   background: p.isGold
-                    ? `radial-gradient(circle, #c9a227 0%, rgba(201, 162, 39, 0.4) 50%, transparent 70%)`
-                    : `radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)`,
-                  boxShadow: p.isGold ? '0 0 10px rgba(201, 162, 39, 0.5)' : 'none',
+                    ? `radial-gradient(circle, #fbbf24 0%, rgba(251, 191, 36, 0.5) 50%, transparent 70%)`
+                    : `radial-gradient(circle, #f8fafc 0%, rgba(248, 250, 252, 0.4) 50%, transparent 70%)`,
+                  boxShadow: p.isGold ? '0 0 12px rgba(251, 191, 36, 0.6)' : 'none',
                 }}
                 animate={{
                   opacity: [0.1, 0.6, 0.9, 0.6, 0.1],
@@ -171,13 +179,13 @@ export default function IndexPage() {
                 animate={{ rotateZ: -360 }}
                 transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
               >
-                <svg viewBox="0 0 200 200" className={styles.baguaSvg} style={{ opacity: 0.4 }}>
+                <svg viewBox="0 0 200 200" className={styles.baguaSvg} style={{ opacity: 0.5 }}>
                   {dizhiLabels.map((item, i) => {
                     const angle = (i / 12) * Math.PI * 2 - Math.PI / 2
                     const x = 100 + Math.cos(angle) * 90
                     const y = 100 + Math.sin(angle) * 90
                     return (
-                      <text key={i} x={x} y={y} fill="#c9a227" fontSize="8" textAnchor="middle" dominantBaseline="middle">
+                      <text key={i} x={x} y={y} fill="#fbbf24" fontSize="8" textAnchor="middle" dominantBaseline="middle">
                         {item}
                       </text>
                     )
@@ -197,12 +205,12 @@ export default function IndexPage() {
             {/* 标题 */}
             <motion.h1
               className={styles.title}
-              initial={{ opacity: 0, y: 80, scale: 0.8 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 1, duration: 1.5, ease: 'easeOut' }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
             >
               <span className={styles.titleChar}>靈</span>
-              <motion.span className={styles.titleDivider} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 3, repeat: Infinity }}>
+              <motion.span className={styles.titleDivider} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}>
                 ✦
               </motion.span>
               <span className={styles.titleChar}>墟</span>
@@ -212,7 +220,7 @@ export default function IndexPage() {
               className={styles.divider}
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 1.8, duration: 1.2, ease: 'easeOut' }}
+              transition={{ duration: 0.3, delay: 0.1, ease: 'easeOut' }}
             >
               <div className={styles.dividerLine} />
               <div className={styles.dividerDot}>❖</div>
@@ -221,25 +229,25 @@ export default function IndexPage() {
 
             <motion.p
               className={styles.subtitle}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.3, duration: 1 }}
+              transition={{ duration: 0.3, delay: 0.15 }}
             >
               <span className={styles.subtitleLine}>末 法 时 代 · 失 落 修 行 文 明 档 案 馆</span>
             </motion.p>
 
             <motion.div
               className={styles.enterWrapper}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3, duration: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
             >
               <motion.button
                 className={styles.enterButton}
                 onClick={handleEnter}
                 whileHover={{
                   scale: 1.08,
-                  boxShadow: '0 0 60px rgba(201, 162, 39, 0.6), 0 0 120px rgba(201, 162, 39, 0.3)',
+                  boxShadow: '0 0 60px rgba(251, 191, 36, 0.7), 0 0 120px rgba(251, 191, 36, 0.4)',
                 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -285,11 +293,26 @@ export default function IndexPage() {
               transition={{ duration: 2, delay: 0.5, times: [0, 0.3, 0.7, 1] }}
             />
 
+            {/* 开门后浮现旋转八卦太极！ */}
+            <motion.div
+              className={styles.gateRuneContainer}
+              initial={{ scale: 0, rotate: -180, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 1.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <motion.div
+                animate={{ rotateZ: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              >
+                <BaguaSVG />
+              </motion.div>
+            </motion.div>
+
             <motion.div
               className={styles.gateText}
               initial={{ opacity: 0, scale: 0.5, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 1.2 }}
+              transition={{ delay: 1, duration: 1.2 }}
             >
               {['道生一', '一生二', '二生三', '三生万物'].map((text, i) => (
                 <motion.span key={text} animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}>

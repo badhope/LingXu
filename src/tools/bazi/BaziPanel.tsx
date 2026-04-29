@@ -44,7 +44,21 @@ function getStemBranch(year: number, month: number, day: number, hour: number) {
   }
 }
 
-function calculateTenGods(dayMaster: typeof HEAVENLY_STEMS[number], pillars: any) {
+interface Pillar {
+  stem?: { element?: string }
+  branch?: { element?: string }
+  [key: string]: unknown
+}
+
+interface Pillars {
+  year?: Pillar
+  month?: Pillar
+  day?: Pillar
+  hour?: Pillar
+  [key: string]: Pillar | undefined
+}
+
+function calculateTenGods(dayMaster: typeof HEAVENLY_STEMS[number], pillars: Pillars) {
   const gods: Record<string, string> = {
     '同阴阳同元素': '比肩',
     '异阴阳同元素': '劫财',
@@ -63,7 +77,7 @@ function calculateTenGods(dayMaster: typeof HEAVENLY_STEMS[number], pillars: any
 function getElementCounts(pillars: ReturnType<typeof getStemBranch>) {
   const counts: Record<string, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
   
-  Object.values(pillars).forEach((p: any) => {
+  Object.values(pillars).forEach((p: Pillar) => {
     if (p?.stem?.element && counts[p.stem.element] !== undefined) {
       counts[p.stem.element]++
     }

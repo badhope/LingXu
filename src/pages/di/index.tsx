@@ -6,23 +6,25 @@
 
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { FadeIn } from '@/components/ui/Animated'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
-  { id: 'tools', name: '工具', icon: '🔧', desc: '阳宅风水模拟器，龙脉探测', href: '/di/tools', color: '#d4af37', isNew: true },
-  { id: 'fengshui', name: '风水', icon: '🏔️', desc: '阴阳宅风水，堪舆布局，寻龙点穴', href: '/di/fengshui', color: '#22c55e' },
-  { id: 'luopan', name: '罗盘', icon: '🧭', desc: '风水罗盘，定方位知吉凶，辨阴阳', href: '/di/luopan', color: '#eab308' },
-  { id: 'longmai', name: '龙脉', icon: '🐉', desc: '中华龙脉，山水灵气，洞天福地', href: '/di/longmai', color: '#f97316' },
-  { id: 'dili', name: '地理', icon: '🗺️', desc: '山川地理，地脉走向，人杰地灵', href: '/di/dili', color: '#06b6d4' },
+  { id: 'xunlong', name: '寻龙', icon: '🎮', desc: '寻龙点穴模拟器，龙脉探索游戏', href: '/di/xunlong', color: '#f97316', isNew: true },
+  { id: 'yangzhai', name: '阳宅', icon: '🏠', desc: '阳宅三要，八宅游年配卦', href: '/di/yangzhai', color: '#22c55e', isNew: true },
+  { id: 'lishi', name: '立向', icon: '🧭', desc: '二十四山，三元九运', href: '/di/lishi', color: '#f59e0b', isNew: true },
+  { id: 'dongtian', name: '洞天', icon: '🏔️', desc: '十大洞天，七十二福地', href: '/di/dongtian', color: '#06b6d4', isNew: true },
+  { id: 'shanchuan', name: '山川', icon: '🗻', desc: '五岳四渎，名山大川百科', href: '/di/shanchuan', color: '#22c55e', isNew: true },
+  { id: 'gudu', name: '古都', icon: '🏛️', desc: '帝都王气，名墓风水', href: '/di/gudu', color: '#a855f7', isNew: true },
+  { id: 'longmai', name: '龙脉', icon: '🐉', desc: '中华龙脉，三干龙尽结', href: '/di/longmai', color: '#f59e0b' },
+  { id: 'fengshui', name: '风水', icon: '☯️', desc: '阴阳宅风水，堪舆布局', href: '/di/fengshui', color: '#22c55e' },
+  { id: 'luopan', name: '罗盘', icon: '🧭', desc: '风水罗盘，天池指南', href: '/di/luopan', color: '#eab308' },
+  { id: 'dili', name: '地理', icon: '🗺️', desc: '山川地理，地脉走向', href: '/di/dili', color: '#06b6d4' },
+  { id: 'tools', name: '工具', icon: '🔧', desc: '阳宅风水工具', href: '/di/tools', color: '#d4af37' },
 ]
-
-const FADE_UP = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
 
 export default function DiIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -138,12 +140,12 @@ export default function DiIndexPage() {
   }, [])
 
   return (
-    <Layout title="地理" transparentNav>
+    <SubPageTemplate title="地理" colorRgb="34, 197, 94">
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
               className={styles.heroIcon}
               animate={{
@@ -211,6 +213,6 @@ export default function DiIndexPage() {
           ))}
         </div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

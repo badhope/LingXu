@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import FuluPanel from '@/tools/fulu/FuluPanel'
 
 export default function FuluPage() {
   return (
-    <Layout title="符箓道法" transparentNav parentPath="/tools">
+    <SubPageTemplate title="符箓绘制" colorRgb="239, 68, 68">
       <FuluPanel />
-    </Layout>
+    </SubPageTemplate>
   )
 }

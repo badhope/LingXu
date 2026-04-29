@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import BaziPanel from '@/tools/bazi/BaziPanel'
 
 export default function BaziPage() {
   return (
-    <Layout title="八字命理" transparentNav parentPath="/tools">
+    <SubPageTemplate title="八字命理" colorRgb="234, 88, 12">
       <BaziPanel />
-    </Layout>
+    </SubPageTemplate>
   )
 }

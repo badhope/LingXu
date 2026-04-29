@@ -73,6 +73,39 @@ const GUAXIANG_BASICS: GuaXiang[] = [
   { name: '比卦', number: 8, nature: '亲比', wuxing: '水地', meaning: '地上有水，亲辅', explanation: '地上有水，比。先王以建万国，亲诸侯。亲近，辅佐，团结。', keywords: ['亲辅', '团结', '朋友', '辅助'] },
 ]
 
+const GUANYIN_LOTS = [
+  { number: 1, level: '上上签', title: '钟离成道', poem: '开天辟地作良缘，吉日良时万物全。若得此签非小可，人行忠正帝王宣。', meaning: '始初皆吉，变转甚易，贵人接引，百事皆吉。', wish: '遂', job: '成', wealth: '有', marriage: '成', love: '合', health: '安', lost: '得', lawsuit: '胜', pregnancy: '生男', travel: '利', icon: '👑' },
+  { number: 2, level: '上签', title: '苏秦不第', poem: '鲸鱼未变守江河，不可升腾更望高。异日峥嵘身变化，许君一跃跳龙门。', meaning: '得忍且忍，得耐且耐，须待时至，功名还在。', wish: '待时', job: '迟', wealth: '求', marriage: '待', love: '难', health: '慎', lost: '迟', lawsuit: '和', pregnancy: '平安', travel: '待', icon: '🐋' },
+  { number: 3, level: '下签', title: '董永卖身', poem: '临风冒雨去还乡，正是其身似燕儿。衔得坭来欲作垒，到头垒坏复须坭。', meaning: '千般用计，晨昏不停，谁知此事，到底劳心。', wish: '空', job: '难', wealth: '耗', marriage: '不合', love: '离', health: '险', lost: '难寻', lawsuit: '凶', pregnancy: '有险', travel: '阻', icon: '💔' },
+  { number: 4, level: '上签', title: '玉莲会十朋', poem: '千年古镜复重圆，女再求夫男再婚。自此门庭重改换，更添福禄在儿孙。', meaning: '淘沙见金，骑龙踏虎，虽是劳心，于中有补。', wish: '遂', job: '成', wealth: '迟', marriage: '成', love: '圆', health: '痊', lost: '得', lawsuit: '胜', pregnancy: '生男', travel: '利', icon: '💍' },
+  { number: 5, level: '中签', title: '刘晨遇仙', poem: '一锥凿地要求泉，努力求之得最难。无意偶然遇知己，相逢携手上青天。', meaning: '心专做事，可兆团圆，莫信闲语，自有姻缘。', wish: '难', job: '迟', wealth: '有', marriage: '合', love: '遇贵', health: '祈福', lost: '迟得', lawsuit: '求', pregnancy: '安', travel: '宜', icon: '💕' },
+  { number: 6, level: '下签', title: '仁贵遇主', poem: '投身岩下饲於菟，须是还他大丈夫。舍己也应难再得，通行天下此人无。', meaning: '安分身无，虽危不危，金鳞入手，得还防失。', wish: '守旧', job: '难', wealth: '无', marriage: '阻', love: '难', health: '祈保', lost: '不见', lawsuit: '和', pregnancy: '有惊', travel: '守', icon: '🏔️' },
+  { number: 7, level: '中签', title: '苏小妹难夫', poem: '谁知石藏碧玉，良工剖出得相宜。果是此中藏异宝，更何须用别狐疑。', meaning: '空里得财，守旧则吉，不必劳心，自有消息。', wish: '实', job: '就', wealth: '有', marriage: '平', love: '待', health: '不妨', lost: '得', lawsuit: '终吉', pregnancy: '生男', travel: '平', icon: '💎' },
+  { number: 8, level: '上签', title: '姚氏嫁女', poem: '年时此际喜生花，岂料风霜正折芽。幸有阳和相暖热，枝头依旧吐奇葩。', meaning: '逢灾不惊，遇危不危，根基深厚，依旧芳菲。', wish: '遂', job: '成', wealth: '有', marriage: '成', love: '甜', health: '安', lost: '寻得', lawsuit: '吉', pregnancy: '生女', travel: '利', icon: '🌸' },
+  { number: 9, level: '中签', title: '孔明点将', poem: '烦君勿作私心事，此意偏宜说向公。一片明心清皎洁，宛如皎月正当中。', meaning: '心中正直，理顺法宽，圣无私语，终有分明。', wish: '公', job: '举', wealth: '守', marriage: '利', love: '正', health: '安', lost: '得', lawsuit: '胜', pregnancy: '安', travel: '公', icon: '🌙' },
+  { number: 10, level: '下签', title: '庞涓败马陵', poem: '朝朝恰似采花蜂，飞出西南又走东。春尽花残无觅处，此心不变旧行踪。', meaning: '用尽心力，有财无功，到底凄凄，守旧则通。', wish: '守', job: '难', wealth: '破', marriage: '离', love: '散', health: '祷', lost: '难', lawsuit: '凶', pregnancy: '防', travel: '凶', icon: '🐝' },
+  { number: 11, level: '上签', title: '书荐姜维', poem: '欲求胜事可非常，争奈亲姻日暂忙。到头竟必成鹿箭，贵人指引贵人乡。', meaning: '因祸得福，家中大吉，始终皆吉，尽可施为。', wish: '遂', job: '荐', wealth: '有', marriage: '合', love: '贵', health: '安', lost: '遇', lawsuit: '吉', pregnancy: '喜', travel: '遇贵', icon: '🏹' },
+  { number: 12, level: '上签', title: '武吉遇师', poem: '否去泰来咫尺间，暂交君子出于山。若逢虎兔佳音信，立志忙中事即闲。', meaning: '换麻得丝，击人双足，要见分明，因灾得福。', wish: '遂', job: '遇师', wealth: '有', marriage: '成', love: '成', health: '安', lost: '得', lawsuit: '吉', pregnancy: '安', travel: '利', icon: '🐯' },
+  { number: 13, level: '中签', title: '罗通拜帅', poem: '自小生身富贵家，眼前万物总奢华。蒙君赐紫金腰带，四海声名定可夸。', meaning: '龙门得遇，名达帝都，象过竹桥，一步一步。', wish: '遂', job: '贵', wealth: '足', marriage: '吉', love: '荣', health: '安', lost: '得', lawsuit: '贵', pregnancy: '安', travel: '荣', icon: '🎖️' },
+  { number: 14, level: '中签', title: '子牙弃官', poem: '宛如仙鹤出凡笼，脱得凡笼路路通。南北东西无阻隔，任君直上九霄宫。', meaning: '任意无虞，得路亨通，失物得见，命享通仙。', wish: '远', job: '遂', wealth: '宜', marriage: '合', love: '自由', health: '愈', lost: '寻得', lawsuit: '吉', pregnancy: '生男', travel: '通', icon: '🦢' },
+  { number: 15, level: '中签', title: '苏秦得志', poem: '行人跘曰偃王师，一日欢娱得好枝。求成谋望皆吉庆，恰如枯木再生枝。', meaning: '名成利遂，谋望皆吉，枯木开花，阖家喜悦。', wish: '遂', job: '遂', wealth: '有', marriage: '成', love: '成', health: '愈', lost: '寻', lawsuit: '和', pregnancy: '生男', travel: '回', icon: '🌳' },
+  { number: 16, level: '上签', title: '叶梦熊朝帝', poem: '愁眉思虑暂时开，启出云霄喜自来。宛如粪土中藏玉，良工一荐出尘埃。', meaning: '藏中得宝，喜出望外，转祸为福，皆大欢喜。', wish: '明', job: '成', wealth: '得', marriage: '合', love: '贵', health: '安', lost: '得', lawsuit: '吉', pregnancy: '安', travel: '利', icon: '💎' },
+  { number: 17, level: '中签', title: '曹操话梅止渴', poem: '莫听闲言说是非，晨昏只好念阿弥。若将狂话为真实，画饼如何止得饥。', meaning: '心中不定，枉费功夫，守旧安静，得念弥陀。', wish: '空', job: '守', wealth: '谨', marriage: '宁', love: '守', health: '吉', lost: '空', lawsuit: '和', pregnancy: '安', travel: '守', icon: '🍐' },
+  { number: 18, level: '上签', title: '曹国舅为仙', poem: '金乌西坠兔东升，日夜循环至古今。僧道得之无不利，士农工商各遂心。', meaning: '阴长阳消，西出东没，凡事得清，无有不利。', wish: '遂', job: '遂', wealth: '有', marriage: '成', love: '吉', health: '愈', lost: '得', lawsuit: '吉', pregnancy: '安', travel: '利', icon: '🌅' },
+  { number: 19, level: '中签', title: '子仪封王', poem: '急水滩头放船归，风波作浪欲何为。若要安然求稳静，等待浪静过此危。', meaning: '急水放船，宜守旧过，静处安身，临危不危。', wish: '守', job: '待时', wealth: '平', marriage: '平', love: '待', health: '安', lost: '难', lawsuit: '平', pregnancy: '安', travel: '待', icon: '⛵' },
+  { number: 20, level: '中签', title: '姜太公遇文王', poem: '当春久雨喜开晴，玉兔金乌渐渐明。旧事消散新事遂，看看一跳过龙门。', meaning: '久遇之后，遇贵经营，龙门得遇，百事皆吉。', wish: '遂', job: '遇贵', wealth: '利', marriage: '成', love: '遇贵', health: '安', lost: '见', lawsuit: '吉', pregnancy: '安', travel: '遂', icon: '🐉' },
+  { number: 21, level: '上签', title: '李旦龙凤配合', poem: '阴阳道合总由天，女嫁男婚喜偎然。但见龙蛇相会合，熊罴入梦乐团圆。', meaning: '从心所欲，百事成就，天作之合，四海扬名。', wish: '遂', job: '成', wealth: '足', marriage: '成', love: '合', health: '安', lost: '得', lawsuit: '吉', pregnancy: '生男', travel: '利', icon: '💑' },
+  { number: 22, level: '下签', title: '六郎逢救', poem: '旱时田里皆枯槁，谢天甘雨落淋淋。花果草木皆润泽，始知一雨值千金。', meaning: '田蚕倍熟，命运渐来，幸遇救病，其财莫贷。', wish: '守', job: '待', wealth: '利', marriage: '迟', love: '救', health: '愈', lost: '迟', lawsuit: '平', pregnancy: '平安', travel: '难', icon: '🌧️' },
+  { number: 23, level: '中签', title: '怀德招亲', poem: '欲扳仙桂入蟾宫，岂虑天门不任君。忽遇一般音信好，人人皆笑岭顶花。', meaning: '谋望从心，求财十分，遇贵成就，锦上添花。', wish: '遂', job: '遂', wealth: '利', marriage: '成', love: '成', health: '安', lost: '得', lawsuit: '吉', pregnancy: '安', travel: '利', icon: '🌺' },
+  { number: 24, level: '下签', title: '殷郊遇师', poem: '不成理论不成家，水性痴人似落花。若问君恩须得力，到头必见事如麻。', meaning: '是非莫说，事如麻乱，痴人说梦，到底成虚。', wish: '难', job: '错', wealth: '破', marriage: '难', love: '痴', health: '祷', lost: '不见', lawsuit: '凶', pregnancy: '防', travel: '凶', icon: '🍂' },
+  { number: 25, level: '中签', title: '李广机智', poem: '过了忧危第几重，从今再历永无凶。宽心自有宽心计，得遇高人护圣功。', meaning: '讼终有理，病得安全，出入求谋，古井遇泉。', wish: '遂', job: '遇贵', wealth: '有', marriage: '合', love: '安', health: '安', lost: '得', lawsuit: '有理', pregnancy: '安', travel: '平', icon: '🔱' },
+  { number: 26, level: '中签', title: '钟馗得道', poem: '上下传来事转虚，天边接得一封书。书中许我功名遂，直到终时亦是虚。', meaning: '名虚声虚，日下安居，守旧待时，不必踌蹰。', wish: '虚', job: '虚', wealth: '谨', marriage: '慎', love: '幻', health: '平', lost: '空', lawsuit: '和', pregnancy: '安', travel: '勿', icon: '👻' },
+  { number: 27, level: '中签', title: '刘基谏主', poem: '一谋一用一番书，虑后思前不敢为。时到贵人相助力，如山墙立可安居。', meaning: '知非莫取，不必劳心，守正待时，贵人相扶。', wish: '待', job: '扶', wealth: '平', marriage: '稳', love: '助', health: '安', lost: '迟', lawsuit: '平', pregnancy: '安', travel: '稳', icon: '🏛️' },
+  { number: 28, level: '中签', title: '李后寻包公', poem: '东边月上正蝉娟，顷刻云遮亦暗存。或有圆时还有缺，更言非者亦闲言。', meaning: '浮云遮月，不须疑惑，等待云收，便见分明。', wish: '待明', job: '迟', wealth: '平', marriage: '缺', love: '破镜', health: '祈', lost: '迟', lawsuit: '终明', pregnancy: '安', travel: '待', icon: '🌥️' },
+  { number: 29, level: '上上签', title: '三顾茅庐', poem: '宝剑出匣耀光明，匣中全然不惹尘。今得贵人提携去，前程可许步青云。', meaning: '宝剑出匣，光芒四射，贵人提携，凡事通达。', wish: '遂', job: '遂', wealth: '得', marriage: '成', love: '合', health: '安', lost: '得', lawsuit: '胜', pregnancy: '安', travel: '利', icon: '⚔️' },
+  { number: 30, level: '中签', title: '棋盘大会', poem: '劝君切莫向他求，似鹤飞来暗箭投。若去采薪蛇在草，恐遭毒口也忧愁。', meaning: '闭口深藏，不可妄动，防小人口，蛇在草中。', wish: '守', job: '防', wealth: '防破', marriage: '慎', love: '防小人', health: '防疾', lost: '不见', lawsuit: '防凶', pregnancy: '防', travel: '防', icon: '🐍' },
+]
+
 export default function ZhanbuPage() {
   const [filteredMethods, setFilteredMethods] = useState(DIVINATION_METHODS)
   const [expandedMethod, setExpandedMethod] = useState<string | null>(null)
@@ -80,6 +113,26 @@ export default function ZhanbuPage() {
   const [expandedMind, setExpandedMind] = useState<string | null>(null)
   const [filteredGua, setFilteredGua] = useState(GUAXIANG_BASICS)
   const [expandedGua, setExpandedGua] = useState<string | null>(null)
+  const [isShaking, setIsShaking] = useState(false)
+  const [currentLot, setCurrentLot] = useState<typeof GUANYIN_LOTS[0] | null>(null)
+  const [shakeCount, setShakeCount] = useState(0)
+
+  const drawLot = () => {
+    setIsShaking(true)
+    setShakeCount(prev => prev + 1)
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * GUANYIN_LOTS.length)
+      setCurrentLot(GUANYIN_LOTS[randomIndex])
+      setIsShaking(false)
+    }, 2000)
+  }
+
+  const getLevelColor = (level: string) => {
+    if (level.includes('上上')) return '#fbbf24'
+    if (level.includes('上')) return '#22c55e'
+    if (level.includes('中')) return '#66ccff'
+    return '#ef4444'
+  }
 
   const handleMethodFilter = useCallback((data: typeof DIVINATION_METHODS) => {
     setFilteredMethods(data)
@@ -108,10 +161,170 @@ export default function ZhanbuPage() {
   return (
     <SubPageTemplate
       title="占卜问卦"
-      subtitle="探赜索隐 · 钩深致远 · 以断天下之吉凶 · 以定天下之业"
+      subtitle="观音灵签 · 在线求签 · 卜筮之道 · 至诚前知"
       icon="🎴"
       colorRgb="129, 140, 248"
     >
+      <SubPageSection title="🎋 观音灵签在线求签">
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1))',
+          borderRadius: '16px',
+          padding: '2rem',
+          border: '1px solid rgba(139, 92, 246, 0.3)',
+          marginBottom: '1rem',
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <p style={{ color: 'rgba(180, 180, 190, 0.75)', marginBottom: '1rem' }}>
+              🙏 诚心诚意，默念所求之事，点击抽签
+            </p>
+
+            <motion.div
+              animate={isShaking ? {
+                rotate: [0, -10, 10, -10, 10, 0],
+                y: [0, -10, 0, -10, 0],
+              } : {}}
+              transition={{ duration: 1.5, repeat: isShaking ? Infinity : 0 }}
+              style={{
+                fontSize: '5rem',
+                marginBottom: '1rem',
+                cursor: 'pointer',
+                filter: isShaking ? 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.8))' : 'none',
+              }}
+            >
+              🎋
+            </motion.div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={drawLot}
+              disabled={isShaking}
+              style={{
+                padding: '1rem 3rem',
+                fontSize: '1.1rem',
+                fontWeight: 'bold',
+                background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                border: 'none',
+                borderRadius: '50px',
+                color: '#fff',
+                cursor: isShaking ? 'not-allowed' : 'pointer',
+                opacity: isShaking ? 0.6 : 1,
+                marginBottom: '0.5rem',
+              }}
+            >
+              {isShaking ? '🎰 灵签降临中...' : '✨ 诚心抽取灵签'}
+            </motion.button>
+
+            {shakeCount > 0 && (
+              <div style={{
+                color: 'rgba(180, 180, 190, 0.5)',
+                fontSize: '0.85rem',
+              }}>
+                已求签 {shakeCount} 次 {shakeCount >= 3 && '| 💡 事不过三，诚心方灵'}
+              </div>
+            )}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {currentLot && !isShaking && (
+              <motion.div
+                key={currentLot.number}
+                initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5 }}
+                style={{
+                  padding: '1.5rem',
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.3))',
+                  borderRadius: '12px',
+                  border: `2px solid ${getLevelColor(currentLot.level)}40`,
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px dashed rgba(255,255,255,0.1)',
+                }}>
+                  <div>
+                    <span style={{ fontSize: '2rem' }}>{currentLot.icon}</span>
+                    <span style={{
+                      fontSize: '1.3rem',
+                      fontWeight: 'bold',
+                      marginLeft: '0.5rem',
+                      color: getLevelColor(currentLot.level),
+                    }}>
+                      第 {currentLot.number} 签 · {currentLot.level}
+                    </span>
+                  </div>
+                  <span style={{
+                    padding: '0.3rem 1rem',
+                    borderRadius: '20px',
+                    background: getLevelColor(currentLot.level) + '30',
+                    color: getLevelColor(currentLot.level),
+                    fontWeight: 'bold',
+                  }}>
+                    {currentLot.title}
+                  </span>
+                </div>
+
+                <div style={{
+                  padding: '1rem',
+                  background: 'rgba(0,0,0,0.2)',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  fontStyle: 'italic',
+                  textAlign: 'center',
+                  color: 'rgba(180, 180, 190, 0.9)',
+                  lineHeight: 2,
+                  letterSpacing: '2px',
+                }}>
+                  "{currentLot.poem}"
+                </div>
+
+                <p style={{
+                  color: 'rgba(180, 180, 190, 0.75)',
+                  marginBottom: '1rem',
+                  textAlign: 'center',
+                }}>
+                  <span style={{ color: '#8b5cf6' }}>💡 解曰：</span> {currentLot.meaning}
+                </p>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                  gap: '0.5rem',
+                }}>
+                  {[
+                    { key: 'wish', label: '心愿', value: currentLot.wish },
+                    { key: 'job', label: '事业', value: currentLot.job },
+                    { key: 'wealth', label: '财运', value: currentLot.wealth },
+                    { key: 'marriage', label: '姻缘', value: currentLot.marriage },
+                    { key: 'health', label: '健康', value: currentLot.health },
+                    { key: 'lawsuit', label: '官非', value: currentLot.lawsuit },
+                    { key: 'pregnancy', label: '六甲', value: currentLot.pregnancy },
+                    { key: 'travel', label: '出行', value: currentLot.travel },
+                  ].map((item) => (
+                    <div key={item.key} style={{
+                      padding: '0.5rem',
+                      textAlign: 'center',
+                      background: 'rgba(139, 92, 246, 0.1)',
+                      borderRadius: '6px',
+                      fontSize: '0.85rem',
+                    }}>
+                      <div style={{ color: 'rgba(180, 180, 190, 0.6)' }}>{item.label}</div>
+                      <div style={{ color: '#8b5cf6', fontWeight: 'bold' }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </SubPageSection>
+
       <SubPageSection title="卜筮之道">
         <InfoCard>
           <p style={{ color: 'rgba(180, 180, 190, 0.75)', lineHeight: 1.8, marginBottom: '1rem' }}>

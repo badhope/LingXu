@@ -1,37 +1,46 @@
-MIT License
+# 灵墟 - 开源许可协议
 
-Copyright (c) 2024-2026 LingXu Archive
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+**版权所有 © 2024 灵墟阁主**
 
 ---
 
-## Additional Terms
+## 📜 许可条款
 
-This project is for entertainment and educational purposes only. 
+### ✅ 允许
+- ✅ 个人学习、研究使用
+- ✅ 非商业用途的自由修改和分发
+- ✅ 保留版权声明的前提下二次开发
+- ✅ 代码参考学习
 
-- The content related to Chinese metaphysics (易经、八字、风水等) is derived from traditional culture and does not represent scientific viewpoints.
-- Any predictions, divinations, or fortune-telling content is for entertainment purposes only and should not be used for making important life decisions.
-- If any content infringes on your copyright, please contact us for removal.
+### ⚠️ 限制
+- ❌ **禁止未经授权的商业使用**
+- ❌ 禁止移除或修改本版权声明
+- ❌ 禁止将本项目用于违法用途
+- ❌ 禁止声称本项目为您的原创作品
 
-本项目仅供娱乐和学习使用。
+### 💼 商业授权
 
-- 玄学相关内容（易经、八字、风水等）源自传统文化，不代表科学观点。
-- 任何预测、占卜、算命内容仅供娱乐，请勿用于人生重大决策。
-- 如有内容侵权，请联系我们删除。
+如需将本项目用于商业用途（包括但不限于：
+- 付费服务
+- 广告变现
+- 企业内部使用
+- 二次开发后商业分发）
+
+**请务必提前联系作者获得书面授权：**
+- 📧 联系方式：请通过 GitHub Issues 联系
+- 💬 或在提交 Issue 时标注【商业授权】
+
+---
+
+## ⚖️ 法律声明
+
+本软件按"原样"提供，不提供任何明示或暗示的保证，包括但不限于适销性和特定用途适用性的保证。
+在任何情况下，作者均不对因使用本软件而产生的任何索赔、损害或其他责任承担责任。
+
+---
+
+**违反本协议者将承担相应法律责任。**
+
+---
+
+*本协议最终解释权归灵墟阁主所有。*

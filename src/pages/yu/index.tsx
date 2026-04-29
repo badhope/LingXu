@@ -7,21 +7,21 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { FadeIn } from '@/components/ui/Animated'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
   { id: 'sanjie', name: '三界', icon: '🌌', desc: '天地人三界，六道轮回，十方世界', href: '/yu/sanjie', color: '#06b6d4' },
   { id: 'dongtian', name: '洞天', icon: '🏔️', desc: '三十六洞天，七十二福地，灵脉汇聚', href: '/yu/dongtian', color: '#22c55e' },
   { id: 'weidu', name: '维度', icon: '🔷', desc: '高维空间，平行世界，位面穿梭', href: '/yu/weidu', color: '#3b82f6' },
-  { id: 'mijie', name: '秘境', icon: '🌀', desc: '上古秘境，小千世界，遗迹探索', href: '/yu/mijie', color: '#a855f7' },
+  { id: 'mijie', name: '密界', icon: '🌀', desc: '上古秘境，小千世界，遗迹探索', href: '/yu/mijie', color: '#a855f7' },
+  { id: 'xingtu', name: '星图', icon: '⭐', desc: '周天星斗，诸天星域，星河地图', href: '/yu/xingtu', color: '#8b5cf6' },
+  { id: 'chuansong', name: '传送', icon: '🚪', desc: '位面传送阵，跨界传送，空间跳跃', href: '/yu/chuansong', color: '#ec4899' },
+  { id: 'qiankun', name: '乾坤', icon: '👝', desc: '储物空间，乾坤袋，须弥芥子', href: '/yu/qiankun', color: '#f59e0b' },
+  { id: 'crack', name: '裂缝', icon: '⚡', desc: '空间裂缝，次元乱流，虚空漫游', href: '/yu/crack', color: '#ef4444' },
 ]
-
-const FADE_UP = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
 
 export default function YuIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -137,12 +137,12 @@ export default function YuIndexPage() {
   }, [])
 
   return (
-    <Layout title="域界" transparentNav>
+    <SubPageTemplate title="域界" colorRgb="6, 182, 212">
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
               className={styles.heroIcon}
               animate={{
@@ -210,6 +210,6 @@ export default function YuIndexPage() {
           ))}
         </div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

@@ -92,12 +92,16 @@ const MODULES = [
     { name: '传说', href: '/hong/chuanshuo' },   // 洪荒传说
     { name: '图腾', href: '/hong/tushu' }         // 氏族图腾
   ] },
-  // 🗝️ 荒部 - 失落传承
-  { key: '荒', href: '/huang-lost', label: '荒 · 失落', sub: [
-    { name: '功法', href: '/huang-lost/gongfa' },  // 修炼功法
-    { name: '丹药', href: '/huang-lost/danyao' }, // 炼丹配方
-    { name: '法宝', href: '/huang-lost/fabao' },  // 法宝图鉴
-    { name: '秘境', href: '/huang-lost/mishi' }   // 秘境地图
+  // 🦁 荒部 - 太古蛮荒
+  { key: '荒', href: '/huang2', label: '荒 · 太古', sub: [
+    { name: '祖巫', href: '/huang2/zhuqing' },  // 十二祖巫
+    { name: '异兽', href: '/huang2/yishou' },   // 山海经异兽
+    { name: '部落', href: '/huang2/buluo' },    // 太古部落
+    { name: '精神', href: '/huang2/jingshen' }, // 图腾信仰
+    { name: '巫文', href: '/huang2/wuwen' },    // 巫文咒语
+    { name: '大战', href: '/huang2/dazhan' },   // 洪荒大战
+    { name: '遗民', href: '/huang2/yimin' },    // 洪荒遗民
+    { name: '工具', href: '/huang2/tools' }     // 巫卜工具
   ] },
 ]
 
@@ -111,9 +115,19 @@ export default function HiddenNav() {
   const router = useRouter()
   const pathname = router.pathname
 
+  // 🔍 全站结构定义 - 和 Layout.tsx 完全一致！
+  const ROOT_PAGES = ['', '/', '/home', '/map', '/about', '/user', '/vip', '/overview', '/xiuzhen']
+  const MODULE_HOMES = ['/tian', '/di', '/xuan', '/lishi', '/yu', '/zhou', '/hong', '/huang2', '/huang-lost', '/tools']
+  
   const pathSegments = pathname.split('/').filter(Boolean)
-  const isSubPage = pathSegments.length > 1
-  const parentPath = isSubPage ? '/' + pathSegments[0] : '/home'
+  const cleanPath = '/' + pathSegments.join('/')
+  
+  const isRootPage = ROOT_PAGES.includes(pathname) || ROOT_PAGES.includes(cleanPath)
+  const isModuleHome = MODULE_HOMES.includes('/' + pathSegments[0]) && pathSegments.length === 1
+  const isSubPage = !isRootPage && !isModuleHome && pathSegments.length > 0
+  
+  const targetModuleHome = '/' + (pathSegments[0] || 'home')
+  const parentPath = MODULE_HOMES.includes(targetModuleHome) ? targetModuleHome : '/home'
 
   const isHomePage = pathname === '/home' || pathname === '/' || pathname === ''
 
@@ -160,10 +174,15 @@ export default function HiddenNav() {
   }, [])
 
   /**
-   * 🔙 返回上级页面，同时收起菜单
+   * 🔙 真正的浏览器后退，同时收起菜单
+   * ✅ 安全处理：只在客户端访问 window
    */
   const handleBack = useCallback(() => {
-    router.push(parentPath)
+    if (typeof window !== 'undefined' && window.history.length > 2) {
+      router.back()  // ✅ 真正的浏览器后退！
+    } else {
+      router.push(parentPath)
+    }
     setIsExpanded(false)
   }, [router, parentPath])
 

@@ -7,21 +7,21 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { FadeIn } from '@/components/ui/Animated'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
-  { id: 'gongfa', name: '功法', icon: '📚', desc: '修真功法，心法口诀，锻体炼气', href: '/huang-lost/gongfa', color: '#d97706' },
-  { id: 'danyao', name: '丹药', icon: '💊', desc: '仙丹灵药，固本培元，突破境界', href: '/huang-lost/danyao', color: '#ea580c' },
-  { id: 'fabao', name: '法宝', icon: '⚔️', desc: '仙家法宝，本命法器，通天灵宝', href: '/huang-lost/fabao', color: '#c2410c' },
-  { id: 'mishi', name: '秘事', icon: '🔮', desc: '修真秘闻，宗门轶事，远古辛密', href: '/huang-lost/mishi', color: '#9a3412' },
+  { id: 'linggen', name: '灵根', icon: '🌱', desc: '灵根检测，体质鉴定，天赋评级', href: '/huang-lost/linggen', color: '#22c55e', isNew: true },
+  { id: 'gongfa', name: '功法', icon: '📚', desc: '修真功法，心法口诀，锻体炼气', href: '/huang-lost/gongfa', color: '#f59e0b', isNew: true },
+  { id: 'jindan', name: '金丹', icon: '✨', desc: '金丹九转，破境渡劫，修炼模拟器', href: '/huang-lost/jindan', color: '#fbbf24', isNew: true },
+  { id: 'danyao', name: '丹药', icon: '💊', desc: '仙丹灵药，丹方大全，炼丹模拟', href: '/huang-lost/danyao', color: '#ea580c', isNew: true },
+  { id: 'fabao', name: '法宝', icon: '⚔️', desc: '仙家法宝，本命法器，通天灵宝', href: '/huang-lost/fabao', color: '#ef4444', isNew: true },
+  { id: 'dujie', name: '渡劫', icon: '⚡', desc: '九霄雷劫，心魔试炼，超脱之路', href: '/huang-lost/dujie', color: '#6366f1', isNew: true },
+  { id: 'zhenfa', name: '阵法', icon: '🌀', desc: '阵法大全，布阵指南，杀阵防御', href: '/huang-lost/zhenfa', color: '#06b6d4', isNew: true },
+  { id: 'mishi', name: '秘境', icon: '🔮', desc: '上古秘境，宗门遗址，机缘探索', href: '/huang-lost/mishi', color: '#a855f7', isNew: true },
 ]
-
-const FADE_UP = {
-  initial: { opacity: 0, y: 40 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
 
 export default function HuangLostIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -153,12 +153,12 @@ export default function HuangLostIndexPage() {
   }, [])
 
   return (
-    <Layout title="荒境" transparentNav>
+    <SubPageTemplate title="荒境" colorRgb="34, 197, 94">
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
               className={styles.heroIcon}
               animate={{
@@ -221,6 +221,6 @@ export default function HuangLostIndexPage() {
           炼气筑基，金丹元婴，化神渡劫，羽化飞仙
         </motion.div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

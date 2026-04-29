@@ -27,17 +27,17 @@
     position: absolute;
     inset: 0;
     background: 
-      radial-gradient(ellipse at 20% 20%, rgba(136, 102, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(201, 162, 39, 0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at center, #120f18 0%, #0a0a0f 50%, #050508 100%);
+      radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(251, 191, 36, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at center, #1e293b 0%, #0f172a 50%, #020617 100%);
   }
   
   .layerMid {
     position: absolute;
     inset: 0;
     background: 
-      radial-gradient(circle at 30% 60%, rgba(255, 136, 204, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 70% 30%, rgba(102, 204, 255, 0.08) 0%, transparent 40%);
+      radial-gradient(circle at 30% 60%, rgba(129, 140, 248, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 70% 30%, rgba(96, 165, 250, 0.08) 0%, transparent 40%);
     animation: midDrift 20s ease-in-out infinite;
   }
   
@@ -45,8 +45,8 @@
     position: absolute;
     inset: 0;
     background: 
-      radial-gradient(ellipse at center top, rgba(201, 162, 39, 0.05) 0%, transparent 60%),
-      linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.5) 100%);
+      radial-gradient(ellipse at center top, rgba(251, 191, 36, 0.05) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 60%, rgba(15, 23, 42, 0.8) 100%);
     animation: nearDrift 15s ease-in-out infinite reverse;
   }
 }
@@ -63,7 +63,7 @@
 
 .starParticle {
   position: absolute;
-  background: radial-gradient(circle, #c9a227 0%, rgba(201, 162, 39, 0.3) 50%, transparent 70%);
+  background: radial-gradient(circle, #fbbf24 0%, rgba(251, 191, 36, 0.3) 50%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
@@ -71,12 +71,12 @@
 
 .runeContainer {
   position: relative;
-  width: 280px;
-  height: 280px;
+  width: 500px;
+  height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
   z-index: 2;
 }
 
@@ -92,7 +92,7 @@
 .baguaSvg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.5));
+  filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.5));
 }
 
 .runeInnerRing {
@@ -107,9 +107,9 @@
 .runeTextCircle {
   width: 100%;
   height: 100%;
-  color: rgba(201, 162, 39, 0.5);
-  font-size: 10px;
-  letter-spacing: 6px;
+  color: rgba(251, 191, 36, 0.6);
+  font-size: 24px;
+  letter-spacing: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,7 +240,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #050508;
+  background: #0f172a;
   overflow: hidden;
   perspective: 1000px;
 }
@@ -249,8 +249,8 @@
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(ellipse at center, rgba(201, 162, 39, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at center, #150f1a 0%, #0a0a0f 40%, #050508 100%);
+    radial-gradient(ellipse at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 30%, #1e293b 0%, #0f172a 40%, #020617 100%);
 }
 
 .gateLeft,
@@ -259,14 +259,15 @@
   top: 0;
   width: 50%;
   height: 100%;
-  background: linear-gradient(135deg, #1a1520 0%, #0f0a15 50%, #0a0a0f 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%);
   transform-origin: center;
   backface-visibility: hidden;
+  box-shadow: inset 0 0 100px rgba(251, 191, 36, 0.05);
 }
 
 .gateLeft {
   left: 0;
-  border-right: 3px solid rgba(201, 162, 39, 0.5);
+  border-right: 3px solid rgba(251, 191, 36, 0.5);
   
   &::before {
     content: '';
@@ -275,13 +276,13 @@
     top: 15%;
     bottom: 15%;
     width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(201, 162, 39, 0.6), transparent);
+    background: linear-gradient(180deg, transparent, rgba(251, 191, 36, 0.6), transparent);
   }
 }
 
 .gateRight {
   right: 0;
-  border-left: 3px solid rgba(201, 162, 39, 0.5);
+  border-left: 3px solid rgba(251, 191, 36, 0.5);
   
   &::before {
     content: '';
@@ -290,7 +291,7 @@
     top: 15%;
     bottom: 15%;
     width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(201, 162, 39, 0.6), transparent);
+    background: linear-gradient(180deg, transparent, rgba(251, 191, 36, 0.6), transparent);
   }
 }
 
@@ -299,9 +300,9 @@
   top: 50%;
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
   font-size: 6rem;
-  color: rgba(201, 162, 39, 0.3);
+  color: rgba(251, 191, 36, 0.3);
   transform: translateY(-50%);
-  text-shadow: 0 0 30px rgba(201, 162, 39, 0.3);
+  text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
 }
 
 .gateLeft .gateCarving { right: 15%; }
@@ -311,9 +312,22 @@
   position: absolute;
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, #c9a227 0%, rgba(201, 162, 39, 0.5) 30%, transparent 70%);
+  background: radial-gradient(circle, #fbbf24 0%, rgba(251, 191, 36, 0.5) 30%, transparent 70%);
   border-radius: 50%;
   z-index: 1;
+}
+
+.gateRuneContainer {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  z-index: 2;
+  
+  .baguaSvg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 50px rgba(251, 191, 36, 0.7));
+  }
 }
 
 .gateText {
@@ -323,41 +337,156 @@
   flex-direction: column;
   gap: 1.2rem;
   text-align: center;
+  margin-top: 380px;
   
   span {
-    color: #c9a227;
+    color: #fbbf24;
     font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
     font-size: 2rem;
     letter-spacing: 0.8rem;
-    text-shadow: 0 0 30px rgba(201, 162, 39, 0.8);
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.8);
     padding-left: 0.8rem;
+  }
+}
+
+@media (max-width: 1440px) {
+  .title {
+    font-size: 20rem;
+    letter-spacing: 2.5rem;
+    gap: 2.5rem;
+  }
+  
+  .runeContainer {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .gateRuneContainer {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .gateText {
+    margin-top: 300px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .title {
+    font-size: 12rem;
+    letter-spacing: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .titleDivider {
+    font-size: 3rem;
+  }
+  
+  .runeContainer {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .gateRuneContainer {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .gateText {
+    margin-top: 250px;
+  }
+  
+  .enterButton {
+    padding: 1.5rem 4rem;
+  }
+  
+  .buttonText {
+    font-size: 1.8rem;
   }
 }
 
 @media (max-width: 768px) {
   .title {
-    font-size: 5rem;
-    letter-spacing: 0.8rem;
+    font-size: 7rem;
+    letter-spacing: 1rem;
+    gap: 1rem;
+  }
+  
+  .titleDivider {
+    font-size: 2rem;
   }
   
   .runeContainer {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
+  }
+  
+  .gateRuneContainer {
+    width: 150px;
+    height: 150px;
   }
   
   .subtitle {
-    font-size: 1rem;
-    letter-spacing: 0.3rem;
+    font-size: 1.4rem;
+    letter-spacing: 0.5rem;
+    margin-bottom: 4rem;
+  }
+  
+  .enterButton {
+    padding: 1.25rem 3rem;
   }
   
   .buttonText {
-    font-size: 1.1rem;
-    letter-spacing: 0.4rem;
+    font-size: 1.4rem;
+    letter-spacing: 0.6rem;
   }
   
   .gateText span {
     font-size: 1.3rem;
     letter-spacing: 0.4rem;
+  }
+  
+  .gateText {
+    margin-top: 220px;
+  }
+  
+  .dividerLine {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 4.5rem;
+    letter-spacing: 0.6rem;
+    gap: 0.6rem;
+  }
+  
+  .runeContainer {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .gateRuneContainer {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .gateText {
+    margin-top: 180px;
+  }
+  
+  .subtitle {
+    font-size: 1.1rem;
+    letter-spacing: 0.4rem;
+  }
+  
+  .enterButton {
+    padding: 1rem 2.5rem;
+  }
+  
+  .buttonText {
+    font-size: 1.2rem;
   }
   
   .dividerLine {

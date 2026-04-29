@@ -38,6 +38,12 @@ import WebGLStarryBackground from '@/components/background/WebGLStarryBackground
 import ImmortalFlowCanvas from '@/components/effects/ImmortalFlowCanvas'
 // 🧭 组件依赖 - 左侧隐藏式导航菜单
 import HiddenNav from './HiddenNav'
+// 📍 常驻顶部导航栏
+import { TopNavigation } from './TopNavigation'
+// 👇 统一底部操作栏
+import { BottomActionBar } from './BottomActionbar'
+// ⌨️ 全局键盘快捷键
+import { KeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 /**
  * 【配置项】布局组件可接收的参数
@@ -87,15 +93,23 @@ export default function Layout({
   // 📱 移动端菜单开关（暂时没用）
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
-  // ==================== 智能返回键逻辑 ====================
+  // ==================== 智能返回键逻辑 - 彻底重写！====================
   
-  // 🔍 切割URL路径，判断当前页面层级
-  // 比如 /tian/xingxiu → ['tian', 'xingxiu'] → 长度2 → 是子页面
+  // 🔍 全站结构定义 - 解决核心BUG！
+  const ROOT_PAGES = ['', '/', '/home', '/map', '/about', '/user', '/vip', '/overview', '/xiuzhen']  // ✅ 真正的首页，没有上级
+  const MODULE_HOMES = ['/tian', '/di', '/xuan', '/lishi', '/yu', '/zhou', '/hong', '/huang2', '/huang-lost', '/tools']  // ✅ 模块首页
+  
   const pathSegments = pathname.split('/').filter(Boolean)
-  // ✅ true = 是子页面（需要显示返回键）
-  const isSubPage = pathSegments.length > 1
-  // 🎯 返回目标优先级：用户指定 > 全站地图 /map
-  const parentPath = customParentPath ?? '/map'
+  const cleanPath = '/' + pathSegments.join('/')
+  
+  // ✅ 真正的子页面判断 - 只有深度2的才显示返回键
+  const isRootPage = ROOT_PAGES.includes(pathname) || ROOT_PAGES.includes(cleanPath)
+  const isModuleHome = MODULE_HOMES.includes('/' + pathSegments[0]) && pathSegments.length === 1
+  const isSubPage = !isRootPage && !isModuleHome && pathSegments.length > 0
+  
+  // 🎯 返回目标：用户指定 > 模块首页 > 首页
+  const targetModuleHome = '/' + (pathSegments[0] || 'home')
+  const parentPath = customParentPath ?? (MODULE_HOMES.includes(targetModuleHome) ? targetModuleHome : '/home')
   
   // ==================== 事件监听 ====================
   
@@ -127,7 +141,7 @@ export default function Layout({
     { href: '/yu', label: '空间' },        // 三界、洞天、维度
     { href: '/zhou', label: '时间' },      // 轮回、因果、预言
     { href: '/hong', label: '洪荒' },      // 神兽、妖魔、传说
-    { href: '/huang-lost', label: '失落' }, // 功法、丹药、法宝
+    { href: '/huang2', label: '太古' }, // 祖巫部落、山海异兽
   ]
   
   // 📄 SEO - 页面标题和描述
@@ -146,7 +160,7 @@ export default function Layout({
         <meta name="description" content={pageDescription} />
         <meta name="keywords" content={SITE_CONFIG.keywords.join(', ')} />
         <meta name="author" content={SITE_CONFIG.author} />
-        <meta name="theme-color" content="#0a0a0f" />
+        <meta name="theme-color" content="#f0e6d3" />
         
         {/* Facebook/微信分享时显示的卡片信息 */}
         <meta property="og:title" content={pageTitle} />
@@ -167,6 +181,12 @@ export default function Layout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Head>
+      
+      {/*
+       * ⌨️ 全局键盘快捷键
+       * ESC返回 / 空格炼丹 / 回车悟道 / H首页 / M地图 / T天时 / D地理 / X玄学
+       */}
+      <KeyboardShortcuts />
       
       {/*
        * 🌌 WebGL背景层 - z-index: 0
@@ -191,6 +211,30 @@ export default function Layout({
       {showNav && <HiddenNav />}
       
       {/*
+       * 📍 常驻顶部导航栏 - z-index: 1000
+       * 所有页面统一渲染，首页只是透明，不消失，防止Layout抖动！
+       */}
+      <div style={{ 
+        opacity: router.pathname === '/' ? 0 : 1,
+        pointerEvents: router.pathname === '/' ? 'none' : 'auto',
+        transition: 'opacity 0.3s ease',
+      }}>
+        <TopNavigation />
+      </div>
+      
+      {/*
+       * 👇 统一底部操作栏 - z-index: 999
+       * 同样永远渲染，首页透明隐藏
+       */}
+      <div style={{ 
+        opacity: router.pathname === '/' ? 0 : 1,
+        pointerEvents: router.pathname === '/' ? 'none' : 'auto',
+        transition: 'opacity 0.3s ease',
+      }}>
+        <BottomActionBar />
+      </div>
+      
+      {/*
        * 🔙 子页面返回按钮 - z-index: 950
        * ⚠️ 无退场动画！避免与Canvas清理时序冲突造成特效残留！
        * 位置：左上角固定
@@ -203,12 +247,18 @@ export default function Layout({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
             className={styles.backButton}
-            onClick={() => router.push(parentPath)}
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.history.length > 2) {
+                router.back()  // ✅ 真正的浏览器后退！
+              } else {
+                router.push(parentPath)  // 兜底：去模块首页
+              }
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <span className={styles.backIcon}>←</span>
-            <span className={styles.backText}>返回地图</span>
+            <span className={styles.backText}>返回</span>
           </motion.button>
         )}
       </AnimatePresence>

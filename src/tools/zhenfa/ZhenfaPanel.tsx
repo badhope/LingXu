@@ -95,15 +95,15 @@ export default function ZhenfaPanel() {
             >
               <span 
                 className={styles.formationName}
-                style={{ color: TIER_COLORS[formation.tier] }}
+                style={{ color: TIER_COLORS[formation.tier as keyof typeof TIER_COLORS] }}
               >
                 {formation.name}
               </span>
               <span 
                 className={styles.formationTier}
                 style={{ 
-                  backgroundColor: TIER_COLORS[formation.tier] + '30',
-                  color: TIER_COLORS[formation.tier],
+                  backgroundColor: TIER_COLORS[formation.tier as keyof typeof TIER_COLORS] + '30',
+                  color: TIER_COLORS[formation.tier as keyof typeof TIER_COLORS],
                 }}
               >
                 {formation.tier}
@@ -328,9 +328,9 @@ export default function ZhenfaPanel() {
                 <h4 className={styles.resultTitle}>阵成！</h4>
                 <p 
                   className={styles.resultName}
-                  style={{ color: TIER_COLORS[selectedFormation.tier] }}
+                  style={{ color: TIER_COLORS[selectedFormation!.tier as keyof typeof TIER_COLORS] }}
                 >
-                  {selectedFormation.name}发动
+                  {selectedFormation!.name}发动
                 </p>
                 <p className={styles.resultEffect}>{selectedFormation.effect}</p>
               </motion.div>

@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import ZhenfaPanel from '@/tools/zhenfa/ZhenfaPanel'
 
 export default function ZhenfaPage() {
   return (
-    <Layout title="阵法大全" transparentNav parentPath="/tools">
+    <SubPageTemplate title="阵法模拟" colorRgb="6, 182, 212">
       <ZhenfaPanel />
-    </Layout>
+    </SubPageTemplate>
   )
 }

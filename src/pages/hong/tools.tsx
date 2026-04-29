@@ -1,12 +1,12 @@
 'use client'
 
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import CreaturePanel from '@/tools/honghuang/CreaturePanel'
 
 export default function HongToolsPage() {
   return (
-    <Layout title="洪部工具 - 山海经异兽录" parentPath="/hong">
+    <SubPageTemplate title="山海经异兽录" colorRgb="124, 58, 237">
       <CreaturePanel />
-    </Layout>
+    </SubPageTemplate>
   )
 }

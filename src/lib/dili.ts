@@ -17,6 +17,27 @@ export interface LuopanResult {
   suggestions: string[]
 }
 
+export interface Room {
+  type: 'bedroom' | 'living' | 'kitchen' | 'study' | 'bathroom' | string
+  name?: string
+  area?: number
+}
+
+export interface Surrounding {
+  type: 'water' | 'park' | 'mountain' | 'road' | 'building' | string
+  name?: string
+  distance: number
+  direction?: number | string
+}
+
+export interface HouseData {
+  facing: number
+  rooms: Room[]
+  surroundings: Surrounding[]
+  floor?: number
+  totalFloors?: number
+}
+
 export const TWENTY_FOUR_MOUNTAINS = [
   { name: '子', degree: 0, gua: '坎', wuxing: '水', direction: '正北' },
   { name: '癸', degree: 15, gua: '坎', wuxing: '水', direction: '北偏东' },
@@ -247,7 +268,7 @@ function getFacingSuggestions(facing: number): string[] {
   ]
 }
 
-function calculateLayoutScore(rooms: any[]): number {
+function calculateLayoutScore(rooms: Room[]): number {
   if (rooms.length === 0) return 50
   
   let score = 70
@@ -262,7 +283,7 @@ function calculateLayoutScore(rooms: any[]): number {
   return Math.min(100, score)
 }
 
-function getLayoutDescription(rooms: any[]): string {
+function getLayoutDescription(rooms: Room[]): string {
   const roomTypes = rooms.map(r => r.type)
   const hasAll = ['bedroom', 'living', 'kitchen'].every(t => roomTypes.includes(t))
   
@@ -270,7 +291,7 @@ function getLayoutDescription(rooms: any[]): string {
   return '格局有待改善，建议调整房间布局。'
 }
 
-function getLayoutSuggestions(rooms: any[]): string[] {
+function getLayoutSuggestions(rooms: Room[]): string[] {
   return [
     '卧室宜安静，远离厨房和卫生间',
     '客厅宜宽敞明亮，便于聚气',
@@ -278,7 +299,7 @@ function getLayoutSuggestions(rooms: any[]): string[] {
   ]
 }
 
-function calculateSurroundingsScore(surroundings: any[]): number {
+function calculateSurroundingsScore(surroundings: Surrounding[]): number {
   if (surroundings.length === 0) return 70
   
   let score = 70
@@ -293,7 +314,7 @@ function calculateSurroundingsScore(surroundings: any[]): number {
   return Math.min(100, Math.max(0, score))
 }
 
-function getSurroundingsDescription(surroundings: any[]): string {
+function getSurroundingsDescription(surroundings: Surrounding[]): string {
   if (surroundings.length === 0) return '周围环境信息不足。'
   
   const hasWater = surroundings.some(s => s.type === 'water')
@@ -306,7 +327,7 @@ function getSurroundingsDescription(surroundings: any[]): string {
   return '周围环境一般，可通过室内布置改善。'
 }
 
-function getSurroundingsSuggestions(surroundings: any[]): string[] {
+function getSurroundingsSuggestions(surroundings: Surrounding[]): string[] {
   return [
     '可在室内摆放水景增强财运',
     '种植绿色植物改善环境',
@@ -314,7 +335,7 @@ function getSurroundingsSuggestions(surroundings: any[]): string[] {
   ]
 }
 
-function analyzeElements(houseData: any): FengshuiAnalysis['elements'] {
+function analyzeElements(houseData: HouseData): FengshuiAnalysis['elements'] {
   return [
     { name: '木', strength: 70, balance: '适中' },
     { name: '火', strength: 60, balance: '偏弱' },

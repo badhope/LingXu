@@ -48,11 +48,11 @@
   --xian-red: #f56565;
   --xian-green: #34d399;
   
-  --xian-dark-bg: #0a0a0f;
-  --xian-card-bg: rgba(22, 22, 38, 0.9);
-  --xian-card-bg-hover: rgba(28, 28, 48, 0.95);
-  --xian-border: rgba(201, 162, 39, 0.18);
-  --xian-border-strong: rgba(201, 162, 39, 0.35);
+  --xian-dark-bg: #12121a;
+  --xian-card-bg: rgba(30, 30, 48, 0.95);
+  --xian-card-bg-hover: rgba(38, 38, 58, 0.98);
+  --xian-border: rgba(201, 162, 39, 0.22);
+  --xian-border-strong: rgba(201, 162, 39, 0.4);
   
   /* ==========================================================================
      排版系统 - 专业字体尺度
@@ -176,10 +176,10 @@
     top: -100%;
     left: -100%;
     background: 
-      radial-gradient(ellipse at 15% 85%, rgba(102, 204, 255, 0.06) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 15%, rgba(201, 162, 39, 0.04) 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 50%, rgba(155, 118, 240, 0.05) 0%, transparent 60%),
-      radial-gradient(ellipse at 30% 30%, rgba(52, 211, 153, 0.035) 0%, transparent 50%);
+      radial-gradient(ellipse at 15% 85%, rgba(102, 204, 255, 0.1) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(201, 162, 39, 0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(155, 118, 240, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 30% 30%, rgba(52, 211, 153, 0.055) 0%, transparent 50%);
     animation: cloudDrift 80s linear infinite;
   }
 
@@ -843,7 +843,7 @@
    ========================================================================== */
 
 html {
-  font-size: 16px;
+  font-size: 17px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -851,48 +851,81 @@ html {
 
 body {
   font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', serif;
-  font-size: 1rem;
-  line-height: 1.85;
-  letter-spacing: 0.025em;
-  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.05rem;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+  color: #3d352b;
+  background: transparent !important;
+  text-shadow: none;
 }
 
-/* 标题系统 - 视觉层级优化 */
+/* 标题系统 - 视觉层级优化 + 神光特效 */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.98);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  color: #3d352b;
+  position: relative;
+  text-shadow: 
+    0 0 10px rgba(201, 162, 39, 0.3),
+    0 0 20px rgba(201, 162, 39, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  font-weight: 700;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #f0d78c 30%, #ffffff 50%, #c9a227 70%, #ffffff 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShimmer 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.4));
 }
 
 h2 {
-  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
-  font-weight: 650;
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  font-weight: 750;
+  background: linear-gradient(135deg, #ffffff 0%, #f0d78c 50%, #ffffff 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShimmer 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.3));
 }
 
 h3 {
-  font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  filter: drop-shadow(0 0 15px rgba(201, 162, 39, 0.25));
+}
+
+h4 {
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  filter: drop-shadow(0 0 10px rgba(201, 162, 39, 0.2));
+}
+
+@keyframes titleShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 /* 正文最小字号保障 */
 p, li, td, th, span, div {
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  line-height: 1.85;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  line-height: 1.9;
 }
 
 /* WCAG 对比度标准: 次要文字 ≥ 4.5:1 */
 .text-secondary {
-  color: rgba(255, 255, 255, 0.72) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .text-tertiary {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* 禁止使用 < 0.55 opacity 的正文 */

@@ -7,26 +7,18 @@
 
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { FadeIn } from '@/components/ui/Animated'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
-import SeoHead from '@/components/common/SeoHead'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
   {
-    id: 'tools',
-    name: '工具',
-    icon: '🔮',
-    desc: '观音灵签，时辰吉凶',
-    href: '/tian/tools',
-    color: '#d4af37',
-    isNew: true,
-  },
-  {
     id: 'xingxiu',
     name: '星宿',
     icon: '⭐',
-    desc: '二十八星宿，三垣四象',
+    desc: '二十八星宿，本命查询',
     href: '/tian/xingxiu',
     color: '#66ccff',
   },
@@ -34,7 +26,7 @@ const SUB_MODULES = [
     id: 'yunshi',
     name: '运势',
     icon: '🌟',
-    desc: '每日运势，流年推演',
+    desc: '生肖星座，每日详解',
     href: '/tian/yunshi',
     color: '#a78bfa',
   },
@@ -42,7 +34,7 @@ const SUB_MODULES = [
     id: 'jieqi',
     name: '节气',
     icon: '🌾',
-    desc: '二十四节气，养生之道',
+    desc: '二十四节气，养生民俗',
     href: '/tian/jieqi',
     color: '#22c55e',
   },
@@ -50,17 +42,56 @@ const SUB_MODULES = [
     id: 'zhanbu',
     name: '占卜',
     icon: '🎴',
-    desc: '铜钱卦象，预知吉凶',
+    desc: '观音灵签，关帝灵签',
     href: '/tian/zhanbu',
     color: '#f59e0b',
   },
+  {
+    id: 'huangdao',
+    name: '择日',
+    icon: '📅',
+    desc: '黄道吉日，吉时查询',
+    href: '/tian/huangdao',
+    color: '#ec4899',
+    isNew: true,
+  },
+  {
+    id: 'yuexiang',
+    name: '月相',
+    icon: '🌙',
+    desc: '月相盈亏，潮汐预报',
+    href: '/tian/yuexiang',
+    color: '#8b5cf6',
+    isNew: true,
+  },
+  {
+    id: 'tools',
+    name: '工具',
+    icon: '🔧',
+    desc: '万年历，阴阳历转换',
+    href: '/tian/tools',
+    color: '#06b6d4',
+    isNew: true,
+  },
+  {
+    id: 'zhouyi',
+    name: '周易',
+    icon: '🌀',
+    desc: '六十四卦，铜钱起卦',
+    href: '/tian/zhouyi',
+    color: '#8b5cf6',
+    isNew: true,
+  },
+  {
+    id: 'taluo',
+    name: '塔罗',
+    icon: '🎴',
+    desc: '七十八张，牌阵占卜',
+    href: '/tian/taluo',
+    color: '#ec4899',
+    isNew: true,
+  },
 ]
-
-const FADE_UP = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
 
 export default function TianIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -176,17 +207,12 @@ export default function TianIndexPage() {
   }, [])
 
   return (
-    <Layout title="天时" transparentNav>
-      <SeoHead
-        title="天时"
-        description="灵墟档案馆 - 天时模块，探索二十八星宿、三垣四象、每日运势、流年推演、二十四节气、铜钱占卜等天象奥秘"
-        keywords="星宿,运势,节气,占卜,星象,天文,黄道吉日"
-      />
+    <SubPageTemplate title="天时" subtitle="天时星宿，择日占卜，二十四节气" colorRgb="59, 130, 246">
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
               className={styles.heroIcon}
               animate={{
@@ -254,6 +280,6 @@ export default function TianIndexPage() {
           ))}
         </div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

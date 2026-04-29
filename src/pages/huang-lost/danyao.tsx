@@ -139,11 +139,62 @@ const FIRES: FlameLevel[] = [
   },
 ]
 
+const ALCHEMY_STEPS = [
+  '准备药材',
+  '提炼精华',
+  '文武火候',
+  '凝聚丹种',
+  '丹转九转',
+  '开炉取丹'
+]
+
 export default function DanyaoPage() {
   const [filteredPills, setFilteredPills] = useState(PILLS)
   const [expandedPill, setExpandedPill] = useState<string | null>(null)
   const [filteredFires, setFilteredFires] = useState(FIRES)
   const [expandedFire, setExpandedFire] = useState<string | null>(null)
+  const [alchemizing, setAlchemizing] = useState(false)
+  const [selectedPill, setSelectedPill] = useState<Pill | null>(null)
+  const [alchemyStep, setAlchemyStep] = useState(0)
+  const [alchemyProgress, setAlchemyProgress] = useState(0)
+  const [result, setResult] = useState<{ success: boolean; quality: string } | null>(null)
+
+  const startAlchemy = useCallback((pill: Pill) => {
+    setSelectedPill(pill)
+    setAlchemizing(true)
+    setAlchemyStep(0)
+    setAlchemyProgress(0)
+    setResult(null)
+
+    let step = 0
+    let progress = 0
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 3 + 0.5
+      if (progress >= 100 && step < ALCHEMY_STEPS.length - 1) {
+        progress = 0
+        step++
+        setAlchemyStep(step)
+      }
+      if (step >= ALCHEMY_STEPS.length - 1 && progress >= 100) {
+        clearInterval(interval)
+        setAlchemyProgress(100)
+
+        setTimeout(() => {
+          const roll = Math.random() * 100
+          const success = roll < pill.successRate
+          const quality = success
+            ? (roll > pill.successRate * 0.7 ? '极品' : roll > pill.successRate * 0.4 ? '上品' : '中品')
+            : '丹毁'
+
+          setResult({ success, quality })
+          setAlchemizing(false)
+        }, 800)
+        return
+      }
+      setAlchemyProgress(Math.min(progress, 100))
+    }, 70)
+  }, [])
 
   const handlePillFilter = useCallback((data: typeof PILLS) => {
     setFilteredPills(data)
@@ -176,7 +227,144 @@ export default function DanyaoPage() {
       icon="💊"
       colorRgb="251, 191, 36"
     >
-      <SubPageSection title="丹方大全">
+      <SubPageSection title="🔥 太上老君八卦炼丹炉">
+        <InfoCard glowIntensity={100} glowColor="251, 191, 36">
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            {!alchemizing && !result ? (
+              <div>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚗️</div>
+                <h3 style={{ marginBottom: '1rem', color: '#fbbf24' }}>八卦炉中炼九转</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  选择一炉丹药，体验丹道造化
+                </p>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: '0.75rem',
+                  maxWidth: 700,
+                  margin: '0 auto'
+                }}>
+                  {PILLS.map((pill) => (
+                    <motion.div
+                      key={pill.name}
+                      whileHover={{ scale: 1.05, y: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => startAlchemy(pill)}
+                      style={{
+                        padding: '1rem 0.75rem',
+                        borderRadius: '10px',
+                        background: `linear-gradient(135deg, ${pill.color}20, rgba(30, 30, 40, 0.9))`,
+                        border: `1px solid ${pill.color}50`,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{pill.icon}</div>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 600, color: pill.color, marginBottom: '0.25rem' }}>
+                        {pill.name}
+                      </div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>成功率 {pill.successRate}%</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ) : alchemizing ? (
+              <div>
+                <motion.div
+                  animate={{
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                >
+                  🔥
+                </motion.div>
+                <h3 style={{ marginBottom: '0.5rem', color: selectedPill?.color }}>
+                  正在炼制：{selectedPill?.name}
+                </h3>
+                <div style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 700,
+                  color: '#f97316',
+                  marginBottom: '1rem'
+                }}>
+                  【{ALCHEMY_STEPS[alchemyStep]}】
+                </div>
+
+                <div style={{ maxWidth: 500, margin: '0 auto 1.5rem' }}>
+                  <ProgressBar value={alchemyProgress} color={selectedPill?.color || '#fbbf24'} />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  maxWidth: 600,
+                  margin: '0 auto',
+                  fontSize: '0.7rem'
+                }}>
+                  {ALCHEMY_STEPS.map((step, i) => (
+                    <div key={step} style={{
+                      color: i <= alchemyStep ? '#22c55e' : 'rgba(180, 180, 190, 0.4)',
+                      fontWeight: i === alchemyStep ? 700 : 400
+                    }}>
+                      {i + 1}. {step}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : result ? (
+              <div>
+                <motion.div
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring' }}
+                  style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                >
+                  {result.success ? '✨' : '💨'}
+                </motion.div>
+                <h2 style={{
+                  fontSize: '1.8rem',
+                  marginBottom: '0.5rem',
+                  color: result.success ? '#22c55e' : '#ef4444',
+                  fontWeight: 700
+                }}>
+                  {result.success ? `炼丹成功！【${result.quality}】` : '炸炉了！丹药化为飞烟...'}
+                </h2>
+                <p style={{
+                  fontSize: '1.1rem',
+                  color: selectedPill?.color,
+                  marginBottom: '0.5rem'
+                }}>
+                  {selectedPill?.name}
+                </p>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  {result.success
+                    ? `恭喜！炼出了${result.quality}${selectedPill?.name}，${selectedPill?.effect}！`
+                    : '火候没掌握好，下次加油！'}
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setResult(null)}
+                  style={{
+                    padding: '0.8rem 2rem',
+                    background: 'rgba(251, 191, 36, 0.2)',
+                    border: '1px solid #fbbf24',
+                    borderRadius: '50px',
+                    color: '#fbbf24',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  🔄 再炼一炉
+                </motion.button>
+              </div>
+            ) : null}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="📜 丹方大全">
         <FilterBar
           data={PILLS}
           onFiltered={handlePillFilter}

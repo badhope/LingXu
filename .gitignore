@@ -53,3 +53,23 @@ logs/
 # Temporary
 tmp/
 temp/
+
+# Trae AI
+.trae/
+
+# PWA Service Worker (generated at build time)
+public/sw.js
+public/workbox-*.js
+
+# Package manager locks
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Audit reports
+docs/*-audit.md
+!docs/README.md
+
+# Agent cache
+agent/cache/
+agent/tmp/

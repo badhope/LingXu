@@ -47,21 +47,163 @@ const CONSTELLATIONS: Constellation[] = [
   { name: '轸水蚓', palace: '南宫朱雀', element: '水', animal: '蚓', desc: '朱雀轸宿，主车骑风歌', lucky: ['出行', '造车', '音乐'], unlucky: ['动土', '挖井'], detail: '轸宿四星为车骑，主风。轸宿四星明，则车马盛行，音律和谐。' },
 ]
 
+const getBirthStar = (month: number, day: number): string => {
+  const starDates = [
+    { name: '角木蛟', range: [[2, 4], [3, 5]] },
+    { name: '亢金龙', range: [[3, 6], [3, 20]] },
+    { name: '氐土貉', range: [[3, 21], [4, 4]] },
+    { name: '房日兔', range: [[4, 5], [4, 19]] },
+    { name: '心月狐', range: [[4, 20], [5, 4]] },
+    { name: '尾火虎', range: [[5, 5], [5, 19]] },
+    { name: '箕水豹', range: [[5, 20], [6, 5]] },
+    { name: '斗木獬', range: [[6, 6], [6, 21]] },
+    { name: '牛金牛', range: [[6, 22], [7, 7]] },
+    { name: '女土蝠', range: [[7, 8], [7, 22]] },
+    { name: '虚日鼠', range: [[7, 23], [8, 7]] },
+    { name: '危月燕', range: [[8, 8], [8, 22]] },
+    { name: '室火猪', range: [[8, 23], [9, 7]] },
+    { name: '壁水貐', range: [[9, 8], [9, 23]] },
+    { name: '奎木狼', range: [[9, 24], [10, 8]] },
+    { name: '娄金狗', range: [[10, 9], [10, 23]] },
+    { name: '胃土雉', range: [[10, 24], [11, 8]] },
+    { name: '昴日鸡', range: [[11, 9], [11, 23]] },
+    { name: '毕月乌', range: [[11, 24], [12, 7]] },
+    { name: '觜火猴', range: [[12, 8], [12, 22]] },
+    { name: '参水猿', range: [[12, 23], [1, 5]] },
+    { name: '井水犴', range: [[1, 6], [1, 20]] },
+    { name: '鬼金羊', range: [[1, 21], [2, 4]] },
+    { name: '柳土獐', range: [[2, 5], [2, 18]] },
+    { name: '星日马', range: [[2, 19], [3, 5]] },
+  ]
+  for (const star of starDates) {
+    const [[m1, d1], [m2, d2]] = star.range
+    if (month === m1 && day >= d1) return star.name
+    if (month === m2 && day <= d2) return star.name
+  }
+  return '轸水蚓'
+}
+
 export default function XingxiuPage() {
   const [filtered, setFiltered] = useState(CONSTELLATIONS)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [birthDate, setBirthDate] = useState('')
+  const [myStar, setMyStar] = useState<typeof CONSTELLATIONS[0] | null>(null)
 
   const handleFilter = useCallback((data: typeof CONSTELLATIONS) => {
     setFiltered(data)
   }, [])
 
+  const handleQueryStar = () => {
+    if (!birthDate) return
+    const [, month, day] = birthDate.split('-').map(Number)
+    const starName = getBirthStar(month, day)
+    const found = CONSTELLATIONS.find(s => s.name === starName)
+    if (found) {
+      setMyStar(found)
+      setExpanded(found.name)
+    }
+  }
+
   return (
     <SubPageTemplate
       title="二十八星宿"
-      subtitle="三垣四象 · 二十八宿 · 天星对应 · 天人合一"
+      subtitle="三垣四象 · 二十八宿 · 本命查询 · 天星对应"
       icon="⭐"
       colorRgb="240, 192, 64"
     >
+      <SubPageSection title="✨ 本命星宿查询神器">
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(240, 192, 64, 0.1), rgba(102, 204, 255, 0.1))',
+          borderRadius: '12px',
+          padding: '1.5rem',
+          border: '1px solid rgba(240, 192, 64, 0.2)',
+          marginBottom: '1rem',
+        }}>
+          <p style={{
+            color: 'rgba(180, 180, 190, 0.7)',
+            marginBottom: '1rem',
+            textAlign: 'center',
+          }}>
+            输入你的出生日期，查询你的本命守护星宿！
+          </p>
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}>
+            <input
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              style={{
+                padding: '0.75rem 1rem',
+                background: 'rgba(0, 0, 0, 0.3)',
+                border: '1px solid rgba(240, 192, 64, 0.3)',
+                borderRadius: '8px',
+                color: '#c9a227',
+                fontSize: '1rem',
+              }}
+            />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleQueryStar}
+              style={{
+                padding: '0.75rem 2rem',
+                background: 'linear-gradient(135deg, #c9a227, #66ccff)',
+                border: 'none',
+                borderRadius: '8px',
+                color: '#fff',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              🔮 查询我的星宿
+            </motion.button>
+          </div>
+
+          {myStar && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                marginTop: '1.5rem',
+                padding: '1.5rem',
+                background: 'rgba(240, 192, 64, 0.1)',
+                borderRadius: '12px',
+                border: '2px solid #c9a227',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🌟</div>
+              <div style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: '#c9a227',
+                marginBottom: '0.5rem',
+              }}>
+                你的本命星宿：{myStar.name}
+              </div>
+              <div style={{
+                color: 'rgba(180, 180, 190, 0.7)',
+                marginBottom: '1rem',
+              }}>
+                {myStar.palace} · {myStar.animal} · {myStar.element}曜
+              </div>
+              <p style={{
+                color: 'rgba(240, 192, 64, 0.9)',
+                fontStyle: 'italic',
+              }}>
+                "{myStar.desc}"
+              </p>
+            </motion.div>
+          )}
+        </div>
+      </SubPageSection>
+
       <SubPageSection title="星宿概述">
         <InfoCard>
           <p style={{ color: 'rgba(180, 180, 190, 0.75)', lineHeight: 1.8, marginBottom: '1rem' }}>
@@ -69,6 +211,7 @@ export default function XingxiuPage() {
           </p>
           <p style={{ color: 'rgba(180, 180, 190, 0.75)', lineHeight: 1.8 }}>
             每宿包含若干颗恒星。作为中国传统文化中的重要组成部分之一，曾广泛应用于古代的天文、宗教、文学及星占、星命、风水、择吉等术数中。
+            <strong>输入生日即可查询你的本命守护星宿！</strong>
           </p>
         </InfoCard>
       </SubPageSection>

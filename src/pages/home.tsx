@@ -33,7 +33,8 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import XianxiaCard from '@/components/ui/XianxiaCard'
-import SeoHead from '@/components/common/SeoHead'
+import { SEO } from '@/components/common/SEO'
+import { PullToRefresh } from '@/hooks/useTouchGestures'
 import styles from './home.module.scss'
 
 /** 确定性伪随机（SSR/客户端一致，无 Hydration Mismatch） */
@@ -82,12 +83,13 @@ export default function HomePage() {
 
   return (
     <Layout showNav={true} transparentNav={true} showFooter={true}>
-      <SeoHead
+      <SEO
         title="灵墟档案馆"
         description="末法时代失落修行文明档案馆 - 收录中华玄学、历史、天文、地理等修真文化，探索天地玄黄宇宙洪荒的奥秘"
-        keywords="修仙,玄学,易经,八字,风水,星宿,历史,修真,传统文化,灵墟,末法时代"
+        keywords={["修仙", "玄学", "易经", "八字", "风水", "星宿", "历史", "修真", "传统文化", "灵墟", "末法时代"]}
       />
-      <div ref={containerRef} className={styles.container}>
+      <PullToRefresh onRefresh={() => window.location.reload()}>
+        <div ref={containerRef} className={styles.container}>
         {/* Hero */}
         <motion.section className={styles.hero} style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}>
           <div className={styles.heroContent}>
@@ -202,7 +204,169 @@ export default function HomePage() {
             </div>
           </motion.div>
         </section>
-      </div>
+
+        {/* 📊 档案馆大数据 */}
+        <section className={styles.statsSection}>
+          <motion.div 
+            className={styles.sectionHeader}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className={styles.sectionTitleRow}>
+              <span className={styles.sectionDivider} />
+              <h2 className={styles.sectionTitle}>📊 档案馆大数据</h2>
+              <span className={styles.sectionDivider} />
+            </div>
+            <p className={styles.sectionSubtitle}>千年传承，万古修为，尽在此间</p>
+          </motion.div>
+
+          <div className={styles.statsGrid}>
+            {[
+              { number: '32', label: '修真子系统', icon: '🏛️', suffix: '套' },
+              { number: '2,847', label: '收录典籍', icon: '📚', suffix: '部' },
+              { number: '896', label: '修真功法', icon: '📜', suffix: '种' },
+              { number: '472', label: '秘术传承', icon: '✨', suffix: '门' },
+              { number: '1,234', label: '天材地宝', icon: '💎', suffix: '品' },
+              { number: '∞', label: '大道无涯', icon: '🌌', suffix: '' },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                className={styles.statItem}
+                initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+              >
+                <div className={styles.statIcon}>{stat.icon}</div>
+                <div className={styles.statNumber}>
+                  {stat.number}
+                  <span className={styles.statSuffix}>{stat.suffix}</span>
+                </div>
+                <div className={styles.statLabel}>{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* 🌟 今日悟道 */}
+        <section className={styles.enlightenSection}>
+          <motion.div
+            className={styles.enlightenCard}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+          >
+            <div className={styles.enlightenTitle}>🌟 今日悟道偈语</div>
+            <motion.blockquote 
+              className={styles.enlightenQuote}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            >
+              "道可道，非常道。名可名，非常名。<br/>
+              无名天地之始，有名万物之母。"
+            </motion.blockquote>
+            <div className={styles.enlightenAuthor}>—— 道德经 · 第一章</div>
+            
+            <motion.button 
+              className={styles.enlightenBtn}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(201, 162, 39, 0.5)' }}
+              whileTap={{ scale: 0.98 }}
+            >
+              ✨ 随机悟道
+            </motion.button>
+          </motion.div>
+        </section>
+
+        {/* 🚀 最近飞升记录 */}
+        <section className={styles.updatesSection}>
+          <motion.div 
+            className={styles.sectionHeader}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className={styles.sectionTitleRow}>
+              <span className={styles.sectionDivider} />
+              <h2 className={styles.sectionTitle}>🚀 最近飞升记录</h2>
+              <span className={styles.sectionDivider} />
+            </div>
+            <p className={styles.sectionSubtitle}>灵墟档案馆功德榜</p>
+          </motion.div>
+
+          <div className={styles.updatesTimeline}>
+            {[
+              { date: '甲辰年戊辰月', title: '宇宙洪荒四部曲 · 圆满', desc: '宇·宙·洪·荒 32大系统全部上线', type: 'feat' },
+              { date: '甲辰年丁卯月', title: '荒部 · 太古蛮荒', desc: '十二祖巫、山海经异兽、太古部落 现世', type: 'feat' },
+              { date: '甲辰年丙寅月', title: '洪部 · 开天辟地', desc: '盘古开天、混沌魔神、无量量劫 降临', type: 'feat' },
+              { date: '甲辰年乙丑月', title: '宙部 · 时光长河', desc: '穿越时空，扭转因果，轮回往生', type: 'feat' },
+              { date: '甲辰年甲子月', title: '宇部 · 三千大世界', desc: '三界六道，洞天福地，维度攀升', type: 'feat' },
+            ].map((update, i) => (
+              <motion.div
+                key={update.title}
+                className={styles.updateItem}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                whileHover={{ x: 10 }}
+              >
+                <div className={styles.updateBadge}>
+                  {update.type === 'feat' ? '✨' : '🔧'}
+                </div>
+                <div className={styles.updateContent}>
+                  <div className={styles.updateDate}>{update.date}</div>
+                  <div className={styles.updateTitle}>{update.title}</div>
+                  <div className={styles.updateDesc}>{update.desc}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* 💫 修真者寄语 */}
+        <section className={styles.epilogueSection}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5 }}
+          >
+            <div className={styles.epilogueContent}>
+              <motion.div 
+                className={styles.epilogueBigChar}
+                animate={{ 
+                  textShadow: [
+                    '0 0 30px rgba(201, 162, 39, 0.5)',
+                    '0 0 60px rgba(201, 162, 39, 0.8)',
+                    '0 0 30px rgba(201, 162, 39, 0.5)'
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                道
+              </motion.div>
+              <p className={styles.epilogueText}>
+                修真之路，漫漫其修远兮。<br/>
+                愿尔等在此间，寻得真我，证得大道。<br/><br/>
+                —— 灵墟阁主 手札
+              </p>
+              <motion.div 
+                className={styles.epilogueSignature}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ⚯
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
+        </div>
+      </PullToRefresh>
     </Layout>
   )
 }

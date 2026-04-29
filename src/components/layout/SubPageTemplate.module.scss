@@ -1,12 +1,13 @@
 @use '@/styles/design-tokens' as *;
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: var(--space-20) var(--page-padding-x) var(--space-16);
+  padding: 5rem var(--page-padding-x) 4rem;
   min-height: 100vh;
   position: relative;
-  z-index: 1;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 /* ==========================================================================
@@ -16,16 +17,16 @@
 .header {
   position: relative;
   text-align: center;
-  margin-bottom: var(--gap-section);
-  padding: var(--space-12) var(--space-8);
+  margin-bottom: 4rem;
+  padding: 3rem 2.5rem;
   background: 
-    radial-gradient(ellipse at center, rgba(201, 162, 39, 0.08) 0%, transparent 70%),
-    linear-gradient(135deg, rgba(20, 20, 40, 0.8) 0%, rgba(10, 10, 30, 0.9) 100%);
-  border-radius: 4px;
-  border: 1px solid rgba(201, 162, 39, 0.15);
+    radial-gradient(ellipse at center, rgba(251, 191, 36, 0.1) 0%, transparent 70%),
+    linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
   overflow: hidden;
-  backdrop-filter: blur(10px);
   font-family: var(--font-display);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
 
   &::before {
     content: '';
@@ -74,11 +75,11 @@
 .title {
   font-family: var(--font-display);
   font-size: var(--fs-1-clamp);
-  font-weight: 500;
-  color: #e8d48b;
+  font-weight: 700;
+  color: #ffffff;
   letter-spacing: var(--ls-title);
   margin: 0 0 var(--space-4);
-  text-shadow: 0 0 40px rgba(201, 162, 39, 0.4);
+  text-shadow: 0 2px 4px rgba(92, 82, 69, 0.15);
   line-height: var(--lh-tight);
   position: relative;
   @include text-balance;
@@ -92,7 +93,7 @@
     height: 1px;
     background: linear-gradient(90deg, 
       transparent, 
-      rgba(232, 212, 139, 0.8), 
+      rgba(251, 191, 36, 0.6), 
       transparent);
     animation: swordFlash 6s ease-in-out infinite;
   }
@@ -107,12 +108,15 @@
 
 .subtitle {
   font-family: var(--font-body);
-  font-size: var(--fs-large);
-  color: rgba(201, 162, 39, 0.6);
+  font-size: 1.25rem;
+  color: #94a3b8;
   letter-spacing: var(--ls-normal);
   margin: 0;
-  font-weight: 300;
+  font-weight: 500;
   line-height: var(--lh-body);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
   @include text-balance;
 }
 
@@ -122,7 +126,7 @@
   justify-content: center;
   gap: var(--space-4);
   margin-top: var(--space-8);
-  color: rgba(201, 162, 39, 0.4);
+  color: #8b6914;
   font-size: var(--fs-small);
   letter-spacing: var(--ls-normal);
 

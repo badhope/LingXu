@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import LiandanPanel from '@/tools/liandan/LiandanPanel'
 
 export default function LiandanPage() {
   return (
-    <Layout title="丹药养生" transparentNav parentPath="/tools">
+    <SubPageTemplate title="炼丹模拟器" colorRgb="234, 88, 12">
       <LiandanPanel />
-    </Layout>
+    </SubPageTemplate>
   )
 }

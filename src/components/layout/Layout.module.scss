@@ -16,9 +16,9 @@
   transition: all 0.4s ease;
   
   &.scrolled {
-    background: rgba(10, 10, 15, 0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(251, 191, 36, 0.15);
     padding: 0.75rem 2rem;
   }
 }
@@ -41,16 +41,15 @@
 
 .logoChar {
   font-size: 1.75rem;
-  font-weight: 300;
+  font-weight: 600;
   letter-spacing: 0.1em;
-  background: linear-gradient(135deg, #f0d78c 0%, #c9a227 50%, #f0d78c 100%);
+  background: linear-gradient(135deg, #e2e8f0 0%, #fbbf24 50%, #e2e8f0 100%);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmer 4s ease-in-out infinite;
   text-shadow: none;
-  filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.5));
   
   &:nth-child(2) {
     animation-delay: 0.5s;
@@ -71,19 +70,20 @@
 .navLink {
   position: relative;
   padding: 0.5rem 1rem;
-  color: #a8a8a8;
+  color: #5c5245;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   letter-spacing: 0.05em;
   transition: all 0.3s ease;
   
   &:hover {
-    color: #c9a227;
-    text-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+    color: #8b6914;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
   }
   
   &.active {
-    color: #c9a227;
+    color: #8b6914;
+    font-weight: 600;
     
     &::after {
       content: '';
@@ -93,7 +93,7 @@
       transform: translateX(-50%);
       width: 20px;
       height: 2px;
-      background: linear-gradient(90deg, transparent, #c9a227, transparent);
+      background: linear-gradient(90deg, transparent, #8b6914, transparent);
     }
   }
 }
@@ -166,7 +166,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(10, 10, 15, 0.98);
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(20px);
   padding: 2rem;
   flex-direction: column;
@@ -182,22 +182,22 @@
   align-items: center;
   min-height: 56px;
   padding: 1rem 1.5rem;
-  color: #a8a8a8;
+  color: #5c5245;
   text-decoration: none;
   font-size: 1.1rem;
   letter-spacing: 0.1em;
-  border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.1);
   transition: all 0.3s ease;
   
   &:hover {
-    color: #c9a227;
-    background: rgba(201, 162, 39, 0.05);
+    color: #8b6914;
+    background: rgba(251, 191, 36, 0.05);
     padding-left: 2rem;
   }
   
   &.active {
-    color: #c9a227;
-    background: rgba(201, 162, 39, 0.1);
+    color: #8b6914;
+    background: rgba(251, 191, 36, 0.1);
   }
 }
 
@@ -212,11 +212,11 @@
   min-height: 52px;
   min-width: 88px;
   padding: 0 20px;
-  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.85) 100%);
-  border: 1px solid rgba(201, 162, 39, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.25);
   border-radius: 10px;
-  color: #c9a227;
-  font-size: 0.9rem;
+  color: #3d352b;
+  font-size: 0.95rem;
   font-weight: 500;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -224,9 +224,9 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(10, 10, 15, 0.95) 100%);
-    border-color: rgba(201, 162, 39, 0.5);
-    box-shadow: 0 8px 32px rgba(201, 162, 39, 0.25);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.65) 100%);
+    border-color: rgba(251, 191, 36, 0.4);
+    box-shadow: 0 8px 32px rgba(92, 82, 69, 0.12);
     transform: translateY(-2px);
   }
 
@@ -249,10 +249,10 @@
 
 .withBackButton {
   @media (min-width: 768px) {
-    padding-top: 80px;
+    padding-top: 100px;
   }
   @media (max-width: 768px) {
-    padding-top: 80px;
+    padding-top: 90px;
   }
 }
 
@@ -260,18 +260,20 @@
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  padding-top: 70px;
+  padding-bottom: 80px;
   
   &.noNav {
-    padding-top: 0;
+    padding-top: 70px;
   }
 }
 
 .footer {
   position: relative;
   z-index: 1;
-  padding: 4rem 2rem 2rem;
-  background: linear-gradient(to top, rgba(10, 10, 15, 1) 0%, transparent 100%);
-  border-top: 1px solid rgba(201, 162, 39, 0.1);
+  padding: 2rem 2rem 6rem;
+  background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, transparent 100%);
+  border-top: 1px solid rgba(251, 191, 36, 0.1);
 }
 
 .footerContent {

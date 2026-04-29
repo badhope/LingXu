@@ -5,7 +5,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import styles from './About.module.scss'
 
 const TECHS = [
@@ -17,7 +17,7 @@ const TECHS = [
 
 export default function About() {
   return (
-    <Layout title="关于">
+    <SubPageTemplate title="关于" colorRgb="139, 92, 246">
       <div className={styles.container}>
         {/* 头部 */}
         <motion.header
@@ -81,6 +81,6 @@ export default function About() {
           </div>
         </motion.section>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

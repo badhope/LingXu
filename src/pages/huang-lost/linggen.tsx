@@ -291,6 +291,46 @@ export default function LinggenPage() {
   const [expandedRoot, setExpandedRoot] = useState<string | null>(null)
   const [filteredConstitutions, setFilteredConstitutions] = useState(SPECIAL_CONSTITUTIONS)
   const [expandedConstitution, setExpandedConstitution] = useState<string | null>(null)
+  const [testing, setTesting] = useState(false)
+  const [testResult, setTestResult] = useState<SpiritRoot | null>(null)
+  const [testProgress, setTestProgress] = useState(0)
+
+  const testSpiritRoot = useCallback(() => {
+    setTesting(true)
+    setTestResult(null)
+    setTestProgress(0)
+
+    const interval = setInterval(() => {
+      setTestProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          return 100
+        }
+        return prev + Math.random() * 8 + 2
+      })
+    }, 80)
+
+    setTimeout(() => {
+      clearInterval(interval)
+      setTestProgress(100)
+
+      const roll = Math.random() * 100
+      let result: SpiritRoot
+      if (roll < 0.1) result = SPIRIT_ROOTS[0]
+      else if (roll < 0.5) result = SPIRIT_ROOTS[1]
+      else if (roll < 1) result = SPIRIT_ROOTS[2]
+      else if (roll < 5) result = SPIRIT_ROOTS[3]
+      else if (roll < 15) result = SPIRIT_ROOTS[4]
+      else if (roll < 35) result = SPIRIT_ROOTS[5]
+      else if (roll < 60) result = SPIRIT_ROOTS[6]
+      else result = SPIRIT_ROOTS[7]
+
+      setTimeout(() => {
+        setTestResult(result)
+        setTesting(false)
+      }, 500)
+    }, 2500)
+  }, [])
 
   const handleRootFilter = useCallback((data: typeof SPIRIT_ROOTS) => {
     setFilteredRoots(data)
@@ -332,7 +372,136 @@ export default function LinggenPage() {
       icon="🌱"
       colorRgb="34, 197, 94"
     >
-      <SubPageSection title="灵根品级">
+      <SubPageSection title="🔮 测灵根">
+        <InfoCard glowIntensity={100} glowColor="34, 197, 94">
+          <div style={{ textAlign: 'center', padding: '2rem' }}>
+            {!testing && !testResult ? (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🧪</div>
+                <h3 style={{ marginBottom: '1rem', color: '#22c55e' }}>灵根检测，一测便知</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  将手掌放在测灵石上，引动天地灵气，检测你的修仙资质
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={testSpiritRoot}
+                  style={{
+                    padding: '1rem 3rem',
+                    fontSize: '1.1rem',
+                    background: 'linear-gradient(135deg, #22c55e, #10b981)',
+                    border: 'none',
+                    borderRadius: '50px',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  ✨ 开始检测灵根
+                </motion.button>
+              </motion.div>
+            ) : testing ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  style={{ fontSize: '4rem', marginBottom: '1rem' }}
+                >
+                  🔮
+                </motion.div>
+                <h3 style={{ marginBottom: '1rem', color: '#fbbf24' }}>正在检测灵根资质...</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '1rem' }}>
+                  引动天地灵气入体，正在分析五行亲和度...
+                </p>
+                <ProgressBar value={Math.min(100, testProgress)} color="#22c55e" label="灵根检测中" />
+              </motion.div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>
+                    {testResult?.icon}
+                  </div>
+                  <h2 style={{
+                    fontSize: '2rem',
+                    marginBottom: '0.5rem',
+                    color: testResult?.color,
+                    fontWeight: 700,
+                  }}>
+                    {testResult?.name}
+                  </h2>
+                  <div style={{
+                    display: 'inline-block',
+                    padding: '0.3rem 1rem',
+                    borderRadius: '20px',
+                    background: `${testResult?.color}20`,
+                    color: testResult?.color,
+                    fontWeight: 600,
+                    marginBottom: '1rem',
+                  }}>
+                    {testResult?.tier} · {testResult?.rarity}
+                  </div>
+                  <p style={{
+                    fontSize: '1.1rem',
+                    color: 'rgba(200, 200, 210, 0.9)',
+                    marginBottom: '1rem',
+                    maxWidth: 500,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                  }}>
+                    {testResult?.feature}
+                  </p>
+                  <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                    {testResult?.desc}
+                  </p>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '1rem',
+                    maxWidth: 500,
+                    margin: '0 auto 2rem',
+                  }}>
+                    <div>
+                      <div style={{ color: '#22c55e', fontWeight: 600 }}>{testResult?.affinity}%</div>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>灵根亲和</div>
+                    </div>
+                    <div>
+                      <div style={{ color: '#f59e0b', fontWeight: 600 }}>{testResult?.cultivationSpeed}%</div>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>修炼速度</div>
+                    </div>
+                    <div>
+                      <div style={{ color: '#6366f1', fontWeight: 600 }}>{testResult?.ceiling}%</div>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>潜力上限</div>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={testSpiritRoot}
+                    style={{
+                      padding: '0.8rem 2rem',
+                      background: 'rgba(34, 197, 94, 0.2)',
+                      border: '1px solid #22c55e',
+                      borderRadius: '50px',
+                      color: '#22c55e',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔄 重新检测
+                  </motion.button>
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="📋 灵根品级总览">
         <FilterBar
           data={SPIRIT_ROOTS}
           onFiltered={handleRootFilter}

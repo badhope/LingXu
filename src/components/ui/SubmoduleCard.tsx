@@ -1,5 +1,6 @@
 'use client'
 
+import React, { memo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import styles from '@/components/layout/SubPageTemplate.module.scss'
@@ -12,7 +13,7 @@ interface SubmoduleCardProps {
   index?: number
 }
 
-export default function SubmoduleCard({
+const SubmoduleCard = memo(function SubmoduleCard({
   title,
   description,
   href,
@@ -60,4 +61,8 @@ export default function SubmoduleCard({
       </motion.a>
     </Link>
   )
-}
+})
+
+SubmoduleCard.displayName = 'SubmoduleCard'
+
+export default SubmoduleCard

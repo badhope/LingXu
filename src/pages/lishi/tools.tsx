@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import TimelinePanel from '@/tools/history/TimelinePanel'
 import RelationPanel from '@/tools/history/RelationPanel'
 
@@ -14,38 +14,27 @@ export default function ShiToolsPage() {
   const [activeTool, setActiveTool] = useState('timeline')
 
   return (
-    <Layout title="史部工具 - 以史为鉴" parentPath="/lishi">
-      <div style={{ 
-        display: 'flex', 
-        gap: 12, 
-        justifyContent: 'center', 
-        marginBottom: 24,
-        flexWrap: 'wrap'
-      }}>
+    <SubPageTemplate title="历史工具" colorRgb="212, 175, 55">
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24, justifyContent: 'center' }}>
         {TOOLS.map((tool) => (
           <button
             key={tool.id}
             onClick={() => setActiveTool(tool.id)}
             style={{
-              padding: '12px 28px',
-              background: activeTool === tool.id ? 'linear-gradient(135deg, #d4af37, #b8941f)' : 'rgba(0,0,0,0.4)',
-              border: '2px solid',
-              borderColor: activeTool === tool.id ? '#d4af37' : '#4a3a2a',
-              borderRadius: 50,
-              color: activeTool === tool.id ? '#1a1510' : '#fff',
+              padding: '8px 16px',
+              borderRadius: 8,
+              background: activeTool === tool.id ? 'rgba(212, 175, 55, 0.2)' : 'rgba(255,255,255,0.05)',
+              border: `1px solid ${activeTool === tool.id ? 'rgba(212, 175, 55, 0.5)' : 'rgba(255,255,255,0.1)'}`,
               cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: activeTool === tool.id ? 'bold' : 'normal',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.2s',
             }}
           >
             {tool.icon} {tool.name}
           </button>
         ))}
       </div>
-
       {activeTool === 'timeline' && <TimelinePanel />}
       {activeTool === 'relation' && <RelationPanel />}
-    </Layout>
+    </SubPageTemplate>
   )
 }

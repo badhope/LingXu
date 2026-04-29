@@ -301,11 +301,72 @@ const NASCENT_SOULS: NascentSoul[] = [
   }
 ]
 
+const CULTIVATION_REALMS = [
+  { name: '炼气初期', realm: 1, progress: 10, description: '引气入体，踏上仙途' },
+  { name: '炼气中期', realm: 2, progress: 20, description: '气感渐强，内力自生' },
+  { name: '炼气后期', realm: 3, progress: 30, description: '真气充盈，内力外放' },
+  { name: '筑基初期', realm: 4, progress: 40, description: '洗髓伐脉，道基初成' },
+  { name: '筑基中期', realm: 5, progress: 50, description: '法力大增，寿元二百' },
+  { name: '筑基后期', realm: 6, progress: 60, description: '筑基圆满，三花聚顶' },
+  { name: '假丹境界', realm: 7, progress: 75, description: '气液凝缩，丹种成形' },
+  { name: '金丹大道', realm: 8, progress: 100, description: '一粒金丹吞入腹，我命由我不由天' },
+]
+
 export default function JindanPage() {
   const [filteredCores, setFilteredCores] = useState(GOLDEN_CORES)
   const [expandedCore, setExpandedCore] = useState<string | null>(null)
   const [filteredSouls, setFilteredSouls] = useState(NASCENT_SOULS)
   const [expandedSoul, setExpandedSoul] = useState<string | null>(null)
+  const [cultivating, setCultivating] = useState(false)
+  const [cultivationRealm, setCultivationRealm] = useState(0)
+  const [cultivationProgress, setCultivationProgress] = useState(0)
+  const [breakthrough, setBreakthrough] = useState(false)
+  const [finalGrade, setFinalGrade] = useState<GoldenCore | null>(null)
+
+  const startCultivation = useCallback(() => {
+    setCultivating(true)
+    setCultivationRealm(0)
+    setCultivationProgress(0)
+    setBreakthrough(false)
+    setFinalGrade(null)
+
+    let realm = 0
+    let progress = 0
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 3 + 1
+      if (progress >= 100 && realm < CULTIVATION_REALMS.length - 1) {
+        progress = 0
+        realm++
+        setBreakthrough(true)
+        setTimeout(() => setBreakthrough(false), 800)
+      }
+      if (realm >= CULTIVATION_REALMS.length - 1 && progress >= 100) {
+        clearInterval(interval)
+        setCultivationProgress(100)
+        setCultivationRealm(realm)
+
+        setTimeout(() => {
+          const roll = Math.random() * 100
+          let result: GoldenCore
+          if (roll < 1) result = GOLDEN_CORES[0]
+          else if (roll < 5) result = GOLDEN_CORES[1]
+          else if (roll < 12) result = GOLDEN_CORES[2]
+          else if (roll < 20) result = GOLDEN_CORES[3]
+          else if (roll < 35) result = GOLDEN_CORES[4]
+          else if (roll < 55) result = GOLDEN_CORES[5]
+          else if (roll < 80) result = GOLDEN_CORES[6]
+          else result = GOLDEN_CORES[7]
+
+          setFinalGrade(result)
+          setCultivating(false)
+        }, 1000)
+        return
+      }
+      setCultivationProgress(Math.min(progress, 100))
+      setCultivationRealm(realm)
+    }, 60)
+  }, [])
 
   const handleCoreFilter = useCallback((data: typeof GOLDEN_CORES) => {
     setFilteredCores(data)
@@ -346,7 +407,187 @@ export default function JindanPage() {
       icon="✨"
       colorRgb="245, 158, 11"
     >
-      <SubPageSection title="金丹九品">
+      <SubPageSection title="🔥 金丹修炼模拟器">
+        <InfoCard glowIntensity={100} glowColor="245, 158, 11">
+          <div style={{ textAlign: 'center', padding: '2rem' }}>
+            {!cultivating && !finalGrade ? (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🧘</div>
+                <h3 style={{ marginBottom: '1rem', color: '#f59e0b' }}>闭关修炼，冲击金丹</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  百日筑基，十月怀胎，三年哺乳，九年面壁，方得金丹大成
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={startCultivation}
+                  style={{
+                    padding: '1rem 3rem',
+                    fontSize: '1.1rem',
+                    background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                    border: 'none',
+                    borderRadius: '50px',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  ✨ 开始闭关修炼
+                </motion.button>
+              </motion.div>
+            ) : cultivating ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <AnimatePresence>
+                  {breakthrough && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1.2 }}
+                      exit={{ opacity: 0, scale: 1.5 }}
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        fontSize: '2rem',
+                        fontWeight: 700,
+                        color: '#22c55e',
+                        textShadow: '0 0 30px #22c55e',
+                        zIndex: 100,
+                      }}
+                    >
+                      🎉 破境！{CULTIVATION_REALMS[cultivationRealm]?.name}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <motion.div
+                  animate={{ rotate: cultivationRealm * 45 }}
+                  transition={{ duration: 0.8, type: 'spring' }}
+                  style={{ fontSize: '4rem', marginBottom: '1rem' }}
+                >
+                  ✨
+                </motion.div>
+                <h3 style={{ marginBottom: '0.5rem', color: '#fbbf24' }}>
+                  {CULTIVATION_REALMS[cultivationRealm]?.name}
+                </h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '1rem' }}>
+                  {CULTIVATION_REALMS[cultivationRealm]?.description}
+                </p>
+                <div style={{ maxWidth: 400, margin: '0 auto' }}>
+                  <ProgressBar
+                    value={cultivationProgress}
+                    color="#f59e0b"
+                    label={`修炼中... 第 ${cultivationRealm + 1} / ${CULTIVATION_REALMS.length} 层`}
+                  />
+                </div>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  maxWidth: 500,
+                  margin: '2rem auto 0',
+                  fontSize: '0.7rem',
+                  opacity: 0.6,
+                }}>
+                  {CULTIVATION_REALMS.map((r, i) => (
+                    <div key={r.name} style={{
+                      color: i <= cultivationRealm ? '#22c55e' : 'inherit'
+                    }}>
+                      {i + 1}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>
+                    {finalGrade?.icon}
+                  </div>
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    <h2 style={{
+                      fontSize: '2rem',
+                      marginBottom: '0.5rem',
+                      color: finalGrade?.color,
+                      fontWeight: 700,
+                    }}>
+                      {finalGrade?.name}
+                    </h2>
+                  </motion.div>
+                  <div style={{
+                    display: 'inline-block',
+                    padding: '0.3rem 1rem',
+                    borderRadius: '20px',
+                    background: `${finalGrade?.color}20`,
+                    color: finalGrade?.color,
+                    fontWeight: 600,
+                    marginBottom: '1rem',
+                  }}>
+                    {finalGrade?.grade} · 金丹纯度 {finalGrade?.purity}%
+                  </div>
+                  <p style={{
+                    fontSize: '1.1rem',
+                    color: 'rgba(200, 200, 210, 0.9)',
+                    marginBottom: '1rem',
+                    maxWidth: 500,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                  }}>
+                    {finalGrade?.feature}
+                  </p>
+                  <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '1rem' }}>
+                    {finalGrade?.desc}
+                  </p>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '1rem',
+                    maxWidth: 500,
+                    margin: '0 auto 2rem',
+                  }}>
+                    <div>
+                      <div style={{ color: '#f59e0b', fontWeight: 600 }}>{finalGrade?.purity}%</div>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>金丹纯度</div>
+                    </div>
+                    <div>
+                      <div style={{ color: '#ef4444', fontWeight: 600 }}>{finalGrade?.power}%</div>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>金丹威力</div>
+                    </div>
+                    <div>
+                      <div style={{ color: '#6366f1', fontWeight: 600 }}>+{finalGrade?.longevity}</div>
+                      <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>增加寿元</div>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={startCultivation}
+                    style={{
+                      padding: '0.8rem 2rem',
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      border: '1px solid #f59e0b',
+                      borderRadius: '50px',
+                      color: '#f59e0b',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔄 再次冲击金丹
+                  </motion.button>
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="📋 金丹九品总览">
         <FilterBar
           data={GOLDEN_CORES}
           onFiltered={handleCoreFilter}

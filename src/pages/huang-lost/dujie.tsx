@@ -283,21 +283,83 @@ const ASCENSION_PATHS: AscensionPath[] = [
   }
 ]
 
+const TRIBULATION_WAVES = [
+  '天雷洗体',
+  '丹火焚身',
+  '九天玄火',
+  '九天弱水',
+  '心魔考验',
+  '业火焚身',
+  '天人五衰',
+  '大道认可'
+]
+
 export default function DujiePage() {
-  const [filteredTribulations, setFilteredTribulations] = useState(TRIBULATIONS)
-  const [expandedTribulation, setExpandedTribulation] = useState<string | null>(null)
+  const [filteredTribs, setFilteredTribs] = useState(TRIBULATIONS)
+  const [expandedTrib, setExpandedTrib] = useState<string | null>(null)
   const [filteredPaths, setFilteredPaths] = useState(ASCENSION_PATHS)
   const [expandedPath, setExpandedPath] = useState<string | null>(null)
+  const [tribulating, setTribulating] = useState(false)
+  const [selectedTrib, setSelectedTrib] = useState<HeavenlyTribulation | null>(null)
+  const [tribWave, setTribWave] = useState(0)
+  const [tribProgress, setTribProgress] = useState(0)
+  const [hp, setHp] = useState(100)
+  const [tribResult, setTribResult] = useState<{ success: boolean; msg: string } | null>(null)
 
-  const handleTribulationFilter = useCallback((data: typeof TRIBULATIONS) => {
-    setFilteredTribulations(data)
+  const startTribulation = useCallback((trib: HeavenlyTribulation) => {
+    setSelectedTrib(trib)
+    setTribulating(true)
+    setTribWave(0)
+    setTribProgress(0)
+    setHp(100)
+    setTribResult(null)
+
+    let wave = 0
+    let progress = 0
+    let health = 100
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 4 + 1
+      health -= Math.random() * trib.difficulty / 15
+
+      if (health <= 0) {
+        clearInterval(interval)
+        setHp(0)
+        setTimeout(() => {
+          setTribResult({ success: false, msg: '未能渡过雷劫，肉身化为飞灰，元神俱灭...' })
+          setTribulating(false)
+        }, 500)
+        return
+      }
+
+      if (progress >= 100 && wave < TRIBULATION_WAVES.length - 1) {
+        progress = 0
+        wave++
+        setTribWave(wave)
+      }
+      if (wave >= TRIBULATION_WAVES.length - 1 && progress >= 100) {
+        clearInterval(interval)
+        setTribProgress(100)
+        setTimeout(() => {
+          setTribResult({ success: true, msg: `雷劫渡过！${trib.reward}！大道可期！` })
+          setTribulating(false)
+        }, 800)
+        return
+      }
+      setTribProgress(Math.min(progress, 100))
+      setHp(Math.max(0, health))
+    }, 60)
+  }, [])
+
+  const handleTribFilter = useCallback((data: typeof TRIBULATIONS) => {
+    setFilteredTribs(data)
   }, [])
 
   const handlePathFilter = useCallback((data: typeof ASCENSION_PATHS) => {
     setFilteredPaths(data)
   }, [])
 
-  const tribulationFilters = {
+  const tribFilters = {
     searchKeys: ['name', 'tier', 'feature', 'desc', 'detail', 'waves', 'survivalMethods'],
     filterKeys: {
       tier: [...new Set(TRIBULATIONS.map(t => t.tier))],
@@ -326,22 +388,175 @@ export default function DujiePage() {
       icon="⚡"
       colorRgb="239, 68, 68"
     >
-      <SubPageSection title="天劫猛于虎">
+      <SubPageSection title="⚡ 九霄雷劫渡劫台">
+        <InfoCard glowIntensity={100} glowColor="147, 51, 234">
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            {!tribulating && !tribResult ? (
+              <div>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⛈️</div>
+                <h3 style={{ marginBottom: '1rem', color: '#7c3aed' }}>天劫之下，谁人能渡？</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  选择一重雷劫，踏上你的渡劫之路
+                </p>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '1rem',
+                  maxWidth: 700,
+                  margin: '0 auto'
+                }}>
+                  {TRIBULATIONS.slice(0, 4).map((trib) => (
+                    <motion.div
+                      key={trib.name}
+                      whileHover={{ scale: 1.05, y: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => startTribulation(trib)}
+                      style={{
+                        padding: '1rem 0.75rem',
+                        borderRadius: '10px',
+                        background: `linear-gradient(135deg, ${trib.color}25, rgba(40, 40, 50, 0.9))`,
+                        border: `1px solid ${trib.color}50`,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{trib.icon}</div>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 600, color: trib.color, marginBottom: '0.25rem' }}>
+                        {trib.name}
+                      </div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>死亡率 {trib.mortality}%</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ) : tribulating ? (
+              <div>
+                <motion.div
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1)']
+                  }}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                  style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                >
+                  ⚡
+                </motion.div>
+                <h3 style={{ marginBottom: '0.5rem', color: selectedTrib?.color }}>
+                  正在渡：{selectedTrib?.name}
+                </h3>
+                <div style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 700,
+                  marginBottom: '1rem',
+                  color: '#ef4444'
+                }}>
+                  【{TRIBULATION_WAVES[tribWave]}】
+                </div>
+
+                <div style={{ maxWidth: 500, margin: '0 auto 1rem' }}>
+                  <div style={{ textAlign: 'left', fontSize: '0.8rem', marginBottom: '0.25rem' }}>
+                    <span style={{ color: hp > 50 ? '#22c55e' : hp > 25 ? '#f59e0b' : '#ef4444' }}>
+                      ❤️ 生命值 {Math.round(hp)}%
+                    </span>
+                  </div>
+                  <ProgressBar value={hp} color={hp > 50 ? '#22c55e' : hp > 25 ? '#f59e0b' : '#ef4444'} />
+                </div>
+
+                <div style={{ maxWidth: 500, margin: '0 auto 1.5rem' }}>
+                  <ProgressBar value={tribProgress} color={selectedTrib?.color || '#7c3aed'} />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  maxWidth: 700,
+                  margin: '0 auto',
+                  fontSize: '0.65rem'
+                }}>
+                  {TRIBULATION_WAVES.map((w, i) => (
+                    <div key={w} style={{
+                      color: i <= tribWave ? '#7c3aed' : 'rgba(180, 180, 190, 0.4)',
+                      fontWeight: i === tribWave ? 700 : 400
+                    }}>
+                      {i + 1}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : tribResult ? (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <motion.div
+                    animate={tribResult.success ? {
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 5, -5, 0]
+                    } : {}}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                  >
+                    {tribResult.success ? '🎉' : '💀'}
+                  </motion.div>
+                  <h2 style={{
+                    fontSize: '1.8rem',
+                    marginBottom: '0.5rem',
+                    color: tribResult.success ? '#22c55e' : '#ef4444',
+                    fontWeight: 700
+                  }}>
+                    {tribResult.success ? '渡劫成功！大道在望！' : '渡劫失败...身死道消'}
+                  </h2>
+                  <p style={{
+                    fontSize: '1.1rem',
+                    color: selectedTrib?.color,
+                    marginBottom: '0.5rem'
+                  }}>
+                    {selectedTrib?.name}
+                  </p>
+                  <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                    {tribResult.msg}
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setTribResult(null)}
+                    style={{
+                      padding: '0.8rem 2rem',
+                      background: 'rgba(124, 58, 237, 0.2)',
+                      border: '1px solid #7c3aed',
+                      borderRadius: '50px',
+                      color: '#7c3aed',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔄 再来一次
+                  </motion.button>
+                </motion.div>
+              </AnimatePresence>
+            ) : null}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="🌩️ 雷劫种类">
         <FilterBar
           data={TRIBULATIONS}
-          onFiltered={handleTribulationFilter}
-          options={tribulationFilters}
+          onFiltered={handleTribFilter}
+          options={tribFilters}
           placeholder="搜索天劫名称、难度、渡劫方法..."
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredTribulations.map((trib, idx) => (
+          {filteredTribs.map((trib, idx) => (
             <motion.div key={trib.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
               <InfoCard
                 title={`${trib.icon} ${trib.name}`}
                 subtitle={`${trib.tier} ${trib.reward}`}
                 glowColor={trib.color.replace('#', '')}
                 glowIntensity={90}
-                onClick={() => setExpandedTribulation(expandedTribulation === trib.name ? null : trib.name)}
+                onClick={() => setExpandedTrib(expandedTrib === trib.name ? null : trib.name)}
               >
                 <div className="space-y-3">
                   <p className="text-gray-600 text-sm">{trib.desc}</p>
@@ -363,11 +578,11 @@ export default function DujiePage() {
                     </span>
                   </div>
                   <p className="text-center text-xs text-gray-400">
-                    {expandedTribulation === trib.name ? '▲ 收起详情' : '▼ 点击展开详情'}
+                    {expandedTrib === trib.name ? '▲ 收起详情' : '▼ 点击展开详情'}
                   </p>
                 </div>
                 <AnimatePresence>
-                  {expandedTribulation === trib.name && (
+                  {expandedTrib === trib.name && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}

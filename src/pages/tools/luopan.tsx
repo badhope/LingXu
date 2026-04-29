@@ -1,10 +1,10 @@
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
 import LuopanInteractive from '@/tools/luopan/LuopanInteractive'
 
 export default function LuopanPage() {
   return (
-    <Layout title="风水罗盘" transparentNav parentPath="/tools">
+    <SubPageTemplate title="风水罗盘" colorRgb="34, 197, 94">
       <LuopanInteractive />
-    </Layout>
+    </SubPageTemplate>
   )
 }

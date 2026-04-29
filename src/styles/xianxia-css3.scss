@@ -158,27 +158,55 @@
 
 .xian-title {
   background: linear-gradient(
-    180deg,
-    var(--xian-gold-light) 0%,
-    var(--xian-gold) 50%,
-    var(--xian-gold-dark) 100%
+    135deg,
+    #ffffff 0%,
+    var(--xian-gold-light) 20%,
+    #ffffff 40%,
+    var(--xian-gold) 60%,
+    var(--xian-gold-light) 80%,
+    #ffffff 100%
   );
+  background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(154, 123, 41, 0.3));
-  animation: titleBreath 5s ease-in-out infinite;
+  filter: 
+    drop-shadow(0 0 15px rgba(201, 162, 39, 0.5))
+    drop-shadow(0 0 30px rgba(201, 162, 39, 0.3))
+    drop-shadow(0 0 50px rgba(201, 162, 39, 0.15));
+  animation: titleBreath 4s ease-in-out infinite, titleShimmer 6s ease-in-out infinite;
+}
+
+@keyframes titleBreath {
+  0%, 100% {
+    filter: 
+      drop-shadow(0 0 15px rgba(201, 162, 39, 0.5))
+      drop-shadow(0 0 30px rgba(201, 162, 39, 0.3))
+      drop-shadow(0 0 50px rgba(201, 162, 39, 0.15));
+  }
+  50% {
+    filter: 
+      drop-shadow(0 0 25px rgba(201, 162, 39, 0.7))
+      drop-shadow(0 0 45px rgba(201, 162, 39, 0.4))
+      drop-shadow(0 0 70px rgba(201, 162, 39, 0.25));
+  }
 }
 
 .xian-rune {
   display: inline-block;
   animation: runeFloat 8s ease-in-out infinite;
   text-shadow: 
-    0 0 6px var(--xian-gold),
-    0 0 12px var(--xian-gold);
+    0 0 8px var(--xian-gold),
+    0 0 16px var(--xian-gold),
+    0 0 24px rgba(201, 162, 39, 0.5);
   
   &:hover {
     animation: runeActivate 0.6s ease forwards;
+    text-shadow: 
+      0 0 12px var(--xian-gold),
+      0 0 24px var(--xian-gold),
+      0 0 36px rgba(201, 162, 39, 0.7),
+      0 0 48px rgba(201, 162, 39, 0.4);
   }
 }
 

@@ -1,38 +1,41 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Layout from './Layout'
 import PageBackground from './PageBackground'
-import SeoHead from '@/components/common/SeoHead'
+import { SEO } from '@/components/common/SEO'
 import styles from './SubPageTemplate.module.scss'
 
 interface SubPageTemplateProps {
   title: string
-  subtitle: string
-  icon: string
+  subtitle?: string
+  icon?: string
   colorRgb?: string
+  parentPath?: string
   children: React.ReactNode
 }
 
 export default function SubPageTemplate({
   title,
-  subtitle,
-  icon,
+  subtitle = '',
+  icon = '📜',
   colorRgb = '154, 123, 41',
+  parentPath,
   children,
 }: SubPageTemplateProps) {
   return (
-    <Layout title={title}>
-      <SeoHead title={title} description={subtitle} />
+    <Layout title={title} parentPath={parentPath}>
+      <SEO title={title} description={subtitle} />
       <PageBackground colorRgb={colorRgb}>
         <div className={styles.container}>
           <motion.div
             className={styles.header}
-            initial={{ opacity: 0, y: -30 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}
+            style={{ willChange: 'transform, opacity' }}
           >
             <div className={styles.icon}>
               {icon}
@@ -51,9 +54,9 @@ export default function SubPageTemplate({
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.4, delay: 0.15, ease: 'easeOut' }}
             style={{ willChange: 'transform, opacity' }}
           >
             {children}
@@ -82,13 +85,20 @@ export function SubPageSection({
 }
 
 interface InfoCardProps {
-  children: React.ReactNode
+  children?: React.ReactNode
   className?: string
   onClick?: () => void
   title?: string
   subtitle?: string
+  feature?: string
+  desc?: string
+  detail?: string
   glowIntensity?: number
   glowColor?: string
+  colorRgb?: string
+  expandable?: boolean
+  expandedContent?: React.ReactNode
+  tags?: string[]
 }
 
 export function InfoCard({
@@ -97,23 +107,36 @@ export function InfoCard({
   onClick,
   title,
   subtitle,
+  feature,
+  desc,
+  detail,
   glowIntensity = 50,
   glowColor = '154, 123, 41',
+  colorRgb = '154, 123, 41',
+  expandable = false,
+  expandedContent,
+  tags,
 }: InfoCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  const handleClick = onClick || (expandable ? () => setIsExpanded(!isExpanded) : undefined)
+  
   return (
     <motion.div
       className={`${styles.infoCard} ${className || ''}`}
       style={{
-        boxShadow: onClick ? `0 0 ${glowIntensity / 2}px rgba(${glowColor}, ${glowIntensity / 200})` : undefined,
-        cursor: onClick ? 'pointer' : undefined,
+        boxShadow: handleClick ? `0 0 ${glowIntensity / 2}px rgba(${glowColor || colorRgb}, ${glowIntensity / 200})` : undefined,
+        cursor: handleClick ? 'pointer' : undefined,
       }}
-      onClick={onClick}
+      onClick={handleClick}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={onClick ? {
-        scale: 1.02,
-        boxShadow: `0 0 ${glowIntensity}px rgba(${glowColor}, ${glowIntensity / 100})`,
+      whileHover={handleClick ? {
+        scale: 1.015,
+        boxShadow: `0 0 ${glowIntensity}px rgba(${glowColor || colorRgb}, ${glowIntensity / 100})`,
+        transition: { duration: 0.15 },
       } : undefined}
+      whileTap={handleClick ? { scale: 0.98, transition: { duration: 0.1 } } : undefined}
       viewport={{ once: true }}
       transition={{ duration: 0.3 }}
     >
@@ -137,6 +160,77 @@ export function InfoCard({
             </p>
           )}
         </>
+      )}
+      {feature && (
+        <p style={{
+          fontSize: '0.9rem',
+          color: `rgb(${colorRgb})`,
+          marginBottom: '0.5rem',
+          fontWeight: 500,
+        }}>
+          ✨ {feature}
+        </p>
+      )}
+      {desc && (
+        <p style={{
+          fontSize: '0.85rem',
+          opacity: 0.8,
+          marginBottom: '0.75rem',
+          lineHeight: 1.7,
+        }}>
+          {desc}
+        </p>
+      )}
+      {tags && tags.length > 0 && (
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          marginTop: '0.5rem',
+          marginBottom: detail || expandedContent ? '0.75rem' : 0,
+        }}>
+          {tags.map((tag, i) => (
+            <span key={i} style={{
+              padding: '0.25rem 0.75rem',
+              fontSize: '0.75rem',
+              borderRadius: '4px',
+              background: `rgba(${colorRgb}, 0.15)`,
+              border: `1px solid rgba(${colorRgb}, 0.3)`,
+            }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+      {detail && expandable && isExpanded && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          style={{
+            marginTop: '1rem',
+            paddingTop: '1rem',
+            borderTop: `1px solid rgba(${colorRgb}, 0.2)`,
+          }}
+        >
+          <p style={{ fontSize: '0.85rem', opacity: 0.9, lineHeight: 1.8 }}>
+            {detail}
+          </p>
+        </motion.div>
+      )}
+      {expandedContent && expandable && isExpanded && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          style={{
+            marginTop: '1rem',
+            paddingTop: '1rem',
+            borderTop: `1px solid rgba(${colorRgb}, 0.2)`,
+          }}
+        >
+          {expandedContent}
+        </motion.div>
       )}
       {children}
     </motion.div>

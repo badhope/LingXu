@@ -1,0 +1,133 @@
+// ============================================
+// 灵墟设计系统 - SCSS 全局变量
+// 与 tokens.ts 保持严格同步！
+// ============================================
+
+// =============== 基础色板 ===============
+$purple: #a855f7;
+$purple-rgb: 168, 85, 247;
+
+$gold: #fbbf24;
+$gold-rgb: 251, 191, 36;
+
+$red: #ef4444;
+$red-rgb: 239, 68, 68;
+
+$green: #22c55e;
+$green-rgb: 34, 197, 94;
+
+$blue: #3b82f6;
+$blue-rgb: 59, 130, 246;
+
+$cyan: #06b6d4;
+$cyan-rgb: 6, 182, 212;
+
+$orange: #f97316;
+$orange-rgb: 249, 115, 22;
+
+$pink: #ec4899;
+$pink-rgb: 236, 72, 153;
+
+$indigo: #6366f1;
+$indigo-rgb: 99, 102, 241;
+
+$teal: #14b8a6;
+$teal-rgb: 20, 184, 166;
+
+$lime: #84cc16;
+$lime-rgb: 132, 204, 22;
+
+$amber: #d97706;
+$amber-rgb: 217, 119, 6;
+
+// =============== 背景与边框 ===============
+$bg-card: rgba(30, 30, 40, 0.95);
+$bg-dark: rgba(20, 20, 30, 0.98);
+$bg-glass: rgba(25, 25, 35, 0.85);
+
+$border-light: rgba(255, 255, 255, 0.08);
+$border-medium: rgba(255, 255, 255, 0.12);
+$border-strong: rgba(255, 255, 255, 0.18);
+
+// =============== 文本层级 ===============
+$text-primary: rgba(255, 255, 255, 0.95);
+$text-secondary: rgba(255, 255, 255, 0.7);
+$text-muted: rgba(255, 255, 255, 0.5);
+
+// =============== 五行专用色 ===============
+$wuxing-jin: #fbbf24;
+$wuxing-mu: #22c55e;
+$wuxing-shui: #3b82f6;
+$wuxing-huo: #ef4444;
+$wuxing-tu: #f97316;
+
+// =============== 品阶颜色系统 ===============
+$tier-fan: #9ca3af;
+$tier-ling: #22c55e;
+$tier-xian: #3b82f6;
+$tier-shen: #a855f7;
+$tier-sheng: #fbbf24;
+$tier-tian: #ef4444;
+$tier-dao: #ec4899;
+
+// =============== 间距系统 ===============
+$xs: 0.25rem;
+$sm: 0.5rem;
+$md: 0.75rem;
+$lg: 1rem;
+$xl: 1.25rem;
+$2xl: 1.5rem;
+$3xl: 2rem;
+$4xl: 2.5rem;
+$section: 4rem;
+
+// =============== 圆角系统 ===============
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-full: 9999px;
+
+// =============== 阴影系统 ===============
+$shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+$shadow-card-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+
+// =============== 动画系统 ===============
+$animation-fast: 0.15s;
+$animation-normal: 0.3s;
+$animation-slow: 0.5s;
+$stagger-delay: 0.07s;
+
+// =============== 工具 Mixin ===============
+@mixin card-base($color: $purple) {
+  padding: $xl;
+  border-radius: $radius-xl;
+  background: linear-gradient(135deg, rgba($color, 0.06), $bg-card);
+  border: 1px solid rgba($color, 0.18);
+  backdrop-filter: blur(10px);
+  box-shadow: $shadow-card;
+}
+
+@mixin button-base($color: $purple) {
+  padding: $md $lg;
+  border-radius: $radius-lg;
+  background: rgba($color, 0.12);
+  border: 1px solid rgba($color, 0.25);
+  color: $color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($color, 0.18);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin glow($color, $intensity: 0.3) {
+  box-shadow: 0 0 30px rgba($color, $intensity);
+}
+
+@mixin glow-strong($color) {
+  box-shadow: 0 0 60px rgba($color, 0.3), 0 0 120px rgba($color, 0.15);
+}

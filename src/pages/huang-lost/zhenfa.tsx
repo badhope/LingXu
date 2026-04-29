@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
 
 interface Formation {
@@ -254,11 +254,58 @@ const ARRAY_TYPES = [
   }
 ]
 
+const FORMATION_STEPS = [
+  '选定阵眼',
+  '布置阵基',
+  '布下阵旗',
+  '刻画阵纹',
+  '注入灵力',
+  '引动天地',
+  '阵法成型',
+  '杀伐开启'
+]
+
 export default function ZhenfaPage() {
   const [filteredFormations, setFilteredFormations] = useState(FORMATIONS)
   const [expandedFormation, setExpandedFormation] = useState<string | null>(null)
   const [filteredTypes, setFilteredTypes] = useState(ARRAY_TYPES)
   const [expandedType, setExpandedType] = useState<string | null>(null)
+  const [forming, setForming] = useState(false)
+  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null)
+  const [formStep, setFormStep] = useState(0)
+  const [formProgress, setFormProgress] = useState(0)
+  const [formResult, setFormResult] = useState<boolean | null>(null)
+
+  const startFormation = useCallback((form: Formation) => {
+    setSelectedFormation(form)
+    setForming(true)
+    setFormStep(0)
+    setFormProgress(0)
+    setFormResult(null)
+
+    let step = 0
+    let progress = 0
+    const maxStep = Math.min(form.power / 12.5, 8)
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 3 + 0.5
+      if (progress >= 100 && step < maxStep - 1) {
+        progress = 0
+        step++
+        setFormStep(step)
+      }
+      if (step >= maxStep - 1 && progress >= 100) {
+        clearInterval(interval)
+        setFormProgress(100)
+        setTimeout(() => {
+          setFormResult(true)
+          setForming(false)
+        }, 800)
+        return
+      }
+      setFormProgress(Math.min(progress, 100))
+    }, 65)
+  }, [])
 
   const handleFormationFilter = useCallback((data: typeof FORMATIONS) => {
     setFilteredFormations(data)
@@ -312,6 +359,152 @@ export default function ZhenfaPage() {
       icon="🔮"
       colorRgb="139, 92, 246"
     >
+      <SubPageSection title="🌀 上古法阵布设法坛">
+        <InfoCard glowIntensity={90} glowColor="6, 182, 212">
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            {!forming && !formResult ? (
+              <div>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🌀</div>
+                <h3 style={{ marginBottom: '1rem', color: '#06b6d4' }}>天地为盘，众生为子</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  选择一座上古杀阵，开启布设法坛
+                </p>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '1rem',
+                  maxWidth: 700,
+                  margin: '0 auto'
+                }}>
+                  {FORMATIONS.slice(0, 8).map((form) => (
+                    <motion.div
+                      key={form.name}
+                      whileHover={{ scale: 1.05, y: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => startFormation(form)}
+                      style={{
+                        padding: '1rem 0.75rem',
+                        borderRadius: '10px',
+                        background: `linear-gradient(135deg, ${form.color}20, rgba(40, 40, 50, 0.9))`,
+                        border: `1px solid ${form.color}50`,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{form.icon}</div>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 600, color: form.color, marginBottom: '0.25rem' }}>
+                        {form.name}
+                      </div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>{form.category}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ) : forming ? (
+              <div>
+                <motion.div
+                  animate={{
+                    rotate: [0, 360],
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                >
+                  {selectedFormation?.icon}
+                </motion.div>
+                <h3 style={{ marginBottom: '0.5rem', color: selectedFormation?.color }}>
+                  正在布阵：{selectedFormation?.name}
+                </h3>
+                <div style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 700,
+                  marginBottom: '1rem',
+                  color: '#06b6d4'
+                }}>
+                  【{FORMATION_STEPS[formStep]}】
+                </div>
+
+                <div style={{ maxWidth: 500, margin: '0 auto 1.5rem' }}>
+                  <ProgressBar value={formProgress} color={selectedFormation?.color || '#06b6d4'} />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  maxWidth: 700,
+                  margin: '0 auto',
+                  fontSize: '0.65rem'
+                }}>
+                  {FORMATION_STEPS.map((s, i) => (
+                    <div key={s} style={{
+                      color: i <= formStep ? '#06b6d4' : 'rgba(180, 180, 190, 0.4)',
+                      fontWeight: i === formStep ? 700 : 400
+                    }}>
+                      {i + 1}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : formResult ? (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="done"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <motion.div
+                    animate={{
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                  >
+                    ✨
+                  </motion.div>
+                  <h2 style={{
+                    fontSize: '1.8rem',
+                    marginBottom: '0.5rem',
+                    color: selectedFormation?.color,
+                    fontWeight: 700,
+                    textShadow: `0 0 30px ${selectedFormation?.color}`
+                  }}>
+                    阵法布置成功！
+                  </h2>
+                  <p style={{
+                    fontSize: '1.3rem',
+                    color: selectedFormation?.color,
+                    marginBottom: '0.5rem',
+                    fontWeight: 700
+                  }}>
+                    {selectedFormation?.name} - {selectedFormation?.feature}
+                  </p>
+                  <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                    阵纹流转，天地共鸣，杀伐开启！
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setFormResult(null)}
+                    style={{
+                      padding: '0.8rem 2rem',
+                      background: 'rgba(6, 182, 212, 0.2)',
+                      border: '1px solid #06b6d4',
+                      borderRadius: '50px',
+                      color: '#06b6d4',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔄 再布一镇
+                  </motion.button>
+                </motion.div>
+              </AnimatePresence>
+            ) : null}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
       <SubPageSection title="阵道总览">
         <InfoCard>
           <div style={{

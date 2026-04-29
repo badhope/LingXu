@@ -14,10 +14,12 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  padding-top: 3rem;
+  padding-bottom: 4rem;
   background: 
-    radial-gradient(ellipse at center top, rgba(201, 162, 39, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 20% 50%, rgba(136, 102, 255, 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 50%, rgba(255, 102, 136, 0.08) 0%, transparent 40%);
+    radial-gradient(ellipse at center 30%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 60%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 60%, rgba(129, 140, 248, 0.1) 0%, transparent 40%);
 }
 
 .heroContent {
@@ -27,37 +29,35 @@
 }
 
 .heroRune {
-  font-size: 160px;
-  color: #c9a227;
+  font-size: 140px;
+  color: #fbbf24;
   line-height: 1;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   text-shadow: 
-    0 0 60px rgba(201, 162, 39, 0.8),
-    0 0 120px rgba(201, 162, 39, 0.5),
-    0 0 180px rgba(201, 162, 39, 0.2);
+    0 0 40px rgba(251, 191, 36, 0.5),
+    0 0 80px rgba(251, 191, 36, 0.3);
   filter: blur(0.3px);
 }
 
 .heroTitle {
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
-  font-size: 8rem;
+  font-size: 6.5rem;
   font-weight: normal;
-  color: #c9a227;
-  letter-spacing: 2.5rem;
-  margin: 0 0 1.5rem 0;
+  color: #f8fafc;
+  letter-spacing: 2rem;
+  margin: 0 0 2rem 0;
   text-shadow: 
-    0 0 40px rgba(201, 162, 39, 0.8),
-    0 0 80px rgba(201, 162, 39, 0.4),
-    0 0 120px rgba(201, 162, 39, 0.2);
+    0 0 30px rgba(251, 191, 36, 0.4),
+    0 0 60px rgba(59, 130, 246, 0.2);
   user-select: none;
 }
 
 .titleSeparator {
-  color: rgba(201, 162, 39, 0.3);
+  color: rgba(251, 191, 36, 0.3);
 }
 
 .heroSubtitle {
-  color: rgba(201, 162, 39, 0.8);
+  color: #e2e8f0;
   font-size: 1.5rem;
   letter-spacing: 0.8rem;
   margin-bottom: 4rem;
@@ -66,14 +66,14 @@
   span {
     display: inline-block;
     padding: 0.75rem 2rem;
-    border-top: 1px solid rgba(201, 162, 39, 0.4);
-    border-bottom: 1px solid rgba(201, 162, 39, 0.4);
-    background: rgba(201, 162, 39, 0.03);
+    border-top: 1px solid rgba(251, 191, 36, 0.5);
+    border-bottom: 1px solid rgba(251, 191, 36, 0.5);
+    background: rgba(251, 191, 36, 0.05);
   }
 }
 
 .scrollIndicator {
-  color: rgba(201, 162, 39, 0.6);
+  color: rgba(251, 191, 36, 0.7);
   font-size: 0.9rem;
   letter-spacing: 0.3rem;
   display: flex;
@@ -122,23 +122,23 @@
 .sectionDivider {
   width: 100px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #c9a227, transparent);
+  background: linear-gradient(90deg, transparent, #7a5a20, transparent);
 }
 
 .sectionTitle {
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
   font-size: 3.5rem;
   font-weight: normal;
-  color: #c9a227;
+  color: #fbbf24;
   letter-spacing: 1.2rem;
   margin: 0;
   text-shadow: 
-    0 0 40px rgba(201, 162, 39, 0.6),
-    0 0 80px rgba(201, 162, 39, 0.3);
+    2px 2px 4px rgba(251, 191, 36, 0.1),
+    0 0 20px rgba(251, 191, 36, 0.2);
 }
 
 .sectionSubtitle {
-  color: rgba(201, 162, 39, 0.6);
+  color: rgba(251, 191, 36, 0.7);
   font-size: 1rem;
   letter-spacing: 0.3rem;
   margin: 0;
@@ -149,22 +149,23 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .moduleCard {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(20, 15, 30, 0.8) 0%, rgba(10, 10, 20, 0.95) 100%);
-  border: 1px solid rgba(201, 162, 39, 0.15);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(2, 6, 23, 0.9) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.2);
   transition: all 0.4s ease;
 
   &:hover {
-    border-color: rgba(201, 162, 39, 0.4);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5),
-                inset 0 0 60px rgba(201, 162, 39, 0.05);
+    border-color: #fbbf24;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3),
+                inset 0 0 60px rgba(251, 191, 36, 0.08);
+    transform: translateY(-4px);
   }
 }
 
@@ -172,7 +173,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 1.5rem;
+  padding: 2rem;
   text-decoration: none;
   position: relative;
 }
@@ -193,43 +194,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .moduleIcon {
-  font-size: 28px;
+  font-size: 32px;
   line-height: 1;
 }
 
 .modulePinyin {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .moduleKey {
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
-  font-size: 4.5rem;
+  font-size: 5rem;
   font-weight: normal;
-  color: #c9a227;
-  line-height: 1.1;
+  color: #fbbf24;
+  line-height: 1.2;
+  text-align: center;
   text-shadow: 
-    0 0 30px rgba(201, 162, 39, 0.6),
-    0 0 60px rgba(201, 162, 39, 0.3);
+    0 0 20px rgba(251, 191, 36, 0.3);
   margin-bottom: 0.5rem;
 }
 
 .moduleTitle {
-  color: rgba(255, 255, 255, 0.9);
+  color: #1a1510;
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.2rem;
   margin: 0 0 0.75rem 0;
 }
 
 .moduleDescription {
-  color: rgba(255, 255, 255, 0.7);
+  color: #4a4035;
   font-size: 0.85rem;
   line-height: 1.6;
   margin: 0 0 1rem 0;
@@ -244,19 +246,21 @@
 }
 
 .moduleFeature {
-  font-size: 11px;
-  color: rgba(201, 162, 39, 0.7);
-  padding: 3px 10px;
-  background: rgba(201, 162, 39, 0.08);
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  padding: 4px 12px;
+  background: rgba(251, 191, 36, 0.08);
   border-radius: 4px;
   letter-spacing: 1px;
+  border: 1px solid rgba(251, 191, 36, 0.15);
 }
 
 .moduleArrow {
   text-align: right;
-  color: #c9a227;
+  color: #e2e8f0;
   font-size: 1.2rem;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .philosophySection {
@@ -280,18 +284,17 @@
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
   font-size: 3.5rem;
   font-weight: normal;
-  color: #c9a227;
+  color: #fbbf24;
   letter-spacing: 0.8rem;
   line-height: 2.2;
   margin: 0 0 1.5rem 0;
   text-shadow: 
-    0 0 40px rgba(201, 162, 39, 0.8),
-    0 0 80px rgba(201, 162, 39, 0.4);
+    2px 2px 4px rgba(251, 191, 36, 0.1);
   padding-left: 0.8rem;
 }
 
 .quoteSource {
-  color: rgba(201, 162, 39, 0.5);
+  color: rgba(251, 191, 36, 0.6);
   font-size: 0.9rem;
   letter-spacing: 0.3rem;
   margin: 0;
@@ -350,10 +353,11 @@
 .quickNavTitle {
   text-align: center;
   font-size: 1.25rem;
-  color: #c9a227;
+  color: #fbbf24;
   letter-spacing: 0.5rem;
   margin-bottom: 1.5rem;
-  opacity: 0.8;
+  opacity: 0.9;
+  font-weight: 600;
 }
 
 .quickNavGrid {
@@ -369,18 +373,18 @@
   flex-direction: column;
   align-items: center;
   padding: 1.25rem 1rem;
-  background: linear-gradient(135deg, rgba(20, 20, 35, 0.5) 0%, rgba(10, 10, 20, 0.7) 100%);
-  border: 1px solid rgba(201, 162, 39, 0.12);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.2);
   border-radius: 12px;
   text-decoration: none;
   transition: all 0.3s ease;
-  color: inherit;
+  color: #1a1510;
 
   &:hover {
-    border-color: rgba(201, 162, 39, 0.3);
-    background: linear-gradient(135deg, rgba(30, 30, 45, 0.6) 0%, rgba(15, 15, 25, 0.8) 100%);
+    border-color: #a89070;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, #faf6ed 100%);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(92, 82, 69, 0.15);
   }
 
   span {
@@ -388,7 +392,7 @@
   }
 
   &:hover span {
-    color: #c9a227;
+    color: #6b4a0a;
   }
 }
 
@@ -399,7 +403,7 @@
 
 .quickNavDesc {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(92, 82, 69, 0.7);
   margin-top: 0.25rem;
 }
 
@@ -411,6 +415,350 @@
 
   .quickNavGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==========================================================================
+   📊 档案馆大数据
+   ========================================================================== */
+
+.statsSection {
+  padding: 6rem 2rem;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(34, 197, 94, 0.06) 0%, transparent 50%);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+.statItem {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(2, 6, 23, 0.9) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: default;
+
+  &:hover {
+    border-color: #a89070;
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    box-shadow: 
+      0 10px 40px rgba(251, 191, 36, 0.15),
+      0 0 30px rgba(201, 162, 39, 0.15);
+  }
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.3));
+}
+
+.statNumber {
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-shadow: 
+    2px 2px 4px rgba(251, 191, 36, 0.15);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.statSuffix {
+  font-size: 1.5rem;
+  color: #e2e8f0;
+  margin-left: 0.25rem;
+  opacity: 0.9;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #5c5245;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   🌟 今日悟道
+   ========================================================================== */
+
+.enlightenSection {
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+.enlightenCard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem;
+  background: linear-gradient(145deg, 
+    rgba(30, 41, 59, 0.7) 0%, 
+    rgba(15, 23, 42, 0.8) 50%,
+    rgba(2, 6, 23, 0.9) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 
+    0 20px 60px rgba(251, 191, 36, 0.15);
+}
+
+.enlightenTitle {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.enlightenQuote {
+  font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+  font-size: 1.8rem;
+  color: #f8fafc;
+  font-weight: 500;
+  line-height: 2.2;
+  letter-spacing: 0.15em;
+  margin: 0;
+  text-shadow: 
+    2px 2px 4px rgba(251, 191, 36, 0.1);
+}
+
+.enlightenAuthor {
+  font-size: 0.9rem;
+  color: rgba(251, 191, 36, 0.7);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  margin-top: 1.5rem;
+}
+
+.enlightenBtn {
+  margin-top: 2.5rem;
+  padding: 0.875rem 2.5rem;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  border-radius: 50px;
+  color: #fbbf24;
+  font-weight: 500;
+  font-size: 1rem;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(201, 162, 39, 0.1) 100%);
+  }
+}
+
+/* ==========================================================================
+   🚀 最近飞升记录
+   ========================================================================== */
+
+.updatesSection {
+  padding: 6rem 2rem;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 30% 50%, rgba(236, 72, 153, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+}
+
+.updatesTimeline {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, 
+      transparent 0%,
+      rgba(201, 162, 39, 0.3) 20%,
+      rgba(201, 162, 39, 0.3) 80%,
+      transparent 100%);
+  }
+}
+
+.updateItem {
+  position: relative;
+  padding-left: 60px;
+  padding-bottom: 2.5rem;
+  transition: all 0.3s ease;
+  cursor: default;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.updateBadge {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  border: 2px solid rgba(251, 191, 36, 0.4);
+  border-radius: 50%;
+  font-size: 0.8rem;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+}
+
+.updateContent {
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.45) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.12);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: rgba(251, 191, 36, 0.25);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.55) 100%);
+    box-shadow: 0 5px 20px rgba(92, 82, 69, 0.1);
+  }
+}
+
+.updateDate {
+  font-size: 0.75rem;
+  color: rgba(201, 162, 39, 0.6);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.25rem;
+}
+
+.updateTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 0 10px rgba(201, 162, 39, 0.2);
+}
+
+.updateDesc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+   💫 修真者寄语
+   ========================================================================== */
+
+.epilogueSection {
+  padding: 6rem 2rem 8rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+.epilogueContent {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+
+.epilogueBigChar {
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: 8rem;
+  color: #c9a227;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.epilogueText {
+  font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 2.2;
+  letter-spacing: 0.15em;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(201, 162, 39, 0.2);
+}
+
+.epilogueSignature {
+  font-size: 4rem;
+  color: #c9a227;
+  margin-top: 2rem;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.5));
+}
+
+/* ==========================================================================
+   📱 响应式
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .statItem {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .statIcon {
+    font-size: 2rem;
+  }
+
+  .statNumber {
+    font-size: 2rem;
+  }
+
+  .enlightenCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .enlightenQuote {
+    font-size: 1.3rem;
+    line-height: 2;
+  }
+
+  .updatesTimeline::before {
+    left: 15px;
+  }
+
+  .updateItem {
+    padding-left: 50px;
+  }
+
+  .updateBadge {
+    left: 3px;
+  }
+
+  .epilogueBigChar {
+    font-size: 5rem;
+  }
+
+  .epilogueText {
+    font-size: 1.1rem;
   }
 }
 

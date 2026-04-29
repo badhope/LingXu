@@ -7,7 +7,9 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Layout from '@/components/layout/Layout'
+import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { FadeIn } from '@/components/ui/Animated'
 import styles from './index.module.scss'
 
 const SUB_MODULES = [
@@ -17,12 +19,6 @@ const SUB_MODULES = [
   { id: 'liuyao', name: '六爻', icon: '☲', desc: '铜钱起卦，预知吉凶', href: '/xuan/liuyao', color: '#8b5cf6' },
   { id: 'fulu', name: '符箓', icon: '⚡', desc: '道教符箓，祝由十三科', href: '/xuan/fulu', color: '#f97316' },
 ]
-
-const FADE_UP = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: 'easeOut' },
-}
 
 export default function XuanIndexPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -138,12 +134,12 @@ export default function XuanIndexPage() {
   }, [])
 
   return (
-    <Layout title="玄学" transparentNav>
+    <SubPageTemplate title="玄学" colorRgb="212, 175, 55">
       <canvas ref={canvasRef} className={styles.particlesCanvas} />
 
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <motion.div initial={FADE_UP.initial} animate={FADE_UP.animate} transition={FADE_UP.transition}>
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
               className={styles.heroIcon}
               animate={{
@@ -211,6 +207,6 @@ export default function XuanIndexPage() {
           ))}
         </div>
       </div>
-    </Layout>
+    </SubPageTemplate>
   )
 }

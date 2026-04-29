@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
 import FilterBar from '@/components/common/FilterBar'
 
 interface Artifact {
@@ -290,11 +290,58 @@ const SPIRITUAL_TREASURES = [
   }
 ]
 
+const REFINEMENT_TIERS = [
+  { name: '凡铁', color: '#78716c' },
+  { name: '法器', color: '#64748b' },
+  { name: '灵器', color: '#3b82f6' },
+  { name: '宝器', color: '#06b6d4' },
+  { name: '后天灵宝', color: '#22c55e' },
+  { name: '先天灵宝', color: '#a855f7' },
+  { name: '先天至宝', color: '#f59e0b' },
+  { name: '混沌至宝', color: '#ef4444' },
+]
+
 export default function FabaoPage() {
   const [filteredArtifacts, setFilteredArtifacts] = useState(ARTIFACTS)
   const [expandedArtifact, setExpandedArtifact] = useState<string | null>(null)
   const [filteredTreasures, setFilteredTreasures] = useState(SPIRITUAL_TREASURES)
   const [expandedTreasure, setExpandedTreasure] = useState<string | null>(null)
+  const [refining, setRefining] = useState(false)
+  const [refineTier, setRefineTier] = useState(0)
+  const [refineProgress, setRefineProgress] = useState(0)
+  const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null)
+  const [finalTier, setFinalTier] = useState<number | null>(null)
+
+  const startRefinement = useCallback((artifact: Artifact) => {
+    setSelectedArtifact(artifact)
+    setRefining(true)
+    setRefineTier(0)
+    setRefineProgress(0)
+    setFinalTier(null)
+
+    let tier = 0
+    let progress = 0
+    const maxTier = Math.min(artifact.power / 12.5, 8)
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 2 + 0.5
+      if (progress >= 100 && tier < maxTier - 1) {
+        progress = 0
+        tier++
+        setRefineTier(tier)
+      }
+      if (tier >= maxTier - 1 && progress >= 100) {
+        clearInterval(interval)
+        setRefineProgress(100)
+        setTimeout(() => {
+          setFinalTier(tier)
+          setRefining(false)
+        }, 800)
+        return
+      }
+      setRefineProgress(Math.min(progress, 100))
+    }, 55)
+  }, [])
 
   const handleArtifactFilter = useCallback((data: typeof ARTIFACTS) => {
     setFilteredArtifacts(data)
@@ -408,8 +455,151 @@ export default function FabaoPage() {
           </div>
         </InfoCard>
       </SubPageSection>
+      <SubPageSection title="⚒️ 法宝炼器室">
+        <InfoCard glowIntensity={90} glowColor="200, 50, 50">
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            {!refining && !finalTier ? (
+              <div>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚒️</div>
+                <h3 style={{ marginBottom: '1rem', color: '#ef4444' }}>八卦炉中炼至宝</h3>
+                <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                  选择一件法宝，注入器灵，开启炼化
+                </p>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '1rem',
+                  maxWidth: 700,
+                  margin: '0 auto'
+                }}>
+                  {ARTIFACTS.slice(0, 8).map((art) => (
+                    <motion.div
+                      key={art.name}
+                      whileHover={{ scale: 1.05, y: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => startRefinement(art)}
+                      style={{
+                        padding: '1rem 0.75rem',
+                        borderRadius: '10px',
+                        background: 'rgba(50, 50, 60, 0.8)',
+                        border: '1px solid rgba(180, 180, 190, 0.2)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{art.icon}</div>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                        {art.name}
+                      </div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.6 }}>{art.tier}</div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ) : refining ? (
+              <div>
+                <motion.div
+                  animate={{
+                    rotate: [0, 5, -5, 0],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                >
+                  {selectedArtifact?.icon}
+                </motion.div>
+                <h3 style={{ marginBottom: '0.5rem', color: REFINEMENT_TIERS[refineTier].color }}>
+                  正在炼化：{selectedArtifact?.name}
+                </h3>
+                <div style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 700,
+                  marginBottom: '1rem',
+                  color: REFINEMENT_TIERS[refineTier].color,
+                  textShadow: `0 0 20px ${REFINEMENT_TIERS[refineTier].color}`
+                }}>
+                  【{REFINEMENT_TIERS[refineTier].name}】
+                </div>
 
-      <SubPageSection title="封神榜">
+                <div style={{ maxWidth: 500, margin: '0 auto 1.5rem' }}>
+                  <ProgressBar value={refineProgress} color={REFINEMENT_TIERS[refineTier].color} />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  maxWidth: 700,
+                  margin: '0 auto',
+                  fontSize: '0.7rem'
+                }}>
+                  {REFINEMENT_TIERS.map((t, i) => (
+                    <div key={t.name} style={{
+                      color: i <= refineTier ? t.color : 'rgba(180, 180, 190, 0.4)',
+                      fontWeight: i === refineTier ? 700 : 400
+                    }}>
+                      {i + 1}. {t.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : finalTier !== null ? (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key="done"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                    style={{ fontSize: '5rem', marginBottom: '1rem' }}
+                  >
+                    ✨
+                  </motion.div>
+                  <h2 style={{
+                    fontSize: '1.8rem',
+                    marginBottom: '0.5rem',
+                    color: REFINEMENT_TIERS[finalTier].color,
+                    fontWeight: 700,
+                    textShadow: `0 0 30px ${REFINEMENT_TIERS[finalTier].color}`
+                  }}>
+                    炼化成功！
+                  </h2>
+                  <p style={{
+                    fontSize: '1.3rem',
+                    color: REFINEMENT_TIERS[finalTier].color,
+                    marginBottom: '0.5rem',
+                    fontWeight: 700
+                  }}>
+                    {selectedArtifact?.name} - {REFINEMENT_TIERS[finalTier].name}
+                  </p>
+                  <p style={{ color: 'rgba(180, 180, 190, 0.7)', marginBottom: '2rem' }}>
+                    器灵注入成功，法宝威力全开！
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setFinalTier(null)}
+                    style={{
+                      padding: '0.8rem 2rem',
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      border: '1px solid #ef4444',
+                      borderRadius: '50px',
+                      color: '#ef4444',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔄 再炼一件
+                  </motion.button>
+                </motion.div>
+              </AnimatePresence>
+            ) : null}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="🏆 封神至宝榜">
         <FilterBar
           data={ARTIFACTS}
           onFiltered={handleArtifactFilter}
