@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const isVercel = process.env.VERCEL === '1'
-const isGitHubPages = process.env.NEXT_PUBLIC_BASE_PATH === '/LingXu'
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -12,17 +10,14 @@ const nextConfig = {
   swcMinify: true,
 
   images: {
-    unoptimized: isGitHubPages,
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    unoptimized: true,
   },
 
-  basePath: isGitHubPages ? '/LingXu' : '',
-  assetPrefix: isGitHubPages ? '/LingXu/' : '',
-  trailingSlash: isGitHubPages,
+  basePath: '/LingXu',
+  assetPrefix: '/LingXu/',
+  trailingSlash: true,
 
-  output: isGitHubPages ? 'export' : undefined,
+  output: 'export',
 
   experimental: {
     optimizePackageImports: ['framer-motion', 'echarts', 'echarts-for-react', 'three', '@react-three/fiber', '@react-three/drei'],
