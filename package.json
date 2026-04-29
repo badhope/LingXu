@@ -15,6 +15,11 @@
     "mini:dev": "cd mini && npm run dev:weapp",
     "mini:build": "cd mini && npm run build:weapp"
   },
+  "pnpm": {
+    "overrides": {
+      "three-mesh-bvh": "^0.8.0"
+    }
+  },
   "dependencies": {
     "@react-three/drei": "^9.117.0",
     "@react-three/fiber": "^8.17.10",
