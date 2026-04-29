@@ -1,0 +1,767 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface SacredBeast {
+  id: number
+  name: string
+  tier: string
+  element: string
+  direction: string
+  constellation: string
+  power: number
+  feature: string
+  status: string
+  appearance: string
+  desc: string
+  detail: string
+  abilities: string[]
+  legends: string[]
+  symbolism: string[]
+  appearances: string[]
+  color: string
+  icon: string
+}
+
+interface DragonKing {
+  id: number
+  name: string
+  palace: string
+  sea: string
+  color: string
+  rank: number
+  power: number
+  responsibility: string
+  desc: string
+  detail: string
+  children: string[]
+  treasures: string[]
+  subordinates: string[]
+  themeColor: string
+  icon: string
+}
+
+const SACRED_BEASTS: SacredBeast[] = [
+  {
+    id: 1,
+    name: '青龙',
+    tier: '四灵之首',
+    element: '木',
+    direction: '东方',
+    constellation: '角亢氐房心尾箕',
+    power: 100,
+    feature: '主春生万物，苍龙之象',
+    status: '祥瑞',
+    appearance: '角似鹿、头似驼、眼似兔、项似蛇、腹似蜃、鳞似鱼、爪似鹰、掌似虎、耳似牛',
+    desc: '东方七宿之化身，主春生之德，苍灵之象征。',
+    detail: '青龙，亦作苍龙，四灵之首，东方七宿之化身。自角宿至尾宿，凡七宿，连缀成龙形。青龙主春，主生，主仁，其色苍，其德木。龙为鳞虫之长，能幽能明，能细能巨，能短能长，春分而登天，秋分而潜渊。青龙为东方天帝太昊之属神，居东宫青华殿，统御东方诸天，镇守东方天门。凡帝王有仁政德治，青龙则现于郊野，以为祥瑞。',
+    abilities: ['主春生', '行云布雨', '驱邪避凶', '镇守天门', '化生万物'],
+    legends: ['太昊感龙而画八卦', '黄帝乘龙而登天', '汉高斩白蛇而起义'],
+    symbolism: ['帝王之象', '仁德之征', '东方之主', '春季之神'],
+    appearances: ['夏帝孔甲时二龙降于庭', '汉宣帝时青龙现于新丰', '魏明帝时青龙见摩陂井中'],
+    color: '#22c55e',
+    icon: '🐉'
+  },
+  {
+    id: 2,
+    name: '白虎',
+    tier: '四灵之一',
+    element: '金',
+    direction: '西方',
+    constellation: '奎娄胃昴毕觜参',
+    power: 98,
+    feature: '主秋杀兵戈，白虎之形',
+    status: '威猛',
+    appearance: '白质黑章，虎啸生风，啸则风兴，威猛无俦',
+    desc: '西方七宿之化身，主兵戈杀戮，威猛之象征。',
+    detail: '白虎，西方七宿之化身，四灵之一。自奎宿至参宿，凡七宿，连缀成虎形。白虎主秋，主杀，主义，其色白，其德金。虎为百兽之长，啸则风兴，威猛无俦。白虎为西方天帝少昊之属神，居西宫白兽殿，统御西方诸天，镇守西方天门。白虎主兵戈，主征伐，主刑杀。古者帝王征伐，皆祭太白金星与白虎星。白虎非仁兽，故非战不现。然亦能驱邪，故后世道家以白虎为护法神。',
+    abilities: ['主秋杀', '驱邪镇煞', '执掌兵戈', '镇守天门', '威慑百兽'],
+    legends: ['周穆王驱白虎以御八骏', '秦昭王白虎为害蜀郡', '汉章帝白虎观会议'],
+    symbolism: ['兵戈之象', '征伐之征', '西方之主', '秋季之神'],
+    appearances: ['周成王时白虎献舞于朝', '秦始皇时白虎现于咸阳', '唐玄宗时白虎守太白山'],
+    color: '#f8fafc',
+    icon: '🐅'
+  },
+  {
+    id: 3,
+    name: '朱雀',
+    tier: '四灵之一',
+    element: '火',
+    direction: '南方',
+    constellation: '井鬼柳星张翼轸',
+    power: 97,
+    feature: '主夏长文明，丹穴采羽',
+    status: '祥瑞',
+    appearance: '鸡头蛇颈燕颔龟背鱼尾，五色备举，浴火重生',
+    desc: '南方七宿之化身，主文明礼乐，朱鸟之象征。',
+    detail: '朱雀，亦作朱鸟，南方七宿之化身，四灵之一。自井宿至轸宿，凡七宿，连缀成鸟形。朱雀主夏，主长，主礼，其色赤，其德火。鸟为羽虫之长，朱雀为羽虫之最尊者。朱雀为南方天帝炎帝之属神，居南宫朱鸟殿，统御南方诸天，镇守南方天门。朱雀主文明，主礼乐，主文章。凡帝王兴礼乐，崇教化，朱雀则翔于阙庭。朱雀浴火重生，生生不息，故为不死之象征。后世道家以朱雀为护法神，号曰陵光神君。',
+    abilities: ['主夏长', '浴火重生', '执掌文明', '镇守天门', '接引亡魂'],
+    legends: ['炎帝感朱雀而制礼乐', '少昊以鸟名官', '文王时凤鸣于岐山'],
+    symbolism: ['文明之象', '礼乐之征', '南方之主', '夏季之神'],
+    appearances: ['帝尧时朱雀巢于阿阁', '汉宣帝时朱雀集于长乐宫', '魏文帝时朱雀现于文昌殿'],
+    color: '#ef4444',
+    icon: '🦅'
+  },
+  {
+    id: 4,
+    name: '玄武',
+    tier: '四灵之一',
+    element: '水',
+    direction: '北方',
+    constellation: '斗牛女虚危室壁',
+    power: 96,
+    feature: '主冬藏智虑，龟蛇合体',
+    status: '长寿',
+    appearance: '龟蛇合体，玄甲在身，千岁之灵，幽冥之主',
+    desc: '北方七宿之化身，主智虑谋略，玄冥之象征。',
+    detail: '玄武，亦作玄冥，北方七宿之化身，四灵之一。自斗宿至壁宿，凡七宿，连缀成龟蛇合体之形。玄武主冬，主藏，主智，其色黑，其德水。玄武为北方天帝颛顼之属神，居北宫玄武殿，统御北方诸天，镇守北方天门。玄武主智虑，主谋略，主寿考。龟寿千年，蛇通幽冥，故玄武兼主生死。后世道家以玄武为玄天上帝，号曰真武大帝，披发跣足，仗剑蹈龟蛇，为北方天界之主。',
+    abilities: ['主冬藏', '延年益寿', '执掌幽冥', '镇守天门', '消灾解厄'],
+    legends: ['颛顼乘玄武而至幽都', '龟蛇锁大江', '净乐国王子修成正果'],
+    symbolism: ['长寿之象', '智慧之征', '北方之主', '冬季之神'],
+    appearances: ['汉武帝时玄武现于甘泉宫', '汉明帝时玄武见于灵台', '宋真宗时玄武降于终南山'],
+    color: '#3b82f6',
+    icon: '🐢'
+  },
+  {
+    id: 5,
+    name: '麒麟',
+    tier: '瑞兽之王',
+    element: '土',
+    direction: '中央',
+    constellation: '轩辕座',
+    power: 99,
+    feature: '圣王至德则见',
+    status: '至瑞',
+    appearance: '麇身牛尾马蹄，不刳胎不剖卵，不践生草，不群不侣',
+    desc: '仁兽之王，圣王至德方现，不出世之祥瑞。',
+    detail: '麒麟，瑞兽之王，四灵之外的至瑞之兽。其状如麇，牛尾，马蹄，一角，角端有肉。含仁怀义，音中律吕，行步中规，折旋中矩。择土而后践，位平然后处。不群居，不旅行，不犯陷阱，不罹网罗。不刳胎，不剖卵，不践生虫，不折生草。明王动静有仪则见。孔子作《春秋》，绝笔于获麟。麒麟不出，圣人隐，王道熄。麒麟为中央黄帝之属兽，居轩辕之丘，为至德之象征。',
+    abilities: ['含仁怀义', '预知兴亡', '催生圣贤', '吐玉书', '镇宅辟邪'],
+    legends: ['孔子母感麟而生孔子', '西狩获麟孔子绝笔', '麒麟送子'],
+    symbolism: ['至德之象', '圣王之征', '圣贤之兆', '太平之应'],
+    appearances: ['黄帝时麒麟游于囿', '周成王时麒麟鸣于郊', '鲁哀公西狩获麟'],
+    color: '#eab308',
+    icon: '🦄'
+  },
+  {
+    id: 6,
+    name: '凤凰',
+    tier: '瑞鸟之王',
+    element: '火',
+    direction: '南方',
+    constellation: '鹑火',
+    power: 98,
+    feature: '天下有道则见',
+    status: '祥瑞',
+    appearance: '非梧桐不栖，非竹实不食，非醴泉不饮。出于东方君子之国',
+    desc: '百鸟之王，天下太平则现，王道之象征。',
+    detail: '凤凰，亦作凤皇，瑞鸟之王，百鸟之长。其状如鸡，五采而文。首文曰德，翼文曰义，背文曰礼，膺文曰仁，腹文曰信。饮食自然，自歌自舞。非梧桐不栖，非竹实不食，非醴泉不饮。出于东方君子之国，翱翔四海之外。过昆仑，饮砥柱，濯羽弱水，暮宿丹穴。见则天下大安宁。凤凰为百鸟朝宗之主，雄曰凤，雌曰凰。凤凰来仪，为王道之极致。',
+    abilities: ['天下太平则现', '百鸟朝凤', '浴火重生', '预兆圣贤', '接引仙真'],
+    legends: ['黄帝时凤凰巢于阿阁', '箫韶九成凤凰来仪', '凤栖梧桐'],
+    symbolism: ['太平之象', '王道之征', '爱情之喻', '君子之德'],
+    appearances: ['黄帝时凤凰集于东园', '虞舜时凤凰来仪', '周文王时凤鸣岐山'],
+    color: '#fb923c',
+    icon: '🐦‍🔥'
+  },
+  {
+    id: 7,
+    name: '应龙',
+    tier: '神龙',
+    element: '土',
+    direction: '中央',
+    constellation: '黄龙',
+    power: 99,
+    feature: '有翼黄龙，主雨',
+    status: '天雨',
+    appearance: '背生双翼，鳞甲坚不可摧。蚩尤之战，应龙蓄水杀蚩尤',
+    desc: '有翼神龙，黄帝之功臣，主司风雨之神。',
+    detail: '应龙，黄龙之有翼者，龙之至尊。昔者蚩尤作乱，黄帝征师诸侯，应龙受命出战。应龙蓄水，蚩尤请风伯雨师纵大风雨。黄帝乃下天女魃止雨，遂杀蚩尤。应龙已杀蚩尤，又杀夸父，乃去南方处之，故南方多雨。应龙又以尾画地成江，导水入海。大禹治水，应龙以尾画地，疏通江河。应龙居南极，司雷雨。凡龙五百年为角龙，千年为应龙。应龙为龙之得道者。',
+    abilities: ['蓄水兴雨', '尾画成江', '斩杀蚩尤', '助禹治水', '飞升天界'],
+    legends: ['涿鹿之战杀蚩尤', '尾画成江导洪水', '助禹治水定九州'],
+    symbolism: ['神龙之象', '治水之征', '功臣之兆'],
+    appearances: ['涿鹿之战现真身', '洪水之时导江河', '禹成其功登天去'],
+    color: '#ca8a04',
+    icon: '🐲'
+  },
+  {
+    id: 8,
+    name: '白泽',
+    tier: '神兽',
+    element: '水',
+    direction: '东海',
+    constellation: '文昌',
+    power: 97,
+    feature: '知万物情，通鬼神语',
+    status: '智慧',
+    appearance: '东望山有兽，名曰白泽，能言语。黄帝巡狩，得白泽图',
+    desc: '智慧神兽，通万物之情，晓鬼神之名。',
+    detail: '白泽，神兽之智者。其状如羊，一角，能言。知万物之情，晓鬼神之名。黄帝巡狩，东至海，登桓山，于海滨得白泽神兽。白泽能言，达于万物之情。因问天下鬼神之事，白泽为说精气游魂物怪之变，凡万一千五百二十种。黄帝令图写之，以示天下，作《白泽精怪图》。后世人家多图白泽于门，以辟邪驱鬼。白泽为智慧之象征，能言语，通古今，知祸福。',
+    abilities: ['能言语', '知万物', '辨鬼神', '辟邪驱凶', '预知祸福'],
+    legends: ['黄帝东巡得白泽', '作《白泽精怪图》', '白泽图辟邪'],
+    symbolism: ['智慧之象', '辟邪之征', '明君之兆'],
+    appearances: ['黄帝时现于东海之滨', '后世画像镇宅', '明君出则白泽现'],
+    color: '#f0f9ff',
+    icon: '🐑'
+  },
+  {
+    id: 9,
+    name: '开明兽',
+    tier: '昆仑守护神',
+    element: '土',
+    direction: '昆仑',
+    constellation: '天门',
+    power: 95,
+    feature: '身大类虎而九首',
+    status: '守护',
+    appearance: '昆仑山门守护神，身大类虎，九首皆人面，东向立昆仑上',
+    desc: '昆仑山门守护神，九首人面，镇守天庭门户。',
+    detail: '开明兽，昆仑山之守护神。身大类虎，九首，皆人面，东向立昆仑开明门之上。昆仑有九门，门有开明兽守之。百神之所在，在八隅之岩，赤水之际，非仁羿莫能上冈之岩。开明兽为西王母之属兽，镇守昆仑天门，不让凡夫俗子擅入。九首各视一方，洞察秋毫，任何妖魔都无法逃过其监视。其吼声能震彻九霄，万魔慑伏。',
+    abilities: ['九首洞察', '镇守天门', '震慑万魔', '护卫西王母', '九门警戒'],
+    legends: ['昆仑九门之守护', '西王母之卫士', '阻羿登昆仑'],
+    symbolism: ['守护之象', '威严之征', '天界门卫'],
+    appearances: ['昆仑山上常镇守', '凡仙欲过皆须问', '千载不挪移其位'],
+    color: '#a855f7',
+    icon: '🦁'
+  },
+  {
+    id: 10,
+    name: '陆吾',
+    tier: '昆仑山神',
+    element: '土',
+    direction: '昆仑',
+    constellation: '帝宫',
+    power: 94,
+    feature: '虎身九尾，人面虎爪',
+    status: '神职',
+    appearance: '是司天之九部及帝之囿时。虎身而九尾，人面而虎爪',
+    desc: '昆仑山神，司天之九部，为黄帝之苑囿神。',
+    detail: '陆吾，亦作肩吾，昆仑山之神。其状虎身而九尾，人面而虎爪。是神也，司天之九部及帝之囿时。陆吾为黄帝属神，掌管昆仑悬圃，监管天之九域。黄帝之苑囿，多珍禽异兽，奇花异草，陆吾主之。虎身威猛，九尾通灵，人面有智，虎爪锋利。陆吾既能威服百兽，又能通达人意，为天界良吏。开明兽守天门，陆吾守内廷，二者共护昆仑圣地。',
+    abilities: ['司天之九部', '掌管苑囿', '监管九域', '威服百兽', '通灵达智'],
+    legends: ['昆仑悬圃之主', '黄帝之属神', '司天之九域'],
+    symbolism: ['神职之象', '威严之征', '天界官吏'],
+    appearances: ['昆仑丘上主苑囿', '帝之下都掌时节', '百兽率服听号令'],
+    color: '#78716c',
+    icon: '🐯'
+  },
+  {
+    id: 11,
+    name: '毕方',
+    tier: '异鸟',
+    element: '火',
+    direction: '南方',
+    constellation: '毕宿',
+    power: 85,
+    feature: '一足一翼，见则火起',
+    status: '灾异',
+    appearance: '其状如鹤，一足，赤文青质而白喙，见则其邑有火',
+    desc: '火灾之兆，一足神鸟，出则邑有大火。',
+    detail: '毕方，火之精也。其状如鹤，一足，一翼，赤文，青质，白喙。见则其邑有火。毕方鸟在其东，青水西，其为鸟人面一脚。昔者黄帝合鬼神于泰山之上，驾象车而六蛟龙，毕方并辖，蚩尤居前，风伯进扫，雨师洒道。毕方能作火，故为火灾之兆。《尚书》曰：鸜鹆来巢，昭公有出奔之祸；毕方集舍，孝宣有火灾之变。',
+    abilities: ['引发火灾', '火德之精', '黄帝之卫士', '预兆灾异'],
+    legends: ['黄帝泰山大会鬼神', '毕方集舍兆火灾', '一足之鸟行夜中'],
+    symbolism: ['火灾之兆', '灾异之征', '火德之精'],
+    appearances: ['汉宣帝时集于未央宫', '魏明帝时现于洛阳宫', '见则其邑必有火'],
+    color: '#f97316',
+    icon: '🕊️'
+  },
+  {
+    id: 12,
+    name: '梼杌',
+    tier: '四凶之一',
+    element: '金',
+    direction: '西方',
+    constellation: '白虎',
+    power: 90,
+    feature: '状如虎而犬毛，人面虎足猪口牙',
+    status: '凶兽',
+    appearance: '西方荒中，有兽焉，其状如虎而犬毛，长二尺，人面，虎足，猪口牙，尾长一丈八尺',
+    desc: '四凶之一，西方之凶兽，桀骜难驯。',
+    detail: '梼杌，四凶之一，西方之凶兽。颛顼氏有不才子，不可教训，不知话言，告之则顽，舍之则嚚，傲狠明德，以乱天常，天下之民谓之梼杌。其状如虎而犬毛，长二尺，人面，虎足，猪口牙，尾长一丈八尺。搅乱荒中，名梼杌，一名傲狠，一名难训。梼杌性顽劣，不可教训，好勇斗狠，为恶一方。舜臣尧，宾于四门，乃流四凶族，投诸四裔，以御螭魅。',
+    abilities: ['不可教训', '桀骜难驯', '勇猛无畏', '扰乱荒中'],
+    legends: ['颛顼氏之不才子', '舜流四凶投诸四裔', '西方荒中作恶'],
+    symbolism: ['凶顽之象', '恶人之类', '蛮夷之征'],
+    appearances: ['西方荒野常出没', '逢人便斗不退缩', '舜流四凶始远遁'],
+    color: '#7f1d1d',
+    icon: '🐺'
+  }
+]
+
+const DRAGON_KINGS: DragonKing[] = [
+  {
+    id: 1,
+    name: '敖广',
+    palace: '东海龙宫',
+    sea: '东海',
+    color: '青',
+    rank: 1,
+    power: 100,
+    responsibility: '司雨兴云，统领四海',
+    desc: '四海龙王之首，东海之主，水族之尊。',
+    detail: '敖广，东海龙王，四海龙王之首。居东海水晶宫，统御东海亿万水族。东海者，百川所归，万水朝宗之地也。东海龙宫藏珍宝无数，有定海神针，乃大禹治水时所留，后为孙悟空取去作金箍棒。敖广性格仁和，为水族长者。昔者孙悟空学艺归来，至东海借兵器，敖广献定海神针，又献披挂。后上天告御状，遂有大闹天宫之事。龙王主司风雨，人间亢旱，则请龙王行雨。',
+    children: ['敖丙', '敖烈', '敖摩昂'],
+    treasures: ['定海神针', '夜明珠', '避水珠', '分水剑'],
+    subordinates: ['巡海夜叉', '龟丞相', '虾兵蟹将'],
+    themeColor: '#22c55e',
+    icon: '🌊'
+  },
+  {
+    id: 2,
+    name: '敖钦',
+    palace: '南海龙宫',
+    sea: '南海',
+    color: '赤',
+    rank: 2,
+    power: 95,
+    responsibility: '司火御灾，统领南海',
+    desc: '南海龙王，四海之二，主火与雷电。',
+    detail: '敖钦，南海龙王，四海龙王之二。居南海火珠宫，统御南海亿万水族。南海近炎洲，多火山，故南海龙王兼司火德，能御火灾，能发雷电。敖钦性格刚烈，嫉恶如仇。昔者孙悟空借兵器，敖钦谓兄弟曰：“莫若取披挂一副送他，打发他去罢。”遂献凤翅紫金冠。凡人间火灾，多请南海龙王灭火；凡人间求子，多拜南海龙母。南海有普陀山，观音大士居之，故南海龙王常听法于观音，为佛门护法。',
+    children: ['敖龙', '敖凤'],
+    treasures: ['火珠', '雷鼓', '电鞭'],
+    subordinates: ['火珠龙母', '雷师', '电母使者'],
+    themeColor: '#ef4444',
+    icon: '🔥'
+  },
+  {
+    id: 3,
+    name: '敖闰',
+    palace: '西海龙宫',
+    sea: '西海',
+    color: '白',
+    rank: 3,
+    power: 93,
+    responsibility: '司风御灾，统领西海',
+    desc: '西海龙王，四海之三，主风与霜雪。',
+    detail: '敖闰，西海龙王，四海龙王之三。居西海风铃宫，统御西海亿万水族。西海近流沙，多大风，故西海龙王兼司风德，能行风，能降雪。敖闰性格沉静，智计过人。其第三子玉龙，因纵火烧了殿上明珠，被贬下界，后为唐僧坐骑白龙马，修成正果，升为八部天龙广力菩萨。凡人间大风、霜雪，皆西海龙王所主。西海有昆仑山，多仙真，故西海龙王常与仙真往来。',
+    children: ['敖烈（白龙马）', '敖摩昂（侄）'],
+    treasures: ['风铃', '霜钟', '雪盏'],
+    subordinates: ['风伯', '雨师', '霜雪使者'],
+    themeColor: '#f8fafc',
+    icon: '💨'
+  },
+  {
+    id: 4,
+    name: '敖顺',
+    palace: '北海龙宫',
+    sea: '北海',
+    color: '黑',
+    rank: 4,
+    power: 90,
+    responsibility: '司寒御冰，统领北海',
+    desc: '北海龙王，四海之四，主寒与冰雪。',
+    detail: '敖顺，北海龙王，四海龙王之四。居北海玄冰宫，统御北海亿万水族。北海苦寒，多玄冰，故北海龙王兼司寒德，能行寒，能结冰。敖顺性格刚毅，坚忍不拔。昔者魏征梦斩泾河龙王，龙王魂魄告唐太宗，遂有太宗入冥之事。凡人间大寒、冰雪、冰雹，皆北海龙王所主。北海有北冥，庄子所谓北冥有鱼，其名为鲲，化而为鸟，其名为鹏，是也。北海多鲲鹏巨鱼，为北海奇观。',
+    children: ['敖冰', '敖雪'],
+    treasures: ['玄冰镜', '北冥珠', '冻天石'],
+    subordinates: ['玄冥子', '冰夷', '雪神'],
+    themeColor: '#3b82f6',
+    icon: '❄️'
+  }
+]
+
+export default function ShenshouPage() {
+  const [filteredBeasts, setFilteredBeasts] = useState(SACRED_BEASTS)
+  const [expandedBeast, setExpandedBeast] = useState<number | null>(null)
+  const [filteredKings, setFilteredKings] = useState(DRAGON_KINGS)
+  const [expandedKing, setExpandedKing] = useState<number | null>(null)
+
+  const handleBeastFilter = useCallback((data: typeof SACRED_BEASTS) => {
+    setFilteredBeasts(data)
+  }, [])
+
+  const handleKingFilter = useCallback((data: typeof DRAGON_KINGS) => {
+    setFilteredKings(data)
+  }, [])
+
+  const beastFilters = {
+    searchKeys: ['name', 'tier', 'feature', 'appearance', 'status', 'desc', 'detail', 'abilities', 'legends'],
+    filterKeys: {
+      element: [...new Set(SACRED_BEASTS.map(b => b.element))],
+      direction: [...new Set(SACRED_BEASTS.map(b => b.direction))],
+      status: [...new Set(SACRED_BEASTS.map(b => b.status))],
+    },
+    sortOptions: [
+      { key: 'power', label: '实力排序' },
+      { key: 'name', label: '神兽名称' },
+    ],
+  }
+
+  const kingFilters = {
+    searchKeys: ['name', 'palace', 'sea', 'responsibility', 'desc', 'detail'],
+    filterKeys: {
+      sea: [...new Set(DRAGON_KINGS.map(k => k.sea))],
+    },
+    sortOptions: [
+      { key: 'power', label: '实力排序' },
+      { key: 'rank', label: '位次排序' },
+    ],
+  }
+
+  return (
+    <SubPageTemplate
+      title="洪荒神兽"
+      subtitle="青龙白虎 · 朱雀玄武 · 麒麟凤凰 · 白泽应龙"
+      icon="✨"
+      colorRgb="168, 85, 247"
+    >
+      <SubPageSection title="四灵镇天">
+        <InfoCard>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '1.5rem',
+            textAlign: 'center'
+          }}>
+            {SACRED_BEASTS.slice(0, 4).map((beast, i) => (
+              <motion.div
+                key={beast.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+              >
+                <motion.div
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 2, -2, 0],
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, delay: i * 0.3 }}
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '16px',
+                    background: beast.color,
+                    margin: '0 auto 0.75rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2.5rem',
+                    boxShadow: `0 0 30px ${beast.color}66`
+                  }}
+                >
+                  {beast.icon}
+                </motion.div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: beast.color }}>{beast.name}</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(180, 180, 190, 0.7)' }}>{beast.direction} · {beast.status}</div>
+              </motion.div>
+            ))}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="神兽图鉴">
+        <FilterBar
+          data={SACRED_BEASTS}
+          onFiltered={handleBeastFilter}
+          options={beastFilters}
+          placeholder="搜索神兽名称、属性、特征、能力..."
+        />
+        
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '1.5rem',
+          marginTop: '1.5rem'
+        }}>
+          <AnimatePresence>
+            {filteredBeasts.map((beast) => (
+              <motion.div key={beast.id} layout>
+                <InfoCard
+                  title={beast.name}
+                  subtitle={`${beast.tier} · ${beast.direction}${beast.element}属`}
+                  glowColor={beast.color.replace('#', '')}
+                  glowIntensity={beast.power >= 95 ? 90 : 60}
+                  onClick={() => setExpandedBeast(expandedBeast === beast.id ? null : beast.id)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+                    <motion.div
+                      animate={beast.power >= 98 ? {
+                        scale: [1, 1.1, 1],
+                        boxShadow: [`0 0 15px ${beast.color}00`, `0 0 30px ${beast.color}`, `0 0 15px ${beast.color}00`]
+                      } : {}}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '10px',
+                        background: beast.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.75rem',
+                        flexShrink: 0
+                      }}
+                    >
+                      {beast.icon}
+                    </motion.div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        <span style={{ 
+                          padding: '0.25rem 0.75rem', 
+                          borderRadius: '12px', 
+                          fontSize: '0.75rem',
+                          background: beast.color,
+                          color: 'white',
+                          fontWeight: 'bold'
+                        }}>
+                          {beast.status}
+                        </span>
+                        <div style={{ flex: 1, marginLeft: '1rem' }}>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.6)' }}>神力指数</div>
+                          <ProgressBar value={beast.power} color={beast.color} height={6} />
+                        </div>
+                      </div>
+                      <p style={{ color: 'rgba(180, 180, 190, 0.9)', fontSize: '0.9rem', margin: '0 0 1rem' }}>
+                        {beast.feature}
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        {beast.abilities.slice(0, 3).map((a, i) => (
+                          <span key={i} style={{
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            background: `${beast.color}20`,
+                            color: beast.color
+                          }}>
+                            {a}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedBeast === beast.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ 
+                          borderTop: `1px solid ${beast.color}33`,
+                          marginTop: '1rem',
+                          paddingTop: '1rem'
+                        }}>
+                          <p style={{ 
+                            color: 'rgba(180, 180, 190, 0.9)', 
+                            fontSize: '0.9rem',
+                            lineHeight: 1.8,
+                            marginBottom: '1rem',
+                            textIndent: '2em'
+                          }}>
+                            {beast.detail}
+                          </p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                            <div>
+                              <div style={{ color: beast.color, fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                ⚡ 主要能力
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {beast.abilities.map((a, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: `${beast.color}20`,
+                                    color: beast.color
+                                  }}>
+                                    {a}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#b89438', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                📖 相关传说
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {beast.legends.map((l, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(184, 148, 56, 0.15)',
+                                    color: '#b89438'
+                                  }}>
+                                    {l}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div style={{ 
+                    textAlign: 'center', 
+                    marginTop: '0.75rem',
+                    color: `${beast.color}99`,
+                    fontSize: '0.8rem'
+                  }}>
+                    {expandedBeast === beast.id ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </div>
+                </InfoCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="四海龙王">
+        <FilterBar
+          data={DRAGON_KINGS}
+          onFiltered={handleKingFilter}
+          options={kingFilters}
+          placeholder="搜索龙王名称、海域、职责..."
+        />
+        
+        <div style={{ marginTop: '1.5rem' }}>
+          <AnimatePresence>
+            {filteredKings.map((king) => (
+              <motion.div key={king.id} layout style={{ marginBottom: '1rem' }}>
+                <InfoCard
+                  title={king.name}
+                  subtitle={`${king.sea} · ${king.palace} · 排名第${king.rank}`}
+                  glowColor={king.themeColor.replace('#', '')}
+                  glowIntensity={80}
+                  onClick={() => setExpandedKing(expandedKing === king.id ? null : king.id)}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr', gap: '1rem', alignItems: 'start' }}>
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.08, 1],
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '10px',
+                        background: king.themeColor,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.75rem'
+                      }}
+                    >
+                      {king.icon}
+                    </motion.div>
+                    <div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '1rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.6)' }}>神力指数</div>
+                          <ProgressBar value={king.power} color={king.themeColor} height={6} />
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'rgba(180, 180, 190, 0.9)' }}>
+                          {king.responsibility}
+                        </div>
+                      </div>
+                      <p style={{ color: 'rgba(180, 180, 190, 0.9)', fontSize: '0.9rem', margin: 0 }}>
+                        {king.desc}
+                      </p>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedKing === king.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ 
+                          borderTop: `1px solid ${king.themeColor}33`,
+                          marginTop: '1rem',
+                          paddingTop: '1rem'
+                        }}>
+                          <p style={{ 
+                            color: 'rgba(180, 180, 190, 0.9)', 
+                            fontSize: '0.9rem',
+                            lineHeight: 1.8,
+                            marginBottom: '1rem',
+                            textIndent: '2em'
+                          }}>
+                            {king.detail}
+                          </p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                            <div>
+                              <div style={{ color: king.themeColor, fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                👑 龙子龙女
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {king.children.map((c, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: `${king.themeColor}20`,
+                                    color: king.themeColor
+                                  }}>
+                                    {c}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                💎 龙宫珍宝
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {king.treasures.map((t, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(239, 68, 68, 0.15)',
+                                    color: '#ef4444'
+                                  }}>
+                                    {t}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#3b82f6', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                🐢 麾下臣属
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {king.subordinates.map((s, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(59, 130, 246, 0.15)',
+                                    color: '#3b82f6'
+                                  }}>
+                                    {s}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div style={{ 
+                    textAlign: 'center', 
+                    marginTop: '0.75rem',
+                    color: `${king.themeColor}99`,
+                    fontSize: '0.8rem'
+                  }}>
+                    {expandedKing === king.id ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </div>
+                </InfoCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </SubPageSection>
+    </SubPageTemplate>
+  )
+}

@@ -1,0 +1,357 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 2rem;
+    color: #d4af37;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.timelineContainer {
+  position: relative;
+  padding: 40px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 40px;
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 4px;
+  }
+}
+
+.timelineAxis {
+  position: relative;
+  min-width: 1200px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.timelineLine {
+  position: absolute;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    #8b4513 0%, 
+    #cd7f32 10%,
+    #d4af37 20%,
+    #1a1a2e 30%,
+    #c53030 40%,
+    #6b7280 50%,
+    #f59e0b 60%,
+    #3b82f6 70%,
+    #ef4444 80%,
+    #fbbf24 90%,
+    #d4af37 100%
+  );
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+.dynastyNode {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover .dynastyDot {
+    transform: scale(1.5);
+    box-shadow: 0 0 30px currentColor;
+  }
+  
+  &.selected .dynastyDot {
+    transform: scale(1.8);
+    box-shadow: 0 0 40px currentColor;
+  }
+}
+
+.dynastyDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.dynastyLabel {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.875rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.dynastyYear {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+.dynastyDetail {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.95) 0%, rgba(26, 21, 16, 0.98) 100%);
+  border: 2px solid #3d3020;
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.dynastyHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dynastyColor {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 0 30px currentColor;
+}
+
+.dynastyName {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+.dynastyMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metaItem {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  text-align: center;
+  
+  .label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 4px;
+  }
+  
+  .value {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #d4af37;
+  }
+}
+
+.dynastyDesc {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid #d4af37;
+}
+
+.eventsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.eventTag {
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  color: #fff;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.relationGraph {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: 
+    radial-gradient(ellipse at center, rgba(42, 34, 24, 0.3) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(26, 21, 16, 0.8) 0%, rgba(16, 12, 8, 0.95) 100%);
+  border: 2px solid #3d3020;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle, rgba(212, 175, 55, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+}
+
+.figureNode {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  
+  &:hover {
+    transform: scale(1.2);
+    z-index: 20;
+    
+    .figureAvatar {
+      box-shadow: 0 0 40px currentColor;
+    }
+  }
+  
+  &.selected {
+    transform: scale(1.3);
+    z-index: 25;
+    
+    .figureAvatar {
+      box-shadow: 0 0 50px currentColor;
+    }
+  }
+}
+
+.figureAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: 3px solid;
+}
+
+.figureName {
+  font-size: 0.7rem;
+  color: #fff;
+  margin-top: 4px;
+  white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.relationLine {
+  position: absolute;
+  height: 2px;
+  transform-origin: left center;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.figureDetail {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.figureTitle {
+  font-size: 1.5rem;
+  color: #d4af37;
+  margin-bottom: 8px;
+}
+
+.figureSubtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 16px;
+}
+
+.figureQuote {
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid #d4af37;
+  font-style: italic;
+  color: #e2d5b8;
+  margin-bottom: 16px;
+}
+
+.figureAchievement {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+}
+
+.figureRelations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.relationTag {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  padding: 12px 28px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #4a3a2a;
+  border-radius: 50px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover, &.active {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.15);
+  }
+}

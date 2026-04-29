@@ -1,0 +1,565 @@
+@import './animations.scss';
+
+/* ==========================================================================
+   ✦ 灵墟统一设计系统 - 全局 CSS 变量 ✦
+   此文件是全局的，所有页面都能访问这些变量
+
+   ╔══════════════════════════════════════════════════════════════════════╗
+   ║                          ✅  正确位置 ✅                              ║
+   ╠══════════════════════════════════════════════════════════════════════╣
+   ║  需要添加新的全局 CSS 变量？放在这里！                               ║
+   ║  这里的 :root 是安全的，因为这是全局样式文件不是 CSS Module          ║
+   ║                                                                     ║
+   ║  绝对不要去 design-tokens.scss 里加 :root！参见该文件头部警告        ║
+   ╚══════════════════════════════════════════════════════════════════════╝
+   ========================================================================== */
+
+/* ==========================================================================
+   字体层级系统 - 成熟产品级排版
+   ========================================================================== */
+:root {
+  --font-display: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', 'Songti SC', 'STZhongsong', 'Microsoft YaHei', serif;
+  --font-body: 'Noto Serif SC', 'ZCOOL XiaoWei', 'Songti SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --fs-hero-clamp: clamp(3.5rem, 12vw, 7rem);
+  --fs-1-clamp: clamp(2.5rem, 8vw, 4rem);
+  --fs-2-clamp: clamp(2rem, 6vw, 3rem);
+  --fs-3-clamp: clamp(1.5rem, 4vw, 2rem);
+  --fs-4-clamp: clamp(1.25rem, 3vw, 1.5rem);
+  --fs-large: clamp(1.1rem, 2vw, 1.25rem);
+  --fs-base: clamp(1rem, 1.5vw, 1.05rem);
+  --fs-small: clamp(0.85rem, 1vw, 0.95rem);
+  --fs-tiny: clamp(0.75rem, 0.8vw, 0.85rem);
+
+  --lh-tight: 1.1;
+  --lh-title: 1.3;
+  --lh-body: 1.7;
+  --lh-relaxed: 1.9;
+
+  --ls-tight: 0.02em;
+  --ls-normal: 0.05em;
+  --ls-wide: 0.15em;
+  --ls-hero: clamp(0.2em, 3vw, 0.8em);
+  --ls-section: clamp(0.1em, 2vw, 0.3em);
+}
+
+/* ==========================================================================
+   间距系统 - 8px网格，完美垂直节奏
+   ========================================================================== */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  --gap-card: clamp(1.5rem, 4vw, 2.5rem);
+  --gap-section: clamp(3rem, 6vw, 5rem);
+  --page-padding-x: clamp(1rem, 5vw, 3rem);
+  --card-padding: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+/* ==========================================================================
+   颜色系统 - 对比度达标
+   ========================================================================== */
+:root {
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
+  --text-muted: rgba(255, 255, 255, 0.38);
+
+  --color-gold: #d4af37;
+  --color-gold-soft: #c9a227;
+  --color-blue: #3b82f6;
+  --color-green: #22c55e;
+  --color-purple: #8b5cf6;
+  --color-cyan: #06b6d4;
+  --color-orange: #f97316;
+  --color-red: #ef4444;
+
+  --xian-gold: #9a7b29;
+  --xian-gold-light: #b89438;
+  --xian-gold-dark: #6b5418;
+  --xian-purple: #4a3870;
+  --xian-cyan: #3a9e98;
+  --xian-blue: #4a5a9a;
+  --xian-dark: #08080e;
+  --xian-glow: rgba(154, 123, 41, 0.15);
+}
+
+.xian-perspective {
+  perspective: 1500px;
+  transform-style: preserve-3d;
+}
+
+.xian-card {
+  transform-style: preserve-3d;
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backface-visibility: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      var(--xian-gold) 50%,
+      transparent 100%
+    );
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    filter: blur(4px);
+  }
+  
+  &:hover {
+    transform: rotateY(4deg) rotateX(-2deg) translateZ(20px) scale(1.01);
+    
+    &::before {
+      opacity: 0.6;
+      animation: goldBorderFlow 3s linear infinite;
+    }
+  }
+}
+
+.xian-card-glow {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(154, 123, 41, 0.08) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+.xian-title {
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    var(--xian-gold-light) 20%,
+    #ffffff 40%,
+    var(--xian-gold) 60%,
+    var(--xian-gold-light) 80%,
+    #ffffff 100%
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: 
+    drop-shadow(0 0 15px rgba(201, 162, 39, 0.5))
+    drop-shadow(0 0 30px rgba(201, 162, 39, 0.3))
+    drop-shadow(0 0 50px rgba(201, 162, 39, 0.15));
+  animation: titleBreath 4s ease-in-out infinite, titleShimmer 6s ease-in-out infinite;
+}
+
+@keyframes titleBreath {
+  0%, 100% {
+    filter: 
+      drop-shadow(0 0 15px rgba(201, 162, 39, 0.5))
+      drop-shadow(0 0 30px rgba(201, 162, 39, 0.3))
+      drop-shadow(0 0 50px rgba(201, 162, 39, 0.15));
+  }
+  50% {
+    filter: 
+      drop-shadow(0 0 25px rgba(201, 162, 39, 0.7))
+      drop-shadow(0 0 45px rgba(201, 162, 39, 0.4))
+      drop-shadow(0 0 70px rgba(201, 162, 39, 0.25));
+  }
+}
+
+.xian-rune {
+  display: inline-block;
+  animation: runeFloat 8s ease-in-out infinite;
+  text-shadow: 
+    0 0 8px var(--xian-gold),
+    0 0 16px var(--xian-gold),
+    0 0 24px rgba(201, 162, 39, 0.5);
+  
+  &:hover {
+    animation: runeActivate 0.6s ease forwards;
+    text-shadow: 
+      0 0 12px var(--xian-gold),
+      0 0 24px var(--xian-gold),
+      0 0 36px rgba(201, 162, 39, 0.7),
+      0 0 48px rgba(201, 162, 39, 0.4);
+  }
+}
+
+.xian-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--xian-gold-dark) 20%,
+    var(--xian-gold) 50%,
+    var(--xian-gold-dark) 80%,
+    transparent 100%
+  );
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%
+    );
+    animation: dividerSweep 6s linear infinite;
+  }
+}
+
+.xian-btn {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(
+      circle,
+      rgba(154, 123, 41, 0.2) 0%,
+      transparent 70%
+    );
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    transition: width 0.6s ease, height 0.6s ease;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+      0 6px 20px rgba(154, 123, 41, 0.15),
+      0 0 30px rgba(154, 123, 41, 0.05);
+    
+    &::before {
+      width: 150%;
+      height: 150%;
+    }
+    
+    &::after {
+      transform: translateX(100%);
+    }
+  }
+  
+  &:active {
+    transform: translateY(-1px) scale(1.01);
+  }
+}
+
+.xian-border-animate {
+  position: relative;
+  
+  &::before,
+  &::after,
+  span::before,
+  span::after {
+    content: '';
+    position: absolute;
+    background: linear-gradient(90deg, var(--xian-gold-dark), var(--xian-gold));
+    transition: all 1s ease;
+  }
+  
+  &::before {
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+  }
+  
+  &::after {
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 0;
+  }
+  
+  span::before {
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 1px;
+  }
+  
+  span::after {
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 0;
+  }
+  
+  &:hover {
+    &::before,
+    span::before {
+      width: 100%;
+    }
+    
+    &::after,
+    span::after {
+      height: 100%;
+    }
+  }
+}
+
+.xian-text-reveal {
+  overflow: hidden;
+  
+  .char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%) rotateX(-90deg);
+    animation: charReveal 0.8s forwards;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}
+
+.xian-image-container {
+  position: relative;
+  overflow: hidden;
+  
+  img {
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(154, 123, 41, 0.08) 100%
+    );
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    mix-blend-mode: overlay;
+  }
+  
+  &:hover {
+    img {
+      transform: scale(1.05) rotate(0.5deg);
+      filter: brightness(1.03) contrast(1.02);
+    }
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.xian-nav-item {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--xian-gold-dark), var(--xian-gold), var(--xian-gold-dark));
+    transform: translateX(-50%);
+    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 5px var(--xian-glow);
+  }
+  
+  &:hover::after,
+  &.active::after {
+    width: 80%;
+  }
+}
+
+.xian-frosted {
+  background: rgba(8, 8, 14, 0.7);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(154, 123, 41, 0.08);
+}
+
+.xian-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--xian-gold-dark), var(--xian-gold), var(--xian-gold-dark));
+  transform-origin: left;
+  z-index: 9999;
+  box-shadow: 0 0 6px var(--xian-glow);
+}
+
+@keyframes goldBorderFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes titleBreath {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(154, 123, 41, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(154, 123, 41, 0.45));
+  }
+}
+
+@keyframes runeFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(3px) rotate(-1deg);
+  }
+}
+
+@keyframes runeActivate {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: brightness(1.4);
+  }
+  100% {
+    transform: scale(1.05);
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes dividerSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+@keyframes charReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+.xian-3d-text {
+  transform-style: preserve-3d;
+  text-shadow:
+    0 1px 0 var(--xian-gold-dark),
+    0 2px 0 #5a4814,
+    0 3px 0 #4a3c10,
+    0 4px 1px rgba(0, 0, 0, 0.15),
+    0 0 3px rgba(154, 123, 41, 0.08),
+    0 1px 2px rgba(154, 123, 41, 0.15),
+    0 2px 4px rgba(154, 123, 41, 0.1);
+}
+
+.xian-submodule-card {
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(12, 12, 20, 0.85) 0%, rgba(8, 8, 14, 0.92) 100%);
+  border: 1px solid rgba(154, 123, 41, 0.1);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  
+  &:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(154, 123, 41, 0.25);
+    box-shadow: 
+      0 8px 30px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(154, 123, 41, 0.05);
+  }
+}
+
+@media (max-width: 768px) {
+  .xian-submodule-card {
+    padding: 1rem;
+  }
+  
+  .xian-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .xian-3d-text {
+    text-shadow:
+      0 1px 0 var(--xian-gold-dark),
+      0 2px 0 #5a4814,
+      0 3px 1px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@media (max-width: 480px) {
+  .xian-submodule-card {
+    padding: 0.875rem;
+  }
+  
+  .xian-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .xian-card {
+    &:hover {
+      transform: none;
+    }
+  }
+}

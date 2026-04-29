@@ -1,0 +1,44 @@
+name: 🚀 部署到 GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: 🌐 一键构建部署
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+
+      - name: ⚙️ 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 安装依赖
+        run: npm ci
+
+      - name: 🔨 构建站点
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: '/LingXu'
+          NODE_ENV: 'production'
+
+      - name: 📄 GitHub Pages 特殊配置
+        run: |
+          touch out/.nojekyll
+          cp out/index.html out/404.html
+
+      - name: 🚀 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          force_orphan: true

@@ -1,0 +1,357 @@
+.xingxiuContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.starmapPanel,
+.queryPanel {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(6, 182, 212, 0.15);
+}
+
+.panelTitle {
+  color: #06b6d4;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-family: 'Georgia', serif;
+  letter-spacing: 2px;
+}
+
+.starMapWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.starMap {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+}
+
+.starPoint {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.activeStar {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.todayStar {
+  filter: drop-shadow(0 0 4px #06b6d4);
+}
+
+.starLabel {
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.enclosureCircle {
+  fill: rgba(6, 182, 212, 0.05);
+  stroke: rgba(6, 182, 212, 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 4 2;
+}
+
+.enclosureText {
+  fill: #0891b2;
+  font-size: 12px;
+  text-anchor: middle;
+  font-weight: 600;
+}
+
+.enclosureTextSmall {
+  fill: #0e7490;
+  font-size: 9px;
+  text-anchor: middle;
+}
+
+.symbolLabel {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legendText {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.todayFortune {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(6, 182, 212, 0.1);
+  border-left: 3px solid #06b6d4;
+  border-radius: 0 8px 8px 0;
+}
+
+.todayLabel {
+  color: #164e63;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.todayName {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Georgia', serif;
+}
+
+.todayRemark {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+}
+
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inputRow label {
+  width: 80px;
+  color: #0891b2;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.inputRow input {
+  flex: 1;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 8px;
+  color: #22d3ee;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: #06b6d4;
+  }
+}
+
+.queryButton {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resultCard {
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.mansionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mansionIcon {
+  font-size: 24px;
+}
+
+.mansionName {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'Georgia', serif;
+}
+
+.mansionFortune {
+  padding: 2px 10px;
+  border-radius: 10px;
+  background: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mansionMeta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.metaItem {
+  color: #0891b2;
+  font-size: 12px;
+}
+
+.mansionRemark {
+  color: #a5f3fc;
+  font-size: 13px;
+  margin: 0 0 12px 0;
+}
+
+.judgementBox {
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+  border-left: 2px solid #06b6d4;
+}
+
+.judgementText {
+  margin: 0;
+  color: #67e8f9;
+  font-size: 12px;
+  line-height: 1.7;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.detailCard {
+  padding: 14px;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.detailTitle {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.detailText {
+  margin: 0 0 8px 0;
+  color: #a5f3fc;
+  font-size: 13px;
+}
+
+.detailJudgement {
+  margin: 0;
+  color: #67e8f9;
+  font-size: 11px;
+  line-height: 1.7;
+  font-family: 'Georgia', serif;
+}
+
+.manualToggle {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 8px;
+  color: #22d3ee;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(6, 182, 212, 0.1);
+  }
+}
+
+.manualPanel {
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.manualHistory {
+  color: #a5f3fc;
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  line-height: 1.7;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.enclosureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.enclosureItem {
+  padding: 8px;
+  background: rgba(6, 182, 212, 0.1);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.encName {
+  display: block;
+  color: #22d3ee;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.encMeaning {
+  display: block;
+  color: #0891b2;
+  font-size: 10px;
+}
+
+@media (max-width: 768px) {
+  .xingxiuContainer {
+    padding: 16px;
+  }
+
+  .starMap {
+    max-width: 280px;
+  }
+
+  .legend {
+    flex-wrap: wrap;
+  }
+
+  .enclosureGrid {
+    grid-template-columns: 1fr;
+  }
+}

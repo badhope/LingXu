@@ -1,0 +1,279 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 2rem;
+    color: #d4af37;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mapContainer {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.8) 0%, rgba(26, 21, 16, 0.95) 100%);
+  border: 1px solid #3d3020;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+}
+
+.mapControls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  
+  button {
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4a3a2a;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    
+    &:hover, &.active {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.15);
+    }
+  }
+}
+
+.mapCanvas {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: 
+    radial-gradient(ellipse at center, rgba(42, 74, 38, 0.1) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(26, 36, 20, 0.8) 0%, rgba(16, 24, 12, 0.95) 100%);
+  border: 2px solid #3a4a2a;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(74, 114, 58, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74, 114, 58, 0.1) 1px, transparent 1px);
+    background-size: 5% 5%;
+    pointer-events: none;
+  }
+}
+
+.veinLine {
+  position: absolute;
+  height: 4px;
+  transform-origin: left center;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 5;
+  
+  &:hover {
+    filter: brightness(1.5);
+    box-shadow: 0 0 20px currentColor;
+    z-index: 10;
+  }
+  
+  &.selected {
+    filter: brightness(2);
+    box-shadow: 0 0 30px currentColor;
+    z-index: 15;
+  }
+}
+
+.cavePoint {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.3s ease;
+  animation: pointPulse 2s ease-in-out infinite;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    animation: pointRing 2s ease-out infinite;
+  }
+  
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+  
+  &.selected {
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+}
+
+@keyframes pointPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes pointRing {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.mapLegend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  
+  .legendItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .legendColor {
+    width: 16px;
+    height: 4px;
+    border-radius: 2px;
+  }
+  
+  .legendDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detailPanel {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.8) 0%, rgba(26, 21, 16, 0.95) 100%);
+  border: 1px solid #3d3020;
+  border-radius: 16px;
+  padding: 24px;
+  
+  h3 {
+    color: #d4af37;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.levelBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.energyBar {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 12px 0;
+  
+  .energyFill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+}
+
+.blessings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  
+  span {
+    padding: 4px 10px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #d4af37;
+  }
+}
+
+.legendText {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.veinList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.veinListItem {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  
+  &:hover {
+    background: rgba(212, 175, 55, 0.1);
+  }
+  
+  &.selected {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.5);
+  }
+  
+  .name {
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  
+  .meta {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+}

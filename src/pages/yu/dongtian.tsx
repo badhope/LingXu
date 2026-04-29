@@ -1,0 +1,577 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface CaveHeaven {
+  rank: number
+  name: string
+  alias: string
+  location: string
+  spiritLevel: number
+  master: string
+  feature: string
+  desc: string
+  detail: string
+  beasts: string[]
+  spiritHerbs: string[]
+  legacy: string[]
+  status: string
+  tier: string
+  color: string
+  icon: string
+}
+
+interface BlessedLand {
+  rank: number
+  name: string
+  location: string
+  spiritLevel: number
+  master: string
+  feature: string
+  desc: string
+  detail: string
+  specialties: string[]
+  notableFigures: string[]
+  status: string
+  tier: string
+  color: string
+  icon: string
+}
+
+const TEN_CAVE_HEAVENS: CaveHeaven[] = [
+  {
+    rank: 1,
+    name: '王屋山洞',
+    alias: '小有清虚之天',
+    location: '河南王屋山',
+    spiritLevel: 100,
+    master: '西城王君',
+    feature: '黄帝祭天之所，女娲补天处',
+    tier: 'SSS级',
+    desc: '十大洞天之首，开天第一洞天。',
+    detail: '王屋山洞，号曰小有清虚之天。为十大洞天之首，开天辟地以来第一洞天。黄帝曾在此设坛祭天，女娲在此炼石补天。洞天之内，日月同辉，四时长春，有三十六宫七十二院。西城王君在此坐镇亿万年，无人敢犯。',
+    beasts: ['玄鹤', '白鹿', '灵狐', '五爪金龙'],
+    spiritHerbs: ['万年灵芝', '王母蟠桃', '紫河车', '九转还魂草'],
+    legacy: ['黄帝阴符经', '女娲补天诀', '西城王君大道'],
+    status: '现世',
+    color: '#22c55e',
+    icon: '👑'
+  },
+  {
+    rank: 2,
+    name: '委羽山洞',
+    alias: '大有空明之天',
+    location: '浙江委羽山',
+    spiritLevel: 98,
+    master: '青童君',
+    feature: '仙人藏丹砂秘籍于此',
+    tier: 'SS级',
+    desc: '第二洞天，上古仙人埋丹藏经之地。',
+    detail: '委羽山洞，号曰大有空明之天。上古仙人青童君在此埋丹藏经，留下无数丹道秘籍。洞天之内，遍地丹砂，空气中都弥漫着丹香。凡人吸入一口，便可延年益寿，百病不侵。',
+    beasts: ['青鸾', '火凤', '金雕', '三足金乌'],
+    spiritHerbs: ['丹砂', '赤灵芝', '火焰果', '太阳神花'],
+    legacy: ['青童君丹经', '九转金丹诀', '火府秘传'],
+    status: '半隐',
+    color: '#ef4444',
+    icon: '🔥'
+  },
+  {
+    rank: 3,
+    name: '西城山洞',
+    alias: '太玄总真之天',
+    location: '四川青城山',
+    spiritLevel: 96,
+    master: '元始天王',
+    feature: '五龙护持，太上老君传道处',
+    tier: 'SS级',
+    desc: '第三洞天，太上老君传道圣地。',
+    detail: '西城山洞，号曰太玄总真之天。元始天王坐镇，五龙护持。太上老君曾在此讲经传道，度化无数众生。洞天之中，随时随地都能听到大道梵音，修行一日，胜过外界百年。',
+    beasts: ['五龙', '仙鹤', '白猿', '青牛'],
+    spiritHerbs: ['先天一气草', '太玄丹', '悟道茶'],
+    legacy: ['元始天尊大道', '太上老君道德经', '五龙护脏法'],
+    status: '现世',
+    color: '#a855f7',
+    icon: '📿'
+  },
+  {
+    rank: 4,
+    name: '西玄山洞',
+    alias: '三元极真之天',
+    location: '陕西华山',
+    spiritLevel: 95,
+    master: '赤松子',
+    feature: '三峰对峙，自古修真圣地',
+    tier: 'S级',
+    desc: '第四洞天，西岳华山，自古剑修圣地。',
+    detail: '西玄山洞，号曰三元极真之天。赤松子得道之处。三峰对峙，如刀似剑，自古便是剑修圣地。洞天之中，剑意冲天，等闲妖魔不敢靠近半步。',
+    beasts: ['黑虎', '苍龙', '白帝子', '剑魂'],
+    spiritHerbs: ['太乙金精', '剑心草', '白帝石乳'],
+    legacy: ['赤松子导引术', '华山剑法', '白帝金精气'],
+    status: '现世',
+    color: '#6366f1',
+    icon: '⚔️'
+  },
+  {
+    rank: 5,
+    name: '青城山洞',
+    alias: '宝仙九室之天',
+    location: '四川青城山',
+    spiritLevel: 93,
+    master: '宁封子',
+    feature: '五岳丈人坐镇，道教第五洞天',
+    tier: 'S级',
+    desc: '第五洞天，五岳丈人修道之所。',
+    detail: '青城山洞，号曰宝仙九室之天。宁封子在此得道，五岳丈人坐镇。洞天分九室，每室都藏有一件至宝。青城山，天下幽，名不虚传。',
+    beasts: ['灵獒', '白蛇', '七彩蝶', '玄龟'],
+    spiritHerbs: ['宁封芝', '五岳真形草', '宝仙花'],
+    legacy: ['宁封子龙跻术', '五岳真形图', '九室丹经'],
+    status: '现世',
+    color: '#06b6d4',
+    icon: '🐍'
+  },
+  {
+    rank: 6,
+    name: '赤城山洞',
+    alias: '上清玉平之天',
+    location: '浙江天台山',
+    spiritLevel: 90,
+    master: '玄洲仙伯',
+    feature: '赤霞万丈，琼楼玉宇隐现',
+    tier: 'A级',
+    desc: '第六洞天，赤霞万丈，仙都秘境。',
+    detail: '赤城山洞，号曰上清玉平之天。玄洲仙伯住持。每日清晨，赤霞万丈，洞天之中琼楼玉宇若隐若现。相传天台十万八千丈，对此欲倒东南倾。',
+    beasts: ['朱雀', '丹凤', '赤鲤', '火鸦'],
+    spiritHerbs: ['赤霞草', '朱果', '玉平芝'],
+    legacy: ['上清大洞真经', '天台丹诀', '玄洲仙法'],
+    status: '隐世',
+    color: '#f97316',
+    icon: '🌅'
+  },
+  {
+    rank: 7,
+    name: '罗浮山洞',
+    alias: '朱明曜真之天',
+    location: '广东罗浮山',
+    spiritLevel: 88,
+    master: '葛洪仙翁',
+    feature: '蓬莱一脉浮海而至',
+    tier: 'A级',
+    desc: '第七洞天，蓬莱浮来，丹道圣地。',
+    detail: '罗浮山洞，号曰朱明曜真之天。葛洪仙翁在此炼丹得道。相传此山本是蓬莱一脉，浮海而至，与罗山并峙，故称罗浮。洞天之中，丹灶千年不熄。',
+    beasts: ['蛟龙', '玄武', '千年龟', '灵鳄'],
+    spiritHerbs: ['罗浮仙草', '朱明丹', '曜真芝'],
+    legacy: ['葛洪抱朴子', '金匮药方', '炼丹术'],
+    status: '现世',
+    color: '#14b8a6',
+    icon: '🧪'
+  },
+  {
+    rank: 8,
+    name: '句曲山洞',
+    alias: '金坛华阳之天',
+    location: '江苏茅山',
+    spiritLevel: 85,
+    master: '三茅真君',
+    feature: '华阳洞天，金陵之屏障',
+    tier: 'B级',
+    desc: '第八洞天，三茅真君得道处，符箓圣地。',
+    detail: '句曲山洞，号曰金坛华阳之天。三茅真君在此得道，开创茅山一脉。洞天之中，符箓之力笼罩四方，百鬼夜行，不敢入内。为金陵城之天然屏障。',
+    beasts: ['白犀', '青牛', '灵芝鹿', '黄鼠狼'],
+    spiritHerbs: ['茅君芝', '华阳草', '符箓朱砂'],
+    legacy: ['三茅真君秘录', '茅山符箓', '上清大法'],
+    status: '现世',
+    color: '#84cc16',
+    icon: '📜'
+  },
+  {
+    rank: 9,
+    name: '林屋山洞',
+    alias: '左神幽虚之天',
+    location: '江苏太湖',
+    spiritLevel: 82,
+    master: '龙威丈人',
+    feature: '藏大禹治水秘籍金简玉字',
+    tier: 'B级',
+    desc: '第九洞天，太湖龙宫，金简玉字藏书处。',
+    detail: '林屋山洞，号曰左神幽虚之天。龙威丈人住持，藏有大禹治水时留下的金简玉字。洞天位于太湖湖心深处，有水路直通龙宫。凡人难得一见。',
+    beasts: ['太湖龙君', '白鱼', '水麒麟', '大鼋'],
+    spiritHerbs: ['水精', '夜明珠', '龙涎香'],
+    legacy: ['大禹治水秘籍', '金简玉字', '龙宫水法'],
+    status: '隐世',
+    color: '#0ea5e9',
+    icon: '🐉'
+  },
+  {
+    rank: 10,
+    name: '括苍山洞',
+    alias: '成德隐玄之天',
+    location: '浙江括苍山',
+    spiritLevel: 80,
+    master: '太极真人',
+    feature: '徐来勒真人得道处',
+    tier: 'C级',
+    desc: '第十洞天，太极真人传法圣地。',
+    detail: '括苍山洞，号曰成德隐玄之天。徐来勒真人在此得道，太极真人在此传法。洞天幽深，与世隔绝，山中一日，世上千年。常有樵夫误入，出山时已过百年。',
+    beasts: ['玄豹', '黄熊', '飞廉', '麋鹿'],
+    spiritHerbs: ['隐玄芝', '成德草', '太极丹'],
+    legacy: ['太极真人法', '徐来勒丹经', '隐玄道'],
+    status: '半隐',
+    color: '#64748b',
+    icon: '🦌'
+  }
+]
+
+const SEVEN_BLESSED_LANDS: BlessedLand[] = [
+  {
+    rank: 1,
+    name: '终南山',
+    location: '陕西秦岭',
+    spiritLevel: 95,
+    master: '太上老君',
+    feature: '老子出关，尹喜闻道',
+    tier: 'SS级',
+    desc: '七十二福地之首，道源圣地。',
+    detail: '终南山，七十二福地之首。老子骑青牛出关，在此留下道德经五千言。尹喜在此得道，开创楼观一脉。终南七十二峪，峪峪有神仙。自古便是天下修道之人向往之地。',
+    specialties: ['楼观台', '道德经', '内丹术'],
+    notableFigures: ['老子', '尹喜', '钟离权', '吕洞宾', '王重阳'],
+    status: '现世',
+    color: '#a855f7',
+    icon: '🐮'
+  },
+  {
+    rank: 2,
+    name: '武当山',
+    location: '湖北十堰',
+    spiritLevel: 92,
+    master: '真武大帝',
+    feature: '非真武不足以当之',
+    tier: 'S级',
+    desc: '真武大帝道场，内家拳发源地。',
+    detail: '武当山，真武大帝道场。山势如玄武盘踞，非真武不足以当之。张三丰在此悟道，开创太极拳一脉。七十二峰朝大顶，二十四涧水长流。有云：北崇少林，南尊武当。',
+    specialties: ['太极拳', '武当剑', '真武大帝像'],
+    notableFigures: ['真武大帝', '张三丰', '张无忌'],
+    status: '现世',
+    color: '#3b82f6',
+    icon: '🥋'
+  },
+  {
+    rank: 3,
+    name: '龙虎山',
+    location: '江西鹰潭',
+    spiritLevel: 90,
+    master: '张天师',
+    feature: '天师道祖庭，丹成龙虎见',
+    tier: 'S级',
+    desc: '正一教祖庭，张天师世袭之地。',
+    detail: '龙虎山，天师道祖庭。第一代天师张道陵在此炼丹，丹成龙虎现，因此得名。张天师在此世袭六十三代，历时一千八百余年。有云：心诚则灵，有求必应。',
+    specialties: ['天师符箓', '正一教', '龙虎丹'],
+    notableFigures: ['张道陵', '历代张天师'],
+    status: '现世',
+    color: '#ef4444',
+    icon: '🐯'
+  },
+  {
+    rank: 4,
+    name: '崂山',
+    location: '山东青岛',
+    spiritLevel: 88,
+    master: '丘处机',
+    feature: '海上第一名山',
+    tier: 'A级',
+    desc: '全真教圣地，海上仙山。',
+    detail: '崂山，海上第一名山。丘处机在此弘道，开创全真教龙门派。山海奇观，云雾缭绕，人称：泰山虽云高，不如东海崂。聊斋之中多有崂山道士的传说。',
+    specialties: ['崂山道士', '穿墙术', '太清水月'],
+    notableFigures: ['丘处机', '张三丰', '蒲松龄'],
+    status: '现世',
+    color: '#06b6d4',
+    icon: '🌊'
+  },
+  {
+    rank: 5,
+    name: '峨眉山',
+    location: '四川乐山',
+    spiritLevel: 85,
+    master: '普贤菩萨',
+    feature: '峨眉天下秀',
+    tier: 'A级',
+    desc: '普贤菩萨道场，佛道双修圣地。',
+    detail: '峨眉山，普贤菩萨道场。峨眉天下秀，山势逶迤，如螓首蛾眉。白娘子在此修道，山中多有灵猴。金顶佛光，为天下奇观。',
+    specialties: ['普贤菩萨', '峨眉剑法', '佛光'],
+    notableFigures: ['普贤菩萨', '白娘子', '郭襄'],
+    status: '现世',
+    color: '#fbbf24',
+    icon: '🐵'
+  },
+  {
+    rank: 6,
+    name: '普陀山',
+    location: '浙江舟山',
+    spiritLevel: 83,
+    master: '观世音菩萨',
+    feature: '海天佛国',
+    tier: 'A级',
+    desc: '观世音菩萨道场，南海圣境。',
+    detail: '普陀山，观世音菩萨道场。南海圣境，海天佛国。观世音菩萨在此普度众生，有求必应。每逢观音诞辰，香客云集，人山人海。',
+    specialties: ['南海观音', '不肯去观音院', '潮音洞'],
+    notableFigures: ['观世音菩萨', '善财童子', '龙女'],
+    status: '现世',
+    color: '#22c55e',
+    icon: '🪷'
+  },
+  {
+    rank: 7,
+    name: '昆仑山',
+    location: '中国西部',
+    spiritLevel: 100,
+    master: '西王母',
+    feature: '万山之祖，龙脉之源',
+    tier: 'SSS级',
+    desc: '万山之祖，中华龙脉之源，西王母瑶池所在地。',
+    detail: '昆仑山，万山之祖，中华龙脉之源。西王母在此设瑶池蟠桃会，宴请群仙。山上有黄帝之宫，悬圃瑶池，乃上古众神所居之地。凡人登上昆仑，便能成仙。',
+    specialties: ['瑶池蟠桃', '西王母', '昆仑玉'],
+    notableFigures: ['西王母', '黄帝', '后羿', '嫦娥'],
+    status: '隐世',
+    color: '#fbbf24',
+    icon: '❄️'
+  }
+]
+
+export default function DongtianPage() {
+  const [filteredCaves, setFilteredCaves] = useState(TEN_CAVE_HEAVENS)
+  const [expandedCave, setExpandedCave] = useState<string | null>(null)
+  const [filteredLands, setFilteredLands] = useState(SEVEN_BLESSED_LANDS)
+  const [expandedLand, setExpandedLand] = useState<string | null>(null)
+
+  const handleCaveFilter = useCallback((data: typeof TEN_CAVE_HEAVENS) => {
+    setFilteredCaves(data)
+  }, [])
+
+  const handleLandFilter = useCallback((data: typeof SEVEN_BLESSED_LANDS) => {
+    setFilteredLands(data)
+  }, [])
+
+  const caveFilters = {
+    searchKeys: ['name', 'alias', 'location', 'master', 'feature', 'desc', 'detail', 'beasts', 'spiritHerbs', 'legacy'],
+    filterKeys: {
+      tier: [...new Set(TEN_CAVE_HEAVENS.map(c => c.tier))],
+      status: [...new Set(TEN_CAVE_HEAVENS.map(c => c.status))],
+    },
+    sortOptions: [
+      { key: 'spiritLevel', label: '灵气排序' },
+      { key: 'rank', label: '排名排序' },
+      { key: 'name', label: '洞天名称' },
+    ],
+  }
+
+  const landFilters = {
+    searchKeys: ['name', 'location', 'master', 'feature', 'desc', 'detail', 'specialties', 'notableFigures'],
+    filterKeys: {
+      tier: [...new Set(SEVEN_BLESSED_LANDS.map(l => l.tier))],
+      status: [...new Set(SEVEN_BLESSED_LANDS.map(l => l.status))],
+    },
+    sortOptions: [
+      { key: 'spiritLevel', label: '灵气排序' },
+      { key: 'rank', label: '排名排序' },
+      { key: 'name', label: '福地名称' },
+    ],
+  }
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case '现世': return { bg: 'rgba(34, 197, 94, 0.15)', color: '#22c55e' }
+      case '半隐': return { bg: 'rgba(234, 179, 8, 0.15)', color: '#eab308' }
+      case '隐世': return { bg: 'rgba(107, 114, 128, 0.15)', color: '#6b7280' }
+      default: return { bg: 'rgba(107, 114, 128, 0.15)', color: '#6b7280' }
+    }
+  }
+
+  return (
+    <SubPageTemplate
+      title="洞天福地"
+      subtitle="十大洞天 · 三十六小洞天 · 七十二福地 · 人间仙境"
+      icon="🏔️"
+      colorRgb="170, 136, 255"
+    >
+      <SubPageSection title="十大洞天">
+        <FilterBar
+          data={TEN_CAVE_HEAVENS}
+          onFiltered={handleCaveFilter}
+          options={caveFilters}
+          placeholder="搜索洞天名称、洞主、位置..."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredCaves.map((cave, idx) => (
+            <motion.div key={cave.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
+              <InfoCard
+                title={`${cave.icon} ${cave.name}`}
+                subtitle={`第${cave.rank}名 · ${cave.alias}`}
+                glowColor={cave.color.replace('#', '')}
+                glowIntensity={90}
+                onClick={() => setExpandedCave(expandedCave === cave.name ? null : cave.name)}
+              >
+                <div className="space-y-3">
+                  <p className="text-gray-600 text-sm">{cave.desc}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">📍 {cave.location}</span>
+                    <span className="text-xs text-gray-500">👤 {cave.master}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span>灵气浓度</span>
+                      <span>{cave.spiritLevel}%</span>
+                    </div>
+                    <ProgressBar value={cave.spiritLevel} color={cave.color} />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded text-xs" style={getStatusStyle(cave.status)}>
+                      {cave.status}
+                    </span>
+                    <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">{cave.tier}</span>
+                  </div>
+                  <p className="text-center text-xs text-gray-400">
+                    {expandedCave === cave.name ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </p>
+                </div>
+                <AnimatePresence>
+                  {expandedCave === cave.name && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-4 border-t space-y-4">
+                        <div>
+                          <h5 className="font-semibold text-sm mb-2">详细介绍</h5>
+                          <p className="text-sm text-gray-600">{cave.detail}</p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <h5 className="font-semibold text-xs mb-2">守护异兽</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {cave.beasts.map((b, i) => (
+                                <span key={i} className="px-1.5 py-0.5 bg-red-50 text-red-700 rounded text-xs">
+                                  {b}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-xs mb-2">天材地宝</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {cave.spiritHerbs.map((h, i) => (
+                                <span key={i} className="px-1.5 py-0.5 bg-green-50 text-green-700 rounded text-xs">
+                                  {h}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-xs mb-2">传承秘籍</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {cave.legacy.map((l, i) => (
+                                <span key={i} className="px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded text-xs">
+                                  {l}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </InfoCard>
+            </motion.div>
+          ))}
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="七十二福地代表">
+        <FilterBar
+          data={SEVEN_BLESSED_LANDS}
+          onFiltered={handleLandFilter}
+          options={landFilters}
+          placeholder="搜索福地名称、祖师、位置..."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredLands.map((land, idx) => (
+            <motion.div key={land.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}>
+              <InfoCard
+                title={`${land.icon} ${land.name}`}
+                subtitle={`第${land.rank}名 · ${land.tier}`}
+                glowColor={land.color.replace('#', '')}
+                glowIntensity={90}
+                onClick={() => setExpandedLand(expandedLand === land.name ? null : land.name)}
+              >
+                <div className="space-y-3">
+                  <p className="text-gray-600 text-sm">{land.desc}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">📍 {land.location}</span>
+                    <span className="text-xs text-gray-500">👤 {land.master}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span>灵气浓度</span>
+                      <span>{land.spiritLevel}%</span>
+                    </div>
+                    <ProgressBar value={land.spiritLevel} color={land.color} />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded text-xs" style={getStatusStyle(land.status)}>
+                      {land.status}
+                    </span>
+                    <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">{land.feature}</span>
+                  </div>
+                  <p className="text-center text-xs text-gray-400">
+                    {expandedLand === land.name ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </p>
+                </div>
+                <AnimatePresence>
+                  {expandedLand === land.name && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-4 border-t space-y-4">
+                        <div>
+                          <h5 className="font-semibold text-sm mb-2">详细介绍</h5>
+                          <p className="text-sm text-gray-600">{land.detail}</p>
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-sm mb-2">特色特产</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {land.specialties.map((s, i) => (
+                              <span key={i} className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-sm mb-2">著名人物</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {land.notableFigures.map((f, i) => (
+                              <span key={i} className="px-2 py-1 bg-amber-50 text-amber-700 rounded text-xs">
+                                {f}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </InfoCard>
+            </motion.div>
+          ))}
+        </div>
+      </SubPageSection>
+    </SubPageTemplate>
+  )
+}

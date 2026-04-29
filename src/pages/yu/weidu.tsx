@@ -1,0 +1,742 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import SubPageTemplate, { SubPageSection, InfoCard, ProgressBar } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface Dimension {
+  id: number
+  level: number
+  name: string
+  alias: string
+  feature: string
+  physics: string
+  beings: string
+  access: string
+  difficulty: number
+  desc: string
+  detail: string
+  capabilities: string[]
+  limitations: string[]
+  knownCultivators: string[]
+  mysteries: string[]
+  color: string
+  icon: string
+}
+
+interface TimeParadox {
+  id: number
+  name: string
+  type: string
+  danger: number
+  feature: string
+  desc: string
+  detail: string
+  cause: string[]
+  consequences: string[]
+  solutions: string[]
+  knownCases: string[]
+  color: string
+  icon: string
+}
+
+const DIMENSIONS: Dimension[] = [
+  {
+    id: 1,
+    level: 0,
+    name: '零维空间',
+    alias: '奇点',
+    feature: '无长宽高，无限小的点',
+    physics: '时空在此收敛，一切法则失效',
+    beings: '无生命体存在',
+    access: '理论不可达',
+    difficulty: 100,
+    desc: '一切的开始与结束，无限小即是无限大。',
+    detail: '零维，又称奇点，是维度的起点与终点。在这里，没有长宽高的概念，没有空间的概念，甚至没有时间的概念。时空在此收敛为一个无限小的点，一切物理法则在此失效，一切道则在此泯灭。传说如果有人能够真正到达并理解零维，那么他便可以超脱一切，因为他本身便成为了奇点，成为了万物的起点与终点。然而，这也意味着失去一切，因为在奇点中，连"存在"这个概念本身都不存在。',
+    capabilities: ['创生万物', '终结一切', '超脱概念'],
+    limitations: ['不可到达', '不可理解', '不可描述'],
+    knownCultivators: ['未知存在', '万物化身'],
+    mysteries: ['奇点之前是什么', '谁创造了奇点', '奇点中是否有意识'],
+    color: '#6b7280',
+    icon: '⚫'
+  },
+  {
+    id: 2,
+    level: 1,
+    name: '一维空间',
+    alias: '直线世界',
+    feature: '只有长度，没有宽度',
+    physics: '物体只能前后移动',
+    beings: '线段生命，无法感知侧向',
+    access: '意识投影可达',
+    difficulty: 10,
+    desc: '无穷小的细线，串联了所有的点。',
+    detail: '一维空间，只有长度，没有宽度和高度。对于一维生命来说，世界就是一条线，他们只能向前或者向后移动，他们的眼中只有点。他们无法理解"侧面"这个概念，就像三维生命无法理解"第四个方向"一样。然而，一维空间虽然简单，却是构成更高维度的基础。修士可以通过意识投影进入一维空间，体验最纯粹的线性存在，以此感悟时间的本质。',
+    capabilities: ['时间线性感悟', '因果线初步感知', '意识纯粹化'],
+    limitations: ['无法侧向移动', '感知范围极小', '不能影响高维'],
+    knownCultivators: ['时间修士', '因果线监察者'],
+    mysteries: ['线的尽头是什么', '一维生物是否有智慧', '是否存在一维古神'],
+    color: '#22c55e',
+    icon: '➖'
+  },
+  {
+    id: 3,
+    level: 2,
+    name: '二维空间',
+    alias: '平面世界',
+    feature: '只有长宽，没有高度',
+    physics: '平面几何，第三个方向不存在',
+    beings: '纸片人，眼中一切都是线段',
+    access: '意识投影可达',
+    difficulty: 20,
+    desc: '无限薄的平面，承载了所有的形状。',
+    detail: '二维空间，有长度和宽度，但没有高度。对于二维生命来说，世界就是一个平面，他们就是一个个的图形。他们的眼睛看到的一切都是线段，他们无法理解"上方"这个概念。一个简单的圆圈就可以把他们永远困住，因为他们无法从上方越过。修士进入二维空间后，可以感悟平面道则，学习阵法的本源，因为所有的阵法本质上都是二维的符文在三维空间的投影。',
+    capabilities: ['阵法本源感悟', '符文铭刻', '平面防御大师'],
+    limitations: ['无法上下移动', '极易被封印', '无法攻击高维'],
+    knownCultivators: ['阵道仙师', '符文大帝', '平面贤者'],
+    mysteries: ['平面世界是否有大帝', '二维是否有自己的文明', '画中人是否真的存在'],
+    color: '#3b82f6',
+    icon: '🔲'
+  },
+  {
+    id: 4,
+    level: 3,
+    name: '三维空间',
+    alias: '物质世界',
+    feature: '长宽高，人类生存的维度',
+    physics: '经典物理，牛顿三定律',
+    beings: '碳基生命，诸多种族',
+    access: '此界就是故乡',
+    difficulty: 0,
+    desc: '我们生活的世界，坚实而真实。',
+    detail: '三维空间，有长度、宽度和高度。这是我们生活的世界，是我们最熟悉的维度。在这里，物质是坚实的，时间是单向流动的，因果是分明的。然而，对于高维存在来说，三维空间只是他们眼中的一个"平面"而已。他们可以随意地干涉三维世界，就像我们在纸上画画一样。然而，三维世界也有自己的优势，这里是最适合修行的地方，因为在这里，每一步都是坚实的，每一次感悟都是真实的。',
+    capabilities: ['肉身修行', '元神修炼', '法则感悟', '万世轮回'],
+    limitations: ['无法突破光速', '无法逆转时间', '无法穿梭维度'],
+    knownCultivators: ['所有修士', '万物生灵'],
+    mysteries: ['三维是真实的吗', '谁创造了物理法则', '三维是试炼场吗'],
+    color: '#a855f7',
+    icon: '🎲'
+  },
+  {
+    id: 5,
+    level: 4,
+    name: '四维空间',
+    alias: '时间维度',
+    feature: '三维+时间轴，一览过去未来',
+    physics: '时空一体，相对时空观',
+    beings: '时间观察者，跳出时间流',
+    access: '大帝级可触及',
+    difficulty: 70,
+    desc: '站在时间长河的岸边，看浪花翻滚。',
+    detail: '四维空间，三维空间加上时间轴。在这里，时间不再是单向流动的河流，而是变成了一条可以上下游走的路。四维存在可以站在时间之外，看着过去和未来，就像我们看着一条路的起点和终点一样。他们看到的不再是一个个瞬间，而是一个个完整的人的一生。然而，看到未来并不代表可以改变未来。每一次试图改变时间的行为，都会造成时间的反噬，让未来变得更加糟糕。',
+    capabilities: ['预知未来', '追溯过去', '时间减速', '时间加速'],
+    limitations: ['无法改变既定事实', '时间反噬', '无法影响五维'],
+    knownCultivators: ['无始大帝', '叶凡', '狠人大帝', '时间仙王'],
+    mysteries: ['时间的源头', '谁在制定时间规则', '时间有终点吗'],
+    color: '#ef4444',
+    icon: '⏳'
+  },
+  {
+    id: 6,
+    level: 5,
+    name: '五维空间',
+    alias: '概率维度',
+    feature: '所有时间线分支同时存在',
+    physics: '因果分叉，无限可能性',
+    beings: '命运编织者，选择观测者',
+    access: '仙尊级可进入',
+    difficulty: 80,
+    desc: '每一个选择，都创造了一个新的世界。',
+    detail: '五维空间，所有可能的时间线的集合。在这里，每一个选择，每一个可能性，都是真实存在的。你选择了A，于是有了世界A；你选择了B，于是有了世界B。在五维存在的眼中，所有的可能性都是同时存在的，他们可以看到A世界中的你，也可以看到B世界中的你。他们可以选择观测某一条时间线，也可以选择干涉某一个可能性。然而，选择太多，往往意味着没有选择。',
+    capabilities: ['命运干涉', '概率操纵', '平行世界观测', '因果线修改'],
+    limitations: ['无法同时选择', '选择太多等于没有选择', '创造悖论'],
+    knownCultivators: ['命运仙尊', '因果之主', '概率老人'],
+    mysteries: ['有多少条时间线', '时间线会重合吗', '是谁在选择'],
+    color: '#f97316',
+    icon: '🔀'
+  },
+  {
+    id: 7,
+    level: 6,
+    name: '六维空间',
+    alias: '维度折叠',
+    feature: '所有时间线可以折叠跳转',
+    physics: '任意穿越平行宇宙',
+    beings: '维度穿梭者，平行干涉者',
+    access: '准仙王级可达到',
+    difficulty: 85,
+    desc: '将无限的可能性折叠成一个点，然后一跃而过。',
+    detail: '六维空间，时间线的折叠。在五维中，你需要沿着时间线从A走到B；但在六维中，你可以直接把A和B折叠在一起，瞬间到达。六维存在可以随意地穿梭于任意平行宇宙之间，他们可以在这个世界是善，在那个世界是恶。他们可以体验无限的人生，拥有无限的可能。然而，穿梭于太多的平行世界之后，他们往往会失去自我，不知道哪一个才是真正的自己。',
+    capabilities: ['平行宇宙穿梭', '身份置换', '记忆移植', '世界线收束'],
+    limitations: ['自我认知混乱', '存在稀释', '被本我排斥'],
+    knownCultivators: ['维度行者', '万界穿梭者', '平行仙帝'],
+    mysteries: ['有相同的我吗', '穿梭会留下痕迹吗', '我还是原来的我吗'],
+    color: '#eab308',
+    icon: '🔄'
+  },
+  {
+    id: 8,
+    level: 7,
+    name: '七维空间',
+    alias: '宇宙起点',
+    feature: '包含所有宇宙所有可能性',
+    physics: '一即一切，一切即一',
+    beings: '宇宙级存在，造物主',
+    access: '仙王级可达到',
+    difficulty: 90,
+    desc: '一个宇宙，就是七维中的一个点。',
+    detail: '七维空间，一个宇宙的全部。在七维存在的眼中，一个从大爆炸开始，到热寂结束的完整宇宙，不过是七维空间中的一个点而已。这个点包含了这个宇宙中的所有时间，所有空间，所有可能性。七维存在可以随意地创造一个宇宙，也可以随意地毁灭一个宇宙。他们就是凡人眼中的造物主。然而，即使是这样伟大的存在，在更高的维度眼中，也不过是一粒尘埃而已。',
+    capabilities: ['创造宇宙', '毁灭宇宙', '修改法则', '宇宙重开'],
+    limitations: ['无法离开本宇宙', '无法创造新的法则', '无法影响其他宇宙'],
+    knownCultivators: ['界海巨头', '宇宙造物主', '仙帝'],
+    mysteries: ['谁创造了第一个宇宙', '有多少个宇宙', '宇宙之外是什么'],
+    color: '#06b6d4',
+    icon: '🌌'
+  },
+  {
+    id: 9,
+    level: 8,
+    name: '八维空间',
+    alias: '多元宇宙',
+    feature: '包含无限个七维宇宙',
+    physics: '道则演化，有无相生',
+    beings: '多元宇宙管理者',
+    access: '不朽仙帝',
+    difficulty: 95,
+    desc: '无限的宇宙，无限的可能，组成了多元的乐章。',
+    detail: '八维空间，无限个宇宙的集合。在这里，每一个宇宙都是一个独立的存在，有自己的法则，有自己的历史，有自己的结局。八维存在可以随意地游走于各个宇宙之间，可以比较不同宇宙的法则优劣，可以选择最好的宇宙居住。他们是多元宇宙的管理者，维持着多元宇宙的平衡。然而，即使是他们，也无法违逆多元宇宙的意志。',
+    capabilities: ['多元宇宙穿梭', '法则比较', '宇宙平衡维护', '跨界传送'],
+    limitations: ['无法创造新宇宙', '无法违逆大势', '无法到达九维'],
+    knownCultivators: ['祭道级存在', '道祖', '多元守护者'],
+    mysteries: ['多元宇宙有边界吗', '谁在维持平衡', '多元之外是什么'],
+    color: '#14b8a6',
+    icon: '♾️'
+  },
+  {
+    id: 10,
+    level: 9,
+    name: '九维空间',
+    alias: '法则维度',
+    feature: '一切法则的本源维度',
+    physics: '万道之源，法则生灭',
+    beings: '道则化身，法则灵智',
+    access: '祭道之上',
+    difficulty: 99,
+    desc: '每一条法则，都是一个活着的存在。',
+    detail: '九维空间，万道之源。在这里，时间法则、空间法则、因果法则、生死法则，每一条法则都是活着的存在，有自己的意识，有自己的意志。他们是真正的永恒，从多元宇宙诞生之初便存在，直到多元宇宙终结也不会消失。九维存在就是法则本身，法则就是他们。他们可以随意地创造新的法则，也可以随意地废掉旧的法则。然而，成为法则的代价，就是失去作为人的一切。',
+    capabilities: ['法则创造', '法则毁灭', '万道执掌', '概念修改'],
+    limitations: ['失去人性', '无法离开九维', '无法超脱法则'],
+    knownCultivators: ['上苍之上存在', '道的化身'],
+    mysteries: ['法则是如何诞生的', '谁创造了法则', '道之上是什么'],
+    color: '#f43f5e',
+    icon: '✨'
+  },
+  {
+    id: 11,
+    level: 10,
+    name: '十维空间',
+    alias: '混沌维度',
+    feature: '包含无限可能，一切即一',
+    physics: '无法则，无概念，无意义',
+    beings: '不可说，不可思，不可议',
+    access: '不可企及',
+    difficulty: 100,
+    desc: '连"存在"都不存在的地方，连"无"都没有。',
+    detail: '十维空间，一切的终结与开始。在这里，没有法则，没有概念，没有意义，甚至连"无"都没有。无法用语言描述，无法用思维理解，无法用意识感知。十维存在，不可说，不可思，不可议。对于他们来说，多元宇宙的生灭，不过是一个念头的生灭而已。然而，达到十维的代价是什么？十维之后还有什么？没有人知道答案。也许，连问题本身都不存在。',
+    capabilities: ['不可说', '不可思', '不可议'],
+    limitations: ['不存在限制'],
+    knownCultivators: ['未知'],
+    mysteries: ['不可说的秘密'],
+    color: '#ec4899',
+    icon: '☯️'
+  }
+]
+
+const TIME_PARADOXES: TimeParadox[] = [
+  {
+    id: 1,
+    name: '祖父悖论',
+    type: '因果悖论',
+    danger: 85,
+    feature: '回到过去杀死自己的祖父',
+    desc: '最经典的时间悖论，因果的矛盾。',
+    detail: '你回到过去，在你的父亲出生前杀死了你的祖父。那么，既然你的祖父死了，就不会有你的父亲，也就不会有你。既然没有你，那么是谁回到过去杀死了你的祖父？这就是因果的矛盾，也是时间旅行最根本的问题。这个悖论没有答案，它本身就是时空的BUG。每一次试图解决这个悖论，都会创造出更多的悖论。',
+    cause: ['改变直系血亲的历史', '回到自己出生前的时间', '抹杀自己存在的根基'],
+    consequences: ['时间线崩溃', '创造平行世界', '被时间抹除', '因果反噬'],
+    solutions: ['平行世界理论', '因果闭环', '历史必然性', '观察者原则'],
+    knownCases: ['某仙帝试图改变历史被抹杀', '时间乱流中的残魂'],
+    color: '#ef4444',
+    icon: '👴'
+  },
+  {
+    id: 2,
+    name: '信息悖论',
+    type: '起源悖论',
+    danger: 75,
+    feature: '信息从未来送到过去，没有起源',
+    desc: '鸡蛋没有鸡，鸡也没有蛋。',
+    detail: '你得到了一本来自未来的功法，然后你把它抄录下来，送到了过去的自己手中。那么，这本功法到底是谁写的？它从未来来到过去，又从过去走到未来，形成了一个闭环。它没有作者，没有起源，就像是凭空出现的一样。这就是信息悖论，一个没有源头的环。信息不可能凭空出现，但在时间的闭环中，一切皆有可能。',
+    cause: ['传送信息到过去', '创造信息闭环', '无中生有'],
+    consequences: ['信息增殖', '起源迷失', '大道缺损', '循环诅咒'],
+    solutions: ['某一时刻必须创造', '信息必然退化', '世界自动补全'],
+    knownCases: ['某古皇的帝经来自未来', '无名古经的诅咒'],
+    color: '#a855f7',
+    icon: '📜'
+  },
+  {
+    id: 3,
+    name: ' bootstrap悖论',
+    type: '循环悖论',
+    danger: 80,
+    feature: '自己成为了自己存在的原因',
+    desc: '我就是我自己的造物主。',
+    detail: '你回到过去，遇见了年轻时候的你的母亲，然后你和她生下了你的父亲。这样一来，你就是你自己的祖父，你自己创造了你自己。或者，你回到过去，教给了年轻时的无始大帝无始经，然后无始经传了下来，又被你学到。你、无始大帝、无始经，形成了一个完美的闭环。没有人创造，也没有人终结，一切都只是在循环而已。',
+    cause: ['自我创造历史', '成为存在的原因', '循环无始无终'],
+    consequences: ['存在固化', '无法跳出循环', '永劫回归', '自我湮灭'],
+    solutions: ['破环而出', '创造新因', '接受命运'],
+    knownCases: ['时间仙王的传说', '某位荒古世家的秘密'],
+    color: '#f97316',
+    icon: '🔁'
+  },
+  {
+    id: 4,
+    name: '观察者效应',
+    type: '干涉悖论',
+    danger: 60,
+    feature: '观察本身就是改变',
+    desc: '你以为你在看，其实你已经在做了。',
+    detail: '你回到过去，声称自己只是一个观察者，不会改变任何事情。但是，你的出现本身就已经是改变了。你呼出的空气，你挡住的阳光，你踩过的地面，这些都是改变。你以为你没有干涉历史，但历史已经因为你的出现而改变了。这就是观察者悖论，没有纯粹的观察者，所有的观察都是干涉。区别只在于，这个改变是大还是小而已。',
+    cause: ['回到过去', '观察历史', '自以为中立'],
+    consequences: ['蝴蝶效应', '历史偏差', '积少成多', '世界线偏移'],
+    solutions: ['意识投影', '不与任何事物交互', '快速穿过'],
+    knownCases: ['某大帝观历史改变了未来', '古史记载的偏差'],
+    color: '#3b82f6',
+    icon: '👁️'
+  },
+  {
+    id: 5,
+    name: '永动机悖论',
+    type: '能量悖论',
+    danger: 90,
+    feature: '从未来借取能量永远不还',
+    desc: '无限的能量来自无限的未来。',
+    detail: '你从一秒后的未来借来100份能量，用来攻击敌人。然后，当到了那一秒时，你再从下一秒借来100份能量还上。这样无限地重复下去，你就拥有了无限的能量。因为未来是无限的，所以你永远也不需要真的支付这份能量。这就是时间永动机，无限能量的来源。然而，天道会允许这种事情存在吗？出来混，迟早是要还的。',
+    cause: ['跨时间借取能量', '无限延迟支付', '透支未来'],
+    consequences: ['时间债务', '未来反噬', '大道追杀', '能量崩溃'],
+    solutions: ['及时还清', '分散债务', '付出同等代价'],
+    knownCases: ['某禁区至尊的无限能量来源', '被未来反噬的准仙帝'],
+    color: '#22c55e',
+    icon: '⚡'
+  }
+]
+
+export default function WeiduPage() {
+  const [filteredDimensions, setFilteredDimensions] = useState(DIMENSIONS)
+  const [expandedDimension, setExpandedDimension] = useState<number | null>(null)
+  const [filteredParadoxes, setFilteredParadoxes] = useState(TIME_PARADOXES)
+  const [expandedParadox, setExpandedParadox] = useState<number | null>(null)
+
+  const handleDimensionFilter = useCallback((data: typeof DIMENSIONS) => {
+    setFilteredDimensions(data)
+  }, [])
+
+  const handleParadoxFilter = useCallback((data: typeof TIME_PARADOXES) => {
+    setFilteredParadoxes(data)
+  }, [])
+
+  const dimensionFilters = {
+    searchKeys: ['name', 'alias', 'feature', 'physics', 'beings', 'access', 'desc', 'detail', 'capabilities'],
+    filterKeys: {
+      access: [...new Set(DIMENSIONS.map(d => d.access))],
+    },
+    sortOptions: [
+      { key: 'level', label: '维度等级' },
+      { key: 'difficulty', label: '难度排序' },
+      { key: 'name', label: '维度名称' },
+    ],
+  }
+
+  const paradoxFilters = {
+    searchKeys: ['name', 'type', 'feature', 'desc', 'detail', 'cause', 'consequences'],
+    filterKeys: {
+      type: [...new Set(TIME_PARADOXES.map(p => p.type))],
+    },
+    sortOptions: [
+      { key: 'danger', label: '危险度' },
+      { key: 'name', label: '悖论名称' },
+    ],
+  }
+
+  return (
+    <SubPageTemplate
+      title="维度时空"
+      subtitle="零维奇点 · 一维直线 · 二维平面 · 三维物质 · 四维时间 · 无限维度"
+      icon="🌐"
+      colorRgb="59, 130, 246"
+    >
+      <SubPageSection title="维度天梯">
+        <InfoCard>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(11, 1fr)',
+            gap: '0.5rem',
+            textAlign: 'center'
+          }}>
+            {DIMENSIONS.map((dim, i) => (
+              <motion.div
+                key={dim.level}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+              >
+                <motion.div
+                  animate={dim.level >= 7 ? {
+                    scale: [1, 1.08, 1],
+                    boxShadow: [`0 0 15px ${dim.color}00`, `0 0 25px ${dim.color}`, `0 0 15px ${dim.color}00`]
+                  } : {}}
+                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '10px',
+                    background: dim.color,
+                    margin: '0 auto 0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.25rem'
+                  }}
+                >
+                  {dim.icon}
+                </motion.div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: dim.color }}>{dim.level}D</div>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(180, 180, 190, 0.7)', lineHeight: 1.2 }}>{dim.name}</div>
+              </motion.div>
+            ))}
+          </div>
+        </InfoCard>
+      </SubPageSection>
+
+      <SubPageSection title="十一维空间">
+        <FilterBar
+          data={DIMENSIONS}
+          onFiltered={handleDimensionFilter}
+          options={dimensionFilters}
+          placeholder="搜索维度名称、特征、能力、存在..."
+        />
+        
+        <div style={{ marginTop: '1.5rem' }}>
+          <AnimatePresence>
+            {filteredDimensions.map((dim, index) => (
+              <motion.div key={dim.id} layout style={{ marginBottom: '1rem' }}>
+                <InfoCard
+                  title={`${dim.level}D ${dim.name}`}
+                  subtitle={dim.alias}
+                  glowColor={dim.color.replace('#', '')}
+                  glowIntensity={dim.level >= 7 ? 90 : 60}
+                  onClick={() => setExpandedDimension(expandedDimension === dim.id ? null : dim.id)}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+                    <motion.div
+                      animate={dim.level >= 7 ? {
+                        scale: [1, 1.1, 1],
+                        boxShadow: [`0 0 20px ${dim.color}00`, `0 0 40px ${dim.color}`, `0 0 20px ${dim.color}00`]
+                      } : {}}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '12px',
+                        background: dim.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2.5rem'
+                      }}
+                    >
+                      {dim.icon}
+                    </motion.div>
+                    <div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(180, 180, 190, 0.6)' }}>悟道难度</div>
+                          <ProgressBar value={dim.difficulty} color={dim.color} height={6} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(180, 180, 190, 0.6)' }}>触及境界</div>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: dim.color }}>{dim.access}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(180, 180, 190, 0.6)' }}>物理法则</div>
+                          <div style={{ fontSize: '0.8rem', color: 'rgba(180, 180, 190, 0.9)' }}>{dim.physics}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(180, 180, 190, 0.6)' }}>存在形式</div>
+                          <div style={{ fontSize: '0.8rem', color: 'rgba(180, 180, 190, 0.9)' }}>{dim.beings}</div>
+                        </div>
+                      </div>
+                      <p style={{ color: 'rgba(180, 180, 190, 0.9)', fontSize: '0.9rem', margin: 0 }}>
+                        {dim.feature}
+                      </p>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedDimension === dim.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ 
+                          borderTop: `1px solid ${dim.color}33`,
+                          marginTop: '1rem',
+                          paddingTop: '1rem'
+                        }}>
+                          <p style={{ 
+                            color: 'rgba(180, 180, 190, 0.9)', 
+                            fontSize: '0.9rem',
+                            lineHeight: 1.8,
+                            marginBottom: '1rem',
+                            textIndent: '2em'
+                          }}>
+                            {dim.detail}
+                          </p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                            <div>
+                              <div style={{ color: dim.color, fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                ✨ 维度能力
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {dim.capabilities.map((c, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: `${dim.color}20`,
+                                    color: dim.color
+                                  }}>
+                                    {c}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                ⚠️ 维度局限
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {dim.limitations.map((l, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(239, 68, 68, 0.15)',
+                                    color: '#ef4444'
+                                  }}>
+                                    {l}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{ marginTop: '1rem' }}>
+                            <div style={{ color: '#b89438', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                              👤 已知悟道者
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                              {dim.knownCultivators.map((p, i) => (
+                                <span key={i} style={{
+                                  padding: '0.25rem 0.5rem',
+                                  borderRadius: '6px',
+                                  fontSize: '0.75rem',
+                                  background: 'rgba(184, 148, 56, 0.15)',
+                                  color: '#b89438'
+                                }}>
+                                  {p}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div style={{ 
+                    textAlign: 'center', 
+                    marginTop: '0.75rem',
+                    color: `${dim.color}99`,
+                    fontSize: '0.8rem'
+                  }}>
+                    {expandedDimension === dim.id ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </div>
+                </InfoCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="时间悖论">
+        <FilterBar
+          data={TIME_PARADOXES}
+          onFiltered={handleParadoxFilter}
+          options={paradoxFilters}
+          placeholder="搜索悖论名称、类型、成因、后果..."
+        />
+        
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '1.5rem',
+          marginTop: '1.5rem'
+        }}>
+          <AnimatePresence>
+            {filteredParadoxes.map((paradox) => (
+              <motion.div key={paradox.id} layout>
+                <InfoCard
+                  title={paradox.name}
+                  subtitle={paradox.type}
+                  glowColor={paradox.color.replace('#', '')}
+                  glowIntensity={70}
+                  onClick={() => setExpandedParadox(expandedParadox === paradox.id ? null : paradox.id)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+                    <motion.div
+                      animate={{
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '10px',
+                        background: paradox.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.75rem',
+                        flexShrink: 0
+                      }}
+                    >
+                      {paradox.icon}
+                    </motion.div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(180, 180, 190, 0.6)' }}>危险度</div>
+                          <ProgressBar value={paradox.danger} color={paradox.color} height={6} />
+                        </div>
+                      </div>
+                      <p style={{ color: 'rgba(180, 180, 190, 0.9)', fontSize: '0.9rem', margin: 0 }}>
+                        {paradox.feature}
+                      </p>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedParadox === paradox.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ 
+                          borderTop: `1px solid ${paradox.color}33`,
+                          marginTop: '1rem',
+                          paddingTop: '1rem'
+                        }}>
+                          <p style={{ 
+                            color: 'rgba(180, 180, 190, 0.9)', 
+                            fontSize: '0.9rem',
+                            lineHeight: 1.8,
+                            marginBottom: '1rem',
+                            textIndent: '2em'
+                          }}>
+                            {paradox.detail}
+                          </p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                            <div>
+                              <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                💥 触发条件
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {paradox.cause.map((c, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(239, 68, 68, 0.15)',
+                                    color: '#ef4444'
+                                  }}>
+                                    {c}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ color: '#f97316', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                ☠️ 可能后果
+                              </div>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {paradox.consequences.map((c, i) => (
+                                  <span key={i} style={{
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    background: 'rgba(249, 115, 22, 0.15)',
+                                    color: '#f97316'
+                                  }}>
+                                    {c}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{ marginTop: '1rem' }}>
+                            <div style={{ color: '#22c55e', fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                              ✅ 解决方案
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                              {paradox.solutions.map((s, i) => (
+                                <span key={i} style={{
+                                  padding: '0.25rem 0.5rem',
+                                  borderRadius: '6px',
+                                  fontSize: '0.75rem',
+                                  background: 'rgba(34, 197, 94, 0.15)',
+                                  color: '#22c55e'
+                                }}>
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div style={{ 
+                    textAlign: 'center', 
+                    marginTop: '0.75rem',
+                    color: `${paradox.color}99`,
+                    fontSize: '0.8rem'
+                  }}>
+                    {expandedParadox === paradox.id ? '▲ 收起详情' : '▼ 点击展开详情'}
+                  </div>
+                </InfoCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </SubPageSection>
+    </SubPageTemplate>
+  )
+}

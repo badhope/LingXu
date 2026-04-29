@@ -1,0 +1,1630 @@
+/* ==========================================================================
+   ✨ 灵墟档案馆 - 专业设计系统 V3.0
+   设计标准：Material Design + 国风仙侠游戏UI + 8px网格系统
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================================================
+   ✅ 8px网格空间系统 - 全站统一
+   ========================================================================== */
+
+:root {
+  /* 基础单位 = 8px */
+  --space-1: 4px;    /* 紧凑 */
+  --space-2: 8px;    /* 标准 */
+  --space-3: 12px;   /* 1.5x */
+  --space-4: 16px;   /* 2x */
+  --space-5: 24px;   /* 3x */
+  --space-6: 32px;   /* 4x */
+  --space-7: 48px;   /* 6x */
+  --space-8: 64px;   /* 8x */
+  --space-9: 96px;   /* 12x */
+  
+  /* 容器间距 */
+  --gap-card: 20px;
+  --gap-section: 56px;
+  --gap-grid: 24px;
+  --card-padding: 28px;
+  
+  /* 圆角系统 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* ==========================================================================
+     仙侠调色板 V2.0 - 专业对比度校准
+     ========================================================================== */
+  
+  --xian-gold: #c9a227;
+  --xian-gold-light: #e8d48b;
+  --xian-gold-dark: #8b6914;
+  --xian-gold-glow: rgba(201, 162, 39, 0.6);
+  
+  --xian-purple: #9b76f0;
+  --xian-blue: #5b9cf7;
+  --xian-cyan: #25c6e0;
+  --xian-red: #f56565;
+  --xian-green: #34d399;
+  
+  --xian-dark-bg: #12121a;
+  --xian-card-bg: rgba(30, 30, 48, 0.95);
+  --xian-card-bg-hover: rgba(38, 38, 58, 0.98);
+  --xian-border: rgba(201, 162, 39, 0.22);
+  --xian-border-strong: rgba(201, 162, 39, 0.4);
+  
+  /* ==========================================================================
+     排版系统 - 专业字体尺度
+     ========================================================================== */
+  
+  --fs-hero: 56px;
+  --fs-1: 40px;
+  --fs-2: 32px;
+  --fs-3: 24px;
+  --fs-4: 20px;
+  --fs-large: 18px;
+  --fs-base: 16px;
+  --fs-small: 14px;
+  --fs-xs: 13px;
+  
+  /* 响应式字体尺度 */
+  --fs-hero-clamp: clamp(36px, 8vw, 56px);
+  --fs-1-clamp: clamp(28px, 6vw, 40px);
+  --fs-2-clamp: clamp(24px, 5vw, 32px);
+  --fs-3-clamp: clamp(20px, 4vw, 24px);
+  
+  /* 行高系统 */
+  --lh-tight: 1.25;
+  --lh-title: 1.4;
+  --lh-body: 1.8;
+  --lh-loose: 2;
+  
+  /* 字距系统 */
+  --ls-tight: -0.02em;
+  --ls-normal: 0.01em;
+  --ls-title: 0.05em;
+  --ls-display: 0.08em;
+  
+  /* 字体家族 */
+  --font-display: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+  --font-body: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', serif;
+  
+  /* ==========================================================================
+     动画时间轴 - 统一缓动
+     ========================================================================== */
+  
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-glow: 3s;
+  
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* ==========================================================================
+     阴影系统 - 四层深度
+     ========================================================================== */
+  
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+  
+  --xian-shadow-glow: 0 0 20px rgba(201, 162, 39, 0.25);
+  --xian-shadow-strong: 0 0 40px rgba(201, 162, 39, 0.4);
+  
+  /* ==========================================================================
+     z-index层级 - 避免冲突
+     ========================================================================== */
+  
+  --z-base: 1;
+  --z-card: 10;
+  --z-nav: 100;
+  --z-dropdown: 200;
+  --z-sticky: 300;
+  --z-modal: 500;
+  --z-toast: 1000;
+}
+
+/* ==========================================================================
+   ✅ 标准容器系统 - 全站布局统一
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.container-narrow {
+  max-width: 1024px;
+}
+
+.container-wide {
+  max-width: 1440px;
+}
+
+.section-padding {
+  padding: var(--space-7) 0;
+}
+
+/* ==========================================================================
+   ✅ 云雾流动背景 V2.0 - 更细腻
+   ========================================================================== */
+
+.xian-cloud-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+    background: 
+      radial-gradient(ellipse at 15% 85%, rgba(102, 204, 255, 0.1) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(201, 162, 39, 0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(155, 118, 240, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 30% 30%, rgba(52, 211, 153, 0.055) 0%, transparent 50%);
+    animation: cloudDrift 80s linear infinite;
+  }
+
+  &::after {
+    animation-direction: reverse;
+    animation-duration: 120s;
+  }
+}
+
+@keyframes cloudDrift {
+  from { transform: rotate(0deg) translate(0, 0) scale(1); }
+  50% { transform: rotate(180deg) translate(15px, 20px) scale(1.05); }
+  to { transform: rotate(360deg) translate(30px, 30px) scale(1); }
+}
+
+/* ==========================================================================
+   ✅ 魔法符文装饰 V2.0 - 国风边框
+   ========================================================================== */
+
+.xian-rune-border {
+  position: relative;
+  
+  &::before,
+  &::after {
+    content: '◇';
+    position: absolute;
+    color: var(--xian-gold);
+    opacity: 0.45;
+    font-size: 0.9rem;
+    animation: runeGlow 4s ease-in-out infinite;
+    z-index: 2;
+  }
+  
+  &::before {
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  &::after {
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 2s;
+  }
+}
+
+@keyframes runeGlow {
+  0%, 100% { 
+    opacity: 0.3; 
+    text-shadow: none;
+    transform: translateX(-50%) scale(0.9);
+  }
+  50% { 
+    opacity: 0.85; 
+    text-shadow: 0 0 15px var(--xian-gold);
+    transform: translateX(-50%) scale(1.1);
+  }
+}
+
+/* ==========================================================================
+   ✅ 标准仙侠卡片组件 V2.0
+   ========================================================================== */
+
+.xian-card {
+  position: relative;
+  background: var(--xian-card-bg);
+  border: 1px solid var(--xian-border);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+  transition: all var(--duration-slow) var(--ease-standard);
+  overflow: hidden;
+  transform-origin: center;
+  will-change: transform, box-shadow, border-color;
+  
+  /* 内部光晕层 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(201, 162, 39, 0.08) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-standard);
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  /* 悬停状态 */
+  &:hover {
+    background: var(--xian-card-bg-hover);
+    border-color: var(--xian-border-strong);
+    transform: translateY(-4px);
+    box-shadow: 
+      var(--shadow-lg),
+      var(--xian-shadow-glow);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  /* 激活状态 */
+  &:active {
+    transform: translateY(-1px) scale(0.995);
+    transition-duration: var(--duration-fast);
+  }
+  
+  /* 内容层级 */
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+/* 卡片变体 - 工具大厅用 */
+.xian-card-featured {
+  @extend .xian-card;
+  
+  border-radius: var(--radius-xl);
+  
+  &:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 
+      var(--shadow-xl),
+      0 0 60px rgba(201, 162, 39, 0.2);
+  }
+}
+
+/* ==========================================================================
+   ✅ 标准仙侠按钮系统 V2.0
+   ========================================================================== */
+
+.xian-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--xian-gold-light);
+  background: linear-gradient(135deg, 
+    rgba(201, 162, 39, 0.15) 0%, 
+    rgba(201, 162, 39, 0.05) 100%);
+  border: 1px solid var(--xian-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-base) var(--ease-standard);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 44px;
+  min-width: 88px;
+  
+  &:hover:not(:disabled) {
+    color: #fff;
+    background: linear-gradient(135deg, 
+      rgba(201, 162, 39, 0.3) 0%, 
+      rgba(201, 162, 39, 0.1) 100%);
+    border-color: var(--xian-border-strong);
+    box-shadow: var(--xian-shadow-glow);
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    transition-duration: var(--duration-fast);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--xian-gold);
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* 主按钮变体 */
+  &-primary {
+    @extend .xian-btn;
+    
+    color: #0a0a0f;
+    background: linear-gradient(135deg, 
+      var(--xian-gold) 0%, 
+      var(--xian-gold-dark) 100%);
+    font-weight: 600;
+    
+    &:hover:not(:disabled) {
+      color: #0a0a0f;
+      background: linear-gradient(135deg, 
+        var(--xian-gold-light) 0%, 
+        var(--xian-gold) 100%);
+      box-shadow: var(--xian-shadow-strong);
+    }
+  }
+  
+  /* 幽灵按钮变体 */
+  &-ghost {
+    @extend .xian-btn;
+    
+    background: transparent;
+    border-color: transparent;
+    
+    &:hover:not(:disabled) {
+      background: rgba(201, 162, 39, 0.1);
+      border-color: var(--xian-border);
+    }
+  }
+}
+
+/* ==========================================================================
+   仙侠卷轴卡片 - 展开动画
+   ========================================================================== */
+
+.xian-scroll-card {
+  position: relative;
+  background: linear-gradient(145deg, 
+    rgba(30, 30, 50, 0.9) 0%, 
+    rgba(15, 15, 25, 0.95) 100%);
+  border: 1px solid var(--xian-border);
+  border-radius: 4px;
+  padding: 2rem;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      var(--xian-gold) 20%, 
+      var(--xian-gold-light) 50%, 
+      var(--xian-gold) 80%, 
+      transparent 100%);
+    transform: scaleX(0);
+    transition: transform 0.6s ease;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+      var(--xian-gold) 0%, 
+      transparent 100%);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.6s ease 0.2s;
+  }
+  
+  &:hover {
+    transform: translateY(-8px);
+    border-color: var(--xian-border-strong);
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.5),
+      0 0 40px rgba(201, 162, 39, 0.15);
+    
+    &::before { transform: scaleX(1); }
+    &::after { transform: scaleY(1); }
+  }
+}
+
+/* ==========================================================================
+   剑光闪烁特效 - 标题
+   ========================================================================== */
+
+.xian-sword-title {
+  position: relative;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20%;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      var(--xian-gold-light), 
+      transparent);
+    animation: swordFlash 4s ease-in-out infinite;
+  }
+}
+
+@keyframes swordFlash {
+  0% { width: 0; opacity: 0; }
+  5% { opacity: 1; }
+  10% { width: 140%; }
+  15%, 100% { width: 0; opacity: 0; }
+}
+
+/* ==========================================================================
+   八卦/魔法阵旋转 - 悬停触发
+   ========================================================================== */
+
+.xian-magic-circle {
+  position: relative;
+  
+  &::before {
+    content: '☯';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 4rem;
+    color: var(--xian-gold);
+    opacity: 0;
+    transition: all 0.5s ease;
+    animation: magicRotate 10s linear infinite;
+    animation-play-state: paused;
+  }
+  
+  &:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.15;
+    animation-play-state: running;
+  }
+}
+
+@keyframes magicRotate {
+  from { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  to { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
+}
+
+/* ==========================================================================
+   竹简列表项 - 古风设计
+   ========================================================================== */
+
+.xian-bamboo-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(90deg, 
+    rgba(40, 35, 20, 0.6) 0%, 
+    rgba(30, 25, 15, 0.8) 100%);
+  border-left: 3px solid var(--xian-gold-dark);
+  border-right: 1px solid var(--xian-border);
+  position: relative;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  
+  &::before {
+    content: '◆';
+    color: var(--xian-gold);
+    font-size: 0.6rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    padding-left: 2rem;
+    background: linear-gradient(90deg, 
+      rgba(60, 50, 30, 0.7) 0%, 
+      rgba(40, 35, 25, 0.9) 100%);
+    border-left-color: var(--xian-gold);
+    box-shadow: -5px 0 30px rgba(201, 162, 39, 0.2);
+    
+    &::before {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+}
+
+/* ==========================================================================
+   仙力值/等级徽章 - 游戏UI风格
+   ========================================================================== */
+
+.xian-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: linear-gradient(135deg, 
+    rgba(201, 162, 39, 0.15) 0%, 
+    rgba(201, 162, 39, 0.05) 100%);
+  border: 1px solid var(--xian-border);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: var(--xian-gold-light);
+  letter-spacing: 0.1em;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.1), 
+      transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+/* ==========================================================================
+   境界突破 - 闪光动画
+   ========================================================================== */
+
+.xian-breakthrough {
+  animation: breakthrough 2s ease-out;
+}
+
+@keyframes breakthrough {
+  0% { filter: brightness(1); }
+  10% { filter: brightness(2) blur(2px); }
+  20% { filter: brightness(3) blur(4px); }
+  30% { filter: brightness(1.5) blur(2px); }
+  100% { filter: brightness(1); }
+}
+
+/* ==========================================================================
+   灵气流动 - 文字边缘光
+   ========================================================================== */
+
+.xian-spirit-text {
+  text-shadow: 
+    0 0 5px var(--xian-gold-glow),
+    0 0 10px var(--xian-gold-glow),
+    0 0 20px var(--xian-gold-glow);
+  animation: spiritPulse 3s ease-in-out infinite;
+}
+
+@keyframes spiritPulse {
+  0%, 100% { text-shadow: 0 0 5px var(--xian-gold-glow), 0 0 10px var(--xian-gold-glow); }
+  50% { text-shadow: 0 0 10px var(--xian-gold-glow), 0 0 20px var(--xian-gold-glow), 0 0 40px var(--xian-gold-glow); }
+}
+
+/* ==========================================================================
+   卷轴展开 - 入场动画
+   ========================================================================== */
+
+@keyframes scrollReveal {
+  0% { 
+    clip-path: inset(0 50% 0 50%); 
+    opacity: 0;
+  }
+  50% { opacity: 1; }
+  100% { 
+    clip-path: inset(0 0 0 0); 
+    opacity: 1;
+  }
+}
+
+.xian-scroll-reveal {
+  animation: scrollReveal 1s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+/* ==========================================================================
+   丹炉火焰 - 加载动画
+   ========================================================================== */
+
+.xian-cauldron {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  
+  &::before {
+    content: '🔥';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    animation: flameFlicker 0.5s ease-in-out infinite alternate;
+    filter: blur(1px);
+  }
+}
+
+@keyframes flameFlicker {
+  from { transform: translateX(-50%) scaleY(1) scaleX(1); }
+  to { transform: translateX(-50%) scaleY(1.15) scaleX(0.95); }
+}
+
+/* ==========================================================================
+   星光点点 - 鼠标跟随效果
+   ========================================================================== */
+
+.xian-star-trail {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: var(--xian-gold-light);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 10px var(--xian-gold-glow);
+  animation: starFade 1s ease-out forwards;
+}
+
+@keyframes starFade {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0); }
+}
+
+/* ==========================================================================
+   古籍引用框 - 泛黄纸张质感
+   ========================================================================== */
+
+.xian-ancient-quote {
+  position: relative;
+  padding: 2rem 3rem;
+  background: 
+    radial-gradient(ellipse at center, 
+      rgba(139, 109, 20, 0.08) 0%, 
+      transparent 70%),
+    linear-gradient(135deg, 
+      rgba(50, 40, 20, 0.5) 0%, 
+      rgba(30, 25, 15, 0.7) 100%);
+  border-top: 1px solid var(--xian-border);
+  border-bottom: 1px solid var(--xian-border);
+  
+  &::before,
+  &::after {
+    content: '━━━ ✧ ━━━';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--xian-gold);
+    opacity: 0.4;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+  }
+  
+  &::before { top: 0.5rem; }
+  &::after { bottom: 0.5rem; }
+}
+
+/* ==========================================================================
+   宗门/门派 标签
+   ========================================================================== */
+
+.xian-sect-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  border-radius: 2px;
+  font-weight: 500;
+  
+  &.sect-qingyun {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+  
+  &.sect-qishan {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  
+  &.sect-lanling {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  
+  &.sect-yaowang {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* ==========================================================================
+   统一返回按钮 - 工具页专用（与Layout内置按钮100%视觉统一）
+   ========================================================================== */
+
+.back-bar {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 999;
+  padding: 0;
+  background: transparent;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.85) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 10px;
+  color: #c9a227;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(10, 10, 15, 0.95) 100%);
+    border-color: rgba(201, 162, 39, 0.5);
+    box-shadow: 0 8px 32px rgba(201, 162, 39, 0.25);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    top: 16px;
+    left: 16px;
+    padding: 10px 14px;
+  }
+}
+
+/* ==========================================================================
+   页面容器 - 全站统一（工具页专用）
+   ========================================================================== */
+
+.page-container {
+  min-height: 100vh;
+  position: relative;
+  
+  @media (min-width: 768px) {
+    padding-top: 80px;
+  }
+  @media (max-width: 768px) {
+    padding-top: 70px;
+  }
+}
+
+/* ==========================================================================
+   ✅ 全局字体优化 V2.0 - 专业级可读性标准
+   参考 W3C WCAG 2.1 可访问性指南
+   ========================================================================== */
+
+html {
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', serif;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+  color: #3d352b;
+  background: transparent !important;
+  text-shadow: none;
+}
+
+/* 标题系统 - 视觉层级优化 + 神光特效 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  color: #3d352b;
+  position: relative;
+  text-shadow: 
+    0 0 10px rgba(201, 162, 39, 0.3),
+    0 0 20px rgba(201, 162, 39, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #f0d78c 30%, #ffffff 50%, #c9a227 70%, #ffffff 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShimmer 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.4));
+}
+
+h2 {
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  font-weight: 750;
+  background: linear-gradient(135deg, #ffffff 0%, #f0d78c 50%, #ffffff 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShimmer 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.3));
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  filter: drop-shadow(0 0 15px rgba(201, 162, 39, 0.25));
+}
+
+h4 {
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  filter: drop-shadow(0 0 10px rgba(201, 162, 39, 0.2));
+}
+
+@keyframes titleShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 正文最小字号保障 */
+p, li, td, th, span, div {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  line-height: 1.9;
+}
+
+/* WCAG 对比度标准: 次要文字 ≥ 4.5:1 */
+.text-secondary {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.text-tertiary {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 禁止使用 < 0.55 opacity 的正文 */
+.no-fade-text {
+  opacity: 1 !important;
+}
+
+/* 移动端字体增强 */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+  
+  body {
+    line-height: 1.9;
+    letter-spacing: 0.015em;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* ==========================================================================
+   ✅ 专业级滚动系统 V2.0
+   ========================================================================== */
+
+/* 全局滚动平滑 */
+html {
+  scroll-behavior: smooth;
+  overflow-y: overlay;
+}
+
+/* 自定义滚动条 - 仙侠风格 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, 
+    rgba(201, 162, 39, 0.4) 0%, 
+    rgba(201, 162, 39, 0.7) 50%, 
+    rgba(201, 162, 39, 0.4) 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, 
+    rgba(201, 162, 39, 0.6) 0%, 
+    rgba(201, 162, 39, 0.9) 50%, 
+    rgba(201, 162, 39, 0.6) 100%);
+  box-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox 滚动条兼容 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 162, 39, 0.6) rgba(0, 0, 0, 0.2);
+}
+
+/* 滚动选择文本高亮 */
+::selection {
+  background: rgba(201, 162, 39, 0.35);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(201, 162, 39, 0.5);
+}
+
+::-moz-selection {
+  background: rgba(201, 162, 39, 0.35);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   ✅ 全局微交互增强 - 专业级用户体验
+   ========================================================================== */
+
+/* 点击波纹效果 */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* 按钮呼吸光晕 */
+@keyframes buttonGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(201, 162, 39, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(201, 162, 39, 0.5);
+  }
+}
+
+/* 骨架屏加载动画 */
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ==========================================================================
+   ✅ 全站统一入场动画系统
+   ========================================================================== */
+
+/* 标准渐入上移动画 */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp var(--duration-slow) var(--ease-bounce) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 交错入场 - 配合index使用 */
+.stagger-1 { animation-delay: calc(1 * 0.08s); }
+.stagger-2 { animation-delay: calc(2 * 0.08s); }
+.stagger-3 { animation-delay: calc(3 * 0.08s); }
+.stagger-4 { animation-delay: calc(4 * 0.08s); }
+.stagger-5 { animation-delay: calc(5 * 0.08s); }
+.stagger-6 { animation-delay: calc(6 * 0.08s); }
+.stagger-7 { animation-delay: calc(7 * 0.08s); }
+.stagger-8 { animation-delay: calc(8 * 0.08s); }
+
+/* ==========================================================================
+   ✅ 通用悬停光效系统 - 跟随鼠标
+   ========================================================================== */
+
+.card-glow {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 2px;
+    top: 0;
+    left: -150%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      var(--xian-gold), 
+      transparent);
+    opacity: 0;
+    transition: left 0.8s var(--ease-decelerate), opacity 0.3s ease;
+    z-index: 10;
+  }
+  
+  &:hover::before {
+    left: 100%;
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   ✅ 标签与徽章系统
+   ========================================================================== */
+
+.xian-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: all var(--duration-base) var(--ease-standard);
+  
+  /* 默认标签 - 金色 */
+  background: rgba(201, 162, 39, 0.15);
+  color: var(--xian-gold-light);
+  border-color: rgba(201, 162, 39, 0.3);
+  
+  /* 变体 */
+  &-purple {
+    background: rgba(155, 118, 240, 0.15);
+    color: #e9d5ff;
+    border-color: rgba(155, 118, 240, 0.3);
+  }
+  
+  &-blue {
+    background: rgba(91, 156, 247, 0.15);
+    color: #bfdbfe;
+    border-color: rgba(91, 156, 247, 0.3);
+  }
+  
+  &-green {
+    background: rgba(52, 211, 153, 0.15);
+    color: #a7f3d0;
+    border-color: rgba(52, 211, 153, 0.3);
+  }
+  
+  &-red {
+    background: rgba(245, 101, 101, 0.15);
+    color: #fecaca;
+    border-color: rgba(245, 101, 101, 0.3);
+  }
+  
+  /* 新增徽章 */
+  &-new {
+    background: rgba(52, 211, 153, 0.2);
+    color: #6ee7b7;
+    animation: tagNewPulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes tagNewPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(52, 211, 153, 0);
+  }
+}
+
+/* ==========================================================================
+   ✅ 分割线与装饰元素系统
+   ========================================================================== */
+
+.xian-divider {
+  height: 1px;
+  width: 100%;
+  margin: var(--space-5) 0;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(201, 162, 39, 0.2), 
+    transparent);
+  position: relative;
+  
+  &::before {
+    content: '◆';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--xian-gold);
+    opacity: 0.6;
+    font-size: 12px;
+    background: var(--xian-dark-bg);
+    padding: 0 16px;
+  }
+}
+
+.xian-divider-simple {
+  height: 1px;
+  width: 100%;
+  margin: var(--space-4) 0;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(201, 162, 39, 0.15), 
+    transparent);
+}
+
+/* ==========================================================================
+   ✅ 响应式断点系统 V2.0
+   ========================================================================== */
+
+/* 桌面大屏 ≥ 1280px */
+@media (min-width: 1280px) {
+  .container {
+    padding: 0 var(--space-6);
+  }
+}
+
+/* 平板 ≤ 1024px */
+@media (max-width: 1024px) {
+  :root {
+    --card-padding: 24px;
+    --gap-grid: 20px;
+    --gap-section: 48px;
+  }
+  
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+/* 平板小 ≤ 768px */
+@media (max-width: 768px) {
+  :root {
+    --card-padding: 20px;
+    --gap-grid: 16px;
+    --gap-section: 40px;
+  }
+  
+  .section-padding {
+    padding: var(--space-6) 0;
+  }
+  
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  /* 单列布局 */
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   ✅ 移动端深度适配优化 - 触控体验专用
+   ========================================================================== */
+
+/* 手机 ≤ 480px */
+@media (max-width: 480px) {
+  :root {
+    --card-padding: 16px;
+    --gap-grid: 12px;
+    --gap-section: 32px;
+  }
+  
+  .section-padding {
+    padding: var(--space-5) 0;
+  }
+  
+  .xian-btn {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--fs-small);
+    min-height: 48px;
+    width: 100%;
+  }
+  
+  .hide-phone {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   ✅ 移动端触控热区强制增强 - iOS/Android兼容
+   ========================================================================== */
+
+@media (hover: none) and (pointer: coarse) {
+  /* 所有可点击元素最小48x48px */
+  a, button, [role="button"], .clickable,
+  .back-button, .filter-tag, .chip,
+  input[type="checkbox"], input[type="radio"],
+  select, .dropdown-item, .tab-item {
+    min-height: 48px !important;
+    min-width: 48px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(201, 162, 39, 0.2) !important;
+  }
+  
+  /* 移除移动端300ms延迟 */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* 图标按钮额外填充 */
+  .icon-btn, .btn-icon {
+    padding: 12px !important;
+  }
+  
+  /* 取消移动端悬停效果 */
+  .xian-card:hover,
+  .xian-btn:hover,
+  .toolCard:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* 移动端点击反馈 */
+  .xian-card:active {
+    transform: scale(0.98) !important;
+    transition: all 100ms ease !important;
+  }
+  
+  .xian-btn:active {
+    transform: scale(0.96) !important;
+  }
+}
+
+/* ==========================================================================
+   ✅ 移动端视口与安全区域适配
+   ========================================================================== */
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .sticky-nav, .fixed-bottom {
+    top: calc(env(safe-area-inset-top) + 0px);
+  }
+  
+  .back-bar {
+    padding-top: calc(8px + env(safe-area-inset-top));
+  }
+}
+
+/* ==========================================================================
+   ✅ 移动端横竖屏旋转优化
+   ========================================================================== */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* 横屏手机模式 */
+  .section-padding {
+    padding: var(--space-4) 0;
+  }
+  
+  .hide-landscape {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   ✅ 移动端字体渲染增强
+   ========================================================================== */
+
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari 专用 */
+  body {
+    -webkit-text-size-adjust: 100%;
+    font-weight: 450;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 650;
+  }
+}
+
+/* 安卓设备专用 */
+@media only screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+}
+
+/* ==========================================================================
+   按钮通用增强样式
+   ========================================================================== */
+
+button {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
+  
+  &:focus-visible {
+    outline: 2px solid #c9a227;
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  &:not(:disabled):active {
+    transform: scale(0.96);
+  }
+}
+
+/* ==========================================================================
+   ✅ 移动端触摸热区与手势优化
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  button, 
+  [role="button"],
+  .clickable,
+  a {
+    min-height: 48px !important;
+    min-width: 48px !important;
+  }
+  
+  .back-button {
+    padding: 12px 20px !important;
+    min-height: 52px !important;
+  }
+  
+  .filter-tag,
+  .chip {
+    padding: 10px 16px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* ==========================================================================
+   ✅ 卡片阴影深度层次系统
+   ========================================================================== */
+
+/* 近景卡片 - 工具大厅 */
+.card-depth-1 {
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    box-shadow: 
+      0 24px 48px rgba(0, 0, 0, 0.25),
+      0 12px 24px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(201, 162, 39, 0.05),
+      0 0 40px rgba(201, 162, 39, 0.1);
+  }
+}
+
+/* 中景卡片 - 内容列表 */
+.card-depth-2 {
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+  
+  &:hover {
+    box-shadow: 
+      0 16px 32px rgba(0, 0, 0, 0.18),
+      0 8px 16px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(201, 162, 39, 0.08);
+  }
+}
+
+/* 远景卡片 - 详情面板 */
+.card-depth-3 {
+  box-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    box-shadow: 
+      0 8px 16px rgba(0, 0, 0, 0.15),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ==========================================================================
+   移动端触摸优化
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* 增大触摸热区 */
+  button, a, .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 移除移动端悬停延迟 */
+  .card {
+    &:active {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+  }
+  
+  /* 防止双击缩放 */
+  * {
+    touch-action: manipulation;
+  }
+}
+
+/* ==========================================================================
+   无障碍焦点可见性
+   ========================================================================== */
+
+.focus-visible {
+  outline: 2px solid #c9a227 !important;
+  outline-offset: 2px !important;
+}
+
+/* Tab键导航焦点环 */
+*:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   滚动体验优化
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 10, 15, 0.95);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #c9a227, #8b6914);
+  border-radius: 4px;
+  
+  &:hover {
+    background: linear-gradient(180deg, #dab82f, #a87f18);
+  }
+}
+
+/* ==========================================================================
+   选择文本样式
+   ========================================================================== */
+
+::selection {
+  background: rgba(201, 162, 39, 0.3);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: rgba(201, 162, 39, 0.3);
+  color: #ffffff;
+}
+
+p {
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
+  line-height: 1.9;
+}
+
+/* 正文内容字体增强特色 */
+.content-text {
+  font-family: 'Noto Serif SC', serif;
+  text-indent: 2em;
+}
+
+/* 按钮文字字体统一 */
+button, .btn, .back-button {
+  font-family: 'Noto Sans SC', 'Source Han Sans SC', sans-serif;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   均衡布局间距系统 - 全站统一
+   ========================================================================== */
+
+:root {
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+}
+
+/* 卡片内边距统一 */
+.card {
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* 网格间距统一 */
+.grid-auto {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+/* Framer Motion 硬件加速优化 */
+.motion-optimize {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* 防止动画闪烁 */
+.no-flicker {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+

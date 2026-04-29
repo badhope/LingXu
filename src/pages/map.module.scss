@@ -1,0 +1,178 @@
+@use '@/styles/design-tokens' as *;
+
+.container {
+  min-height: 100vh;
+  background: transparent;
+  padding: 6rem 2rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   头部
+   ========================================================================== */
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: #c9a227;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, #c9a227 0%, #e8d48b 50%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: var(--fs-base);
+}
+
+/* ==========================================================================
+   筛选器包装
+   ========================================================================== */
+
+.filterWrapper {
+  margin-bottom: 2rem;
+}
+
+.resultCount {
+  text-align: right;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--fs-small);
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   卡片网格
+   ========================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  display: block;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(20, 20, 35, 0.6) 0%, rgba(10, 10, 20, 0.8) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.12);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    border-color: rgba(201, 162, 39, 0.3);
+    background: linear-gradient(135deg, rgba(30, 30, 45, 0.7) 0%, rgba(20, 20, 30, 0.9) 100%);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(201, 162, 39, 0.05);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.moduleIcon {
+  font-size: 1.5rem;
+}
+
+.moduleBadge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pageName {
+  color: #ffffff;
+  font-size: var(--fs-subtitle);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.pageDesc {
+  color: #5c5245;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  padding: 0.25rem 0.6rem;
+  background: rgba(251, 191, 36, 0.08);
+  color: #e2e8f0;
+  border: 1px solid rgba(251, 191, 36, 0.15);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.categoryBadge {
+  color: rgba(251, 191, 36, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.goBtn {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  .card:hover & {
+    color: #c9a227;
+    transform: translateX(2px);
+  }
+}
+
+/* ==========================================================================
+   空状态
+   ========================================================================== */
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 5rem 1rem 2rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/home/home",
+    "pages/zhou/index",
+    "pages/tian/index",
+    "pages/xuan/index",
+    "pages/di/index",
+    "pages/huang/index",
+    "pages/yu/index",
+    "pages/hong/index",
+    "pages/tools/bagua",
+    "pages/tools/bazi",
+    "pages/tools/liuyao",
+    "pages/tools/fulu",
+    "pages/user/profile",
+    "pages/user/vip"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#12121a",
+    "navigationBarTitleText": "灵墟档案馆",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#12121a"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userInfo": {
+      "desc": "用于保存您的修行进度"
+    }
+  },
+  "requiredPrivateInfos": []
+}

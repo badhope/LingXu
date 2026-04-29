@@ -1,0 +1,122 @@
+/* ==========================================================================
+   ✦ 灵墟设计系统 - Design Tokens ✦
+   专业级设计规范，解决所有排版、间距、响应式问题
+
+   ╔══════════════════════════════════════════════════════════════════════╗
+   ║                           ⚠️  致命警告  ⚠️                            ║
+   ╠══════════════════════════════════════════════════════════════════════╣
+   ║  此文件会被所有 *.module.scss 通过 @use 引入！                      ║
+   ║  绝对不允许在此文件中添加任何 :root {} 选择器！                      ║
+   ║  添加任何纯全局选择器（无本地 class）都会导致全站 CSS Modules 崩溃！  ║
+   ║                                                                     ║
+   ║  需要添加全局 CSS 变量？去 xianxia-css3.scss 里加！                  ║
+   ║  此文件只能包含：@mixin、$scss-variable、断点定义                    ║
+   ╚══════════════════════════════════════════════════════════════════════╝
+   ========================================================================== */
+
+/* ==========================================================================
+   断点系统 - 移动优先
+   ========================================================================== */
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+/* ==========================================================================
+   工具类 - 统一解决对齐问题
+   ========================================================================== */
+@mixin center-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin text-balance {
+  text-wrap: balance;
+}
+
+@mixin icon-align {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   色彩系统 - 统一调色板
+   ========================================================================== */
+$color-primary: #a855f7;
+$color-secondary: #ec4899;
+$color-accent: #f59e0b;
+$color-success: #22c55e;
+$color-info: #3b82f6;
+$color-warning: #f59e0b;
+$color-danger: #ef4444;
+
+$colors: (
+  purple: #a855f7,
+  pink: #ec4899,
+  amber: #f59e0b,
+  green: #22c55e,
+  blue: #3b82f6,
+  red: #ef4444,
+);
+
+/* ==========================================================================
+   动画曲线 - 统一动效
+   ========================================================================== */
+$easing-smooth: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+$easing-ease: cubic-bezier(0.4, 0, 0.2, 1);
+$easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.2);
+
+$animation-fast: 0.2s;
+$animation-normal: 0.4s;
+$animation-slow: 0.6s;
+
+/* ==========================================================================
+   卡片工具类 - 统一样式
+   ========================================================================== */
+@mixin card-base($color: $color-primary) {
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.45));
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  backdrop-filter: blur(10px);
+  transition: all $animation-normal $easing-ease;
+}
+
+@mixin card-hover($color: $color-primary, $y: -3px, $scale: 1.02) {
+  transform: translate3d(0, $y, 0) scale($scale);
+  box-shadow: 0 20px 40px rgba(#{$color}, 0.2);
+}
+
+/* ==========================================================================
+   渐变文字 - 统一效果
+   ========================================================================== */
+@mixin gradient-text($from: $color-primary, $to: $color-secondary) {
+  background: linear-gradient(135deg, $from, $to);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==========================================================================
+   发光效果
+   ========================================================================== */
+@mixin glow($color: $color-primary, $intensity: 0.4) {
+  filter: drop-shadow(0 0 20px rgba(#{$color}, $intensity));
+}
+
+@mixin text-glow($color: $color-primary, $intensity: 0.4) {
+  text-shadow: 0 0 20px rgba(#{$color}, $intensity);
+}

@@ -1,0 +1,457 @@
+.luopanContainer {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 30px;
+  padding: 40px;
+  min-height: 600px;
+  background: radial-gradient(ellipse at center, #1a1510 0%, #0d0a07 100%);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(139, 115, 85, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.luopanMain {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.luopanStand {
+  position: absolute;
+  width: 470px;
+  height: 470px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle, #3d3020 0%, #2a2218 50%, #1a1510 100%);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    inset 0 2px 4px rgba(212, 175, 55, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  border: 3px solid #5c4a2d;
+}
+
+.luopanDisk {
+  position: relative;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(ellipse at 30% 30%, 
+      rgba(139, 115, 85, 0.4) 0%, 
+      rgba(92, 74, 45, 0.6) 50%, 
+      #2a2218 100%);
+  box-shadow: 
+    inset 0 0 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(212, 175, 55, 0.1),
+    0 5px 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  canvas {
+    display: block;
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+  }
+}
+
+.compassNeedle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.needleBase {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #d4af37, #8b6914);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.needleRed {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 30px solid #ef4444;
+  filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+}
+
+.luopanOuterRing {
+  position: absolute;
+  width: 455px;
+  height: 455px;
+  border-radius: 50%;
+  pointer-events: none;
+
+  .ringMark {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 8px;
+    background: #ef4444;
+    transform-origin: center 227.5px;
+    border-radius: 1px;
+  }
+}
+
+.controlPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.infoCard {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.9) 0%, rgba(26, 21, 16, 0.95) 100%);
+  border: 1px solid #5c4a2d;
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  h3 {
+    color: #d4af37;
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(92, 74, 45, 0.5);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span:first-child {
+    color: #8b7355;
+    font-size: 14px;
+  }
+
+  span:last-child:not(.directionHighlight) {
+    color: #c9a96a;
+    font-weight: 500;
+  }
+
+  .note {
+    font-size: 12px;
+    color: #6b7280;
+  }
+}
+
+.directionHighlight {
+  color: #fbbf24;
+  font-size: 16px;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.layerButton {
+  background: linear-gradient(135deg, #5c4a2d 0%, #3d3020 100%);
+  border: 1px solid #8b7355;
+  color: #d4af37;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #6d5a3d 0%, #4d4030 100%);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+  }
+}
+
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.helpButton {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: 1px solid #3b82f6;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    transform: translateY(-1px);
+  }
+}
+
+.layerPanel {
+  background: linear-gradient(135deg, rgba(42, 34, 24, 0.95) 0%, rgba(26, 21, 16, 0.98) 100%);
+  border: 1px solid #5c4a2d;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  margin-bottom: 12px;
+
+  h4 {
+    color: #d4af37;
+    margin: 0 0 12px 0;
+    font-size: 14px;
+  }
+}
+
+.helpPanel {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  border: 1px solid #3b82f6;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+  margin-bottom: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+
+  h4 {
+    color: #60a5fa;
+    margin: 0 0 12px 0;
+    font-size: 14px;
+  }
+}
+
+.helpSection {
+  margin-bottom: 16px;
+
+  h5 {
+    color: #93c5fd;
+    margin: 0 0 8px 0;
+    font-size: 13px;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #bfdbfe;
+    font-size: 12px;
+    line-height: 1.8;
+
+    li {
+      margin-bottom: 4px;
+
+      strong {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.helpTip {
+  background: rgba(59, 130, 246, 0.15);
+  border-left: 3px solid #3b82f6;
+  padding: 10px 12px;
+  border-radius: 0 6px 6px 0;
+  color: #93c5fd;
+  font-size: 12px;
+  line-height: 1.6;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.schoolCard {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+
+  h6 {
+    color: #60a5fa;
+    margin: 0 0 6px 0;
+    font-size: 12px;
+  }
+
+  p {
+    color: #bfdbfe;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+}
+
+.prose {
+  color: #fbbf24;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.8;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  text-align: center;
+  padding: 8px;
+  background: rgba(251, 191, 36, 0.08);
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .buttonGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .helpPanel {
+    max-height: 280px;
+    padding: 12px;
+  }
+
+  .helpSection ul {
+    padding-left: 16px;
+  }
+}
+
+.layerCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  color: #c9a96a;
+  cursor: pointer;
+  font-size: 13px;
+
+  input {
+    accent-color: #d4af37;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    color: #fbbf24;
+  }
+}
+
+.hint {
+  color: #6b7280;
+  font-size: 12px;
+  padding: 12px;
+  background: rgba(92, 74, 45, 0.2);
+  border-radius: 8px;
+  border: 1px dashed #5c4a2d;
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .luopanContainer {
+    grid-template-columns: 1fr;
+    padding: 20px 15px;
+    gap: 20px;
+  }
+
+  .luopanMain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .luopanStand {
+    width: 370px;
+    height: 370px;
+  }
+
+  .luopanDisk {
+    width: 340px;
+    height: 340px;
+
+    canvas {
+      transform: scale(0.773);
+      transform-origin: center;
+    }
+  }
+
+  .luopanOuterRing {
+    width: 355px;
+    height: 355px;
+
+    .ringMark {
+      transform-origin: center 177.5px;
+    }
+  }
+
+  .infoPanel {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .luopanContainer {
+    padding: 15px 10px;
+  }
+
+  .luopanStand {
+    width: 310px;
+    height: 310px;
+  }
+
+  .luopanDisk {
+    width: 280px;
+    height: 280px;
+
+    canvas {
+      transform: scale(0.636);
+      transform-origin: center;
+    }
+  }
+
+  .luopanOuterRing {
+    width: 295px;
+    height: 295px;
+
+    .ringMark {
+      transform-origin: center 147.5px;
+      font-size: 10px;
+    }
+  }
+
+  .layerButton {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .infoPanel h3 {
+    font-size: 16px;
+  }
+
+  .infoRow {
+    font-size: 13px;
+    padding: 10px 0;
+  }
+
+  .hint {
+    font-size: 11px;
+    padding: 10px;
+  }
+}

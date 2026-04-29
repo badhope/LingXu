@@ -1,0 +1,211 @@
+@use '@/styles/design-tokens' as *;
+
+.container {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--page-padding-x);
+  position: relative;
+  z-index: 1;
+}
+
+.content {
+  text-align: center;
+  max-width: 600px;
+}
+
+/* ==========================================================================
+   符文旋转法阵
+   ========================================================================== */
+
+.runeCircle {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(201, 162, 39, 0.2);
+  border-radius: 50%;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    border-radius: 50%;
+  }
+
+  &::before {
+    width: 100px;
+    height: 100px;
+  }
+
+  &::after {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.rune {
+  font-size: 3rem;
+  color: #c9a227;
+  text-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+  line-height: 1;
+}
+
+/* ==========================================================================
+   标题样式
+   ========================================================================== */
+
+.title {
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+
+.errorCode {
+  display: block;
+  font-size: clamp(5rem, 15vw, 8rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, #c9a227 0%, #e8d48b 50%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 40px rgba(201, 162, 39, 0.4));
+  letter-spacing: 0.1em;
+}
+
+.titleText {
+  font-size: var(--fs-3-clamp);
+  color: #e8d48b;
+  letter-spacing: 0.2em;
+}
+
+/* ==========================================================================
+   描述文字
+   ========================================================================== */
+
+.description {
+  font-family: var(--font-body);
+  font-size: var(--fs-large);
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-12);
+  @include text-balance;
+}
+
+/* ==========================================================================
+   分割线
+   ========================================================================== */
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+  color: rgba(201, 162, 39, 0.3);
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   按钮组
+   ========================================================================== */
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+
+.primaryBtn,
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  border: none;
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(10, 10, 20, 0.9) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  color: #e8d48b;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.3) 0%, rgba(15, 15, 30, 0.95) 100%);
+    border-color: rgba(201, 162, 39, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(201, 162, 39, 0.2);
+  }
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.btnIcon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   底部小字
+   ========================================================================== */
+
+.footerHint {
+  color: rgba(201, 162, 39, 0.4);
+  font-size: var(--fs-small);
+  font-style: italic;
+  letter-spacing: 0.1em;
+}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .container {
+    min-height: 75vh;
+  }
+
+  .runeCircle {
+    width: 100px;
+    height: 100px;
+    
+    &::before {
+      width: 80px;
+      height: 80px;
+    }
+    
+    &::after {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  .rune {
+    font-size: 2.5rem;
+  }
+}

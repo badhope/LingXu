@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  lingxu:
+    build: .
+    container_name: lingxu-app
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - lingxu-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: lingxu-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - lingxu
+    networks:
+      - lingxu-network
+
+networks:
+  lingxu-network:
+    driver: bridge

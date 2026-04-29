@@ -1,0 +1,975 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import SubPageTemplate, { SubPageSection, InfoCard } from '@/components/layout/SubPageTemplate'
+import FilterBar from '@/components/common/FilterBar'
+
+interface Element {
+  name: string
+  season: string
+  direction: string
+  color: string
+  desc: string
+  sheng: string
+  ke: string
+  detail: string
+  manifestations: string[]
+  personality: string[]
+}
+
+const ELEMENTS: Element[] = [
+  {
+    name: '木',
+    season: '春',
+    direction: '东',
+    color: '#22c55e',
+    desc: '主仁，其性直，其情和。旺者丰姿秀丽，骨骼修长，手足细腻。',
+    sheng: '火',
+    ke: '土',
+    detail: '甲乙寅卯属木，为生生不息之气。木主仁，为东方生气之木，主生发，主成长，主慈爱。木旺之人有仁爱之心，有恻隐之心，有慈悲之心。木旺者丰姿秀丽，骨骼修长，手足细腻，面色青白，为人有博爱恻隐之心，清高慷慨，质朴无伪。木衰则个性偏狭，嫉妒不仁。',
+    manifestations: ['树木花草', '仁慈博爱', '生发成长', '文教艺术'],
+    personality: ['仁慈善良', '正直不阿', '文雅有礼', '有同情心'],
+  },
+  {
+    name: '火',
+    season: '夏',
+    direction: '南',
+    color: '#ef4444',
+    desc: '主礼，其性急，其情恭。旺者浓眉小耳，精神闪烁，谦和恭敬。',
+    sheng: '土',
+    ke: '金',
+    detail: '丙丁巳午属火，为炎上之气。火主礼，为南方明丽之火，主光明，主热情，主礼仪。火旺之人有礼节，有风度，有热情。火旺者浓眉小耳，精神闪烁，为人谦和恭敬，淳朴急躁。火衰则黄瘦尖楞，语言妄诞，诡诈妒毒，做事有始无终。',
+    manifestations: ['光明热情', '文明礼乐', '文采艺术', '热能电力'],
+    personality: ['热情奔放', '光明磊落', '彬彬有礼', '积极向上'],
+  },
+  {
+    name: '土',
+    season: '四季',
+    direction: '中',
+    color: '#f59e0b',
+    desc: '主信，其性重，其情厚。旺者腰阔鼻圆，忠孝至诚，度量宽厚。',
+    sheng: '金',
+    ke: '水',
+    detail: '戊己辰戌丑未属土，为厚重之气。土主信，为中央厚重之土，主诚信，主稳重，主包容。土旺之人有诚信，有担当，有度量。土旺者腰阔鼻圆，忠孝至诚，度量宽厚，言必行，行必果。土衰则面色忧滞，面扁鼻低，为人狠毒乖戾，不讲信用，不通情理。',
+    manifestations: ['土地山川', '诚实守信', '稳重包容', '建筑地产'],
+    personality: ['诚实守信', '稳重可靠', '宽宏大量', '勤劳踏实'],
+  },
+  {
+    name: '金',
+    season: '秋',
+    direction: '西',
+    color: '#9ca3af',
+    desc: '主义，其性刚，其情烈。旺者骨肉相称，面方白净，刚毅果断。',
+    sheng: '水',
+    ke: '木',
+    detail: '庚辛申酉属金，为肃杀之气。金主义，为西方肃杀之金，主义气，主刚毅，主果断。金旺之人有义气，有骨气，有魄力。金旺者骨肉相称，面方白净，眉高眼深，体健神清。为人刚毅果断，疏财仗义，深知廉耻。金衰则身材瘦小，为人刻薄内毒，喜淫好杀，吝啬贪婪。',
+    manifestations: ['金属兵器', '义气刚直', '法律金融', '精密器械'],
+    personality: ['刚直不阿', '义薄云天', '果断坚毅', '威武不屈'],
+  },
+  {
+    name: '水',
+    season: '冬',
+    direction: '北',
+    color: '#3b82f6',
+    desc: '主智，其性聪，其情善。旺者面黑有采，语言清和，深谋远虑。',
+    sheng: '木',
+    ke: '火',
+    detail: '壬癸亥子属水，为润下之气。水主智，为北方智慧之水，主智慧，主流动，主变通。水旺之人有智慧，有谋略，有城府。水旺者面黑有采，语言清和，为人深思熟虑，足智多谋，学识过人。水衰则人物短小，性情无常，胆小无略，行事反覆。',
+    manifestations: ['江河湖海', '智慧谋略', '贸易交通', '旅游物流'],
+    personality: ['聪明智慧', '灵活变通', '深谋远虑', '随和善良'],
+  },
+]
+
+interface TianGan {
+  index: number
+  name: string
+  element: string
+  nature: string
+  color: string
+  polarity: string
+  feature: string
+  strength: number
+  detail: string
+  representative: string[]
+}
+
+const TIAN_GAN: TianGan[] = [
+  {
+    index: 1,
+    name: '甲',
+    element: '阳木',
+    nature: '栋梁之木',
+    color: '#22c55e',
+    polarity: '阳',
+    feature: '参天大树，高耸挺拔，积极向上，有担当有魄力。',
+    strength: 85,
+    detail: '甲木为参天大树，为阳木，如松柏之挺拔，栋梁之材。得令则为栋梁，失令则为废材。甲木之人有担当，有魄力，积极向上，不屈不挠。甲木日主多为领导者，有开拓精神，有创业能力，能承担大任。甲木喜庚金雕琢，方成大器。',
+    representative: ['参天大树', '栋梁之才', '领导者', '开拓者'],
+  },
+  {
+    index: 2,
+    name: '乙',
+    element: '阴木',
+    nature: '花果之木',
+    color: '#16a34a',
+    polarity: '阴',
+    feature: '花草藤蔓，柔韧多姿，细腻敏感，善于变通。',
+    strength: 70,
+    detail: '乙木为花草藤蔓，为阴木，如兰蕙之芬芳，藤蔓之柔韧。得令则繁华似锦，失令则枯朽凋零。乙木之人细腻敏感，善于变通，能屈能伸，有艺术天赋。乙木日主多为艺术家，有审美眼光，有交际手腕，能随遇而安。乙木喜庚金劈甲引丁，方能秀发。',
+    representative: ['花草藤蔓', '艺术家', '交际花', '外交家'],
+  },
+  {
+    index: 3,
+    name: '丙',
+    element: '阳火',
+    nature: '太阳之火',
+    color: '#ef4444',
+    polarity: '阳',
+    feature: '烈日骄阳，热情奔放，光明磊落，照破幽冥。',
+    strength: 95,
+    detail: '丙火为烈日骄阳，为阳火，如太阳之普照，光明遍十方。得令则辉煌灿烂，失令则微光闪烁。丙火之人热情奔放，光明磊落，有领导力，有感染力。丙火日主多为政治家，有领袖魅力，有开创精神，能照亮他人。丙火喜壬水相济，方成既济之功。',
+    representative: ['太阳之光', '政治家', '领袖人物', '开拓者'],
+  },
+  {
+    index: 4,
+    name: '丁',
+    element: '阴火',
+    nature: '灯烛之火',
+    color: '#dc2626',
+    polarity: '阴',
+    feature: '灯烛星光，温柔含蓄，长明不灭，暗夜指引。',
+    strength: 65,
+    detail: '丁火为灯烛星光，为阴火，如灯烛之长明，星光之指引。得令则炳耀千古，失令则烟消云散。丁火之人温柔含蓄，细腻体贴，有耐力，有恒心。丁火日主多为学者文人，有钻研精神，有奉献精神，能在暗处发光。丁火喜甲木引助，方能长久。',
+    representative: ['灯烛星光', '学者文人', '幕后英雄', '指路明灯'],
+  },
+  {
+    index: 5,
+    name: '戊',
+    element: '阳土',
+    nature: '城墙之土',
+    color: '#f59e0b',
+    polarity: '阳',
+    feature: '高城厚土，稳重可靠，包容万物，承载四方。',
+    strength: 90,
+    detail: '戊土为城墙高土，为阳土，如长城之巍峨，大地之厚重。得令则巍峨耸立，失令则崩塌瓦解。戊土之人稳重可靠，包容万物，有担当，有度量。戊土日主多为实业家，有经营才能，有包容心，能承载重任。戊土喜甲木疏土，丙火暖局，方能生发。',
+    representative: ['长城大地', '实业家', '靠山支柱', '包容万物'],
+  },
+  {
+    index: 6,
+    name: '己',
+    element: '阴土',
+    nature: '田园之土',
+    color: '#d97706',
+    polarity: '阴',
+    feature: '田园润土，养育滋养，默默耕耘，无私奉献。',
+    strength: 75,
+    detail: '己土为田园润土，为阴土，如田园之肥沃，养育之厚德。得令则五谷丰登，失令则荒芜贫瘠。己土之人默默耕耘，无私奉献，细心体贴，有服务精神。己土日主多为服务行业，有耐心，有爱心，能滋养他人。己土喜丙火暖照，甲木疏土，方能生长。',
+    representative: ['田园沃土', '服务者', '园丁慈母', '幕后奉献'],
+  },
+  {
+    index: 7,
+    name: '庚',
+    element: '阳金',
+    nature: '斧钺之金',
+    color: '#9ca3af',
+    polarity: '阳',
+    feature: '金刚利刃，果断刚毅，锄强扶弱，仗义疏财。',
+    strength: 88,
+    detail: '庚金为斧钺金刚，为阳金，如宝剑之锋利，金刚之坚硬。得令则百炼成钢，失令则生锈蒙尘。庚金之人果断刚毅，锄强扶弱，仗义疏财，有正义感。庚金日主多为军人法官，有威严，有魄力，能惩恶扬善。庚金喜丁火锻炼，方成利器。',
+    representative: ['宝剑金刚', '军人法官', '正义之士', '铁面无私'],
+  },
+  {
+    index: 8,
+    name: '辛',
+    element: '阴金',
+    nature: '首饰之金',
+    color: '#6b7280',
+    polarity: '阴',
+    feature: '珠宝美玉，精致珍贵，温润光华，惹人喜爱。',
+    strength: 68,
+    detail: '辛金为首饰美玉，为阴金，如珠宝之璀璨，美玉之温润。得令则璀璨夺目，失令则蒙尘失色。辛金之人精致优雅，温润光华，有品位，有气质。辛金日主多为艺术家设计家，有审美眼光，有工匠精神，能创造美好。辛金喜壬水淘洗，方显光华。',
+    representative: ['珠宝美玉', '艺术家', '设计师', '精致优雅'],
+  },
+  {
+    index: 9,
+    name: '壬',
+    element: '阳水',
+    nature: '江河之水',
+    color: '#3b82f6',
+    polarity: '阳',
+    feature: '大江大河，奔腾不息，智慧深远，气象万千。',
+    strength: 92,
+    detail: '壬水为大江大河，为阳水，如长江之奔腾，大海之浩瀚。得令则浩瀚无边，失令则干涸见底。壬水之人智慧深远，气象万千，有胸怀，有魄力。壬水日主多为思想家哲学家，有远见，有胸怀，能包容万象。壬水喜戊土筑堤，丙火照暖，方能济物。',
+    representative: ['江河大海', '思想家', '哲学家', '胸怀宽广'],
+  },
+  {
+    index: 10,
+    name: '癸',
+    element: '阴水',
+    nature: '雨露之水',
+    color: '#2563eb',
+    polarity: '阴',
+    feature: '雨露甘霖，润物无声，细腻入微，泽被苍生。',
+    strength: 62,
+    detail: '癸水为雨露甘霖，为阴水，如雨露之滋润，泉水之清澈。得令则润物无声，失令则冻冰成霜。癸水之人细腻入微，润物无声，有灵感，有直觉。癸水日主多为灵媒体质，有第六感，有艺术天赋，能感知微妙。癸水喜戊土堤防，丙火照暖，方能成用。',
+    representative: ['雨露甘霖', '灵感源泉', '艺术家', '通灵体质'],
+  },
+]
+
+interface DiZhi {
+  index: number
+  name: string
+  animal: string
+  element: string
+  hidden: string[]
+  month: string
+  direction: string
+  color: string
+  feature: string
+  detail: string
+  significance: string[]
+}
+
+const DI_ZHI: DiZhi[] = [
+  {
+    index: 1,
+    name: '子',
+    animal: '鼠',
+    element: '水',
+    hidden: ['癸水'],
+    month: '11月',
+    direction: '正北',
+    color: '#2563eb',
+    feature: '墨池清华，智巧聪明。',
+    detail: '子为墨池，属正北坎位，纯癸水之方。夜半子时，阴阳交替，一阳来复。子水为智巧之水，主聪明智慧，随机应变。子为桃花，主人缘好，异性缘佳。子为帝旺，主生命力旺盛，适应能力强。女命坐贵，男命坐财。',
+    significance: ['智巧聪明', '桃花人缘', '一阳来复', '生命力旺盛'],
+  },
+  {
+    index: 2,
+    name: '丑',
+    animal: '牛',
+    element: '湿土',
+    hidden: ['己土', '辛金', '癸水'],
+    month: '12月',
+    direction: '东北',
+    color: '#78716c',
+    feature: '柳岸湿泥，含蓄深藏。',
+    detail: '丑为柳岸湿泥，属东北艮位，湿土金库。寒冬腊月，万物蛰伏，含蓄深藏。丑土为湿土，能生金蓄水，晦火养木。丑为金库，辛金得生。丑为华盖，主玄学天赋，孤独清高。丑土坚韧不拔，默默耕耘，终有收获。',
+    significance: ['含蓄深藏', '金库所在', '玄学天赋', '默默耕耘'],
+  },
+  {
+    index: 3,
+    name: '寅',
+    animal: '虎',
+    element: '木',
+    hidden: ['甲木', '丙火', '戊土'],
+    month: '正月',
+    direction: '东北',
+    color: '#16a34a',
+    feature: '广谷乔木，生机勃发。',
+    detail: '寅为广谷乔木，属东北艮位，木火同宫。孟春正月，阳气始升，生机勃发。寅为丙火长生之地，功参造化。寅木为参天大树，有生机有活力，能生火生土。寅为驿马，主动主远行，主升迁调动。寅木生机勃勃，积极向上。',
+    significance: ['生机勃发', '火之长生', '驿马星动', '积极向上'],
+  },
+  {
+    index: 4,
+    name: '卯',
+    animal: '兔',
+    element: '木',
+    hidden: ['乙木'],
+    month: '2月',
+    direction: '正东',
+    color: '#22c55e',
+    feature: '琼林繁花，文采风流。',
+    detail: '卯为琼林繁花，属正东震位，纯一乙木。仲春二月，百花盛开，文采风流。卯木为纯木，清秀可人，主文采，主艺术。卯为桃花，主人缘好，风情万种。卯木专气，力量纯粹，主坚持不懈，始终如一。卯木温柔美丽，招人喜爱。',
+    significance: ['文采风流', '清秀纯粹', '桃花人缘', '温柔美丽'],
+  },
+  {
+    index: 5,
+    name: '辰',
+    animal: '龙',
+    element: '湿土',
+    hidden: ['戊土', '乙木', '癸水'],
+    month: '3月',
+    direction: '东南',
+    color: '#78716c',
+    feature: '草泽熏风，变化莫测。',
+    detail: '辰为草泽熏风，属东南巽位，湿土水库。季春三月，雨泽万物，变化莫测。辰为水库，癸水归藏。辰为天罡，主权威，主变化，主神秘。辰土能藏万物，能育万物，主包容主变化。龙能大能小，能升能隐，变化无穷。',
+    significance: ['变化莫测', '水库所在', '权威神秘', '包容变化'],
+  },
+  {
+    index: 6,
+    name: '巳',
+    animal: '蛇',
+    element: '火',
+    hidden: ['丙火', '庚金', '戊土'],
+    month: '4月',
+    direction: '东南',
+    color: '#dc2626',
+    feature: '大驿炊烟，暗藏金锋。',
+    detail: '巳为大驿炊烟，属东南巽位，火土金同宫。孟夏四月，阳气鼎盛，暗藏金锋。巳为庚金长生之地，火土同宫。巳主道路，主信息，主传播。巳火外柔内刚，表面温和内心刚烈，暗藏杀机。蛇善于蛰伏，一击必中。',
+    significance: ['暗藏金锋', '金之长生', '道路信息', '外柔内刚'],
+  },
+  {
+    index: 7,
+    name: '午',
+    animal: '马',
+    element: '火',
+    hidden: ['丁火', '己土'],
+    month: '5月',
+    direction: '正南',
+    color: '#ef4444',
+    feature: '炎天烈日，热情奔放。',
+    detail: '午为炎天烈日，属正南离位，丁火己土同宫。仲夏五月，骄阳似火，热情奔放。午为丁火禄地，己土得生。午为桃花，主人缘好，热情奔放。午为驿马，主动主远行。午火光明磊落，热情奔放，感染力强。马不停蹄，奔腾向前。',
+    significance: ['热情奔放', '桃花人缘', '驿马星动', '光明磊落'],
+  },
+  {
+    index: 8,
+    name: '未',
+    animal: '羊',
+    element: '干土',
+    hidden: ['己土', '乙木', '丁火'],
+    month: '6月',
+    direction: '西南',
+    color: '#a16207',
+    feature: '花园暖土，木火交辉。',
+    detail: '未为花园暖土，属西南坤位，干土木库。季夏六月，湿热熏蒸，木火交辉。未为木库，丁火余气。未主园林，主花园，主艺术。未土温暖，能养木生火。未为华盖，主玄学天赋，主艺术才华。羊温和善良，默默奉献。',
+    significance: ['木火交辉', '木库所在', '艺术天赋', '温和善良'],
+  },
+  {
+    index: 9,
+    name: '申',
+    animal: '猴',
+    element: '金',
+    hidden: ['庚金', '壬水', '戊土'],
+    month: '7月',
+    direction: '西南',
+    color: '#6b7280',
+    feature: '名都剑气，水之长生。',
+    detail: '申为名都剑气，属西南坤位，金水同宫。孟秋七月，金气始肃，水之长生。申为壬水长生之地，金白水清。申主名都，主交通，主贸易。申金聪明过人，灵活多变，足智多谋。猴机智灵活，善于应变。',
+    significance: ['金白水清', '水之长生', '聪明机智', '灵活应变'],
+  },
+  {
+    index: 10,
+    name: '酉',
+    animal: '鸡',
+    element: '金',
+    hidden: ['辛金'],
+    month: '8月',
+    direction: '正西',
+    color: '#9ca3af',
+    feature: '寺钟金鸣，声闻九天。',
+    detail: '酉为寺钟金鸣，属正西兑位，纯一辛金。仲秋八月，金气鼎盛，声闻九天。酉为纯金，纯粹洁净，主文章，主名声。酉为桃花，主人缘好，风情万种。酉金纯粹，主品质高洁，声闻远播。鸡司晨，守时守信，一鸣惊人。',
+    significance: ['文章盖世', '纯粹洁净', '桃花人缘', '声闻远播'],
+  },
+  {
+    index: 11,
+    name: '戌',
+    animal: '狗',
+    element: '干土',
+    hidden: ['戊土', '辛金', '丁火'],
+    month: '9月',
+    direction: '西北',
+    color: '#57534e',
+    feature: '烧原烈火，火库所在。',
+    detail: '戌为烧原烈火，属西北乾位，干土火库。季秋九月，寒气渐生，火库所在。戌为火库，丁火余气，辛金得藏。戌主寺庙，主修行，主孤独。戌土干燥，能藏金晦火。戌为华盖，主玄学天赋，主修行得道。狗忠诚可靠，守护一生。',
+    significance: ['火库所在', '玄学修行', '忠诚可靠', '孤独守护'],
+  },
+  {
+    index: 12,
+    name: '亥',
+    animal: '猪',
+    element: '水',
+    hidden: ['壬水', '甲木'],
+    month: '10月',
+    direction: '西北',
+    color: '#3b82f6',
+    feature: '登明天河，木之长生。',
+    detail: '亥为登明天河，属西北乾位，水木同宫。孟冬十月，阴气鼎盛，木之长生。亥为甲木长生之地，水绕山环。亥主天河，主智慧，主灵气。亥水智慧深远，有灵气，有福气。猪有福气，随遇而安，知足常乐。',
+    significance: ['灵气充盈', '木之长生', '智慧深远', '福气满满'],
+  },
+]
+
+interface ShiShen {
+  name: string
+  polarity: string
+  relation: string
+  feature: string
+  effect: number
+  color: string
+  nature: string
+  detail: string
+  applications: string[]
+}
+
+const SHI_SHEN: ShiShen[] = [
+  {
+    name: '正官',
+    polarity: '异阴阳',
+    relation: '克我',
+    feature: '官职名誉，责任担当。女命夫星，男命子星。',
+    effect: 80,
+    color: '#8b5cf6',
+    nature: '约束修身',
+    detail: '正官为异阴阳之克我者，如朝廷之官，管束我身。主官职名誉，责任担当，约束修身。正官为女命夫星，男命子星。正官清纯粹正，主正直端方，循规蹈矩，有责任感有担当。正官得用，仕途顺遂，名声远扬。',
+    applications: ['仕途功名', '责任担当', '女命婚姻', '名誉地位'],
+  },
+  {
+    name: '七杀',
+    polarity: '同阴阳',
+    relation: '克我',
+    feature: '权威魄力，冒险进取。偏官无情，小人侵害。',
+    effect: 75,
+    color: '#dc2626',
+    nature: '威压竞争',
+    detail: '七杀为同阴阳之克我者，如虎狼在侧，威胁我身。主权威魄力，冒险进取，威压竞争。七杀为偏官，无情无义，小人侵害。七杀得制化为权，主刚猛果断，不屈不挠，有魄力有胆识。杀印相生，威权显赫。',
+    applications: ['权威魄力', '军事武功', '竞争冒险', '应变能力'],
+  },
+  {
+    name: '正印',
+    polarity: '异阴阳',
+    relation: '生我',
+    feature: '学业文凭，长辈助力。母性慈悲，包容爱护。',
+    effect: 90,
+    color: '#22c55e',
+    nature: '滋养培育',
+    detail: '正印为异阴阳之生我者，如慈母育儿，滋养我身。主学业文凭，长辈助力，学识渊博。正印为母星，慈悲包容，爱护有加。正印得用，学识过人，品德高尚，得长辈提携，贵人相助。印绶护身，逢凶化吉。',
+    applications: ['学业文凭', '长辈助力', '品德修养', '贵人相助'],
+  },
+  {
+    name: '偏印',
+    polarity: '同阴阳',
+    relation: '生我',
+    feature: '玄学天赋，旁门左道。枭神夺食，孤独多疑。',
+    effect: 65,
+    color: '#059669',
+    nature: '奇思异想',
+    detail: '偏印为同阴阳之生我者，如继母养子，生我不亲。主玄学天赋，旁门左道，奇思异想。偏印为枭神，能夺食，主孤独多疑，性格孤僻。偏印得用，思维奇特，创造力强，玄学天赋高，在冷门领域有大成。',
+    applications: ['玄学宗教', '创意发明', '冷门领域', '特殊技能'],
+  },
+  {
+    name: '比肩',
+    polarity: '同阴阳',
+    relation: '同我',
+    feature: '朋友同辈，竞争合作。手足相助，分财夺利。',
+    effect: 70,
+    color: '#3b82f6',
+    nature: '平等竞争',
+    detail: '比肩为同阴阳之同我者，如兄弟同体，情同手足。主朋友同辈，竞争合作，平等互助。比肩为手足，能相助也能分财。比肩得用，独立自主，自尊心强，有朋友相助，团队合作。比肩过多则分财夺利，竞争激烈。',
+    applications: ['朋友同辈', '团队合作', '独立自主', '平等竞争'],
+  },
+  {
+    name: '劫财',
+    polarity: '异阴阳',
+    relation: '同我',
+    feature: '异性朋友，合伙分财。败财夺妻，慷慨豪爽。',
+    effect: 60,
+    color: '#0ea5e9',
+    nature: '互助分享',
+    detail: '劫财为异阴阳之同我者，如异性朋友，虽同而异。主异性朋友，合伙分财，互助分享。劫财败财夺妻，也主慷慨豪爽，重义轻财。劫财得用，人缘极佳，社交能力强，能得异性助力。劫财过多则破财耗散，婚姻不顺。',
+    applications: ['社交人缘', '异性助力', '合伙合作', '慷慨仗义'],
+  },
+  {
+    name: '食神',
+    polarity: '同阴阳',
+    relation: '我生',
+    feature: '福禄寿元，口福享受。子息后代，聪明智慧。',
+    effect: 85,
+    color: '#f59e0b',
+    nature: '创造表达',
+    detail: '食神为同阴阳之我生者，如慈母育儿，我生之子。主福禄寿元，口福享受，创造表达。食神为子息，主聪明智慧，才华横溢。食神得用，福禄寿全，乐观开朗，才华横溢，有口福有子女福。食神生财，富贵自天来。',
+    applications: ['福禄寿元', '子女后代', '美食享受', '才华创造'],
+  },
+  {
+    name: '伤官',
+    polarity: '异阴阳',
+    relation: '我生',
+    feature: '才华智慧，艺术天赋。克官伤夫，恃才傲物。',
+    effect: 75,
+    color: '#ea580c',
+    nature: '反叛革新',
+    detail: '伤官为异阴阳之我生者，如严父教子，我生之女。主才华智慧，艺术天赋，反叛革新。伤官克官伤夫，也主恃才傲物，不拘礼法。伤官得用，才华横溢，创意无限，突破传统，在艺术科技领域有大成。伤官配印，名扬天下。',
+    applications: ['艺术才华', '科技创新', '反叛革新', '突破传统'],
+  },
+  {
+    name: '正财',
+    polarity: '异阴阳',
+    relation: '我克',
+    feature: '正业财富，工资稳定。男命妻星，物质基础。',
+    effect: 88,
+    color: '#a855f7',
+    nature: '正当收获',
+    detail: '正财为异阴阳之我克者，如正妻，正当之财。主正业财富，工资稳定，勤俭持家。正财为男命妻星，主物质基础。正财得用，踏实可靠，勤俭持家，正业有成，婚姻美满。财官相生，富贵双全。',
+    applications: ['正业收入', '男命婚姻', '房产物质', '勤俭持家'],
+  },
+  {
+    name: '偏财',
+    polarity: '同阴阳',
+    relation: '我克',
+    feature: '意外之财，投机所得。父缘异性，商业头脑。',
+    effect: 82,
+    color: '#c026d3',
+    nature: '机缘收获',
+    detail: '偏财为同阴阳之我克者，如妾，意外之财。主意外之财，投机所得，商业头脑。偏财为父星，也主异性缘。偏财得用，商业头脑好，机动灵活，能得意外之财，有父缘异性缘。偏财旺者适合经商投资。',
+    applications: ['商业投资', '意外横财', '父缘异性', '机动灵活'],
+  },
+]
+
+interface GeJu {
+  name: string
+  level: string
+  feature: string
+  difficulty: number
+  fame: number
+  requirement: string
+  detail: string
+  celebrities: string[]
+}
+
+const GE_JU: GeJu[] = [
+  {
+    name: '正官格',
+    level: '上格',
+    feature: '月令正官，清纯粹正。官星得用，仕途顺遂。',
+    difficulty: 60,
+    fame: 85,
+    requirement: '月令官星无破',
+    detail: '正官格为月令取正官，清纯粹正，最为贵重。主正直端方，循规蹈矩，有责任感有担当。正官格喜财星生官，印星护官，忌刑冲破害。正官格成，仕途顺遂，名声远扬，多为政府官员，事业单位领导，企业高管。',
+    celebrities: ['文官宰相', '政府官员', '企业高管', '社会贤达'],
+  },
+  {
+    name: '七杀格',
+    level: '上格',
+    feature: '月令七杀，制化为权。杀印相生，威权显赫。',
+    difficulty: 80,
+    fame: 90,
+    requirement: '有制化方为贵',
+    detail: '七杀格为月令取七杀，有制化为权，无制化为祸。主权威魄力，冒险进取，刚猛果断。七杀格喜食神制杀，杀印相生，忌无制攻身。七杀格成，威权显赫，多为军事将领，政法干部，企业老板，有魄力有胆识。',
+    celebrities: ['军事将领', '政法干部', '企业老板', '铁腕人物'],
+  },
+  {
+    name: '正印格',
+    level: '上格',
+    feature: '月令正印，文星照命。印绶护身，学识过人。',
+    difficulty: 50,
+    fame: 75,
+    requirement: '印星通根得气',
+    detail: '正印格为月令取正印，文星照命，学识渊博。主品德高尚，待人宽厚，有长辈助力贵人相助。正印格喜官杀生印，忌财星坏印。正印格成，学识过人，品德高尚，多为学者教授，文化名人，专家顾问。',
+    celebrities: ['学者教授', '文化名人', '专家顾问', '教育工作者'],
+  },
+  {
+    name: '财格',
+    level: '上格',
+    feature: '月令财星，财富丰隆。财官相生，富贵双全。',
+    difficulty: 55,
+    fame: 80,
+    requirement: '身强能任财',
+    detail: '财格为月令取财星，财富丰隆，物质丰饶。主勤劳致富，踏实经营，有商业头脑。财格喜官星护财，食神生财，忌比劫夺财。财格成，富有天下，多为企业家，银行家，投资者，实业家。',
+    celebrities: ['企业家', '银行家', '投资者', '实业家'],
+  },
+  {
+    name: '食神格',
+    level: '中格',
+    feature: '月令食神，福禄寿全。食神生财，富贵自天来。',
+    difficulty: 45,
+    fame: 70,
+    requirement: '食神不破枭',
+    detail: '食神格为月令取食神，福禄寿全，福气满满。主乐观开朗，才华横溢，有口福有子女福。食神格喜生财制杀，忌枭神夺食。食神格成，福禄寿全，多为美食家，艺术家，教师，自由职业者。',
+    celebrities: ['美食家', '艺术家', '教师', '自由职业者'],
+  },
+  {
+    name: '伤官格',
+    level: '中格',
+    feature: '月令伤官，才华横溢。伤官配印，名扬天下。',
+    difficulty: 70,
+    fame: 85,
+    requirement: '配印生财为美',
+    detail: '伤官格为月令取伤官，才华横溢，创意无限。主聪明智慧，艺术天赋，反叛精神。伤官格喜配印生财，忌见官破格。伤官格成，名扬天下，多为艺术家，作家，科学家，演艺明星。',
+    celebrities: ['艺术家', '作家', '科学家', '演艺明星'],
+  },
+  {
+    name: '建禄格',
+    level: '中格',
+    feature: '月令建禄，身强无疑。禄马同乡，富贵非凡。',
+    difficulty: 65,
+    fame: 75,
+    requirement: '有财官方为贵',
+    detail: '建禄格为月令得禄，身强无疑，独立自主。主自尊心强，吃苦耐劳，白手起家。建禄格喜财官，忌比劫。建禄格成，白手起家，多为创业者，个体户，技术骨干，专业人士。',
+    celebrities: ['创业者', '个体户', '技术骨干', '专业人士'],
+  },
+  {
+    name: '羊刃格',
+    level: '破格',
+    feature: '月令羊刃，刚猛过甚。刃杀两停，武将功名。',
+    difficulty: 90,
+    fame: 88,
+    requirement: '制杀为上',
+    detail: '羊刃格为月令羊刃，刚猛过甚，攻击性强。主勇敢果断，不怕牺牲，能吃苦。羊刃格喜杀制刃，忌无制冲动。羊刃格成，武将功名，多为军人警察，运动员，保镖，从事危险行业者。',
+    celebrities: ['军人警察', '运动员', '保镖', '武术家'],
+  },
+  {
+    name: '从强格',
+    level: '外格',
+    feature: '一气专旺，从势而行。格真局正，大富大贵。',
+    difficulty: 95,
+    fame: 95,
+    requirement: '满局生扶无克',
+    detail: '从强格为满局生扶无克，一气专旺，从势而行。主意志坚定，目标明确，能成大事。从强格喜顺其势，忌逆其性。从强格真，大富大贵，多为顶级富豪，行业领袖，一代宗师，影响力巨大。',
+    celebrities: ['顶级富豪', '行业领袖', '一代宗师', '传奇人物'],
+  },
+  {
+    name: '从弱格',
+    level: '外格',
+    feature: '弃命从弱，顺势而为。从财从官，皆是贵格。',
+    difficulty: 92,
+    fame: 92,
+    requirement: '无生扶方真',
+    detail: '从弱格为无生扶，弃命从弱，顺势而为。主适应能力强，能借势成事，善于合作。从弱格喜从财从官，忌生扶破格。从弱格真，大富大贵，多为职业经理人，高级幕僚，公关专家，资源整合者。',
+    celebrities: ['职业经理人', '高级幕僚', '公关专家', '资源整合者'],
+  },
+]
+
+export default function BaziPage() {
+  const [filteredElements, setFilteredElements] = useState(ELEMENTS)
+  const [expandedElement, setExpandedElement] = useState<string | null>(null)
+  const [filteredGan, setFilteredGan] = useState(TIAN_GAN)
+  const [expandedGan, setExpandedGan] = useState<number | null>(null)
+  const [filteredZhi, setFilteredZhi] = useState(DI_ZHI)
+  const [expandedZhi, setExpandedZhi] = useState<number | null>(null)
+  const [filteredShen, setFilteredShen] = useState(SHI_SHEN)
+  const [expandedShen, setExpandedShen] = useState<string | null>(null)
+  const [filteredGe, setFilteredGe] = useState(GE_JU)
+  const [expandedGe, setExpandedGe] = useState<string | null>(null)
+
+  const handleElementFilter = useCallback((data: typeof ELEMENTS) => {
+    setFilteredElements(data)
+  }, [])
+
+  const handleGanFilter = useCallback((data: typeof TIAN_GAN) => {
+    setFilteredGan(data)
+  }, [])
+
+  const handleZhiFilter = useCallback((data: typeof DI_ZHI) => {
+    setFilteredZhi(data)
+  }, [])
+
+  const handleShenFilter = useCallback((data: typeof SHI_SHEN) => {
+    setFilteredShen(data)
+  }, [])
+
+  const handleGeFilter = useCallback((data: typeof GE_JU) => {
+    setFilteredGe(data)
+  }, [])
+
+  const elementFilters = {
+    searchKeys: ['name', 'season', 'direction', 'desc', 'detail', 'manifestations', 'personality'],
+    filterKeys: {
+      season: [...new Set(ELEMENTS.map(e => e.season))],
+    },
+    sortOptions: [
+      { key: 'name', label: '五行名排序' },
+    ],
+  }
+
+  const ganFilters = {
+    searchKeys: ['name', 'element', 'nature', 'feature', 'detail', 'representative'],
+    filterKeys: {
+      polarity: [...new Set(TIAN_GAN.map(g => g.polarity))],
+    },
+    sortOptions: [
+      { key: 'strength', label: '力量排序' },
+      { key: 'index', label: '天干顺序' },
+    ],
+  }
+
+  const zhiFilters = {
+    searchKeys: ['name', 'animal', 'element', 'hidden', 'feature', 'detail', 'significance'],
+    filterKeys: {
+      element: [...new Set(DI_ZHI.map(z => z.element))],
+    },
+    sortOptions: [
+      { key: 'index', label: '地支顺序' },
+      { key: 'name', label: '地支名排序' },
+    ],
+  }
+
+  const shenFilters = {
+    searchKeys: ['name', 'polarity', 'relation', 'feature', 'nature', 'detail', 'applications'],
+    filterKeys: {
+      relation: [...new Set(SHI_SHEN.map(s => s.relation))],
+    },
+    sortOptions: [
+      { key: 'effect', label: '吉庆度排序' },
+      { key: 'name', label: '十神名排序' },
+    ],
+  }
+
+  const geFilters = {
+    searchKeys: ['name', 'level', 'feature', 'requirement', 'detail', 'celebrities'],
+    filterKeys: {
+      level: [...new Set(GE_JU.map(g => g.level))],
+    },
+    sortOptions: [
+      { key: 'fame', label: '知名度排序' },
+      { key: 'difficulty', label: '难度排序' },
+      { key: 'name', label: '格局名排序' },
+    ],
+  }
+
+  return (
+    <SubPageTemplate
+      title="四柱八字"
+      subtitle="天干地支 · 五行生克 · 六亲十神 · 命格穷通"
+      icon="📜"
+      colorRgb="168, 85, 247"
+    >
+      <SubPageSection title="五行大义">
+        <FilterBar
+          data={ELEMENTS}
+          onFiltered={handleElementFilter}
+          options={elementFilters}
+          placeholder="搜索五行..."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          {filteredElements.map((element) => (
+            <InfoCard
+              key={element.name}
+              title={`${element.name}行 · ${element.season}季 · ${element.direction}方`}
+              onClick={() => setExpandedElement(expandedElement === element.name ? null : element.name)}
+              glowIntensity={90}
+              glowColor={element.color.replace('#', '')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>{element.desc}</span>
+                <div style={{ color: element.color, fontWeight: 'bold' }}>
+                  生{element.sheng} · 克{element.ke}
+                </div>
+                {expandedElement === element.name ? '▲' : '▼'}
+              </div>
+
+              {expandedElement === element.name && (
+                <>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '1rem' }}>
+                    {element.detail}
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                    <div>
+                      <h4 style={{ color: element.color, fontSize: '0.9rem', marginBottom: '0.5rem' }}>🌍 代表物象</h4>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        {element.manifestations.map((m, i) => (
+                          <span key={i} style={{ background: `${element.color}20`, padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 style={{ color: element.color, fontSize: '0.9rem', marginBottom: '0.5rem' }}>😊 性格特点</h4>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        {element.personality.map((p, i) => (
+                          <span key={i} style={{ background: `${element.color}20`, padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                            {p}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </InfoCard>
+          ))}
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="十天干">
+        <FilterBar
+          data={TIAN_GAN}
+          onFiltered={handleGanFilter}
+          options={ganFilters}
+          placeholder="搜索天干..."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          {filteredGan.map((gan) => (
+            <InfoCard
+              key={gan.index}
+              title={`${gan.name} · ${gan.element}`}
+              subtitle={`${gan.nature} · 力量 ${gan.strength}%`}
+              onClick={() => setExpandedGan(expandedGan === gan.index ? null : gan.index)}
+              glowIntensity={gan.strength}
+              glowColor={gan.color.replace('#', '')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>{gan.feature}</span>
+                {expandedGan === gan.index ? '▲' : '▼'}
+              </div>
+
+              {expandedGan === gan.index && (
+                <>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '1rem' }}>
+                    {gan.detail}
+                  </p>
+
+                  <div>
+                    <h4 style={{ color: gan.color, fontSize: '0.9rem', marginBottom: '0.5rem' }}>🎯 典型代表</h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      {gan.representative.map((r, i) => (
+                        <span key={i} style={{ background: `${gan.color}20`, padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                          {r}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </InfoCard>
+          ))}
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="十二地支">
+        <FilterBar
+          data={DI_ZHI}
+          onFiltered={handleZhiFilter}
+          options={zhiFilters}
+          placeholder="搜索地支..."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          {filteredZhi.map((zhi) => (
+            <InfoCard
+              key={zhi.index}
+              title={`${zhi.name} · ${zhi.animal} · ${zhi.element}`}
+              subtitle={`${zhi.month} · ${zhi.direction}`}
+              onClick={() => setExpandedZhi(expandedZhi === zhi.index ? null : zhi.index)}
+              glowIntensity={85}
+              glowColor={zhi.color.replace('#', '')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>{zhi.feature}</span>
+                {expandedZhi === zhi.index ? '▲' : '▼'}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                {zhi.hidden.map((h, i) => (
+                  <span key={i} style={{ background: 'rgba(168, 85, 247, 0.15)', padding: '0.2rem 0.5rem', borderRadius: '1rem', fontSize: '0.75rem' }}>
+                    藏干: {h}
+                  </span>
+                ))}
+              </div>
+
+              {expandedZhi === zhi.index && (
+                <>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '1rem' }}>
+                    {zhi.detail}
+                  </p>
+
+                  <div>
+                    <h4 style={{ color: zhi.color, fontSize: '0.9rem', marginBottom: '0.5rem' }}>🎯 核心意义</h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      {zhi.significance.map((s, i) => (
+                        <span key={i} style={{ background: `${zhi.color}20`, padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </InfoCard>
+          ))}
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="十神奥义">
+        <FilterBar
+          data={SHI_SHEN}
+          onFiltered={handleShenFilter}
+          options={shenFilters}
+          placeholder="搜索十神..."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          {filteredShen.map((shen) => (
+            <InfoCard
+              key={shen.name}
+              title={shen.name}
+              subtitle={`${shen.relation} · ${shen.nature} · 吉庆度 ${shen.effect}%`}
+              onClick={() => setExpandedShen(expandedShen === shen.name ? null : shen.name)}
+              glowIntensity={shen.effect}
+              glowColor={shen.color.replace('#', '')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>{shen.feature}</span>
+                {expandedShen === shen.name ? '▲' : '▼'}
+              </div>
+
+              {expandedShen === shen.name && (
+                <>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '1rem' }}>
+                    {shen.detail}
+                  </p>
+
+                  <div>
+                    <h4 style={{ color: shen.color, fontSize: '0.9rem', marginBottom: '0.5rem' }}>📋 应用场景</h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      {shen.applications.map((a, i) => (
+                        <span key={i} style={{ background: `${shen.color}20`, padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                          {a}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </InfoCard>
+          ))}
+        </div>
+      </SubPageSection>
+
+      <SubPageSection title="命格格局">
+        <FilterBar
+          data={GE_JU}
+          onFiltered={handleGeFilter}
+          options={geFilters}
+          placeholder="搜索格局..."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '1.5rem' }}>
+          {filteredGe.map((ge) => (
+            <InfoCard
+              key={ge.name}
+              title={`${ge.name} · ${ge.level}`}
+              subtitle={`难度 ${ge.difficulty} · 成名度 ${ge.fame}%`}
+              onClick={() => setExpandedGe(expandedGe === ge.name ? null : ge.name)}
+              glowIntensity={ge.fame}
+              glowColor="168, 85, 247"
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', opacity: 0.8 }}>{ge.feature}</span>
+                {expandedGe === ge.name ? '▲' : '▼'}
+              </div>
+              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                📋 成格条件：{ge.requirement}
+              </p>
+
+              {expandedGe === ge.name && (
+                <>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '1rem' }}>
+                    {ge.detail}
+                  </p>
+
+                  <div>
+                    <h4 style={{ color: 'rgb(168, 85, 247)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>👤 典型人物</h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      {ge.celebrities.map((c, i) => (
+                        <span key={i} style={{ background: 'rgba(168, 85, 247, 0.15)', padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </InfoCard>
+          ))}
+        </div>
+      </SubPageSection>
+    </SubPageTemplate>
+  )
+}

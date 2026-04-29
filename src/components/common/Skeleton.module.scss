@@ -1,0 +1,65 @@
+@use '@/styles/design-tokens' as *;
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--gap-card);
+}
+
+.skeletonCard {
+  background: linear-gradient(135deg, rgba(20, 20, 35, 0.4) 0%, rgba(10, 10, 20, 0.6) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.08);
+  border-radius: 16px;
+  padding: var(--card-padding);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(201, 162, 39, 0.05) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+.skeletonIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(201, 162, 39, 0.1);
+  margin-bottom: var(--space-4);
+}
+
+.skeletonTitle {
+  height: 24px;
+  width: 60%;
+  background: rgba(201, 162, 39, 0.15);
+  border-radius: 4px;
+  margin-bottom: var(--space-4);
+}
+
+.skeletonLine {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  margin-bottom: var(--space-2);
+}

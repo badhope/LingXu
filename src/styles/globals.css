@@ -1,0 +1,500 @@
+@charset "UTF-8";
+
+/* ==========================================
+   全局字体引入
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+
+/* Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* ==========================================
+   CSS 变量 - 正宗米黄羊皮卷主题
+   ========================================== */
+:root {
+  /* 主色 - 深空蓝金 */
+  --color-gold: #fbbf24;
+  --color-gold-light: #fcd34d;
+  --color-gold-dark: #d97706;
+  
+  /* 深空四色背景系统 */
+  --space-1: #1e293b;  /* 最亮 - 石板蓝 */
+  --space-2: #0f172a;  /* 深海军蓝 */
+  --space-3: #020617;  /* 深空黑 */
+  --space-4: #000510;  /* 宇宙黑 */
+  
+  /* 文字 - 纯白系统（黑暗背景下对比度爆炸） */
+  --color-text-primary: #f8fafc;    /* 主文字 - 纯白 */
+  --color-text-secondary: #e2e8f0;  /* 次要文字 - 浅灰 */
+  --color-text-muted: #94a3b8;      /* 辅助文字 - 中灰 */
+  
+  /* 边框 - 蓝金 */
+  --color-border: rgba(251, 191, 36, 0.15);
+  --color-border-hover: rgba(251, 191, 36, 0.3);
+  
+  /* 背景 - 卡片毛玻璃 */
+  --bg-primary: var(--space-2);
+  --bg-secondary: var(--space-1);
+  --bg-card: rgba(30, 41, 59, 0.6);
+  
+  /* 阴影 - 深空投影 */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.4);
+  
+  /* 动画时长 - 极速响应 */
+  --duration-fast: 0.08s;
+  --duration-normal: 0.15s;
+  --duration-slow: 0.25s;
+  
+  /* 字体再放大 25% */
+  font-size: 20px;
+}
+
+/* ==========================================
+   基础样式
+   ========================================== */
+html {
+  scroll-behavior: smooth;
+}
+
+html, body, #__next {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #0f172a !important;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, #1e293b 0%, #0f172a 40%, #020617 100%) !important;
+  background-attachment: fixed !important;
+  background-size: 100vw 100vh !important;
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  min-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+html::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+
+html::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(251, 191, 36, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 30%, rgba(129, 140, 248, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+* {
+  background-color: transparent;
+}
+
+div[class*="container"],
+div[class*="page"],
+div[class*="wrapper"],
+main,
+section {
+  background: transparent !important;
+}
+
+div[style*="background: #0"],
+div[style*="background: #1"],
+div[style*="background-color: #0"],
+div[style*="background-color: #1"] {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.35) 100%) !important;
+}
+
+/* 古体字字体 */
+.font-ancient {
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+}
+
+/* ==========================================
+   滚动条样式
+   ========================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-light);
+}
+
+/* ==========================================
+   选择文字样式
+   ========================================== */
+::selection {
+  background: rgba(201, 162, 39, 0.3);
+  color: var(--color-gold-light);
+}
+
+/* ==========================================
+   链接样式
+   ========================================== */
+a {
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: all var(--duration-fast) ease;
+}
+
+a:hover {
+  color: var(--color-gold-light);
+  text-shadow: var(--glow-gold);
+}
+
+/* ==========================================
+   全局动画关键帧
+   ========================================== */
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    opacity: 0.5;
+    box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+  }
+  50% { 
+    opacity: 1;
+    box-shadow: 0 0 30px rgba(201, 162, 39, 0.6);
+  }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ink-spread {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(100% at 50% 50%);
+    opacity: 1;
+  }
+}
+
+/* ==========================================
+   动画工具类
+   ========================================== */
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.5s ease-out forwards;
+}
+
+.animate-ink-spread {
+  animation: ink-spread 0.8s ease-out forwards;
+}
+
+/* ==========================================
+   组件样式
+   ========================================== */
+@layer components {
+  /* 金色发光文字 */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(201, 162, 39, 0.5),
+                 0 0 20px rgba(201, 162, 39, 0.3),
+                 0 0 30px rgba(201, 162, 39, 0.2);
+  }
+  
+  /* 金色渐变文字 */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #f0d78c 0%, #c9a227 25%, #e8c76b 50%, #c9a227 75%, #f0d78c 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  /* 卡片样式 */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all var(--duration-normal) ease;
+  }
+  
+  .card:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--glow-gold);
+    transform: translateY(-4px);
+  }
+  
+  /* 按钮样式 */
+  .btn-gold {
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    color: var(--bg-primary);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    transition: all var(--duration-normal) ease;
+    border: 1px solid transparent;
+  }
+  
+  .btn-gold:hover {
+    box-shadow: var(--glow-gold-strong);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
+  }
+  
+  .btn-outline-gold {
+    background: transparent;
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    transition: all var(--duration-normal) ease;
+  }
+  
+  .btn-outline-gold:hover {
+    background: rgba(201, 162, 39, 0.1);
+    box-shadow: var(--glow-gold);
+  }
+  
+  /* 分隔线 */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-gold), transparent);
+  }
+  
+  /* 装饰边框 */
+  .ornate-border {
+    position: relative;
+    border: 1px solid var(--color-border);
+  }
+  
+  .ornate-border::before,
+  .ornate-border::after {
+    content: '◆';
+    position: absolute;
+    color: var(--color-gold);
+    font-size: 8px;
+  }
+  
+  .ornate-border::before {
+    top: -5px;
+    left: -5px;
+  }
+  
+  .ornate-border::after {
+    bottom: -5px;
+    right: -5px;
+  }
+
+  /* 玄学卡片 */
+  .xuan-card {
+    position: relative;
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.8), rgba(10, 10, 15, 0.9));
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .xuan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .xuan-card:hover::before {
+    left: 100%;
+  }
+
+  /* 符文边框 */
+  .rune-border {
+    position: relative;
+    border: 1px solid var(--color-gold);
+  }
+
+  .rune-border::before,
+  .rune-border::after {
+    content: '☰';
+    position: absolute;
+    color: var(--color-gold);
+    font-size: 12px;
+    opacity: 0.5;
+  }
+
+  .rune-border::before {
+    top: -8px;
+    left: 10px;
+  }
+
+  .rune-border::after {
+    bottom: -8px;
+    right: 10px;
+    transform: rotate(180deg);
+  }
+}
+
+/* ==========================================
+   动画延迟工具类
+   ========================================== */
+@layer utilities {
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+  .animate-delay-1000 { animation-delay: 1000ms; }
+  .animate-delay-1500 { animation-delay: 1500ms; }
+  .animate-delay-2000 { animation-delay: 2000ms; }
+  
+  .backdrop-blur-gold {
+    backdrop-filter: blur(10px);
+    background: rgba(201, 162, 39, 0.05);
+  }
+  
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* 文字模糊到清晰动画 */
+  .blur-in {
+    animation: blur-in 0.8s ease-out forwards;
+  }
+
+  @keyframes blur-in {
+    from {
+      filter: blur(10px);
+      opacity: 0;
+    }
+    to {
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* ==========================================
+   减少动画偏好
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,11 @@
+# Robots.txt for LingXu Archive
+# https://badhope.github.io/LingXu
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://badhope.github.io/LingXu/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1

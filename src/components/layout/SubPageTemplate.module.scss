@@ -1,0 +1,356 @@
+@use '@/styles/design-tokens' as *;
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 5rem var(--page-padding-x) 4rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   页头 - 应用设计系统
+   ========================================================================== */
+
+.header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem 2.5rem;
+  background: 
+    radial-gradient(ellipse at center, rgba(251, 191, 36, 0.1) 0%, transparent 70%),
+    linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  overflow: hidden;
+  font-family: var(--font-display);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      #c9a227 20%, 
+      #e8d48b 50%, 
+      #c9a227 80%, 
+      transparent 100%);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      #c9a227 20%, 
+      #e8d48b 50%, 
+      #c9a227 80%, 
+      transparent 100%);
+  }
+}
+
+.icon {
+  font-size: var(--fs-hero-clamp);
+  margin-bottom: var(--space-6);
+  filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.3));
+  animation: iconFloat 4s ease-in-out infinite;
+  line-height: 1;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-1-clamp);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: var(--ls-title);
+  margin: 0 0 var(--space-4);
+  text-shadow: 0 2px 4px rgba(92, 82, 69, 0.15);
+  line-height: var(--lh-tight);
+  position: relative;
+  @include text-balance;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20%;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(251, 191, 36, 0.6), 
+      transparent);
+    animation: swordFlash 6s ease-in-out infinite;
+  }
+}
+
+@keyframes swordFlash {
+  0% { width: 0; opacity: 0; }
+  5% { opacity: 1; }
+  10% { width: 140%; }
+  15%, 100% { width: 0; opacity: 0; }
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  color: #94a3b8;
+  letter-spacing: var(--ls-normal);
+  margin: 0;
+  font-weight: 500;
+  line-height: var(--lh-body);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  @include text-balance;
+}
+
+.headerDecor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  color: #8b6914;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-normal);
+
+  &::before,
+  &::after {
+    content: '';
+    width: clamp(40px, 10vw, 80px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.4), transparent);
+  }
+}
+
+/* ==========================================================================
+   章节标题
+   ========================================================================== */
+
+.section {
+  margin-bottom: var(--gap-section);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-3-clamp);
+  margin-bottom: var(--space-8);
+  text-align: center;
+  color: var(--text-primary);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
+  @include text-balance;
+}
+
+/* ==========================================================================
+   信息卡片容器
+   ========================================================================== */
+
+.infoCard {
+  background: linear-gradient(145deg, 
+    rgba(30, 30, 50, 0.85) 0%, 
+    rgba(20, 20, 35, 0.95) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.12);
+  border-radius: 8px;
+  padding: var(--card-padding);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(201, 162, 39, 0.5), 
+      transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    border-color: rgba(201, 162, 39, 0.25);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+/* ==========================================================================
+   子模块卡片网格
+   ========================================================================== */
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--gap-card);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.submoduleCard {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: linear-gradient(145deg, 
+    rgba(30, 30, 50, 0.85) 0%, 
+    rgba(20, 20, 35, 0.95) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.12);
+  border-radius: 8px;
+  padding: var(--card-padding);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(201, 162, 39, 0.6), 
+      transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(201, 162, 39, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.cardIcon {
+  font-size: var(--fs-2-clamp);
+  margin-bottom: var(--space-4);
+  opacity: 0.85;
+  line-height: 1;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-4-clamp);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
+}
+
+.cardDesc {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  line-height: var(--lh-body);
+  margin-bottom: var(--space-4);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-tiny);
+  color: rgba(201, 162, 39, 0.7);
+}
+
+/* ==========================================================================
+   进度条
+   ========================================================================== */
+
+.progressBar {
+  margin-bottom: var(--space-4);
+}
+
+.progressLabelRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+
+.progressValue {
+  color: #c9a227;
+  font-weight: 500;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #c9a227;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   响应式断点
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-16) var(--page-padding-x) var(--space-12);
+  }
+
+  .header {
+    padding: var(--space-8) var(--space-6);
+    margin-bottom: var(--space-12);
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .headerDecor {
+    gap: var(--space-2);
+    font-size: var(--fs-tiny);
+  }
+}

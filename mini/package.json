@@ -1,0 +1,63 @@
+{
+  "name": "lingxu-mini",
+  "version": "3.0.0",
+  "private": true,
+  "description": "灵墟 - 微信小程序版",
+  "templateInfo": {
+    "name": "default",
+    "typescript": true,
+    "css": "sass"
+  },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "build:swan": "taro build --type swan",
+    "build:alipay": "taro build --type alipay",
+    "build:tt": "taro build --type tt",
+    "build:h5": "taro build --type h5",
+    "build:rn": "taro build --type rn",
+    "build:qq": "taro build --type qq",
+    "build:jd": "taro build --type jd",
+    "build:quickapp": "taro build --type quickapp",
+    "dev:weapp": "taro build --watch --type weapp",
+    "dev:swan": "taro build --watch --type swan",
+    "dev:alipay": "taro build --watch --type alipay",
+    "dev:tt": "taro build --watch --type tt",
+    "dev:h5": "taro build --watch --type h5",
+    "dev:rn": "taro build --watch --type rn",
+    "dev:qq": "taro build --watch --type qq",
+    "dev:jd": "taro build --watch --type jd",
+    "dev:quickapp": "taro build --watch --type quickapp"
+  },
+  "dependencies": {
+    "@tarojs/components": "^3.6.30",
+    "@tarojs/helper": "^3.6.30",
+    "@tarojs/plugin-framework-react": "^3.6.30",
+    "@tarojs/plugin-platform-alipay": "^3.6.30",
+    "@tarojs/plugin-platform-h5": "^3.6.30",
+    "@tarojs/plugin-platform-jd": "^3.6.30",
+    "@tarojs/plugin-platform-qq": "^3.6.30",
+    "@tarojs/plugin-platform-swan": "^3.6.30",
+    "@tarojs/plugin-platform-tt": "^3.6.30",
+    "@tarojs/plugin-platform-weapp": "^3.6.30",
+    "@tarojs/react": "^3.6.30",
+    "@tarojs/runtime": "^3.6.30",
+    "@tarojs/taro": "^3.6.30",
+    "@tarojs/taro-h5": "^3.6.30",
+    "lunar-javascript": "^1.7.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/runtime": "^7.26.0",
+    "@tarojs/cli": "^3.6.30",
+    "@tarojs/webpack5-runner": "^3.6.30",
+    "@types/react": "^18.3.12",
+    "@types/webpack-env": "^1.18.5",
+    "babel-preset-taro": "^3.6.30",
+    "sass": "^1.81.0",
+    "typescript": "^5.6.3",
+    "webpack": "^5.96.1"
+  }
+}
