@@ -187,7 +187,11 @@ export default function ImmortalFlowCanvas() {
           canvas.width = 0
           canvas.height = 0
         }
-      } catch (e) {}
+      } catch (e) {
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('Canvas cleanup skipped:', e)
+        }
+      }
       
       window.removeEventListener('resize', resize)
       canvas?.removeEventListener('mousemove', handleMouseMove)

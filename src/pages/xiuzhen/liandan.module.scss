@@ -1,0 +1,172 @@
+@use '@/styles/design-tokens.scss' as tokens;
+
+.levelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.levelCard {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.levelColor {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  box-shadow: 0 0 20px currentColor;
+}
+
+.levelName {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.1em;
+}
+
+.levelDesc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin: 4rem 0 3rem;
+}
+
+.sectionTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.sectionDivider {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), transparent);
+}
+
+.sectionTitle {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: white;
+}
+
+.sectionSubtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.card {
+  padding: 1.75rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(168, 85, 247, 0.1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.6), transparent);
+    opacity: 0.6;
+  }
+}
+
+.cardIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.5));
+}
+
+.cardHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.cardName {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.cardLevel {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 999px;
+  color: #fbbf24;
+  letter-spacing: 0.1em;
+}
+
+.cardEffect {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.cardIngredients {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.tipBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(6, 182, 212, 0.1));
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.tipIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.tipText {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.8;
+  margin: 0;
+}

@@ -1,0 +1,274 @@
+.container {
+  min-height: 100vh;
+  position: relative;
+}
+
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.heroRune {
+  font-size: clamp(4rem, 15vw, 8rem);
+  background: linear-gradient(135deg, #a855f7 0%, #06b6d4 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.5));
+  line-height: 1;
+}
+
+.heroTitle {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 300;
+  letter-spacing: 2rem;
+  color: white;
+  text-shadow: 0 0 60px rgba(168, 85, 247, 0.6), 0 0 120px rgba(6, 182, 212, 0.4);
+  line-height: 1.2;
+
+  @media (max-width: 768px) {
+    letter-spacing: 1rem;
+  }
+}
+
+.titleSeparator {
+  letter-spacing: 0.5rem;
+  opacity: 0.3;
+}
+
+.heroSubtitle {
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5em;
+  margin-top: 1rem;
+
+  span {
+    display: block;
+  }
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  z-index: 10;
+
+  div:first-child {
+    font-size: 1.25rem;
+  }
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.8), transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 修士状态面板 */
+.cultivatorPanel {
+  max-width: 1200px;
+  margin: 0 auto 6rem;
+  padding: 0 1.5rem;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.statusCard {
+  padding: 2rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.8), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(168, 85, 247, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #a855f7, #06b6d4, transparent);
+    opacity: 0.6;
+  }
+}
+
+.statusHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.statusIcon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5));
+}
+
+.statusShichen {
+  font-size: 0.875rem;
+  color: rgba(168, 85, 247, 0.8);
+  font-family: 'ZCOOL XiaoWei', serif;
+  letter-spacing: 0.2em;
+  background: rgba(168, 85, 247, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.statusValue {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a855f7, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.25rem;
+}
+
+.statusLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.2em;
+}
+
+.statusProgress {
+  margin-top: 1rem;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.statusProgressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #a855f7, #06b6d4);
+  border-radius: 999px;
+  transition: width 1s ease;
+}
+
+/* 章节标题 */
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.sectionTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.sectionDivider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), transparent);
+}
+
+.sectionTitle {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: white;
+  background: linear-gradient(135deg, #a855f7 0%, #06b6d4 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sectionSubtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  letter-spacing: 0.3em;
+}
+
+/* 十二法门 */
+.modulesSection {
+  max-width: 1400px;
+  margin: 0 auto 8rem;
+  padding: 0 1.5rem;
+}
+
+.modulesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  perspective: 2000px;
+  transform-style: preserve-3d;
+}
+
+/* 大道箴言 */
+.philosophySection {
+  max-width: 900px;
+  margin: 6rem auto;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.philosophyContent {
+  padding: 4rem;
+  border-radius: 24px;
+  background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.1), transparent 70%);
+  border: 1px solid rgba(168, 85, 247, 0.1);
+}
+
+.quote {
+  font-family: 'Noto Serif SC', serif;
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 300;
+  line-height: 2.5;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.3em;
+  margin-bottom: 2rem;
+
+  span {
+    display: block;
+  }
+}
+
+.quoteSource {
+  color: rgba(168, 85, 247, 0.6);
+  font-size: 0.875rem;
+  letter-spacing: 0.3em;
+}

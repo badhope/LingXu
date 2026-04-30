@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Home from './home'
+import { useTheme } from '@/context/ThemeContext'
 import styles from './index.module.scss'
 
 // Bagua SVG 组件 - 客户端动态渲染消除 Hydration 警告
@@ -43,17 +44,6 @@ const BaguaSVG = () => {
       <circle cx="100" cy="100" r="80" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.5" />
       <circle cx="100" cy="100" r="65" fill="none" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.6" />
 
-      <g stroke="url(#goldGradient)" strokeWidth="2" filter="url(#glow)">
-        <text x="100" y="18" fill="#fbbf24" fontSize="14" textAnchor="middle">☰</text>
-        <text x="162" y="42" fill="#fbbf24" fontSize="14" textAnchor="middle">☴</text>
-        <text x="182" y="105" fill="#fbbf24" fontSize="14" textAnchor="middle">☲</text>
-        <text x="162" y="168" fill="#fbbf24" fontSize="14" textAnchor="middle">☶</text>
-        <text x="100" y="190" fill="#fbbf24" fontSize="14" textAnchor="middle">☷</text>
-        <text x="38" y="168" fill="#fbbf24" fontSize="14" textAnchor="middle">☳</text>
-        <text x="18" y="105" fill="#fbbf24" fontSize="14" textAnchor="middle">☵</text>
-        <text x="38" y="42" fill="#fbbf24" fontSize="14" textAnchor="middle">☱</text>
-      </g>
-
       <circle cx="100" cy="100" r="40" fill="url(#centerGradient)" filter="url(#glow)" />
 
       <g transform="translate(100, 100)">
@@ -80,17 +70,19 @@ interface Particle {
   size: number
   isGold: boolean
   yDist: number
+  xDist: number
 }
 
 function generateParticles(): Particle[] {
-  return Array.from({ length: 60 }, (_, i) => ({
+  return Array.from({ length: 120 }, (_, i) => ({
     id: i,
     x: seededRandom(i * 3 + 1),
     y: seededRandom(i * 3 + 2),
-    delay: seededRandom(i * 3 + 3) * 3,
-    size: 1 + seededRandom(i * 3 + 4) * 5,
-    isGold: seededRandom(i * 3 + 5) > 0.4,
-    yDist: 50 + seededRandom(i * 3 + 6) * 50,
+    delay: seededRandom(i * 3 + 3) * 5,
+    size: 1 + seededRandom(i * 3 + 4) * 6,
+    isGold: seededRandom(i * 3 + 5) > 0.5,
+    yDist: 30 + seededRandom(i * 3 + 6) * 80,
+    xDist: seededRandom(i * 3 + 7) * 40 - 20,
   }))
 }
 
@@ -98,6 +90,7 @@ export default function IndexPage() {
   const [phase, setPhase] = useState<'splash' | 'gate' | 'main'>('splash')
   // 粒子在 useEffect 中初始化（仅客户端），避免 SSR mismatch
   const [particles, setParticles] = useState<Particle[]>([])
+  const { themeConfig } = useTheme()
 
   useEffect(() => {
     setParticles(generateParticles())
@@ -108,25 +101,43 @@ export default function IndexPage() {
     setTimeout(() => setPhase('main'), 2500)
   }, [])
 
-  // 地支标签（确定性渲染）
-  const dizhiLabels = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ background: themeConfig.bgGradient }}>
       <AnimatePresence mode="wait">
         {phase === 'splash' && (
           <motion.div
             key="splash"
             className={styles.splash}
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5 }}
           >
-            <div className={styles.backgroundLayers}>
+            <div className={styles.backgroundLayers} style={{ '--theme-primary': themeConfig.primary, '--theme-glow': themeConfig.glowColor } as React.CSSProperties}>
               <div className={styles.layerFar} />
               <div className={styles.layerMid} />
               <div className={styles.layerNear} />
+              
+              {/* 星云效果 */}
+              <div className={styles.nebulaCloud} />
+              <div className={styles.nebulaCloud} />
+              <div className={styles.nebulaCloud} />
+            </div>
+            
+            {/* 能量线条 */}
+            <div className={styles.energyLines}>
+              <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="transparent" />
+                    <stop offset="50%" stopColor={themeConfig.particleColor} />
+                    <stop offset="100%" stopColor="transparent" />
+                  </linearGradient>
+                </defs>
+                <path d="M0,200 Q480,100 960,200 T1920,200" />
+                <path d="M0,500 Q480,400 960,500 T1920,500" style={{ animationDelay: '-2s' }} />
+                <path d="M0,800 Q480,700 960,800 T1920,800" style={{ animationDelay: '-4s' }} />
+              </svg>
             </div>
 
             {/* 粒子动画（延迟挂载，等待 particles 初始化） */}
@@ -146,11 +157,12 @@ export default function IndexPage() {
                 }}
                 animate={{
                   opacity: [0.1, 0.6, 0.9, 0.6, 0.1],
-                  scale: [1, 1.2, 1, 0.8, 1],
+                  scale: [1, 1.3, 1, 0.7, 1],
                   y: [0, -p.yDist, 0, p.yDist / 2, 0],
+                  x: [0, p.xDist, 0, -p.xDist, 0],
                 }}
                 transition={{
-                  duration: 4 + seededRandom(p.id + 100) * 6,
+                  duration: 3 + seededRandom(p.id + 100) * 5,
                   delay: p.delay,
                   repeat: Infinity,
                   ease: 'easeInOut',
@@ -158,48 +170,37 @@ export default function IndexPage() {
               />
             ))}
 
-            {/* 八卦旋转环 */}
+            {/* 八卦旋转环 - 外层高速旋转 */}
             <motion.div
               className={styles.runeContainer}
               initial={{ scale: 0, rotate: -180, opacity: 0 }}
               animate={{ scale: 1, rotate: 0, opacity: 1 }}
               transition={{ duration: 2.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
+              {/* 外环 - 高速顺时针旋转 */}
               <motion.div
                 className={styles.runeRing}
                 animate={{ rotateZ: 360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
               >
                 <BaguaSVG />
               </motion.div>
-
+              
+              {/* 内环 - 反向逆时针旋转，营造视觉差 */}
               <motion.div
-                className={styles.runeRing}
-                style={{ scale: 1.15 }}
+                className={styles.runeRingInner}
                 animate={{ rotateZ: -360 }}
-                transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
               >
-                <svg viewBox="0 0 200 200" className={styles.baguaSvg} style={{ opacity: 0.5 }}>
-                  {dizhiLabels.map((item, i) => {
-                    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2
-                    const x = 100 + Math.cos(angle) * 90
-                    const y = 100 + Math.sin(angle) * 90
-                    return (
-                      <text key={i} x={x} y={y} fill="#fbbf24" fontSize="8" textAnchor="middle" dominantBaseline="middle">
-                        {item}
-                      </text>
-                    )
-                  })}
-                </svg>
+                <div className={styles.innerRing} />
               </motion.div>
-
+              
+              {/* 中心光环脉动 */}
               <motion.div
-                className={styles.runeInnerRing}
-                animate={{ rotateZ: -360 }}
-                transition={{ duration: 35, repeat: Infinity, ease: 'linear' }}
-              >
-                <div className={styles.runeTextCircle}>✧ 天 地 玄 黄 宇 宙 洪 荒 ✧</div>
-              </motion.div>
+                className={styles.centerGlow}
+                animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.8, 0.4] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              />
             </motion.div>
 
             {/* 标题 */}
@@ -246,15 +247,15 @@ export default function IndexPage() {
                 className={styles.enterButton}
                 onClick={handleEnter}
                 whileHover={{
-                  scale: 1.08,
-                  boxShadow: '0 0 60px rgba(251, 191, 36, 0.7), 0 0 120px rgba(251, 191, 36, 0.4)',
+                  scale: 1.05,
+                  boxShadow: '0 0 40px rgba(251, 191, 36, 0.5), 0 0 80px rgba(251, 191, 36, 0.3)',
                 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <div className={styles.buttonBorderTop} />
                 <div className={styles.buttonBorderBottom} />
                 <div className={styles.buttonGlow} />
-                <span className={styles.buttonText}>一 踏 入 灵 墟 一</span>
+                <span className={styles.buttonText}>踏入灵墟</span>
               </motion.button>
             </motion.div>
           </motion.div>
@@ -302,7 +303,7 @@ export default function IndexPage() {
             >
               <motion.div
                 animate={{ rotateZ: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
               >
                 <BaguaSVG />
               </motion.div>

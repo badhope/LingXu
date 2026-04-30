@@ -61,6 +61,87 @@
   50% { transform: translate(-15px, 15px); }
 }
 
+@keyframes energyFlow {
+  0% { 
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  50% { opacity: 0.6; }
+  100% { 
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes nebulaPulse {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.energyLines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    
+    path {
+      fill: none;
+      stroke: url(#energyGradient);
+      stroke-width: 1;
+      stroke-dasharray: 50 100;
+      animation: energyFlow 8s ease-in-out infinite;
+    }
+  }
+}
+
+.nebulaCloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  mix-blend-mode: screen;
+  animation: nebulaPulse 10s ease-in-out infinite;
+  
+  &:nth-child(1) {
+    width: 400px;
+    height: 400px;
+    top: 10%;
+    left: 15%;
+    background: radial-gradient(circle, var(--theme-glow, rgba(251, 191, 36, 0.4)) 0%, transparent 70%);
+    animation-delay: 0s;
+  }
+  
+  &:nth-child(2) {
+    width: 500px;
+    height: 500px;
+    bottom: 20%;
+    right: 10%;
+    background: radial-gradient(circle, var(--theme-glow, rgba(251, 191, 36, 0.3)) 0%, transparent 70%);
+    animation-delay: -3s;
+    opacity: 0.7;
+  }
+  
+  &:nth-child(3) {
+    width: 350px;
+    height: 350px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, var(--theme-glow, rgba(251, 191, 36, 0.25)) 0%, transparent 70%);
+    animation-delay: -6s;
+    opacity: 0.5;
+  }
+}
+
 .starParticle {
   position: absolute;
   background: radial-gradient(circle, #fbbf24 0%, rgba(251, 191, 36, 0.3) 50%, transparent 70%);
@@ -71,12 +152,13 @@
 
 .runeContainer {
   position: relative;
-  width: 500px;
-  height: 500px;
+  width: 450px;
+  height: 450px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+  margin-top: 0;
   z-index: 2;
 }
 
@@ -87,6 +169,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.runeRingInner {
+  position: absolute;
+  width: 65%;
+  height: 65%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.innerRing {
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(251, 191, 36, 0.4);
+  border-radius: 50%;
+  box-shadow: 
+    inset 0 0 20px rgba(251, 191, 36, 0.1),
+    0 0 20px rgba(251, 191, 36, 0.2);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 15%;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 50%;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 30%;
+    border: 1px dashed rgba(251, 191, 36, 0.25);
+    border-radius: 50%;
+  }
+}
+
+.centerGlow {
+  position: absolute;
+  width: 35%;
+  height: 35%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, rgba(251, 191, 36, 0.1) 40%, transparent 70%);
+  filter: blur(8px);
 }
 
 .baguaSvg {
@@ -118,19 +244,19 @@
 
 .title {
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
-  font-size: 8rem;
+  font-size: 6rem;
   font-weight: normal;
   color: #c9a227;
-  letter-spacing: 1.5rem;
+  letter-spacing: 1.2rem;
   text-shadow: 
     0 0 40px rgba(201, 162, 39, 0.8),
     0 0 80px rgba(201, 162, 39, 0.4),
     0 0 120px rgba(201, 162, 39, 0.2);
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.8rem 0;
   user-select: none;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.2rem;
   z-index: 2;
 }
 
@@ -166,9 +292,9 @@
 
 .subtitle {
   color: rgba(201, 162, 39, 0.8);
-  font-size: 1.4rem;
-  letter-spacing: 0.8rem;
-  margin: 0 0 4rem 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.6rem;
+  margin: 0 0 2.5rem 0;
   user-select: none;
   font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
   z-index: 2;
@@ -188,7 +314,7 @@
 
 .enterButton {
   position: relative;
-  padding: 1.2rem 4rem;
+  padding: 0.8rem 2.5rem;
   background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(201, 162, 39, 0.05) 100%);
   border: none;
   border-radius: 2px;
@@ -222,11 +348,11 @@
 .buttonText {
   position: relative;
   color: #c9a227;
-  font-size: 1.4rem;
-  letter-spacing: 0.8rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.4rem;
   font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
   text-shadow: 0 0 20px rgba(201, 162, 39, 0.6);
-  padding-left: 0.8rem;
+  padding-left: 0.4rem;
 }
 
 .enterButton:hover .buttonGlow {
@@ -351,14 +477,14 @@
 
 @media (max-width: 1440px) {
   .title {
-    font-size: 20rem;
-    letter-spacing: 2.5rem;
-    gap: 2.5rem;
+    font-size: 5rem;
+    letter-spacing: 1rem;
+    gap: 1rem;
   }
   
   .runeContainer {
-    width: 350px;
-    height: 350px;
+    width: 380px;
+    height: 380px;
   }
   
   .gateRuneContainer {
@@ -373,18 +499,18 @@
 
 @media (max-width: 1024px) {
   .title {
-    font-size: 12rem;
-    letter-spacing: 1.5rem;
-    gap: 1.5rem;
+    font-size: 4rem;
+    letter-spacing: 0.8rem;
+    gap: 0.8rem;
   }
   
   .titleDivider {
-    font-size: 3rem;
+    font-size: 1.5rem;
   }
   
   .runeContainer {
-    width: 250px;
-    height: 250px;
+    width: 320px;
+    height: 320px;
   }
   
   .gateRuneContainer {
@@ -397,28 +523,29 @@
   }
   
   .enterButton {
-    padding: 1.5rem 4rem;
+    padding: 0.7rem 2rem;
   }
   
   .buttonText {
-    font-size: 1.8rem;
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 768px) {
   .title {
-    font-size: 7rem;
-    letter-spacing: 1rem;
-    gap: 1rem;
+    font-size: 3rem;
+    letter-spacing: 0.6rem;
+    gap: 0.6rem;
   }
   
   .titleDivider {
-    font-size: 2rem;
+    font-size: 1.2rem;
   }
   
   .runeContainer {
-    width: 180px;
-    height: 180px;
+    width: 260px;
+    height: 260px;
+    margin-bottom: 1.5rem;
   }
   
   .gateRuneContainer {
@@ -427,18 +554,18 @@
   }
   
   .subtitle {
-    font-size: 1.4rem;
-    letter-spacing: 0.5rem;
-    margin-bottom: 4rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.4rem;
+    margin-bottom: 2rem;
   }
   
   .enterButton {
-    padding: 1.25rem 3rem;
+    padding: 0.6rem 1.8rem;
   }
   
   .buttonText {
-    font-size: 1.4rem;
-    letter-spacing: 0.6rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.3rem;
   }
   
   .gateText span {
@@ -451,20 +578,20 @@
   }
   
   .dividerLine {
-    width: 150px;
+    width: 120px;
   }
 }
 
 @media (max-width: 480px) {
   .title {
-    font-size: 4.5rem;
-    letter-spacing: 0.6rem;
-    gap: 0.6rem;
+    font-size: 2.5rem;
+    letter-spacing: 0.4rem;
+    gap: 0.4rem;
   }
   
   .runeContainer {
-    width: 140px;
-    height: 140px;
+    width: 200px;
+    height: 200px;
   }
   
   .gateRuneContainer {
@@ -477,19 +604,19 @@
   }
   
   .subtitle {
-    font-size: 1.1rem;
-    letter-spacing: 0.4rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.3rem;
   }
   
   .enterButton {
-    padding: 1rem 2.5rem;
+    padding: 0.5rem 1.5rem;
   }
   
   .buttonText {
-    font-size: 1.2rem;
+    font-size: 0.85rem;
   }
   
   .dividerLine {
-    width: 100px;
+    width: 80px;
   }
 }

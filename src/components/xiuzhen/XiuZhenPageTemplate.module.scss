@@ -1,0 +1,181 @@
+.container {
+  min-height: 100vh;
+  position: relative;
+}
+
+.hero {
+  height: 70vh;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.heroRune {
+  font-size: clamp(3rem, 10vw, 5rem);
+  background: linear-gradient(135deg, #a855f7 0%, #06b6d4 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.5));
+  line-height: 1;
+}
+
+.heroTitle {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: 0.5em;
+  color: white;
+  text-shadow: 0 0 40px rgba(168, 85, 247, 0.5), 0 0 80px rgba(6, 182, 212, 0.3);
+  line-height: 1.3;
+
+  @media (max-width: 768px) {
+    letter-spacing: 0.3em;
+  }
+}
+
+.heroSubtitle {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.3em;
+  margin-top: 0.5rem;
+
+  span {
+    display: block;
+  }
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  z-index: 10;
+
+  div:first-child {
+    font-size: 1rem;
+  }
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.6), transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto 6rem;
+  padding: 0 1.5rem;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin: 4rem 0 3rem;
+}
+
+.sectionTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.sectionDivider {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), transparent);
+}
+
+.sectionTitle {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: white;
+}
+
+.sectionSubtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.infoCard {
+  padding: 1.75rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(168, 85, 247, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), rgba(6, 182, 212, 0.5), transparent);
+    opacity: 0.5;
+  }
+}
+
+.cardIcon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4));
+}
+
+.cardTitle {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.cardDesc {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+}

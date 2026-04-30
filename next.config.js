@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const isGitHubPages = process.env.NEXT_PUBLIC_BASE_PATH === '/LingXu'
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -7,20 +8,37 @@ const nextConfig = {
   reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
-  swcMinify: true,
+  generateEtags: true,
+  httpAgentOptions: {
+    keepAlive: true,
+  },
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 5,
+  },
 
   images: {
     unoptimized: true,
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 86400,
   },
 
-  basePath: '/LingXu',
-  assetPrefix: '/LingXu/',
+  basePath: isGitHubPages ? '/LingXu' : '',
+  assetPrefix: isGitHubPages ? '/LingXu/' : '',
   trailingSlash: true,
-
   output: 'export',
+  distDir: 'out',
+  cleanDistDir: true,
 
   experimental: {
-    optimizePackageImports: ['framer-motion', 'echarts', 'echarts-for-react', 'three', '@react-three/fiber', '@react-three/drei'],
+    optimizePackageImports: ['framer-motion', 'three', '@react-three/fiber', '@react-three/drei', 'lodash-es'],
+    serverMinification: true,
+    serverSourceMaps: false,
+    webpackBuildWorker: true,
+    parallelServerBuildTraces: true,
+    parallelServerCompiles: true,
   },
 
   webpack: (config, { dev, isServer }) => {
@@ -28,60 +46,55 @@ const nextConfig = {
       config.optimization.splitChunks = {
         chunks: 'all',
         minSize: 20000,
-        maxSize: 250000,
+        maxSize: 200000,
+        minChunks: 1,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 30,
         cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
+          default: false,
+          defaultVendors: false,
+          framework: {
+            test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
+            name: 'framework',
             chunks: 'all',
-            priority: 10,
+            priority: 40,
+            enforce: true,
           },
           framer: {
             test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
             name: 'framer',
             chunks: 'all',
-            priority: 20,
+            priority: 30,
+            enforce: true,
           },
-          three: {
+          threejs: {
             test: /[\\/]node_modules[\\/](three|@react-three)[\\/]/,
-            name: 'three',
-            chunks: 'all',
-            priority: 20,
+            name: 'threejs',
+            chunks: 'async',
+            priority: 25,
+            enforce: true,
           },
-          echarts: {
-            test: /[\\/]node_modules[\\/]echarts[\\/]/,
-            name: 'echarts',
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
             chunks: 'all',
-            priority: 20,
+            priority: 10,
           },
           commons: {
             name: 'commons',
             minChunks: 2,
+            chunks: 'all',
             priority: 5,
+            reuseExistingChunk: true,
           },
         },
       }
+    }
 
+    if (!dev) {
       config.optimization.minimize = true
-      
-      config.optimization.minimizer = config.optimization.minimizer.map(minimizer => {
-        if (minimizer.options?.terserOptions) {
-          minimizer.options.terserOptions.compress = {
-            ...minimizer.options.terserOptions.compress,
-            drop_console: true,
-          }
-        }
-        return minimizer
-      })
     }
-    
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'three/addons/libs': false,
-      }
-    }
-    
+
     return config
   },
 }

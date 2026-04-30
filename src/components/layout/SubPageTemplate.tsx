@@ -32,7 +32,7 @@ export default function SubPageTemplate({
         <div className={styles.container}>
           <motion.div
             className={styles.header}
-            initial={{ opacity: 0, y: -20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}
             style={{ willChange: 'transform, opacity' }}
@@ -54,7 +54,7 @@ export default function SubPageTemplate({
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15, ease: 'easeOut' }}
             style={{ willChange: 'transform, opacity' }}
@@ -125,16 +125,31 @@ export function InfoCard({
     <motion.div
       className={`${styles.infoCard} ${className || ''}`}
       style={{
+        position: 'relative',
+        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%)',
+        border: '1px solid transparent',
+        backgroundClip: 'padding-box',
         boxShadow: handleClick ? `0 0 ${glowIntensity / 2}px rgba(${glowColor || colorRgb}, ${glowIntensity / 200})` : undefined,
         cursor: handleClick ? 'pointer' : undefined,
+      }}
+      onMouseEnter={(e) => {
+        if (handleClick) {
+          e.currentTarget.style.border = `1px solid rgba(${glowColor || colorRgb}, 0.4)`
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (handleClick) {
+          e.currentTarget.style.border = '1px solid transparent'
+        }
       }}
       onClick={handleClick}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       whileHover={handleClick ? {
-        scale: 1.015,
-        boxShadow: `0 0 ${glowIntensity}px rgba(${glowColor || colorRgb}, ${glowIntensity / 100})`,
-        transition: { duration: 0.15 },
+        scale: 1.025,
+        y: -6,
+        boxShadow: `0 20px 40px rgba(0, 0, 0, 0.3), 0 0 ${glowIntensity}px rgba(${glowColor || colorRgb}, ${glowIntensity / 80})`,
+        transition: { duration: 0.25, ease: 'easeOut' },
       } : undefined}
       whileTap={handleClick ? { scale: 0.98, transition: { duration: 0.1 } } : undefined}
       viewport={{ once: true }}

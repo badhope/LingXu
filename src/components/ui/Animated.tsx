@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo } from 'react'
+import React, { memo, Children } from 'react'
 import { motion } from 'framer-motion'
 
 export interface FadeInProps {
@@ -28,7 +28,7 @@ export const FadeIn = memo(function FadeIn({
 }: FadeInProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, x, y, scale }}
+      initial={false}
       whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ delay: index * delay, duration }}
@@ -64,7 +64,7 @@ export const AnimatedCard = memo(function AnimatedCard({
 }: AnimatedCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={false}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ delay: index * delay, duration: 0.4 }}
@@ -94,6 +94,28 @@ export function withFadeIn<T extends object>(Component: React.ComponentType<T>) 
     )
   }
 }
+
+export interface StaggerChildrenProps {
+  children: React.ReactNode
+  staggerDelay?: number
+  className?: string
+}
+
+export const StaggerChildren = memo(function StaggerChildren({
+  children,
+  staggerDelay = 0.1,
+  className = '',
+}: StaggerChildrenProps) {
+  return (
+    <div className={className}>
+      {Children.map(children, (child, index) => (
+        <div key={index} style={{ animationDelay: `${index * staggerDelay}s` }}>
+          {child}
+        </div>
+      ))}
+    </div>
+  )
+})
 
 export const AnimationPresets = {
   card: {

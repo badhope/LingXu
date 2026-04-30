@@ -1,204 +1,130 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import SubPageTemplate from '@/components/layout/SubPageTemplate'
+import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { PageLayout } from '@/components/layout/PageLayout'
+import { ModuleSidebar } from '@/components/layout/ModuleSidebar'
+import InfoCard from '@/components/ui/InfoCard'
 import { FadeIn } from '@/components/ui/Animated'
-import TimeRiverCanvas from '@/components/effects/TimeRiverCanvas'
-import SixPathsWheel from '@/components/effects/SixPathsWheel'
-import KarmaButterflyEffect from '@/components/effects/KarmaButterflyEffect'
-import ProphecyTimeline from '@/components/effects/ProphecyTimeline'
-import JuneFortunePanel from '@/components/effects/JuneFortunePanel'
-import DragonBoatFestival from '@/components/effects/DragonBoatFestival'
-import AuraTideSystem from '@/components/effects/AuraTideSystem'
-import styles from './index.module.scss'
 
-const EFFECT_SYSTEMS = [
-  {
-    id: 'aura',
-    name: '灵气潮汐',
-    icon: '🌊',
-    desc: '每日时辰灵气值，子时修炼buff加成',
-    color: '#3b82f6',
-    component: 'AuraTideSystem',
-    tags: ['实时', '修炼', '十二时辰'],
-  },
-  {
-    id: 'fortune',
-    name: '6月运势',
-    icon: '⭐',
-    desc: '十二生肖月度运程，每日宜忌黄历',
-    color: '#eab308',
-    component: 'JuneFortunePanel',
-    tags: ['运势', '黄历', '生肖'],
-  },
-  {
-    id: 'dragonboat',
-    name: '端午驱邪',
-    icon: '🐲',
-    desc: '艾草符箓小游戏，龙舟水驱邪仪式',
-    color: '#22c55e',
-    component: 'DragonBoatFestival',
-    tags: ['互动', '游戏', '节气'],
-  },
-  {
-    id: 'shiguang',
-    name: '时光长河',
-    icon: '⌛',
-    desc: '过去现在未来，时间轴3D可视化',
-    color: '#8b5cf6',
-    component: 'TimeRiverCanvas',
-    tags: ['Canvas', '粒子', '历史'],
-  },
-  {
-    id: 'lunhui',
-    name: '六道轮回',
-    icon: '♾️',
-    desc: '生死流转，业力计算转生系统',
-    color: '#ec4899',
-    component: 'SixPathsWheel',
-    tags: ['互动', '因果', '转生'],
-  },
-  {
-    id: 'yinguo',
-    name: '因果蝴蝶',
-    icon: '🦋',
-    desc: '善恶业力可视化，蝴蝶效应演示',
-    color: '#06b6d4',
-    component: 'KarmaButterflyEffect',
-    tags: ['Canvas', '涟漪', '业力'],
-  },
-  {
-    id: 'yuce',
-    name: '预言时间线',
-    icon: '🔮',
-    desc: '古今预言应验度，天机推演',
-    color: '#f59e0b',
-    component: 'ProphecyTimeline',
-    tags: ['时间线', '预言', '筛选'],
-  },
+const SUB_MODULES = [
+  { id: 'shiguang', name: '时光', icon: '⌛', desc: '过去现在未来，时间轴可视化', href: '/zhou/shiguang', color: '#8b5cf6', isNew: true },
+  { id: 'lunhui', name: '轮回', icon: '♾️', desc: '六道轮回，业力转生系统', href: '/zhou/lunhui', color: '#ec4899', isNew: true },
+  { id: 'yinguo', name: '因果', icon: '🦋', desc: '善恶业力，蝴蝶效应演示', href: '/zhou/yinguo', color: '#06b6d4', isNew: true },
+  { id: 'yuce', name: '预言', icon: '🔮', desc: '古今预言应验度，天机推演', href: '/zhou/yuce', color: '#f59e0b', isNew: true },
 ]
 
-const ComponentMap: Record<string, React.ComponentType> = {
-  AuraTideSystem,
-  JuneFortunePanel,
-  DragonBoatFestival,
-  TimeRiverCanvas,
-  SixPathsWheel,
-  KarmaButterflyEffect,
-  ProphecyTimeline,
-}
-
 export default function ZhouIndexPage() {
-  const [activeSystem, setActiveSystem] = useState<string>('aura')
+  const router = useRouter()
+  const [device, setDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
 
-  const ActiveComponent = ComponentMap[activeSystem] || AuraTideSystem
+  useEffect(() => {
+    const checkDevice = () => {
+      const w = window.innerWidth
+      if (w < 768) setDevice('mobile')
+      else if (w < 1024) setDevice('tablet')
+      else setDevice('desktop')
+    }
+    checkDevice()
+    window.addEventListener('resize', checkDevice)
+    return () => window.removeEventListener('resize', checkDevice)
+  }, [])
+
+  const showSidebar = device === 'desktop'
 
   return (
-    <SubPageTemplate title="周流" colorRgb="139, 92, 246">
-      <div className={styles.container}>
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-          className={styles.header}
-        >
-          <h1 className={styles.title}>
-            <span className={styles.titleIcon}>宙</span>
-            时间维度
-          </h1>
-          <p className={styles.subtitle}>
-            宙部 · 七大玄奇系统 · 探索时间的奥义
-          </p>
-        </motion.div>
+    <PageLayout
+      title="周字卷 · 演时间"
+      subtitle="往古来今谓之宙，四方上下谓之宇"
+      showBack={true}
+      backTo="/home"
+      padding="md"
+      maxWidth="full"
+    >
+      <div style={{
+        display: 'flex',
+        gap: '2rem',
+        maxWidth: '1400px',
+        margin: '0 auto',
+      }}>
+        {showSidebar && <ModuleSidebar modules={SUB_MODULES} title="周字卷" icon="⏳" />}
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className={styles.systemNav}
+          style={{ flex: 1, minWidth: 0 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
         >
-          {EFFECT_SYSTEMS.map((system, i) => (
-            <motion.button
-              key={system.id}
-              whileHover={{ scale: 1.05, y: -3 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveSystem(system.id)}
-              className={`${styles.navCard} ${
-                activeSystem === system.id ? styles.active : ''
-              }`}
-              style={{
-                borderColor: activeSystem === system.id ? system.color : 'transparent',
-              }}
-              transition={{ delay: 0.1 * i }}
-            >
-              <span className={styles.navIcon}>{system.icon}</span>
-              <span className={styles.navName}>{system.name}</span>
-              <div className={styles.navTags}>
-                {system.tags.map(tag => (
-                  <span key={tag} className={styles.tag}>{tag}</span>
-                ))}
-              </div>
-            </motion.button>
-          ))}
-        </motion.div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeSystem}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.4 }}
-            className={styles.displayArea}
-          >
-            {EFFECT_SYSTEMS.find(s => s.id === activeSystem) && (
-              <div
-                className={styles.systemHeader}
+          <FadeIn>
+            <div style={{
+              padding: '2rem',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(6, 182, 212, 0.1) 100%)',
+              border: '1px solid rgba(251, 191, 36, 0.2)',
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <motion.div
                 style={{
-                  background: `linear-gradient(135deg, ${EFFECT_SYSTEMS.find(s => s.id === activeSystem)!.color}20 0%, transparent 100%)`,
+                  position: 'absolute',
+                  top: '-50%',
+                  right: '-20%',
+                  width: '300px',
+                  height: '300px',
+                  background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+                  borderRadius: '50%',
+                  pointerEvents: 'none',
                 }}
-              >
-                <h2 className={styles.systemTitle}>
-                  {EFFECT_SYSTEMS.find(s => s.id === activeSystem)!.icon}
-                  {EFFECT_SYSTEMS.find(s => s.id === activeSystem)!.name}
-                </h2>
-                <p className={styles.systemDesc}>
-                  {EFFECT_SYSTEMS.find(s => s.id === activeSystem)!.desc}
-                </p>
-              </div>
-            )}
-            
-            <div className={styles.componentWrapper}>
-              <ActiveComponent />
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.5, 0.7, 0.5],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+              <h2 style={{
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                marginBottom: '0.75rem',
+                color: '#8b5cf6',
+              }}>
+                ⏳ 时间之河
+              </h2>
+              <p style={{ opacity: 0.8, lineHeight: 1.8 }}>
+                子在川上曰：逝者如斯夫，不舍昼夜。时间如流水，奔腾不息，无始无终。
+                过去现在未来，三世因果，六道轮回。善有善报，恶有恶报，不是不报，时辰未到。
+                一饮一啄，莫非前定；一得一失，俱是前缘。
+              </p>
             </div>
-          </motion.div>
-        </AnimatePresence>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className={styles.statsBar}
-        >
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>7</span>
-            <span className={styles.statLabel}>大特效系统</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>&infin;</span>
-            <span className={styles.statLabel}>交互次数</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>100%</span>
-            <span className={styles.statLabel}>修复完成</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>0</span>
-            <span className={styles.statLabel}>运行时崩溃</span>
-          </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '1.25rem',
+            }}>
+              {SUB_MODULES.map((module, index) => (
+                <FadeIn key={module.id} index={index}>
+                  <InfoCard
+                    title={module.icon + ' ' + module.name}
+                    subtitle={module.desc}
+                    glowColor={module.color.replace('#', '') === '8b5cf6' ? '139, 92, 246' : 
+                              module.color.replace('#', '') === 'ec4899' ? '236, 72, 153' : 
+                              module.color.replace('#', '') === '06b6d4' ? '6, 182, 212' : 
+                              '245, 158, 11'}
+                    onClick={() => router.push(module.href)}
+                    tags={module.isNew ? ['新功能'] : undefined}
+                  />
+                </FadeIn>
+              ))}
+            </div>
+          </FadeIn>
         </motion.div>
       </div>
-    </SubPageTemplate>
+    </PageLayout>
   )
 }

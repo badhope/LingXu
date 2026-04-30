@@ -59,13 +59,13 @@ const XianxiaCard = memo(function XianxiaCard({
         ref={cardRef}
         className="xian-perspective"
         data-module={MODULE_MAP[char]}
-        initial={{ opacity: 0, y: 50, rotateX: -15 }}
+        initial={{ opacity: 0, y: 30, rotateX: -8 }}
         whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
+        viewport={{ once: true }}
         transition={{
-          duration: 0.8,
-          delay: index * 0.1,
-          ease: [0.175, 0.885, 0.32, 1.275],
+          duration: 0.4,
+          delay: index * 0.05,
+          ease: 'easeOut',
         }}
         onMouseMove={handleCardMouseMove}
         onMouseEnter={handleMouseEnter}

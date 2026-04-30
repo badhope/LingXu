@@ -1,0 +1,89 @@
+.tabGroup {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 998;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+}
+
+.triggerButton {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(251, 191, 36, 0.18);
+  color: rgba(251, 191, 36, 0.75);
+  cursor: pointer;
+  font-size: 15px;
+  backdrop-filter: blur(14px);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    background: rgba(30, 41, 59, 0.85);
+    box-shadow: 0 0 18px rgba(251, 191, 36, 0.2);
+  }
+}
+
+.panel {
+  margin-top: 6px;
+  width: 136px;
+  background: rgba(22, 30, 45, 0.75);
+  border: 1px solid rgba(251, 191, 36, 0.15);
+  border-radius: 10px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.section {
+  padding: 6px 0;
+}
+
+.sectionTitle {
+  padding: 6px 12px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(241, 245, 249, 0.35);
+  user-select: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(241, 245, 249, 0.6);
+  cursor: pointer;
+  user-select: none;
+  border-left: 2px solid transparent;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: rgba(251, 191, 36, 0.9);
+    background: rgba(251, 191, 36, 0.06);
+  }
+  
+  &.active {
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+.itemIcon {
+  width: 16px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

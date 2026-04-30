@@ -148,7 +148,11 @@ export default function HuangLostIndexPage() {
           canvas.width = 0
           canvas.height = 0
         }
-      } catch (e) {}
+      } catch (e) {
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('Canvas cleanup skipped:', e)
+        }
+      }
     }
   }, [])
 

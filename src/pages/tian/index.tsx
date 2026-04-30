@@ -1,17 +1,11 @@
-/**
- * 灵墟 - 天时模块首页
- * 包含星宿、运势、节气、占卜四大功能
- */
-
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import SubPageTemplate from '@/components/layout/SubPageTemplate'
-import SubmoduleCard from '@/components/ui/SubmoduleCard'
-import { FadeIn } from '@/components/ui/Animated'
-import Link from 'next/link'
-import styles from './index.module.scss'
+import { PageLayout } from '@/components/layout/PageLayout'
+import { ModuleSidebar } from '@/components/layout/ModuleSidebar'
+import InfoCard from '@/components/ui/InfoCard'
+import { FadeIn, StaggerChildren } from '@/components/ui/Animated'
 
 const SUB_MODULES = [
   {
@@ -94,192 +88,164 @@ const SUB_MODULES = [
 ]
 
 export default function TianIndexPage() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [device, setDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const dpr = window.devicePixelRatio || 1
-    canvas.width = window.innerWidth * dpr
-    canvas.height = window.innerHeight * dpr
-    ctx.scale(dpr, dpr)
-
-    interface Particle {
-      x: number
-      y: number
-      size: number
-      vx: number
-      vy: number
-      life: number
-      maxLife: number
-      hue: number
+    const checkDevice = () => {
+      const w = window.innerWidth
+      if (w < 768) setDevice('mobile')
+      else if (w < 1024) setDevice('tablet')
+      else setDevice('desktop')
     }
-
-    const particles: Particle[] = []
-    const particleCount = 120
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        size: Math.random() * 2 + 0.5,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        life: Math.random(),
-        maxLife: Math.random() * 100 + 100,
-        hue: 200 + Math.random() * 60,
-      })
-    }
-
-    let animId: number
-    let mouseX = window.innerWidth / 2
-    let mouseY = window.innerHeight / 2
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX
-      mouseY = e.clientY
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-
-    const animate = () => {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-
-      particles.forEach((p, i) => {
-        p.x += p.vx
-        p.y += p.vy
-        p.life += 1
-
-        const dx = mouseX - p.x
-        const dy = mouseY - p.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 180) {
-          p.vx -= dx * 0.0008
-          p.vy -= dy * 0.0008
-        }
-
-        if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1
-        if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1
-
-        const alpha = 0.5 * (1 - Math.abs((p.life / p.maxLife - 0.5) * 2))
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, ${alpha * 0.6})`
-        ctx.fill()
-
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j]
-          const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2)
-          if (d < 120) {
-            ctx.beginPath()
-            ctx.moveTo(p.x, p.y)
-            ctx.lineTo(p2.x, p2.y)
-            ctx.strokeStyle = `hsla(${p.hue}, 60%, 60%, ${0.15 * (1 - d / 120)})`
-            ctx.lineWidth = 0.5
-            ctx.stroke()
-          }
-        }
-      })
-
-      animId = requestAnimationFrame(animate)
-    }
-
-    let isMounted = true
-    animate()
-
-    return () => {
-      isMounted = false
-      cancelAnimationFrame(animId)
-      window.removeEventListener('mousemove', handleMouseMove)
-      
-      // ✅ 标准Canvas防泄漏
-      try {
-        if (canvas) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          canvas.width = 0
-          canvas.height = 0
-        }
-      } catch (e) {}
-    }
+    checkDevice()
+    window.addEventListener('resize', checkDevice)
+    return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
+  const showSidebar = device === 'desktop'
+
   return (
-    <SubPageTemplate title="天时" subtitle="天时星宿，择日占卜，二十四节气" colorRgb="59, 130, 246">
-      <canvas ref={canvasRef} className={styles.particlesCanvas} />
+    <PageLayout
+      title="天字卷 · 观天象"
+      subtitle="观天象而知人事，察星宿而明吉凶"
+      showBack={true}
+      backTo="/home"
+      padding="md"
+      maxWidth="full"
+    >
+      <div style={{
+        display: 'flex',
+        gap: '2rem',
+        maxWidth: '1400px',
+        margin: '0 auto',
+      }}>
+        {showSidebar && <ModuleSidebar modules={SUB_MODULES} title="天字卷" icon="☀️" />}
 
-      <div className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <motion.div
-              className={styles.heroIcon}
-              animate={{
-                scale: [1, 1.05, 1],
-                rotate: [0, 1, -1, 0],
-              }}
-              transition={{ duration: 6, repeat: Infinity }}
-            >
-              🌌
-            </motion.div>
-            <h1 className={styles.mainTitle}>天时</h1>
-            <p className={styles.subTitle}>
-              <span>天道运行 · 星辰变化 · 观测天象 · 推演气运</span>
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className={styles.modulesSection}>
-        <motion.h2
-          className={styles.sectionTitle}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+        <motion.div
+          style={{ flex: 1, minWidth: 0 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
         >
-          探索天机
-        </motion.h2>
+          <FadeIn>
+            <div style={{
+              padding: '2rem',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(124, 58, 237, 0.1) 50%, rgba(251, 191, 36, 0.1) 100%)',
+              border: '1px solid rgba(251, 191, 36, 0.2)',
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <motion.div
+                style={{
+                  position: 'absolute',
+                  top: '-50%',
+                  right: '-20%',
+                  width: '300px',
+                  height: '300px',
+                  background: 'radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%)',
+                  borderRadius: '50%',
+                  pointerEvents: 'none',
+                }}
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.5, 0.8, 0.5],
+                }}
+                transition={{ duration: 8, repeat: Infinity }}
+              />
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>☀️</div>
+                <h2 style={{
+                  fontSize: '1.75rem',
+                  fontWeight: 700,
+                  color: '#fbbf24',
+                  marginBottom: '0.75rem',
+                }}>
+                  夫天者，人之始也
+                </h2>
+                <p style={{
+                  color: '#94a3b8',
+                  fontSize: '1.05rem',
+                  lineHeight: 1.8,
+                  maxWidth: '600px',
+                }}>
+                  天有四时五行，九候其象。日月运行，一寒一暑。
+                  昼明者为日，夜明者为月，周天列宿，各有所主。
+                  观天之象，察时之变，以通神明之德，以类万物之情。
+                </p>
+              </div>
+            </div>
+          </FadeIn>
 
-        <div className={styles.modulesGrid}>
-          {SUB_MODULES.map((mod, i) => (
-            <motion.div
-              key={mod.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ scale: 1.02, y: -8 }}
-            >
-              <Link href={mod.href} className={styles.moduleLink}>
-                <div
-                  className={styles.moduleCard}
-                  style={{ '--module-color': mod.color } as React.CSSProperties}
+          <StaggerChildren staggerDelay={0.08}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: device === 'mobile' ? '1fr' : device === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+              gap: '1.25rem',
+            }}>
+              {SUB_MODULES.map((module) => (
+                <InfoCard
+                  key={module.id}
+                  title={module.name}
+                  subtitle={module.desc}
+                  feature="点击进入"
+                  glowIntensity={30}
+                  glowColor={module.color?.replace('#', '') === '66ccff' ? '102, 204, 255' :
+                             module.color?.replace('#', '') === 'a78bfa' ? '167, 139, 250' :
+                             module.color?.replace('#', '') === '22c55e' ? '34, 197, 94' :
+                             '251, 191, 36'}
+                  expandable={false}
+                  onClick={() => window.location.href = module.href}
+                  tags={module.isNew ? ['✨ 新上线'] : []}
                 >
-                  <div className={styles.moduleGlow} />
-                  <motion.div
-                    className={styles.moduleIcon}
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, delay: i * 0.3, repeat: Infinity }}
-                  >
-                    {mod.icon}
-                  </motion.div>
-                  <h3 className={styles.moduleName}>{mod.name}</h3>
-                  <p className={styles.moduleDesc}>{mod.desc}</p>
-                  <motion.div
-                    className={styles.moduleArrow}
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    →
-                  </motion.div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                  <div style={{
+                    fontSize: '2.5rem',
+                    textAlign: 'center',
+                    padding: '1rem 0',
+                  }}>
+                    <motion.span
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 2, -2, 0],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                    >
+                      {module.icon}
+                    </motion.span>
+                  </div>
+                </InfoCard>
+              ))}
+            </div>
+          </StaggerChildren>
+
+          <FadeIn delay={0.6}>
+            <div style={{
+              marginTop: '3rem',
+              padding: '1.5rem 2rem',
+              borderRadius: '16px',
+              background: 'rgba(30, 41, 59, 0.5)',
+              border: '1px solid rgba(251, 191, 36, 0.1)',
+              textAlign: 'center',
+            }}>
+              <p style={{
+                color: '#64748b',
+                fontSize: '0.9rem',
+                fontStyle: 'italic',
+              }}>
+                「观乎天文，以察时变；观乎人文，以化成天下」
+                <br />
+                —— 《周易·贲卦》
+              </p>
+            </div>
+          </FadeIn>
+        </motion.div>
       </div>
-    </SubPageTemplate>
+    </PageLayout>
   )
 }

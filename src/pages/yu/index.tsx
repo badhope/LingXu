@@ -1,215 +1,134 @@
-/**
- * 域界模块 - 空间维度首页
- */
-
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
-import SubPageTemplate from '@/components/layout/SubPageTemplate'
-import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { useRouter } from 'next/navigation'
+import { PageLayout } from '@/components/layout/PageLayout'
+import { ModuleSidebar } from '@/components/layout/ModuleSidebar'
+import InfoCard from '@/components/ui/InfoCard'
 import { FadeIn } from '@/components/ui/Animated'
-import styles from './index.module.scss'
 
 const SUB_MODULES = [
-  { id: 'sanjie', name: '三界', icon: '🌌', desc: '天地人三界，六道轮回，十方世界', href: '/yu/sanjie', color: '#06b6d4' },
-  { id: 'dongtian', name: '洞天', icon: '🏔️', desc: '三十六洞天，七十二福地，灵脉汇聚', href: '/yu/dongtian', color: '#22c55e' },
-  { id: 'weidu', name: '维度', icon: '🔷', desc: '高维空间，平行世界，位面穿梭', href: '/yu/weidu', color: '#3b82f6' },
-  { id: 'mijie', name: '密界', icon: '🌀', desc: '上古秘境，小千世界，遗迹探索', href: '/yu/mijie', color: '#a855f7' },
-  { id: 'xingtu', name: '星图', icon: '⭐', desc: '周天星斗，诸天星域，星河地图', href: '/yu/xingtu', color: '#8b5cf6' },
-  { id: 'chuansong', name: '传送', icon: '🚪', desc: '位面传送阵，跨界传送，空间跳跃', href: '/yu/chuansong', color: '#ec4899' },
-  { id: 'qiankun', name: '乾坤', icon: '👝', desc: '储物空间，乾坤袋，须弥芥子', href: '/yu/qiankun', color: '#f59e0b' },
-  { id: 'crack', name: '裂缝', icon: '⚡', desc: '空间裂缝，次元乱流，虚空漫游', href: '/yu/crack', color: '#ef4444' },
+  { id: 'qiankun', name: '乾坤', icon: '☯️', desc: '两仪四象，八卦演化', href: '/yu/qiankun', color: '#eab308' },
+  { id: 'xingtu', name: '星图', icon: '🌌', desc: '三垣二十八宿，全天星图', href: '/yu/xingtu', color: '#3b82f6', isNew: true },
+  { id: 'weidu', name: '维度', icon: '🔲', desc: '十一维空间，弦理论探索', href: '/yu/weidu', color: '#8b5cf6', isNew: true },
+  { id: 'sanjie', name: '三界', icon: '🏛️', desc: '天人地三界，六道体系', href: '/yu/sanjie', color: '#ec4899' },
+  { id: 'dongtian', name: '洞天', icon: '🏔️', desc: '洞天福地，小世界入口', href: '/yu/dongtian', color: '#22c55e' },
+  { id: 'mijie', name: '秘境', icon: '🌀', desc: '空间裂缝，次元通道', href: '/yu/mijie', color: '#06b6d4' },
+  { id: 'chuansong', name: '传送', icon: '✨', desc: '跨位面传送阵坐标', href: '/yu/chuansong', color: '#a855f7', isNew: true },
+  { id: 'crack', name: '裂缝', icon: '💎', desc: '世界裂隙，虚空入侵', href: '/yu/crack', color: '#ef4444', isNew: true },
 ]
 
 export default function YuIndexPage() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const router = useRouter()
+  const [device, setDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const dpr = window.devicePixelRatio || 1
-    canvas.width = window.innerWidth * dpr
-    canvas.height = window.innerHeight * dpr
-    ctx.scale(dpr, dpr)
-
-    interface Particle {
-      x: number
-      y: number
-      size: number
-      vx: number
-      vy: number
-      life: number
-      maxLife: number
-      hue: number
+    const checkDevice = () => {
+      const w = window.innerWidth
+      if (w < 768) setDevice('mobile')
+      else if (w < 1024) setDevice('tablet')
+      else setDevice('desktop')
     }
-
-    const particles: Particle[] = []
-    const particleCount = 120
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        size: Math.random() * 2 + 0.5,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        life: Math.random(),
-        maxLife: Math.random() * 100 + 100,
-        hue: 180 + Math.random() * 30,
-      })
-    }
-
-    let animId: number
-    let mouseX = window.innerWidth / 2
-    let mouseY = window.innerHeight / 2
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX
-      mouseY = e.clientY
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-
-    const animate = () => {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-
-      particles.forEach((p, i) => {
-        p.x += p.vx
-        p.y += p.vy
-        p.life += 1
-
-        const dx = mouseX - p.x
-        const dy = mouseY - p.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 180) {
-          p.vx -= dx * 0.0008
-          p.vy -= dy * 0.0008
-        }
-
-        if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1
-        if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1
-
-        const alpha = 0.5 * (1 - Math.abs((p.life / p.maxLife - 0.5) * 2))
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(${p.hue}, 80%, 50%, ${alpha * 0.6})`
-        ctx.fill()
-
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j]
-          const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2)
-          if (d < 120) {
-            ctx.beginPath()
-            ctx.moveTo(p.x, p.y)
-            ctx.lineTo(p2.x, p2.y)
-            ctx.strokeStyle = `hsla(${p.hue}, 70%, 50%, ${0.15 * (1 - d / 120)})`
-            ctx.lineWidth = 0.5
-            ctx.stroke()
-          }
-        }
-      })
-
-      animId = requestAnimationFrame(animate)
-    }
-
-    let isMounted = true
-    animate()
-
-    return () => {
-      isMounted = false
-      cancelAnimationFrame(animId)
-      window.removeEventListener('mousemove', handleMouseMove)
-      
-      // ✅ 标准Canvas防泄漏
-      try {
-        if (canvas) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          canvas.width = 0
-          canvas.height = 0
-        }
-      } catch (e) {}
-    }
+    checkDevice()
+    window.addEventListener('resize', checkDevice)
+    return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
+  const showSidebar = device === 'desktop'
+
   return (
-    <SubPageTemplate title="域界" colorRgb="6, 182, 212">
-      <canvas ref={canvasRef} className={styles.particlesCanvas} />
+    <PageLayout
+      title="宇字卷 · 观宇宙"
+      subtitle="天地四方曰宇，古往今来曰宙"
+      showBack={true}
+      backTo="/home"
+      padding="md"
+      maxWidth="full"
+    >
+      <div style={{
+        display: 'flex',
+        gap: '2rem',
+        maxWidth: '1400px',
+        margin: '0 auto',
+      }}>
+        {showSidebar && <ModuleSidebar modules={SUB_MODULES} title="宇字卷" icon="🌌" />}
 
-      <div className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <motion.div
-              className={styles.heroIcon}
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{ duration: 5, repeat: Infinity }}
-            >
-              🌌
-            </motion.div>
-            <h1 className={styles.mainTitle}>域界</h1>
-            <p className={styles.subTitle}>
-              <span>三界六道 · 洞天福地 · 多维宇宙 · 须弥芥子</span>
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className={styles.modulesSection}>
-        <motion.h2
-          className={styles.sectionTitle}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+        <motion.div
+          style={{ flex: 1, minWidth: 0 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
         >
-          空间奥秘
-        </motion.h2>
+          <FadeIn>
+            <div style={{
+              padding: '2rem',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(6, 182, 212, 0.1) 100%)',
+              border: '1px solid rgba(251, 191, 36, 0.2)',
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <motion.div
+                style={{
+                  position: 'absolute',
+                  top: '-50%',
+                  right: '-20%',
+                  width: '300px',
+                  height: '300px',
+                  background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+                  borderRadius: '50%',
+                  pointerEvents: 'none',
+                }}
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.5, 0.7, 0.5],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+              <h2 style={{
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                marginBottom: '0.75rem',
+                color: '#3b82f6',
+              }}>
+                🌌 寰宇浩瀚
+              </h2>
+              <p style={{ opacity: 0.8, lineHeight: 1.8 }}>
+                天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。四方上下谓之宇，往古来今谓之宙。
+                宇宙之间，一尘不染，湛然常寂。唯有道气，充塞两间。天地与我并生，
+                而万物与我为一。既已为一矣，且得有言乎？既已谓之一矣，且得无言乎？
+              </p>
+            </div>
 
-        <div className={styles.modulesGrid}>
-          {SUB_MODULES.map((mod, i) => (
-            <motion.div
-              key={mod.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ scale: 1.02, y: -8 }}
-            >
-              <Link href={mod.href} className={styles.moduleLink}>
-                <div
-                  className={styles.moduleCard}
-                  style={{ '--module-color': mod.color } as React.CSSProperties}
-                >
-                  <div className={styles.moduleGlow} />
-                  <motion.div
-                    className={styles.moduleIcon}
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, delay: i * 0.3, repeat: Infinity }}
-                  >
-                    {mod.icon}
-                  </motion.div>
-                  <h3 className={styles.moduleName}>{mod.name}</h3>
-                  <p className={styles.moduleDesc}>{mod.desc}</p>
-                  <motion.div
-                    className={styles.moduleArrow}
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    →
-                  </motion.div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '1.25rem',
+            }}>
+              {SUB_MODULES.map((module, index) => (
+                <FadeIn key={module.id} index={index}>
+                  <InfoCard
+                    title={module.icon + ' ' + module.name}
+                    subtitle={module.desc}
+                    glowColor={module.color.replace('#', '') === '3b82f6' ? '59, 130, 246' : 
+                              module.color.replace('#', '') === '8b5cf6' ? '139, 92, 246' : 
+                              module.color.replace('#', '') === '06b6d4' ? '6, 182, 212' : 
+                              '234, 179, 8'}
+                    onClick={() => router.push(module.href)}
+                    tags={module.isNew ? ['新功能'] : undefined}
+                  />
+                </FadeIn>
+              ))}
+            </div>
+          </FadeIn>
+        </motion.div>
       </div>
-    </SubPageTemplate>
+    </PageLayout>
   )
 }

@@ -18,6 +18,7 @@ import { MouseTrailAdvanced, CardHoverGlow, ParallaxMouse } from '@/components/e
 import FormationProgress from '@/components/common/FormationProgress'
 import { KeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import Layout from '@/components/layout/Layout'
+import { ThemeProvider } from '@/context/ThemeContext'
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.985 },
@@ -57,7 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const transitionType = useState(() => Math.floor(Math.random() * 4))[0]
 
   return (
-    <>
+    <ThemeProvider>
       <SEO />
       <GlobalErrorHandler />
       <PerformanceMonitor />
@@ -82,6 +83,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </ErrorBoundary>
       
       <PageTransitionShader active={isTransitioning} type={transitionType} />
-    </>
+    </ThemeProvider>
   )
 }

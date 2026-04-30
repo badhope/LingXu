@@ -82,7 +82,7 @@ export function PageLayout({
       style={{
         background: 'transparent !important',
         fontSize: `${fontSizeMap[device]}rem`,
-        padding: device === 'mobile' ? '3.5rem 1rem 2rem' : device === 'tablet' ? '4rem 1.5rem 2rem' : '5rem 2rem 3rem',
+        padding: device === 'mobile' ? '4.5rem 1rem 5rem' : device === 'tablet' ? '5rem 1.5rem 5.5rem' : '5.5rem 2rem 6rem',
       }}
     >
       <div className={`${maxWidthMap[maxWidth]} mx-auto`}>

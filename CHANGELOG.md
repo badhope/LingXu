@@ -1,52 +1,46 @@
-# Changelog
+# CHANGELOG - 灵墟版本历史
 
-All notable changes to this project will be documented in this file.
+## v3.1.0 - 2026-04-30
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### 🎯 核心修复
 
-## [2.1.0] - 2026-03-28
+**彻底解决黑屏 + 服务不可用问题**
 
-### Fixed
-- Fixed SCSS module type declarations
-- Fixed TypeScript strict mode configuration
-- Fixed CSS @import order warning
-- Verified all 46 pages build successfully
+- ✅ **修复 SSR 黑屏** - Framer Motion `initial={false}` 解决 opacity:0 默认渲染问题
+- ✅ **修复部署路径问题** - 自适应 `basePath` 配置，Netlify/GitHub Pages 双支持
+- ✅ **修复 JS 阻塞问题** - 渐进增强，JS不加载内容也可见
 
-### Improved
-- Optimized build output for production
-- Enhanced CSS import optimization
+### 🚀 部署优化
 
-## [2.0.0] - 2024-03-26
+- ✅ **新增 Netlify 支持** - `netlify.toml` 零配置一键部署
+- ✅ **新增 Apache 支持** - `.htaccess` 兼容虚拟主机
+- ✅ **SPA 路由重定向** - `_redirects` 规则兼容所有主流平台
+- ✅ **缓存策略优化** - JS/CSS 一年永久缓存 + immutable
 
-### Added
-- 🎉 Complete rewrite using Next.js 14 + TypeScript
-- 🌌 New immersive splash screen with particle effects
-- ✨ Eight main modules: 天时, 地理, 玄学, 历史, 空间, 时间, 洪荒, 失落
-- 🎨 Gold and dark theme with starry background
-- 🔄 Interactive orbital system with mouse tracking
-- ☯️ Animated Taiji diagram on splash screen
-- 📦 Zustand-based state management
-- 🌙 Dark mode by default
-- 📱 Responsive design for all devices
-- 🎭 Framer Motion animations throughout
-- 🌐 Static site generation for GitHub Pages
+### 🛠️ 代码质量
 
-### Changed
-- Migrated from Astro to Next.js
-- Redesigned entire UI with modern aesthetics
-- Improved performance and loading times
-- Enhanced accessibility features
+- ✅ 修复 5 个空 catch 块异常吞噬问题
+- ✅ Button 组件 TypeScript 类型安全修复
+- ✅ 解决 eslint-utils 依赖版本冲突
+- ✅ SCSS 路径别名兼容性修复
 
-### Technical
-- Upgraded to React 18
-- Implemented Tailwind CSS + SCSS Modules
-- Added Three.js for future 3D features
-- Integrated lunar-javascript for Chinese calendar
+### 📚 文档更新
 
-## [1.0.0] - Previous Version
+- ✅ README.md 完整更新到 v15 技术栈
+- ✅ DEPLOY.md 全平台 7 种部署方式详细指南
+- ✅ 111 页面全功能构建验证
 
-### Added
-- Initial release with Astro framework
-- Basic module structure
-- Static content pages
+---
+
+## v3.0.0 - 2026-04-22
+
+### ✨ 重大升级
+
+- Next.js 14 → 15 升级
+- Tailwind CSS 4 引入
+- 页面扩展到 111 个
+- 修真系统模块完善
+
+---
+
+> 修行路上，与君共勉 ✨

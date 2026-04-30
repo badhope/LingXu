@@ -1,223 +1,130 @@
-/**
- * 历史模块 - 华夏文明首页
- */
-
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
-import SubPageTemplate from '@/components/layout/SubPageTemplate'
-import SubmoduleCard from '@/components/ui/SubmoduleCard'
+import { useRouter } from 'next/navigation'
+import { PageLayout } from '@/components/layout/PageLayout'
+import { ModuleSidebar } from '@/components/layout/ModuleSidebar'
+import InfoCard from '@/components/ui/InfoCard'
 import { FadeIn } from '@/components/ui/Animated'
-import styles from './index.module.scss'
 
 const SUB_MODULES = [
-  { id: 'tools', name: '工具', icon: '🔮', desc: '历史时间轴，人物关系图谱', href: '/lishi/tools', color: '#d4af37', isNew: true },
-  { id: 'chaodai', name: '朝代', icon: '🏛️', desc: '夏商周秦汉，魏晋南北朝，隋唐宋', href: '/lishi/chaodai', color: '#a16207' },
-  { id: 'renwu', name: '人物', icon: '👑', desc: '帝王将相，诸子百家，英雄豪杰', href: '/lishi/renwu', color: '#854d0e' },
-  { id: 'wenxian', name: '文献', icon: '📜', desc: '四书五经，二十四史，百家典籍', href: '/lishi/wenxian', color: '#ca8a04' },
-  { id: 'mixin', name: '秘辛', icon: '🔍', desc: '历史谜团，宫廷秘闻，未解之谜', href: '/lishi/mixin', color: '#713f12' },
+  { id: 'chaodai', name: '朝代', icon: '🏛️', desc: '华夏五千年，朝代更迭', href: '/lishi/chaodai', color: '#eab308' },
+  { id: 'renwu', name: '人物', icon: '👑', desc: '帝王将相，英雄豪杰', href: '/lishi/renwu', color: '#3b82f6' },
+  { id: 'wenxian', name: '文献', icon: '📚', desc: '四书五经，诸子百家', href: '/lishi/wenxian', color: '#8b5cf6' },
+  { id: 'mixin', name: '谜辛', icon: '🔍', desc: '历史谜团，未解之谜', href: '/lishi/mixin', color: '#f59e0b', isNew: true },
 ]
 
 export default function LishiIndexPage() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const router = useRouter()
+  const [device, setDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const dpr = window.devicePixelRatio || 1
-    canvas.width = window.innerWidth * dpr
-    canvas.height = window.innerHeight * dpr
-    ctx.scale(dpr, dpr)
-
-    interface Particle {
-      x: number
-      y: number
-      size: number
-      vx: number
-      vy: number
-      life: number
-      maxLife: number
-      hue: number
+    const checkDevice = () => {
+      const w = window.innerWidth
+      if (w < 768) setDevice('mobile')
+      else if (w < 1024) setDevice('tablet')
+      else setDevice('desktop')
     }
-
-    const particles: Particle[] = []
-    const particleCount = 120
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        size: Math.random() * 2 + 0.5,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        life: Math.random(),
-        maxLife: Math.random() * 100 + 100,
-        hue: 40 + Math.random() * 15,
-      })
-    }
-
-    let mouseX = window.innerWidth / 2
-    let mouseY = window.innerHeight / 2
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX
-      mouseY = e.clientY
-    }
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth * dpr
-      canvas.height = window.innerHeight * dpr
-      ctx.scale(dpr, dpr)
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('resize', handleResize)
-
-    let animationId: number
-
-    const animate = () => {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
-
-      particles.forEach((p, i) => {
-        p.life += 1
-        if (p.life > p.maxLife) {
-          p.x = Math.random() * window.innerWidth
-          p.y = Math.random() * window.innerHeight
-          p.life = 0
-        }
-
-        const dx = mouseX - p.x
-        const dy = mouseY - p.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 150) {
-          const force = (150 - dist) / 150
-          p.vx -= (dx / dist) * force * 0.02
-          p.vy -= (dy / dist) * force * 0.02
-        }
-
-        p.x += p.vx
-        p.y += p.vy
-
-        p.vx *= 0.99
-        p.vy *= 0.99
-
-        const alpha = 0.5 * (1 - Math.abs((p.life / p.maxLife - 0.5) * 2))
-
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(${p.hue}, 70%, 50%, ${alpha})`
-        ctx.fill()
-
-        particles.slice(i + 1).forEach((p2) => {
-          const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2)
-          if (d < 120) {
-            ctx.beginPath()
-            ctx.moveTo(p.x, p.y)
-            ctx.lineTo(p2.x, p2.y)
-            ctx.strokeStyle = `hsla(${p.hue}, 60%, 40%, ${alpha * 0.15 * (1 - d / 120)})`
-            ctx.lineWidth = 0.5
-            ctx.stroke()
-          }
-        })
-      })
-
-      animationId = requestAnimationFrame(animate)
-    }
-
-    let isMounted = true
-    animate()
-
-    return () => {
-      isMounted = false
-      cancelAnimationFrame(animationId)
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('resize', handleResize)
-      
-      // ✅ 标准Canvas防泄漏
-      try {
-        if (canvas) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          canvas.width = 0
-          canvas.height = 0
-        }
-      } catch (e) {}
-    }
+    checkDevice()
+    window.addEventListener('resize', checkDevice)
+    return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
+  const showSidebar = device === 'desktop'
+
   return (
-    <SubPageTemplate title="历史" colorRgb="212, 175, 55">
-      <canvas ref={canvasRef} className={styles.particlesCanvas} />
-
-      <div className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <motion.div
-              className={styles.heroIcon}
-              animate={{
-                scale: [1, 1.1, 1],
-              }}
-              transition={{ duration: 4, repeat: Infinity }}
-            >
-              📜
-            </motion.div>
-            <h1 className={styles.mainTitle}>历史</h1>
-            <p className={styles.subTitle}>
-              <span>华夏文明 · 上下五千年 · 以人为镜</span>
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      <div className={styles.modulesSection}>
-        <motion.h2
-          className={styles.sectionTitle}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          青史留名
-        </motion.h2>
-
-        <div className={styles.modulesGrid}>
-          {SUB_MODULES.map((mod, i) => (
-            <motion.div
-              key={mod.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              whileHover={{ scale: 1.02, y: -8 }}
-            >
-              <Link href={mod.href} className={styles.moduleLink}>
-                <div
-                  className={styles.moduleCard}
-                  style={{ '--module-color': mod.color } as React.CSSProperties}
-                >
-                  <div className={styles.cardIcon}>{mod.icon}</div>
-                  <h3 className={styles.cardTitle}>{mod.name}</h3>
-                  <p className={styles.cardDesc}>{mod.desc}</p>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+    <PageLayout
+      title="史字卷 · 知兴替"
+      subtitle="以史为镜，可以知兴替；以人为镜，可以明得失"
+      showBack={true}
+      backTo="/home"
+      padding="md"
+      maxWidth="full"
+    >
+      <div style={{
+        display: 'flex',
+        gap: '2rem',
+        maxWidth: '1400px',
+        margin: '0 auto',
+      }}>
+        {showSidebar && <ModuleSidebar modules={SUB_MODULES} title="史字卷" icon="📜" />}
 
         <motion.div
-          className={styles.footerQuote}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          style={{ flex: 1, minWidth: 0 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
         >
-          以史为镜，可以知兴替；以人为镜，可以明得失
+          <FadeIn>
+            <div style={{
+              padding: '2rem',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(59, 130, 246, 0.1) 50%, rgba(139, 92, 246, 0.1) 100%)',
+              border: '1px solid rgba(251, 191, 36, 0.2)',
+              marginBottom: '2rem',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <motion.div
+                style={{
+                  position: 'absolute',
+                  top: '-50%',
+                  right: '-20%',
+                  width: '300px',
+                  height: '300px',
+                  background: 'radial-gradient(circle, rgba(234, 179, 8, 0.15) 0%, transparent 70%)',
+                  borderRadius: '50%',
+                  pointerEvents: 'none',
+                }}
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.5, 0.7, 0.5],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+              <h2 style={{
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                marginBottom: '0.75rem',
+                color: '#eab308',
+              }}>
+                📜 历史长河
+              </h2>
+              <p style={{ opacity: 0.8, lineHeight: 1.8 }}>
+                千古兴亡多少事？悠悠。不尽长江滚滚流。天下大势，分久必合，合久必分。
+                古今多少事，都付笑谈中。滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。
+                青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢。
+              </p>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '1.25rem',
+            }}>
+              {SUB_MODULES.map((module, index) => (
+                <FadeIn key={module.id} index={index}>
+                  <InfoCard
+                    title={module.icon + ' ' + module.name}
+                    subtitle={module.desc}
+                    glowColor={module.color.replace('#', '') === 'eab308' ? '234, 179, 8' : 
+                              module.color.replace('#', '') === '3b82f6' ? '59, 130, 246' : 
+                              module.color.replace('#', '') === '8b5cf6' ? '139, 92, 246' : 
+                              '245, 158, 11'}
+                    onClick={() => router.push(module.href)}
+                    tags={module.isNew ? ['新功能'] : undefined}
+                  />
+                </FadeIn>
+              ))}
+            </div>
+          </FadeIn>
         </motion.div>
       </div>
-    </SubPageTemplate>
+    </PageLayout>
   )
 }

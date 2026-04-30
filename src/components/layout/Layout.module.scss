@@ -1,392 +1,57 @@
-.backgroundLayer {
+.layout {
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.globalNav {
   position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 1rem 2rem;
-  transition: all 0.4s ease;
-  
-  &.scrolled {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(251, 191, 36, 0.15);
-    padding: 0.75rem 2rem;
-  }
-}
-
-.navContainer {
-  max-width: 1400px;
-  margin: 0 auto;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
-}
+  gap: 1rem;
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.25em;
-  text-decoration: none;
-}
-
-.logoChar {
-  font-size: 1.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  background: linear-gradient(135deg, #e2e8f0 0%, #fbbf24 50%, #e2e8f0 100%);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 4s ease-in-out infinite;
-  text-shadow: none;
-  
-  &:nth-child(2) {
-    animation-delay: 0.5s;
-  }
-}
-
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.desktopNav {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.navLink {
-  position: relative;
-  padding: 0.5rem 1rem;
-  color: #5c5245;
-  text-decoration: none;
-  font-size: 0.95rem;
-  letter-spacing: 0.05em;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    color: #8b6914;
-    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
-  }
-  
-  &.active {
-    color: #8b6914;
-    font-weight: 600;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #8b6914, transparent);
-    }
-  }
-}
-
-.menuButton {
-  display: none;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-  background: transparent;
-  border: 1px solid rgba(201, 162, 39, 0.3);
-  border-radius: 10px;
-  cursor: pointer;
-  position: relative;
-  padding: 0;
-  
-  @media (max-width: 1024px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-.menuIcon {
-  width: 20px;
-  height: 2px;
-  background: #c9a227;
-  position: relative;
-  transition: all 0.3s ease;
-  
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 2px;
-    background: #c9a227;
-    left: 0;
-    transition: all 0.3s ease;
-  }
-  
-  &::before {
-    top: -6px;
-  }
-  
-  &::after {
-    top: 6px;
-  }
-  
-  &.open {
-    background: transparent;
-    
-    &::before {
-      top: 0;
-      transform: rotate(45deg);
-    }
-    
-    &::after {
-      top: 0;
-      transform: rotate(-45deg);
-    }
-  }
-}
-
-.mobileNav {
-  display: none;
-  position: fixed;
-  top: 70px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(20px);
-  padding: 2rem;
-  flex-direction: column;
-  gap: 0.5rem;
-  
-  @media (max-width: 1024px) {
-    display: flex;
-  }
-}
-
-.mobileNavLink {
-  display: flex;
-  align-items: center;
-  min-height: 56px;
-  padding: 1rem 1.5rem;
-  color: #5c5245;
-  text-decoration: none;
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid rgba(251, 191, 36, 0.1);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    color: #8b6914;
-    background: rgba(251, 191, 36, 0.05);
-    padding-left: 2rem;
-  }
-  
-  &.active {
-    color: #8b6914;
-    background: rgba(251, 191, 36, 0.1);
+  @media (max-width: 768px) {
+    top: 1rem;
+    right: 1rem;
   }
 }
 
 .backButton {
   position: fixed;
-  top: 24px;
-  left: 24px;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 52px;
-  min-width: 88px;
-  padding: 0 20px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
-  border: 1px solid rgba(251, 191, 36, 0.25);
-  border-radius: 10px;
-  color: #3d352b;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95));
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
   cursor: pointer;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  user-select: none;
+
+  @media (max-width: 768px) {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.75rem;
+  }
 
   &:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.65) 100%);
-    border-color: rgba(251, 191, 36, 0.4);
-    box-shadow: 0 8px 32px rgba(92, 82, 69, 0.12);
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 768px) {
-    top: 16px;
-    left: 16px;
-    min-height: 56px;
-    padding: 0 20px;
-  }
-}
-
-.backIcon {
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.backText {
-  font-variant-numeric: tabular-nums;
-}
-
-.withBackButton {
-  @media (min-width: 768px) {
-    padding-top: 100px;
-  }
-  @media (max-width: 768px) {
-    padding-top: 90px;
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 8px 30px rgba(168, 85, 247, 0.2);
   }
 }
 
 .main {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
-  padding-top: 70px;
-  padding-bottom: 80px;
-  
-  &.noNav {
-    padding-top: 70px;
-  }
-}
-
-.footer {
-  position: relative;
-  z-index: 1;
-  padding: 2rem 2rem 6rem;
-  background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, transparent 100%);
-  border-top: 1px solid rgba(251, 191, 36, 0.1);
-}
-
-.footerContent {
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.footerLogo {
-  display: flex;
-  justify-content: center;
-  gap: 0.25em;
-  margin-bottom: 1rem;
-}
-
-.footerLogoChar {
-  font-size: 2rem;
-  font-weight: 300;
-  background: linear-gradient(135deg, #f0d78c 0%, #c9a227 50%, #f0d78c 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.3));
-}
-
-.footerText {
-  color: #c9a227;
-  font-size: 1rem;
-  letter-spacing: 0.2em;
-  margin-bottom: 0.5rem;
-}
-
-.footerSubtext {
-  color: #666;
-  font-size: 0.85rem;
-  margin-bottom: 1.5rem;
-}
-
-.footerLinks {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  
-  a {
-    color: #888;
-    font-size: 0.85rem;
-    transition: all 0.3s ease;
-    
-    &:hover {
-      color: #c9a227;
-    }
-  }
-}
-
-// 响应式
-@media (max-width: 768px) {
-  .header {
-    padding: 0.75rem 1rem;
-    
-    &.scrolled {
-      padding: 0.5rem 1rem;
-    }
-  }
-  
-  .logoChar {
-    font-size: 1.5rem;
-  }
-  
-  .footer {
-    padding: 3rem 1rem 1.5rem;
-  }
-  
-  .footerLinks {
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-}
-
-/* ==========================================================================
-   ⬆️ 回到顶部按钮 - 「御剑飞升」
-   ========================================================================== */
-
-.scrollTop {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 998;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(10, 10, 15, 0.9) 100%);
-  border: 1px solid rgba(201, 162, 39, 0.3);
-  border-radius: 50%;
-  color: #c9a227;
-  font-size: 1.5rem;
-  cursor: pointer;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: linear-gradient(135deg, rgba(201, 162, 39, 0.25) 0%, rgba(15, 15, 25, 0.95) 100%);
-    border-color: rgba(201, 162, 39, 0.5);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(201, 162, 39, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    bottom: 24px;
-    right: 24px;
-    width: 48px;
-    height: 48px;
-    font-size: 1.25rem;
-  }
+  width: 100%;
 }

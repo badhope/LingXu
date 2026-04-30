@@ -71,7 +71,11 @@ export function destroyAllCanvasOnPage(): void {
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
       }
-    } catch (e) {}
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('WebGL cleanup skipped:', e)
+      }
+    }
   })
 }
 
