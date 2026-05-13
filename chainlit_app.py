@@ -1,4 +1,4 @@
-"""Simple Chainlit frontend for DataAgent - Test Version"""
+"""Simple Chainlit frontend for DATA-AI - Test Version"""
 
 import chainlit as cl
 import asyncio

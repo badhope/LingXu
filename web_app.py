@@ -1,5 +1,5 @@
 """
-DataAgent - 万能智能助手 Web Interface
+DATA-AI - 万能智能助手 Web Interface
 完整的系统化架构，包括知识库、技能系统、MCP工具、数据清洗等功能
 """
 
@@ -28,7 +28,7 @@ except ImportError:
     OPENAI_AVAILABLE = False
 
 app = FastAPI(
-    title="DataAgent - 万能智能助手",
+    title="DATA-AI - 万能智能助手",
     description="完整的系统化智能助手：知识库、技能系统、MCP工具、数据清洗",
     version="2.0.0"
 )
@@ -227,7 +227,7 @@ def init_builtin_skills():
             name="代码审查专家",
             description="智能代码审查，发现潜在问题并提供优化建议",
             version="1.0.0",
-            author="DataAgent Team",
+            author="DATA-AI Team",
             category="code_generation",
             type="built_in",
             icon="🔍",
@@ -246,7 +246,7 @@ def init_builtin_skills():
             name="数据分析助手",
             description="执行数据分析和可视化",
             version="1.0.0",
-            author="DataAgent Team",
+            author="DATA-AI Team",
             category="data_analysis",
             type="built_in",
             icon="📊",
@@ -262,7 +262,7 @@ def init_builtin_skills():
             name="文档处理助手",
             description="提取、总结和分析文档内容",
             version="1.0.0",
-            author="DataAgent Team",
+            author="DATA-AI Team",
             category="document_processing",
             type="built_in",
             icon="📄",
@@ -765,7 +765,7 @@ async def get():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataAgent - 万能智能助手</title>
+    <title>DATA-AI - 万能智能助手</title>
     <style>
         /* ==================== 企业级设计系统 ==================== */
         :root {
@@ -1749,7 +1749,7 @@ async def get():
     <div class="app-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2>🤖 DataAgent</h2>
+                <h2>🤖 DATA-AI</h2>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-item active" onclick="showMainChat()">
@@ -1811,7 +1811,7 @@ async def get():
             </div>
             <div class="chat-area" id="chat-area">
                 <div class="message system">
-                    <div class="message-content">欢迎使用 DataAgent！我是您的万能智能助手。</div>
+                    <div class="message-content">欢迎使用 DATA-AI！我是您的万能智能助手。</div>
                 </div>
             </div>
             <div class="input-area">
@@ -2090,7 +2090,7 @@ async def get():
             </div>
             <div class="modal-body help-content">
                 <h4>🚀 快速开始</h4>
-                <p>DataAgent 是一个完整的智能助手系统，包含以下核心功能：</p>
+                <p>DATA-AI 是一个完整的智能助手系统，包含以下核心功能：</p>
                 <ul>
                     <li><strong>万能对话</strong> - 支持自然语言对话，自动识别意图</li>
                     <li><strong>代码执行</strong> - 自动生成并执行 Python 代码</li>
@@ -2375,7 +2375,7 @@ async def get():
 
         function clearChat() {
             const chatArea = document.getElementById('chat-area');
-            chatArea.innerHTML = '<div class="message system"><div class="message-content">欢迎使用 DataAgent！</div></div>';
+            chatArea.innerHTML = '<div class="message system"><div class="message-content">欢迎使用 DATA-AI！</div></div>';
         }
 
         function toggleSidebar() {
@@ -2984,5 +2984,5 @@ async def get():
 
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 Starting DataAgent Web Interface...")
+    print("🚀 Starting DATA-AI Web Interface...")
     uvicorn.run(app, host="0.0.0.0", port=8000)

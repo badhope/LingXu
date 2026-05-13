@@ -156,13 +156,13 @@ class MCPServer:
         atexit.register(lambda: asyncio.run(self.cleanup()))
 
         # Start server (with same logging as original)
-        logger.info(f"Starting DataAgent server ({transport} mode)")
+        logger.info(f"Starting DATA-AI server ({transport} mode)")
         self.server.run(transport=transport)
 
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description="DataAgent MCP Server")
+    parser = argparse.ArgumentParser(description="DATA-AI MCP Server")
     parser.add_argument(
         "--transport",
         choices=["stdio"],

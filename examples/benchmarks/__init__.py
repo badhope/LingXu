@@ -1,3 +1,3 @@
 """
-DataAgent benchmark system for standardized agent evaluation.
+DATA-AI benchmark system for standardized agent evaluation.
 """

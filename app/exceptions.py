@@ -5,9 +5,9 @@ class ToolError(Exception):
         self.message = message
 
 
-class DataAgentError(Exception):
-    """Base exception for all DataAgent errors"""
+class DATA-AIError(Exception):
+    """Base exception for all DATA-AI errors"""
 
 
-class TokenLimitExceeded(DataAgentError):
+class TokenLimitExceeded(DATA-AIError):
     """Exception raised when the token limit is exceeded"""

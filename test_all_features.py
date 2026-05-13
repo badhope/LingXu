@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DataAgent 全功能测试脚本
+DATA-AI 全功能测试脚本
 测试所有代理、工具和功能模块
 """
 import asyncio
@@ -24,7 +24,7 @@ def test_import(module_path, class_name, description):
 
 async def test_all():
     print("=" * 70)
-    print("🚀 DataAgent 全功能测试")
+    print("🚀 DATA-AI 全功能测试")
     print("=" * 70)
 
     results = {}
@@ -171,7 +171,7 @@ async def test_all():
     try:
         from app.tool.bash import Bash
         bash = Bash()
-        result = await bash.execute(command="echo 'DataAgent OK'")
+        result = await bash.execute(command="echo 'DATA-AI OK'")
         print(f"  ✅ Bash 执行正常: {result}")
         results["Bash执行"] = True
     except Exception as e:
@@ -183,7 +183,7 @@ async def test_all():
     try:
         from app.tool.python_execute import PythonExecute
         py = PythonExecute()
-        result = await py.execute(code="print('DataAgent Python OK'); print(2+3)")
+        result = await py.execute(code="print('DATA-AI Python OK'); print(2+3)")
         print(f"  ✅ Python 执行正常: {result}")
         results["Python执行"] = True
     except Exception as e:
@@ -200,7 +200,7 @@ async def test_all():
             f.write("Hello World!\n")
         editor = StrReplaceEditor()
         result = await editor.execute(command="view", path=test_file)
-        result = await editor.execute(command="str_replace", path=test_file, old_str="Hello World!", new_str="Hello DataAgent!")
+        result = await editor.execute(command="str_replace", path=test_file, old_str="Hello World!", new_str="Hello DATA-AI!")
         print(f"  ✅ 文件编辑正常")
         os.unlink(test_file)
         results["文件编辑"] = True
@@ -213,7 +213,7 @@ async def test_all():
     try:
         from app.tool.search.baidu_search import BaiduSearchEngine
         baidu = BaiduSearchEngine()
-        search_results_list = list(baidu.perform_search("DataAgent", num_results=2))
+        search_results_list = list(baidu.perform_search("DATA-AI", num_results=2))
         if search_results_list:
             print(f"  ✅ 百度搜索正常，获取 {len(search_results_list)} 条结果")
             results["网络搜索"] = True

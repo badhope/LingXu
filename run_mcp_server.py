@@ -1,5 +1,5 @@
 # coding: utf-8
-# A shortcut to launch DataAgent MCP server, where its introduction also solves other import issues.
+# A shortcut to launch DATA-AI MCP server, where its introduction also solves other import issues.
 from app.mcp.server import MCPServer, parse_args
 
 

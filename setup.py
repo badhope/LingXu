@@ -5,14 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="dataagent",
+    name="data-ai",
     version="0.1.0",
-    author="mannaandpoem and DataAgent Team",
-    author_email="mannaandpoem@gmail.com",
-    description="A versatile agent that can solve various tasks using multiple tools",
+    author="badhope",
+    author_email="",
+    description="DATA-AI - 智能化数据处理和分析平台，支持多种 AI 工具和代理",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/FoundationAgents/DataAgent",
+    url="https://github.com/badhope/LingXu",
     packages=find_packages(),
     install_requires=[
         "pydantic~=2.10.4",
@@ -43,7 +43,7 @@ setup(
     python_requires=">=3.12",
     entry_points={
         "console_scripts": [
-            "dataagent=main:main",
+            "data-ai=main:main",
         ],
     },
 )
