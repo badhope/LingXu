@@ -1,11 +1,11 @@
-pydantic~=2.10.0
-openai~=1.66.0
+pydantic~=2.13.4
+openai~=2.36.0
 tenacity~=9.0.0
 pyyaml~=6.0.0
 loguru~=0.7.0
 numpy
-fastapi~=0.115.0
-tiktoken~=0.9.0
+fastapi~=0.136.1
+tiktoken~=0.12.0
 html2text~=2024.2.26
 uvicorn~=0.34.0
 unidiff~=0.7.5
