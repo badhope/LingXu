@@ -1,0 +1,218 @@
+{
+  "name": "MCP (Model Context Protocol) Service Specification",
+  "version": "1.0.0",
+  "description": "MCP工具服务系统架构定义",
+  "protocol_version": "2024-11-05",
+  "schemas": {
+    "MCPServerConfig": {
+      "type": "object",
+      "description": "MCP服务器配置",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "服务器唯一标识"
+        },
+        "name": {
+          "type": "string",
+          "description": "服务器名称"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["stdio", "sse", "http"],
+          "description": "连接类型"
+        },
+        "command": {
+          "type": "string",
+          "description": "启动命令（stdio类型）"
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "启动参数"
+        },
+        "url": {
+          "type": "string",
+          "description": "服务器URL（sse/http类型）"
+        },
+        "env": {
+          "type": "object",
+          "description": "环境变量"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive", "error"],
+          "default": "inactive"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": ["id", "name", "type"]
+    },
+    "MCPTool": {
+      "type": "object",
+      "description": "MCP工具定义",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "工具名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "工具描述"
+        },
+        "inputSchema": {
+          "type": "object",
+          "description": "输入参数JSON Schema"
+        },
+        "server_id": {
+          "type": "string",
+          "description": "所属服务器ID"
+        }
+      },
+      "required": ["name", "description", "inputSchema"]
+    },
+    "MCPResource": {
+      "type": "object",
+      "description": "MCP资源定义",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "资源URI"
+        },
+        "name": {
+          "type": "string",
+          "description": "资源名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "资源描述"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME类型"
+        }
+      }
+    },
+    "MCPServerManifest": {
+      "type": "object",
+      "description": "MCP服务器清单文件",
+      "properties": {
+        "mcpServers": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/schemas/MCPServerConfig"
+          }
+        }
+      }
+    }
+  },
+  "builtin_servers": {
+    "filesystem": {
+      "name": "本地文件系统",
+      "description": "读取和操作本地文件",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/"],
+      "icon": "📁"
+    },
+    "github": {
+      "name": "GitHub",
+      "description": "访问GitHub仓库和API",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "icon": "🐙"
+    },
+    "postgres": {
+      "name": "PostgreSQL",
+      "description": "访问PostgreSQL数据库",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "icon": "🐘"
+    },
+    "slack": {
+      "name": "Slack",
+      "description": "访问Slack工作区",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "icon": "💬"
+    },
+    "brave_search": {
+      "name": "Brave Search",
+      "description": "通过Brave Search API搜索网络",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "icon": "🔍"
+    },
+    "web_playwright": {
+      "name": "Web Playwright",
+      "description": "浏览器自动化操作",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-web-playwright"],
+      "icon": "🌐"
+    },
+    "gmail": {
+      "name": "Gmail",
+      "description": "访问Gmail邮件",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gmail"],
+      "icon": "📧"
+    },
+    "google_drive": {
+      "name": "Google Drive",
+      "description": "访问Google Drive文件",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-drive"],
+      "icon": "📁"
+    },
+    "notion": {
+      "name": "Notion",
+      "description": "访问Notion工作区",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-notion"],
+      "icon": "📝"
+    },
+    "sequential_thinking": {
+      "name": "Sequential Thinking",
+      "description": "顺序思考工具",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "icon": "🧠"
+    }
+  },
+  "example_config": {
+    "mcpServers": {
+      "my_files": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/my/files"]
+      },
+      "github": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-github"],
+        "env": {
+          "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_xxxxx"
+        }
+      },
+      "brave_search": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+        "env": {
+          "BRAVE_API_KEY": "xxxxx"
+        }
+      }
+    }
+  }
+}

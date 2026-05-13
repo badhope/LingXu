@@ -1,0 +1,162 @@
+{
+  "name": "Knowledge Base System Specification",
+  "version": "1.0.0",
+  "description": "规范的知识库系统架构定义",
+  "schemas": {
+    "KnowledgeBase": {
+      "type": "object",
+      "description": "知识库主对象",
+      "properties": {
+        "id": {
+          "type": "string",
+          "type": "string",
+          "description": "知识库唯一标识"
+        },
+        "name": {
+          "type": "string",
+          "description": "知识库名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "知识库描述"
+        },
+        "created_at": {
+          "type": "string",
+          "type": "string",
+          "format": "date-time",
+          "description": "创建时间"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "更新时间"
+        },
+        "embedding_model": {
+          "type": "string",
+          "description": "嵌入模型"
+        },
+        "indexing_technique": {
+          "type": "string",
+          "enum": ["high_quality", "economy", "semantic"],
+          "default": "high_quality",
+          "description": "索引技术"
+        },
+        "retrieval_model": {
+          "type": "string",
+          "type": "string",
+          "description": "检索模型"
+        },
+        "permission": {
+          "type": "string",
+          "type": "type": "string",
+          "enum": ["only_me", "all_team_members", "partial_members"],
+          "default": "only_me",
+          "description": "权限设置"
+        }
+      }
+    },
+    "Document": {
+      "type": "object",
+      "description": "文档对象",
+      "properties": {
+        "id": {
+          "type": "string",
+          "type": "string",
+          "description": "文档唯一标识"
+        },
+        "name": {
+          "type": "type": "string",
+          "description": "文档名称"
+        },
+        "data_source_type": {
+          "type": "type": "string",
+          "enum": ["upload_file", "web_url", "notion", "website", "custom_text"],
+          "description": "数据来源类型"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["queuing", "indexing", "available", "error", "paused"],
+          "description": "处理状态"
+        },
+        "processing_rule": {
+          "type": "object",
+          "description": "处理规则配置"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "DocumentProcessingRule": {
+      "type": "object",
+      "type": "object",
+      "description": "文档处理规则",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["automatic", "custom"],
+          "default": "automatic",
+          "description": "处理模式"
+        },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "pre_processing_rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "enum": ["remove_extra_spaces", "remove_urls_emails", "remove_stopwords", "remove_non_text"]
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "default": [{"id": "remove_extra_spaces", "enabled": true}]
+            },
+            "segmentation": {
+              "type": "object",
+              "type": "object",
+              "properties": {
+                "separator": {
+                  "type": "string",
+                  "default": "\\n\\n",
+                  "description": "分割符"
+                },
+                "max_tokens": {
+                  "type": "integer",
+                  "default": 1000,
+                  "description": "最大分块token数"
+                },
+                "chunk_size": {
+                  "type": "integer",
+                  "default": 1000
+                },
+                "chunk_overlap": {
+                  "type": "integer",
+                  "default": 200
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "supported_file_formats": {
+    "text": [".txt", ".md", ".markdown", ".rtf"],
+    "document": [".pdf", ".doc", ".docx", ".odt", ".pages"],
+    "spreadsheet": [".csv", ".xlsx", ".xls", ".ods"],
+    "presentation": [".pptx", ".ppt", ".odp"],
+    "html": [".html", ".htm", ".xhtml"],
+    "image": [".pdf", ".png", ".jpg", ".jpeg", ".gif", ".bmp"],
+    "code": [".py", ".js", ".ts", ".java", ".cpp", ".c", ".h", ".go", ".rs", ".sql"],
+    "other": [".json", ".xml", ".yaml", ".yml", ".toml", ".ini"]
+  },
+  "max_file_size": 50,
+  "max_files_per_upload": 10
+}

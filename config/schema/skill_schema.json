@@ -1,0 +1,265 @@
+{
+  "name": "Skill System Specification",
+  "version": "1.0.0",
+  "description": "规范的技能系统架构定义",
+  "schemas": {
+    "Skill": {
+      "type": "object",
+      "description": "技能主对象",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "技能唯一标识"
+        },
+        "name": {
+          "type": "string",
+          "description": "技能名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "技能详细描述"
+        },
+        "version": {
+          "type": "string",
+          "description": "版本号",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "author": {
+          "type": "string",
+          "description": "作者"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["data_analysis", "code_generation", "document_processing", "web_scraping", "api_integration", "automation", "custom"],
+          "description": "技能分类"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["built_in", "custom", "workflow", "mcp"],
+          "description": "技能类型"
+        },
+        "icon": {
+          "type": "string",
+          "description": "图标（emoji或URL）"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "published", "deprecated"],
+          "default": "published"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name", "description", "version", "type"]
+    },
+    "SkillParameter": {
+      "type": "object",
+      "description": "技能参数定义",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "参数名称"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "integer", "boolean", "object", "array", "file"],
+          "description": "参数类型"
+        },
+        "description": {
+          "type": "string",
+          "description": "参数说明"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "default": {
+          "description": "默认值"
+        },
+        "enum": {
+          "type": "array",
+          "description": "枚举值列表"
+        },
+        "min": {
+          "type": "number",
+          "description": "最小值（数字类型）"
+        },
+        "max": {
+          "type": "number",
+          "description": "最大值（数字类型）"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "正则表达式模式（字符串类型）"
+        }
+      },
+      "required": ["name", "type", "description"]
+    },
+    "SkillPrompt": {
+      "type": "object",
+      "description": "技能提示词定义",
+      "properties": {
+        "system_prompt": {
+          "type": "string",
+          "description": "系统提示词"
+        },
+        "user_prompt_template": {
+          "type": "string",
+          "description": "用户提示词模板（支持变量占位符）"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "input": { "type": "string" },
+              "output": { "type": "string" }
+            }
+          },
+          "description": "示例"
+        }
+      }
+    },
+    "SkillTool": {
+      "type": "object",
+      "description": "技能关联工具",
+      "properties": {
+        "tool_name": { "type": "string" },
+        "tool_config": { "type": "object" }
+      }
+    },
+    "CustomSkillManifest": {
+      "type": "object",
+      "description": "自定义技能清单",
+      "properties": {
+        "manifest_version": {
+          "type": "string",
+          "enum": ["1.0"],
+          "description": "清单版本"
+        },
+        "skill": {
+          "$ref": "#/schemas/Skill"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/schemas/SkillParameter"
+          }
+        },
+        "prompts": {
+          "$ref": "#/schemas/SkillPrompt"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/schemas/SkillTool"
+          }
+        },
+        "code": {
+          "type": "object",
+          "description": "代码实现",
+          "properties": {
+            "language": {
+              "type": "string",
+              "enum": ["python", "javascript", "typescript"]
+            },
+            "entry_point": {
+              "type": "string",
+              "description": "入口函数名"
+            },
+            "source": {
+              "type": "string",
+              "description": "源代码（或文件路径）"
+            }
+          }
+        },
+        "requirements": {
+          "type": "object",
+          "description": "依赖要求",
+          "properties": {
+            "python_packages": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Python包依赖"
+            },
+            "node_packages": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Node.js包依赖"
+            },
+            "external_apis": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "外部API依赖"
+            }
+          }
+        }
+      },
+      "required": ["manifest_version", "skill", "parameters"]
+    }
+  },
+  "examples": {
+    "simple_prompt_skill": {
+      "manifest_version": "1.0",
+      "skill": {
+        "id": "code_reviewer",
+        "name": "代码审查专家",
+        "description": "智能代码审查，发现潜在问题并提供优化建议",
+        "version": "1.0.0",
+        "author": "DataAgent Team",
+        "category": "code_generation",
+        "type": "custom",
+        "icon": "🔍"
+      },
+      "parameters": [
+        {
+          "name": "code",
+          "type": "string",
+          "description": "待审查的代码",
+          "required": true
+        },
+        {
+          "name": "language",
+          "type": "string",
+          "description": "编程语言",
+          "required": false,
+          "enum": ["python", "javascript", "typescript", "java", "cpp"]
+        },
+        {
+          "name": "strictness",
+          "type": "string",
+          "description": "严格程度",
+          "default": "medium",
+          "enum": ["low", "medium", "high"]
+        }
+      ],
+      "prompts": {
+        "system_prompt": "你是一位资深的代码审查专家，请按照以下标准审查代码：\n1. 检查语法错误和潜在bug\n2. 评估代码风格和最佳实践\n3. 提供性能优化建议\n4. 指出安全隐患",
+        "user_prompt_template": "请审查以下{{language}}代码，严格程度：{{strictness}}\n\n```{{language}}\n{{code}}\n```"
+      }
+    },
+    "code_execution_skill": {
+      "manifest_version": "1.0",
+      "skill": {
+        "id": "data_analyzer",
+        "name": "数据分析助手",
+        "description": "执行数据分析和可视化",
+        "version": "1.0.0",
+        "category": "data_analysis",
+        "type": "custom",
+        "icon": "📊"
+      },
+      "parameters": [
+        { "name": "data", "type": "string", "description": "数据（CSV格式或描述）", "required": true },
+        { "name": "analysis_type", "type": "string", "description": "分析类型", "enum": ["summary", "statistics", "visualization", "prediction"], "required": true }
+      ],
+      "tools": [{ "tool_name": "python_execute" }]
+    }
+  }
+}
