@@ -212,7 +212,7 @@
         "name": "代码审查专家",
         "description": "智能代码审查，发现潜在问题并提供优化建议",
         "version": "1.0.0",
-        "author": "DataAgent Team",
+        "author": "DATA-AI Team",
         "category": "code_generation",
         "type": "custom",
         "icon": "🔍"

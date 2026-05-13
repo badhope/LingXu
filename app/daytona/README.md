@@ -4,7 +4,7 @@
 
 
 ## Prerequisites
-- conda activate 'Your DataAgent python env'
+- conda activate 'Your DATA-AI python env'
 - pip install daytona==0.21.8 structlog==25.4.0
 
 
@@ -13,7 +13,7 @@
 
 1. daytona config :
    ```bash
-   cd DataAgent
+   cd DATA-AI
    cp config/config.example-daytona.toml config/config.toml
    ```
 2. get daytona apikey :
@@ -33,7 +33,7 @@
 2. Run :
 
    ```bash
-   cd DataAgent
+   cd DATA-AI
    python sandbox_main.py
    ```
 
