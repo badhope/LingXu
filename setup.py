@@ -12,7 +12,7 @@ setup(
     description="DATA-AI - 智能化数据处理和分析平台，支持多种 AI 工具和代理",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/badhope/LingXu",
+    url="https://github.com/badhope/DATA-AI",
     packages=find_packages(),
     install_requires=[
         "pydantic~=2.10.4",
