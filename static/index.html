@@ -1,358 +1,451 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DATA-AI - 万能智能助手</title>
-        <link rel="stylesheet" href="/static/css/style.css">
-
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <div class="app-container">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2>🤖 DATA-AI</h2>
+        <!-- ==================== Sidebar ==================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <button class="sidebar-toggle-close" id="sidebar-close-btn" title="关闭侧边栏">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button class="new-chat-btn" id="new-chat-btn" title="新建对话">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                    <span>新建对话</span>
+                </button>
             </div>
-            <div class="sidebar-nav">
-                <div class="nav-item active" onclick="showMainChat()">
-                    <span class="nav-icon">💬</span>
-                    <div class="nav-text">
-                        <h4>对话</h4>
-                        <p>开始智能对话</p>
-                    </div>
-                </div>
-                <div class="nav-divider"></div>
-                <div class="nav-item" onclick="openModal('knowledge-modal'); closeSidebar();">
-                    <span class="nav-icon">📚</span>
-                    <div class="nav-text">
-                        <h4>知识库</h4>
-                        <p>文档管理与检索</p>
-                    </div>
-                </div>
-                <div class="nav-item" onclick="openModal('prompt-modal'); closeSidebar();">
-                    <span class="nav-icon">💡</span>
-                    <div class="nav-text">
-                        <h4>技能系统</h4>
-                        <p>自定义技能与提示词</p>
-                    </div>
-                </div>
-                <div class="nav-item" onclick="openModal('mcp-modal'); closeSidebar();">
-                    <span class="nav-icon">🔌</span>
-                    <div class="nav-text">
-                        <h4>MCP工具</h4>
-                        <p>Model Context Protocol</p>
-                    </div>
-                </div>
-                <div class="nav-divider"></div>
-                <div class="nav-item" onclick="openModal('settings-modal'); closeSidebar();">
-                    <span class="nav-icon">⚙️</span>
-                    <div class="nav-text">
-                        <h4>设置</h4>
-                        <p>模型与系统配置</p>
-                    </div>
-                </div>
-                <div class="nav-item" onclick="openModal('help-modal'); closeSidebar();">
-                    <span class="nav-icon">❓</span>
-                    <div class="nav-text">
-                        <h4>使用说明</h4>
-                        <p>帮助文档</p>
-                    </div>
+
+            <div class="sidebar-search">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" class="search-input" id="search-input" placeholder="搜索对话..." autocomplete="off">
+                    <button class="search-clear-btn" id="search-clear-btn" style="display:none;" title="清除">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
             </div>
-        </div>
-        <div class="main-content">
-            <div class="header">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">☰</button>
-                    <h1>万能智能助手</h1>
+
+            <div class="sidebar-conversations" id="sidebar-conversations">
+                <!-- 对话列表由JS渲染 -->
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-bottom-item" id="sidebar-kb-btn" title="知识库">
+                    <i class="fa-solid fa-book"></i>
+                    <span>知识库</span>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="clearChat()">🗑️ 清空对话</button>
-                    <button class="btn btn-primary" onclick="openModal('help-modal')">📖 帮助</button>
+                <div class="sidebar-bottom-item" id="sidebar-skill-btn" title="技能系统">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>技能系统</span>
+                </div>
+                <div class="sidebar-bottom-item" id="sidebar-mcp-btn" title="MCP工具">
+                    <i class="fa-solid fa-plug"></i>
+                    <span>MCP工具</span>
+                </div>
+                <div class="sidebar-bottom-divider"></div>
+                <div class="sidebar-bottom-item" id="sidebar-settings-btn" title="设置">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>设置</span>
                 </div>
             </div>
+        </aside>
+
+        <!-- ==================== Main ==================== -->
+        <main class="main-content">
+            <!-- Chat Header -->
+            <header class="chat-header" id="chat-header">
+                <div class="chat-header-left">
+                    <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="打开侧边栏">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="model-selector" id="model-selector">
+                        <button class="model-selector-btn" id="model-selector-btn">
+                            <span class="model-name" id="model-name-display">选择模型</span>
+                            <i class="fa-solid fa-chevron-down model-arrow"></i>
+                        </button>
+                        <div class="model-dropdown" id="model-dropdown">
+                            <div class="model-dropdown-search">
+                                <input type="text" class="model-search-input" id="model-search-input" placeholder="搜索模型...">
+                            </div>
+                            <div class="model-dropdown-list" id="model-dropdown-list">
+                                <!-- 模型列表由JS渲染 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-header-right">
+                    <button class="header-icon-btn" id="header-kb-btn" title="知识库">
+                        <i class="fa-solid fa-book"></i>
+                    </button>
+                    <button class="header-icon-btn" id="header-skill-btn" title="技能">
+                        <i class="fa-solid fa-bolt"></i>
+                    </button>
+                    <button class="header-icon-btn" id="header-mcp-btn" title="MCP">
+                        <i class="fa-solid fa-plug"></i>
+                    </button>
+                    <button class="header-icon-btn" id="header-settings-btn" title="设置">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Area -->
             <div class="chat-area" id="chat-area">
-                <div class="message system">
-                    <div class="message-content">欢迎使用 DATA-AI！我是您的万能智能助手。</div>
+                <!-- 欢迎页 -->
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-logo">
+                        <div class="welcome-logo-icon">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <h1 class="welcome-title">DATA-AI</h1>
+                        <p class="welcome-subtitle">万能智能助手</p>
+                    </div>
+                    <div class="welcome-suggestions">
+                        <div class="suggestion-card" data-prompt="帮我写一段 Python 代码，实现快速排序">
+                            <div class="suggestion-icon"><i class="fa-solid fa-code"></i></div>
+                            <div class="suggestion-text">帮我写一段 Python 代码，实现快速排序</div>
+                        </div>
+                        <div class="suggestion-card" data-prompt="分析以下数据并生成可视化图表">
+                            <div class="suggestion-icon"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="suggestion-text">分析以下数据并生成可视化图表</div>
+                        </div>
+                        <div class="suggestion-card" data-prompt="帮我总结这篇文档的核心要点">
+                            <div class="suggestion-icon"><i class="fa-solid fa-file-lines"></i></div>
+                            <div class="suggestion-text">帮我总结这篇文档的核心要点</div>
+                        </div>
+                        <div class="suggestion-card" data-prompt="解释什么是 Transformer 架构">
+                            <div class="suggestion-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="suggestion-text">解释什么是 Transformer 架构</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="input-area">
-                <!-- 工具栏 -->
-                <div class="input-tools">
-                    <button class="tool-btn" onclick="document.getElementById('file-input').click()" title="上传文件">📎</button>
-                    <button class="tool-btn" onclick="openModal('knowledge-modal'); closeSidebar();" title="知识库">📚</button>
-                    <button class="tool-btn" onclick="toggleWebSearch()" title="联网搜索" id="web-search-btn">🔍</button>
-                    <button class="tool-btn" onclick="openModal('prompt-modal'); closeSidebar();" title="技能中心">💡</button>
-                    <button class="tool-btn" onclick="openModal('mcp-modal'); closeSidebar();" title="工具市场">🔌</button>
-                    <input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.docx,.csv,.xlsx,.xls,.ppt,.pptx" style="display: none;" onchange="handleFileUpload(event)">
+
+            <!-- Input Area -->
+            <div class="input-area" id="input-area">
+                <div class="input-container" id="input-container">
+                    <div class="input-actions-left">
+                        <button class="input-action-btn" id="attach-btn" title="上传附件">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
+                        <button class="input-action-btn" id="web-search-toggle" title="联网搜索">
+                            <i class="fa-solid fa-globe"></i>
+                        </button>
+                        <button class="input-action-btn" id="skill-quick-btn" title="技能">
+                            <i class="fa-solid fa-bolt"></i>
+                        </button>
+                    </div>
+                    <div class="input-wrapper">
+                        <textarea class="input-box" id="input-box" placeholder="给 DATA-AI 发送消息..." rows="1"></textarea>
+                    </div>
+                    <button class="send-btn" id="send-btn" title="发送">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
                 </div>
-                
-                <!-- 输入框区域 -->
-                <div class="input-container">
-                    <textarea class="input-box" id="input-box" placeholder="输入您的需求...（Enter发送，Shift+Enter换行）" rows="2"></textarea>
-                    <button class="send-btn" id="send-btn" onclick="sendMessage()">发送</button>
-                </div>
-                
-                <!-- 快捷指令 -->
-                <div class="quick-commands">
-                    <span class="quick-label">快捷指令：</span>
-                    <button class="quick-btn" onclick="insertCommand('生成Python代码')">🐍 Python</button>
-                    <button class="quick-btn" onclick="insertCommand('分析数据')">📊 数据分析</button>
-                    <button class="quick-btn" onclick="insertCommand('画一个图表')">📈 图表</button>
-                    <button class="quick-btn" onclick="insertCommand('写一段文案')">✍️ 写作</button>
+                <input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.docx,.csv,.xlsx,.xls,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.webp" style="display:none;">
+                <div class="input-footer">
+                    <span class="input-hint">DATA-AI 可能会产生不准确的信息，请注意甄别</span>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
-    <div class="modal-overlay" id="settings-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">⚙️ 设置</div>
-                <button class="modal-close" onclick="closeModal('settings-modal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="settings-tabs">
-                    <div class="settings-tab active" onclick="showSettingsTab('model')">🤖 模型</div>
-                    <div class="settings-tab" onclick="showSettingsTab('sandbox')">🏖️ 沙箱</div>
-                    <div class="settings-tab" onclick="showSettingsTab('agent')">🧠 智能体</div>
+    <!-- ==================== Settings Drawer ==================== -->
+    <div class="drawer-overlay" id="settings-drawer-overlay"></div>
+    <div class="drawer drawer-right" id="settings-drawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title">设置</h2>
+            <button class="drawer-close-btn" id="settings-drawer-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-tabs">
+                <div class="drawer-tab active" data-tab="tab-model">
+                    <i class="fa-solid fa-robot"></i> 模型
                 </div>
-                <div class="settings-section active" id="settings-model">
-                    <h3>模型配置</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">模型提供商</span>
-                        <select class="setting-select" id="setting-provider">
-                            <option value="aliyun">阿里云 - 通义千问</option>
-                            <option value="openai">OpenAI - GPT</option>
-                            <option value="anthropic">Anthropic - Claude</option>
-                            <option value="deepseek">DeepSeek</option>
-                        </select>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">模型名称</span>
-                        <select class="setting-select" id="setting-model">
-                            <option value="qwen-plus-latest">qwen-plus-latest</option>
-                            <option value="qwen-max">qwen-max</option>
-                            <option value="gpt-4o">gpt-4o</option>
-                        </select>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">API Base URL</span>
-                        <input type="text" class="setting-input" id="setting-base-url" value="https://dashscope.aliyuncs.com/compatible-mode/v1">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">API Key</span>
+                <div class="drawer-tab" data-tab="tab-sandbox">
+                    <i class="fa-solid fa-cube"></i> 沙箱
+                </div>
+                <div class="drawer-tab" data-tab="tab-agent">
+                    <i class="fa-solid fa-brain"></i> 智能体
+                </div>
+                <div class="drawer-tab" data-tab="tab-display">
+                    <i class="fa-solid fa-palette"></i> 显示
+                </div>
+                <div class="drawer-tab" data-tab="tab-langsmith">
+                    <i class="fa-solid fa-bug"></i> 调试
+                </div>
+            </div>
+
+            <!-- Model Tab -->
+            <div class="drawer-tab-content active" id="tab-model">
+                <div class="setting-group">
+                    <label class="setting-label">模型提供商</label>
+                    <select class="setting-select" id="setting-provider">
+                        <option value="aliyun">阿里云 - 通义千问</option>
+                        <option value="openai">OpenAI - GPT</option>
+                        <option value="anthropic">Anthropic - Claude</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="ollama">Ollama - 本地模型</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">模型名称</label>
+                    <select class="setting-select" id="setting-model">
+                        <option value="qwen-plus-latest">qwen-plus-latest</option>
+                        <option value="qwen-max">qwen-max</option>
+                        <option value="gpt-4o">gpt-4o</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">API Base URL</label>
+                    <input type="text" class="setting-input" id="setting-base-url" value="https://dashscope.aliyuncs.com/compatible-mode/v1">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">API Key</label>
+                    <div class="password-input-wrapper">
                         <input type="password" class="setting-input" id="setting-api-key" placeholder="sk-...">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">最大 Token</span>
-                        <input type="number" class="setting-input" id="setting-max-tokens" value="4096">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">温度系数</span>
-                        <input type="number" step="0.1" class="setting-input" id="setting-temperature" value="0.7">
+                        <button class="password-toggle-btn" id="api-key-toggle" title="显示/隐藏">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="settings-section" id="settings-sandbox">
-                    <h3>沙箱环境</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">启用沙箱</span>
-                        <div class="setting-switch on" id="setting-sandbox-enabled" onclick="toggleSwitch(this)"></div>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">执行超时 (秒)</span>
-                        <input type="number" class="setting-input" id="setting-sandbox-timeout" value="60">
-                    </div>
+                <div class="setting-group">
+                    <label class="setting-label">最大 Token</label>
+                    <input type="number" class="setting-input" id="setting-max-tokens" value="4096">
                 </div>
-                <div class="settings-section" id="settings-agent">
-                    <h3>智能体配置</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">知识库启用</span>
-                        <div class="setting-switch on" id="setting-kb-enabled" onclick="toggleSwitch(this)"></div>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">最大步数</span>
-                        <input type="number" class="setting-input" id="setting-max-steps" value="5">
-                    </div>
-                </div>
-                <div class="settings-section" id="settings-langsmith">
-                    <h3>🦜 LangSmith 调试</h3>
-                    <div class="setting-row">
-                        <span class="setting-label">启用LangSmith</span>
-                        <div class="setting-switch" id="setting-langsmith-enabled" onclick="toggleSwitch(this)"></div>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">LangSmith API Key</span>
-                        <input type="password" class="setting-input" id="setting-langsmith-api-key" placeholder="lsv2_...">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">项目名称</span>
-                        <input type="text" class="setting-input" id="setting-langsmith-project" value="dataagent">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">端点</span>
-                        <input type="text" class="setting-input" id="setting-langsmith-endpoint" value="https://api.smith.langchain.com">
+                <div class="setting-group">
+                    <label class="setting-label">温度系数</label>
+                    <div class="range-wrapper">
+                        <input type="range" class="setting-range" id="setting-temperature" min="0" max="2" step="0.1" value="0.7">
+                        <span class="range-value" id="temperature-value">0.7</span>
                     </div>
                 </div>
             </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="resetSettings()">重置默认</button>
-                <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+
+            <!-- Sandbox Tab -->
+            <div class="drawer-tab-content" id="tab-sandbox">
+                <div class="setting-group">
+                    <label class="setting-label">启用沙箱</label>
+                    <div class="setting-switch on" id="setting-sandbox-enabled"></div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">执行超时 (秒)</label>
+                    <input type="number" class="setting-input" id="setting-sandbox-timeout" value="60">
+                </div>
+            </div>
+
+            <!-- Agent Tab -->
+            <div class="drawer-tab-content" id="tab-agent">
+                <div class="setting-group">
+                    <label class="setting-label">知识库启用</label>
+                    <div class="setting-switch on" id="setting-kb-enabled"></div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">最大步数</label>
+                    <input type="number" class="setting-input" id="setting-max-steps" value="5">
+                </div>
+            </div>
+
+            <!-- Display Tab -->
+            <div class="drawer-tab-content" id="tab-display">
+                <div class="setting-group">
+                    <label class="setting-label">主题模式</label>
+                    <div class="theme-switcher">
+                        <button class="theme-option active" data-theme="dark">
+                            <i class="fa-solid fa-moon"></i> 暗色
+                        </button>
+                        <button class="theme-option" data-theme="light">
+                            <i class="fa-solid fa-sun"></i> 亮色
+                        </button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">显示思考链</label>
+                    <div class="setting-switch on" id="setting-thinking-chain"></div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">代码高亮</label>
+                    <div class="setting-switch on" id="setting-code-highlight"></div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Markdown渲染</label>
+                    <div class="setting-switch on" id="setting-markdown-render"></div>
+                </div>
+            </div>
+
+            <!-- LangSmith Tab -->
+            <div class="drawer-tab-content" id="tab-langsmith">
+                <div class="setting-group">
+                    <label class="setting-label">启用 LangSmith</label>
+                    <div class="setting-switch" id="setting-langsmith-enabled"></div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">API Key</label>
+                    <input type="password" class="setting-input" id="setting-langsmith-api-key" placeholder="lsv2_...">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">项目名称</label>
+                    <input type="text" class="setting-input" id="setting-langsmith-project" value="dataagent">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">端点</label>
+                    <input type="text" class="setting-input" id="setting-langsmith-endpoint" value="https://api.smith.langchain.com">
+                </div>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <button class="drawer-btn drawer-btn-secondary" id="reset-settings-btn">重置默认</button>
+            <button class="drawer-btn drawer-btn-primary" id="save-settings-btn">保存设置</button>
+        </div>
+    </div>
+
+    <!-- ==================== Knowledge Base Panel ==================== -->
+    <div class="drawer-overlay" id="kb-drawer-overlay"></div>
+    <div class="drawer drawer-right" id="kb-drawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="fa-solid fa-book"></i> 知识库</h2>
+            <button class="drawer-close-btn" id="kb-drawer-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-tabs">
+                <div class="drawer-tab active" data-tab="kb-tab-list">知识库列表</div>
+                <div class="drawer-tab" data-tab="kb-tab-create">创建知识库</div>
+            </div>
+            <div class="drawer-tab-content active" id="kb-tab-list">
+                <div class="kb-grid" id="kb-grid"></div>
+            </div>
+            <div class="drawer-tab-content" id="kb-tab-create">
+                <div class="setting-group">
+                    <label class="setting-label">知识库名称</label>
+                    <input type="text" class="setting-input" id="kb-name" placeholder="例如：产品文档库">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">描述</label>
+                    <textarea class="setting-input setting-textarea" id="kb-desc" placeholder="简短描述该知识库的用途" rows="3"></textarea>
+                </div>
+                <button class="drawer-btn drawer-btn-primary" style="width:100%;margin-top:12px;" id="create-kb-btn">创建知识库</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="knowledge-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">📚 知识库</div>
-                <button class="modal-close" onclick="closeModal('knowledge-modal')">×</button>
+    <!-- ==================== Skill Panel ==================== -->
+    <div class="drawer-overlay" id="skill-drawer-overlay"></div>
+    <div class="drawer drawer-right" id="skill-drawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="fa-solid fa-bolt"></i> 技能系统</h2>
+            <button class="drawer-close-btn" id="skill-drawer-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-tabs">
+                <div class="drawer-tab active" data-tab="skill-tab-list">技能列表</div>
+                <div class="drawer-tab" data-tab="skill-tab-create">创建技能</div>
             </div>
-            <div class="modal-body">
-                <div class="settings-tabs">
-                    <div class="settings-tab active" onclick="showKbTab('list')">知识库列表</div>
-                    <div class="settings-tab" onclick="showKbTab('create')">创建知识库</div>
+            <div class="drawer-tab-content active" id="skill-tab-list">
+                <div class="skill-list" id="skill-list-content"></div>
+            </div>
+            <div class="drawer-tab-content" id="skill-tab-create">
+                <div class="setting-group">
+                    <label class="setting-label">技能用途</label>
+                    <input type="text" class="setting-input" id="skill-purpose" placeholder="描述你想要这个技能做什么">
                 </div>
-                <div class="settings-section active" id="kb-list">
-                    <div class="kb-grid" id="kb-grid"></div>
+                <button class="drawer-btn drawer-btn-secondary" style="width:100%;margin-bottom:16px;" id="ai-generate-skill-btn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI辅助生成
+                </button>
+                <div class="setting-group">
+                    <label class="setting-label">技能名称</label>
+                    <input type="text" class="setting-input" id="skill-name" placeholder="例如：代码审查专家">
                 </div>
-                <div class="settings-section" id="kb-create">
-                    <div class="setting-row">
-                        <span class="setting-label">知识库名称</span>
-                        <input type="text" class="setting-input" id="kb-name" placeholder="例如：产品文档库">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">描述</span>
-                        <textarea class="setting-input" id="kb-desc" placeholder="简短描述该知识库的用途" rows="3"></textarea>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="createKnowledgeBase()">创建知识库</button>
+                <div class="setting-group">
+                    <label class="setting-label">图标</label>
+                    <input type="text" class="setting-input" id="skill-icon" value="⚡" style="max-width:80px;">
                 </div>
-                <div class="file-upload-area" onclick="document.getElementById('file-input').click()" style="margin-top: 20px;">
-                    <div style="font-size: 32px; margin-bottom: 12px;">📁</div>
-                    <h4>上传文档</h4>
-                    <p>支持 .pdf, .txt, .md, .docx, .csv 等格式</p>
-                    <input type="file" id="file-input" multiple accept=".pdf,.txt,.md,.docx,.csv,.xlsx,.xls,.ppt,.pptx" style="display: none;" onchange="handleFileUpload(event)">
+                <div class="setting-group">
+                    <label class="setting-label">描述</label>
+                    <textarea class="setting-input setting-textarea" id="skill-desc" placeholder="描述技能的功能" rows="3"></textarea>
                 </div>
-                <div id="upload-progress" style="display: none; margin-top: 16px;">
-                    <div style="background: rgba(255,255,255,0.1); border-radius: 8px; height: 8px; overflow: hidden;">
-                        <div id="upload-progress-bar" style="background: linear-gradient(90deg, #3b82f6, #2563eb); height: 100%; width: 0%; transition: width 0.3s;"></div>
-                    </div>
-                    <p id="upload-status" style="color: #94a3b8; margin-top: 8px; font-size: 13px;">准备上传...</p>
+                <div id="ai-generating" style="display:none;margin:12px 0;padding:12px;border-radius:8px;" class="info-banner">
+                    <i class="fa-solid fa-spinner fa-spin"></i> AI正在生成，请稍候...
                 </div>
-                <div id="upload-error" style="display: none; margin-top: 16px; padding: 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px;">
-                    <p style="color: #f87171; margin: 0;">❌ <span id="upload-error-message"></span></p>
-                </div>
-                <div class="processing-rules">
-                    <h4 style="color: white; margin-bottom: 12px;">数据清洗规则</h4>
-                    <div class="rule-item">
-                        <span>移除多余空格和换行</span>
-                        <div class="setting-switch on" onclick="toggleSwitch(this)"></div>
-                    </div>
-                    <div class="rule-item">
-                        <span>移除URL和邮箱</span>
-                        <div class="setting-switch" onclick="toggleSwitch(this)"></div>
-                    </div>
-                </div>
+                <button class="drawer-btn drawer-btn-primary" style="width:100%;margin-top:12px;" id="create-skill-btn">创建技能</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="prompt-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">💡 技能系统</div>
-                <button class="modal-close" onclick="closeModal('prompt-modal')">×</button>
+    <!-- ==================== MCP Panel ==================== -->
+    <div class="drawer-overlay" id="mcp-drawer-overlay"></div>
+    <div class="drawer drawer-right" id="mcp-drawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="fa-solid fa-plug"></i> MCP工具服务</h2>
+            <button class="drawer-close-btn" id="mcp-drawer-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div class="mcp-list" id="mcp-list-content"></div>
+            <div class="section-divider">
+                <span>快速添加</span>
             </div>
-            <div class="modal-body">
-                <div class="settings-tabs">
-                    <div class="settings-tab active" onclick="showSkillTab('list')">技能列表</div>
-                    <div class="settings-tab" onclick="showSkillTab('create')">创建技能</div>
-                </div>
-                <div class="settings-section active" id="skill-list">
-                    <div class="skill-list" id="skill-list-content"></div>
-                </div>
-                <div class="settings-section" id="skill-create">
-                    <div class="setting-row">
-                        <span class="setting-label">技能用途</span>
-                        <input type="text" class="setting-input" id="skill-purpose" placeholder="描述你想要这个技能做什么，例如：代码审查、数据分析等">
-                    </div>
-                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 16px;" onclick="aiGenerateSkill()">🤖 AI辅助生成</button>
-                    <div class="setting-row">
-                        <span class="setting-label">技能名称</span>
-                        <input type="text" class="setting-input" id="skill-name" placeholder="例如：代码审查专家">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">图标</span>
-                        <input type="text" class="setting-input" id="skill-icon" value="⚡" style="max-width: 80px;">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">描述</span>
-                        <textarea class="setting-input" id="skill-desc" placeholder="描述技能的功能" rows="3"></textarea>
-                    </div>
-                    <div id="ai-generating" style="display: none; margin: 12px 0; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
-                        <p style="color: #60a5fa; margin: 0;">⏳ AI正在生成，请稍候...</p>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="createSkill()">创建技能</button>
-                </div>
+            <div class="mcp-quick-grid">
+                <button class="mcp-quick-btn" data-mcp="filesystem"><i class="fa-solid fa-folder"></i> 文件系统</button>
+                <button class="mcp-quick-btn" data-mcp="github"><i class="fa-brands fa-github"></i> GitHub</button>
+                <button class="mcp-quick-btn" data-mcp="notion"><i class="fa-solid fa-book-open"></i> Notion</button>
+                <button class="mcp-quick-btn" data-mcp="brave"><i class="fa-solid fa-shield-halved"></i> Brave搜索</button>
+                <button class="mcp-quick-btn" data-mcp="sqlite"><i class="fa-solid fa-database"></i> SQLite</button>
+                <button class="mcp-quick-btn" data-mcp="postgres"><i class="fa-solid fa-elephant"></i> PostgreSQL</button>
+                <button class="mcp-quick-btn" data-mcp="slack"><i class="fa-brands fa-slack"></i> Slack</button>
+                <button class="mcp-quick-btn" data-mcp="gmail"><i class="fa-solid fa-envelope"></i> Gmail</button>
             </div>
+            <div class="section-divider">
+                <span>自定义服务器</span>
+            </div>
+            <div class="setting-group">
+                <label class="setting-label">名称</label>
+                <input type="text" class="setting-input" id="mcp-name" placeholder="例如：本地文件系统">
+            </div>
+            <div class="setting-group">
+                <label class="setting-label">类型</label>
+                <select class="setting-select" id="mcp-type">
+                    <option value="stdio">stdio</option>
+                    <option value="sse">sse</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label class="setting-label">命令</label>
+                <input type="text" class="setting-input" id="mcp-command" placeholder="例如：npx">
+            </div>
+            <button class="drawer-btn drawer-btn-primary" style="width:100%;" id="create-mcp-btn">添加服务器</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="mcp-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">🔌 MCP工具服务</div>
-                <button class="modal-close" onclick="closeModal('mcp-modal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="mcp-list" id="mcp-list-content"></div>
-                
-                <div style="margin-top: 20px;">
-                    <h4 style="color: white; margin-bottom: 12px;">📦 快速添加MCP服务器</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('filesystem')">📁 文件系统</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('github')">🐙 GitHub</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('notion')">📓 Notion</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('brave')">🔍 Brave搜索</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('sqlite')">🗄️ SQLite</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('postgres')">🐘 PostgreSQL</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('slack')">💬 Slack</button>
-                        <button class="btn btn-secondary" style="font-size: 13px; padding: 8px;" onclick="quickAddMcp('gmail')">📧 Gmail</button>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 20px;">
-                    <h4 style="color: white; margin-bottom: 12px;">⚙️ 自定义MCP服务器</h4>
-                    <div class="setting-row">
-                        <span class="setting-label">名称</span>
-                        <input type="text" class="setting-input" id="mcp-name" placeholder="例如：本地文件系统">
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">类型</span>
-                        <select class="setting-select" id="mcp-type">
-                            <option value="stdio">stdio</option>
-                            <option value="sse">sse</option>
-                        </select>
-                    </div>
-                    <div class="setting-row">
-                        <span class="setting-label">命令</span>
-                        <input type="text" class="setting-input" id="mcp-command" placeholder="例如：npx">
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="createMcpServer()">添加服务器</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- ==================== Help Modal ==================== -->
     <div class="modal-overlay" id="help-modal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">❓ 使用说明</div>
-                <button class="modal-close" onclick="closeModal('help-modal')">×</button>
+                <h2 class="modal-title">使用说明</h2>
+                <button class="modal-close-btn" id="help-modal-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             <div class="modal-body help-content">
-                <h4>🚀 快速开始</h4>
+                <h3><i class="fa-solid fa-rocket"></i> 快速开始</h3>
                 <p>DATA-AI 是一个完整的智能助手系统，包含以下核心功能：</p>
                 <ul>
                     <li><strong>万能对话</strong> - 支持自然语言对话，自动识别意图</li>
@@ -362,29 +455,29 @@
                     <li><strong>技能系统</strong> - 自定义提示词和技能</li>
                     <li><strong>MCP工具</strong> - 支持 Model Context Protocol</li>
                 </ul>
-                <h4>💡 使用示例</h4>
+                <h3><i class="fa-solid fa-lightbulb"></i> 使用示例</h3>
                 <pre><code>生成一个正弦函数的折线图
 分析这些数据：[1,2,3,4,5]
 帮我写一个斐波那契数列
 解释这个Python代码</code></pre>
-                <h4>📚 知识库说明</h4>
-                <p>1. 创建知识库 → 2. 上传文档 → 3. 配置清洗规则 → 4. 提问时自动检索</p>
-                <h4>⚡ 技能系统</h4>
-                <p>技能是预定义的提示词模板，可以自定义参数和功能。参考规范：<code>config/schema/skill_schema.json</code></p>
-                <h4>🔌 MCP协议</h4>
-                <p>MCP (Model Context Protocol) 允许连接外部工具和数据源。配置文件：<code>config/mcp.json</code></p>
-                <h4>📋 规范文档</h4>
-                <p>所有系统规范定义在 <code>config/schema/</code> 目录下：</p>
+                <h3><i class="fa-solid fa-keyboard"></i> 快捷键</h3>
                 <ul>
-                    <li><code>knowledge_base_schema.json</code> - 知识库系统规范</li>
-                    <li><code>skill_schema.json</code> - 技能系统规范</li>
-                    <li><code>mcp_schema.json</code> - MCP工具规范</li>
+                    <li><kbd>Enter</kbd> - 发送消息</li>
+                    <li><kbd>Shift + Enter</kbd> - 换行</li>
+                    <li><kbd>Ctrl/Cmd + N</kbd> - 新建对话</li>
                 </ul>
             </div>
         </div>
     </div>
 
-        <script src="/static/js/app.js"></script>
+    <!-- ==================== Image Preview ==================== -->
+    <div class="image-preview-overlay" id="image-preview-overlay">
+        <img class="image-preview-img" id="image-preview-img" src="" alt="预览">
+    </div>
 
+    <!-- ==================== Toast Container ==================== -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
 </body>
 </html>

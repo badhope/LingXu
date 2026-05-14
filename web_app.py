@@ -167,6 +167,7 @@ knowledge_bases: Dict[str, KnowledgeBase] = {}
 documents: Dict[str, Document] = {}
 skills: Dict[str, Skill] = {}
 mcp_servers: Dict[str, MCPServer] = {}
+conversations: Dict[str, dict] = {}  # {conv_id: {"id": str, "title": str, "messages": [...], "created_at": str, "updated_at": str}}
 
 def load_settings():
     if SETTINGS_FILE.exists():
@@ -642,109 +643,261 @@ async def get_schema(schema_type: str):
     with open(schema_file, 'r', encoding='utf-8') as f:
         return JSONResponse(json.load(f))
 
-async def run_universal_agent(websocket: WebSocket, message: str):
+# ==================== 对话历史 API ====================
+
+@app.get("/api/conversations")
+async def list_conversations():
+    """获取所有对话列表"""
+    return JSONResponse(sorted(conversations.values(), key=lambda x: x["updated_at"], reverse=True))
+
+@app.post("/api/conversations")
+async def create_conversation(request: Request):
+    """创建新对话"""
+    data = await request.json()
+    conv_id = data.get("id", str(uuid.uuid4()))
+    conv = {
+        "id": conv_id,
+        "title": data.get("title", "新对话"),
+        "messages": [],
+        "created_at": datetime.datetime.now().isoformat(),
+        "updated_at": datetime.datetime.now().isoformat()
+    }
+    conversations[conv_id] = conv
+    return JSONResponse(conv)
+
+@app.get("/api/conversations/{conv_id}")
+async def get_conversation(conv_id: str):
+    """获取单个对话详情"""
+    if conv_id not in conversations:
+        raise HTTPException(status_code=404, detail="对话不存在")
+    return JSONResponse(conversations[conv_id])
+
+@app.delete("/api/conversations/{conv_id}")
+async def delete_conversation(conv_id: str):
+    """删除对话"""
+    if conv_id in conversations:
+        del conversations[conv_id]
+    return JSONResponse({"success": True})
+
+@app.post("/api/conversations/{conv_id}/messages")
+async def add_message(conv_id: str, request: Request):
+    """向对话添加消息"""
+    if conv_id not in conversations:
+        raise HTTPException(status_code=404, detail="对话不存在")
+    data = await request.json()
+    msg = {
+        "id": str(uuid.uuid4()),
+        "role": data.get("role", "user"),
+        "content": data.get("content", ""),
+        "timestamp": datetime.datetime.now().isoformat()
+    }
+    conversations[conv_id]["messages"].append(msg)
+    conversations[conv_id]["updated_at"] = datetime.datetime.now().isoformat()
+    # 自动更新标题（用第一条用户消息）
+    if data.get("role") == "user" and conversations[conv_id]["title"] == "新对话":
+        conversations[conv_id]["title"] = data.get("content", "新对话")[:20]
+    return JSONResponse(msg)
+
+@app.put("/api/conversations/{conv_id}/title")
+async def update_conversation_title(conv_id: str, request: Request):
+    """更新对话标题"""
+    if conv_id not in conversations:
+        raise HTTPException(status_code=404, detail="对话不存在")
+    data = await request.json()
+    conversations[conv_id]["title"] = data.get("title", "")
+    return JSONResponse({"success": True})
+
+# ==================== 联网搜索 ====================
+
+async def web_search(query: str, num_results: int = 5) -> str:
+    """执行联网搜索"""
+    try:
+        from duckduckgo_search import DDGS
+        results = []
+        with DDGS() as ddgs:
+            for r in ddgs.text(query, max_results=num_results):
+                results.append(f"- {r['title']}: {r['href']}\n  {r['body']}")
+        if results:
+            return "\n".join(results)
+        return "未找到相关结果"
+    except Exception as e:
+        return f"搜索失败: {str(e)}"
+
+async def run_universal_agent(websocket: WebSocket, message: str, conversation_id: str = None, options: dict = None):
+    """运行通用AI Agent，支持联网搜索和对话历史"""
+    if options is None:
+        options = {}
+
     try:
         await websocket.send_json({
             "type": "thinking",
             "title": "🤔 理解需求",
             "content": f"正在分析用户需求: {message[:80]}..."
         })
-        
+
         use_code = False
         kb_related = False
-        search_enabled = False
-        
+        enable_web_search = options.get("web_search", False)
+
         if current_settings.knowledge_base.get("enabled"):
             kb_related = any(kw in message.lower() for kw in ["文档", "知识库", "knowledge", "search", "查找"])
-        
+
         if any(kw in message.lower() for kw in ["代码", "python", "图表", "计算", "数据", "分析", "plot", "chart", "execute"]):
             use_code = True
-        
+
+        # 构建对话历史上下文
+        context_prompt = ""
+        if conversation_id and conversation_id in conversations:
+            history = conversations[conversation_id]["messages"]
+            if history:
+                context_prompt = "\n\n以下是之前的对话历史：\n"
+                for h_msg in history[-10:]:  # 最近10条消息作为上下文
+                    role_label = "用户" if h_msg["role"] == "user" else "助手"
+                    context_prompt += f"{role_label}: {h_msg['content']}\n"
+                context_prompt += "\n请基于以上对话历史继续回答。\n"
+
+        # 联网搜索
+        search_context = ""
+        if enable_web_search:
+            await websocket.send_json({
+                "type": "thinking",
+                "title": "🌐 联网搜索",
+                "content": f"正在搜索: {message[:50]}..."
+            })
+            search_context = await web_search(message)
+            if search_context and not search_context.startswith("搜索失败") and search_context != "未找到相关结果":
+                await websocket.send_json({
+                    "type": "thinking",
+                    "title": "🔍 搜索结果",
+                    "content": f"找到相关资料，正在整合分析..."
+                })
+
         if use_code:
             await websocket.send_json({
                 "type": "thinking",
                 "title": "🛠️ 工具选择",
                 "content": "检测到代码/数据需求，准备生成Python代码"
             })
-            
+
             code_prompt = f"""根据用户需求生成Python代码：
-用户需求：{message}
-请直接输出可执行的Python代码，不需要解释。如果需要图表，保存为PNG文件。"""
-            
+用户需求：{message}"""
+            if search_context:
+                code_prompt += f"\n\n参考资料：\n{search_context}"
+            if context_prompt:
+                code_prompt += context_prompt
+            code_prompt += "\n请直接输出可执行的Python代码，不需要解释。如果需要图表，保存为PNG文件。"
+
             await websocket.send_json({
                 "type": "thinking",
                 "title": "💬 调用模型",
                 "content": "正在向AI模型请求生成代码..."
             })
-            
+
             code = await call_llm(code_prompt, current_settings)
             code = re.sub(r'^```python\s*\n?', '', code.strip(), flags=re.MULTILINE)
             code = re.sub(r'\n?```$', '', code.strip(), flags=re.MULTILINE)
             code = code.strip()
-            
+
             await websocket.send_json({
                 "type": "thinking",
                 "title": "📋 生成代码",
                 "content": f"```python\n{code}\n```"
             })
-            
+
             await websocket.send_json({
                 "type": "thinking",
                 "title": "▶️ 执行代码",
                 "content": "正在沙箱环境中执行代码..."
             })
-            
+
             result = await execute_python(code, timeout=current_settings.sandbox["timeout"])
-            
+
             if result["success"]:
                 response = f"✅ 执行成功！\n\n**标准输出:**\n{result['stdout']}\n\n**代码:**\n```python\n{code}\n```"
                 if result["stderr"]:
                     response += f"\n\n**警告:**\n{result['stderr']}"
             else:
                 response = f"❌ 执行失败: {result.get('error', '未知错误')}\n\n**代码:**\n```python\n{code}\n```"
-        
+
         elif kb_related and knowledge_bases:
             await websocket.send_json({
                 "type": "thinking",
                 "title": "📚 知识库检索",
                 "content": "正在从知识库中检索相关信息..."
             })
-            
+
             kb_list = ", ".join([kb.name for kb in knowledge_bases.values()])
-            
+
             await websocket.send_json({
                 "type": "thinking",
                 "title": "🔍 检索内容",
                 "content": f"可用知识库: {kb_list}"
             })
-            
-            response = await call_llm(f"用户问题：{message}\n\n可用知识库：{kb_list}\n\n请基于知识库内容回答用户问题。", current_settings)
-        
+
+            kb_prompt = f"用户问题：{message}\n\n可用知识库：{kb_list}\n\n请基于知识库内容回答用户问题。"
+            if context_prompt:
+                kb_prompt += context_prompt
+            if search_context:
+                kb_prompt += f"\n\n网络搜索参考资料：\n{search_context}\n"
+            response = await call_llm(kb_prompt, current_settings)
+
         else:
             await websocket.send_json({
                 "type": "thinking",
                 "title": "🧠 智能分析",
                 "content": "正在处理您的请求..."
             })
-            
+
             await websocket.send_json({
                 "type": "thinking",
                 "title": "💬 调用模型",
                 "content": "正在向AI模型发送请求..."
             })
-            
-            response = await call_llm(message, current_settings)
-        
+
+            full_prompt = message
+            if context_prompt:
+                full_prompt = context_prompt + "\n\n当前用户问题：" + message
+            if search_context:
+                full_prompt += f"\n\n网络搜索参考资料：\n{search_context}\n请参考以上搜索结果回答用户问题。"
+
+            response = await call_llm(full_prompt, current_settings)
+
+        # 保存用户消息到对话历史
+        if conversation_id and conversation_id in conversations:
+            user_msg = {
+                "id": str(uuid.uuid4()),
+                "role": "user",
+                "content": message,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+            conversations[conversation_id]["messages"].append(user_msg)
+            conversations[conversation_id]["updated_at"] = datetime.datetime.now().isoformat()
+            # 自动更新标题
+            if conversations[conversation_id]["title"] == "新对话":
+                conversations[conversation_id]["title"] = message[:20]
+
+        # 流式输出
         await websocket.send_json({"type": "stream_start"})
-        
+
         chunk_size = 50
         for i in range(0, len(response), chunk_size):
             chunk = response[i:i+chunk_size]
             await websocket.send_json({"type": "stream_data", "content": chunk})
             await asyncio.sleep(0.05)
-        
+
         await websocket.send_json({"type": "stream_end"})
-        
+
+        # 保存助手回复到对话历史
+        if conversation_id and conversation_id in conversations:
+            assistant_msg = {
+                "id": str(uuid.uuid4()),
+                "role": "assistant",
+                "content": response,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+            conversations[conversation_id]["messages"].append(assistant_msg)
+            conversations[conversation_id]["updated_at"] = datetime.datetime.now().isoformat()
+
     except Exception as e:
         error_msg = f"❌ 处理失败: {str(e)[:300]}"
         await websocket.send_json({"type": "error", "content": error_msg})
@@ -757,8 +910,26 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_json()
-            message = data.get("content", "")
-            await run_universal_agent(websocket, message)
+            msg_type = data.get("type", "chat")
+            if msg_type == "chat":
+                content = data.get("content", "")
+                conversation_id = data.get("conversation_id")
+                options = data.get("options", {})
+                # 如果指定了 conversation_id 但对话不存在，自动创建
+                if conversation_id and conversation_id not in conversations:
+                    conv = {
+                        "id": conversation_id,
+                        "title": "新对话",
+                        "messages": [],
+                        "created_at": datetime.datetime.now().isoformat(),
+                        "updated_at": datetime.datetime.now().isoformat()
+                    }
+                    conversations[conversation_id] = conv
+                await run_universal_agent(websocket, content, conversation_id=conversation_id, options=options)
+            else:
+                # 兼容旧格式：直接将 data 当作消息内容
+                message = data.get("content", str(data))
+                await run_universal_agent(websocket, message)
     except WebSocketDisconnect:
         pass
     except Exception as e:
