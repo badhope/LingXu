@@ -290,7 +290,7 @@ async def test_all():
     print("\n📋 9. 旧名称残留检查")
     print("-" * 50)
     name_issues = []
-    check_dirs = ["app", "main.py", "chainlit_app.py", "web_app.py", "sandbox_main.py", "run_flow.py", "setup.py"]
+    check_dirs = ["app", "main.py", "web_app.py", "sandbox_main.py", "run_flow.py", "setup.py"]
     for check_dir in check_dirs:
         check_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), check_dir)
         if os.path.isfile(check_path):

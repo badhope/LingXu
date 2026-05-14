@@ -352,6 +352,12 @@ class SandboxFilesTool(SandboxToolsBase):
 
     async def cleanup(self):
         """Clean up sandbox resources."""
+        try:
+            if self.sandbox:
+                # Clean up any temporary resources if needed
+                pass
+        except Exception as e:
+            logger.warning(f"Cleanup warning: {e}")
 
     @classmethod
     def create_with_context(cls, context: Context) -> "SandboxFilesTool[Context]":

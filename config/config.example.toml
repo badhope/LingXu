@@ -4,6 +4,7 @@ model = "claude-3-7-sonnet-20250219"       # The LLM model to use
 base_url = "https://api.anthropic.com/v1/" # API endpoint URL
 api_key = "YOUR_API_KEY"                   # Your API key
 max_tokens = 8192                          # Maximum number of tokens in the response
+max_input_tokens = 32000                   # Maximum input tokens (None for unlimited)
 temperature = 0.0                          # Controls randomness
 
 # [llm] # Amazon Bedrock
@@ -70,6 +71,8 @@ temperature = 0.0                          # Controls randomness for vision mode
 #wss_url = ""
 # Connect to a browser instance via CDP
 #cdp_url = ""
+# Maximum length for content retrieval operations (default: 2000)
+#max_content_length = 2000
 
 # Optional configuration, Proxy settings for the browser
 # [browser.proxy]
@@ -106,6 +109,14 @@ temperature = 0.0                          # Controls randomness for vision mode
 # MCP (Model Context Protocol) configuration
 [mcp]
 server_reference = "app.mcp.server" # default server module reference
+
+# Daytona sandbox configuration (optional)
+# [daytona]
+# daytona_api_key = "your-daytona-api-key"
+# daytona_server_url = "https://app.daytona.io/api"
+# daytona_target = "us"  # Options: "us", "eu"
+# sandbox_image_name = "whitezxj/sandbox:0.1.0"
+# VNC_password = "123456"
 
 # Optional Runflow configuration
 # Your can add additional agents into run-flow workflow to solve different-type tasks.
