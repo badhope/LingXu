@@ -4,6 +4,9 @@ from app.agent.mcp import MCPAgent
 from app.agent.react import ReActAgent
 from app.agent.swe import SWEAgent
 from app.agent.toolcall import ToolCallAgent
+from app.agent.data import Data
+from app.agent.data_analysis import DataAnalysis
+from app.agent.sandbox_agent import SandboxData
 
 
 __all__ = [
@@ -13,4 +16,7 @@ __all__ = [
     "SWEAgent",
     "ToolCallAgent",
     "MCPAgent",
+    "Data",
+    "DataAnalysis",
+    "SandboxData",
 ]

@@ -364,6 +364,7 @@ class LLM:
         system_msgs: Optional[List[Union[dict, Message]]] = None,
         stream: bool = True,
         temperature: Optional[float] = None,
+        stream_callback: Optional[callable] = None,
     ) -> str:
         """
         Send a prompt to the LLM and get the response.
@@ -373,6 +374,8 @@ class LLM:
             system_msgs: Optional system messages to prepend
             stream (bool): Whether to stream the response
             temperature (float): Sampling temperature for the response
+            stream_callback (callable): Optional async callback for streaming chunks.
+                When provided, chunks are sent via callback instead of printing to stdout.
 
         Returns:
             str: The generated response
@@ -443,9 +446,13 @@ class LLM:
                 chunk_message = chunk.choices[0].delta.content or ""
                 collected_messages.append(chunk_message)
                 completion_text += chunk_message
-                print(chunk_message, end="", flush=True)
+                if stream_callback:
+                    await stream_callback(chunk_message)
+                else:
+                    print(chunk_message, end="", flush=True)
 
-            print()  # Newline after streaming
+            if not stream_callback:
+                print()  # Newline after streaming
             full_response = "".join(collected_messages).strip()
             if not full_response:
                 raise ValueError("Empty response from streaming LLM")
@@ -649,6 +656,7 @@ class LLM:
         tools: Optional[List[dict]] = None,
         tool_choice: TOOL_CHOICE_TYPE = ToolChoice.AUTO,  # type: ignore
         temperature: Optional[float] = None,
+        stream_callback: Optional[callable] = None,
         **kwargs,
     ) -> ChatCompletionMessage | None:
         """
@@ -661,6 +669,8 @@ class LLM:
             tools: List of tools to use
             tool_choice: Tool choice strategy
             temperature: Sampling temperature for the response
+            stream_callback (callable): Optional async callback for streaming chunks.
+                When provided, chunks are sent via callback instead of printing to stdout.
             **kwargs: Additional completion arguments
 
         Returns:

@@ -669,6 +669,44 @@
             chatArea.appendChild(errMsg);
             scrollToBottom();
             finishProcessing();
+
+        } else if (data.type === 'rag_sources') {
+            // 知识库引用来源 - 在最新的助手消息中添加引用标签
+            var sources = data.sources || [];
+            if (sources.length === 0) return;
+
+            var lastAssistant = chatArea.querySelector('.message.assistant:last-of-type');
+            if (!lastAssistant) return;
+
+            // 检查是否已有引用容器
+            var existingRefs = lastAssistant.querySelector('.rag-references');
+            if (existingRefs) existingRefs.remove();
+
+            var refsHtml = '<div class="rag-references">' +
+                '<div class="rag-references-title"><i class="fa-solid fa-book"></i> 知识库引用 (' + sources.length + ')</div>' +
+                '<div class="rag-references-list">';
+
+            sources.forEach(function (src) {
+                var name = src.metadata ? (src.metadata.name || '未知文档') : '未知文档';
+                var score = src.score || 0;
+                var snippet = (src.content || '').substring(0, 100);
+                if ((src.content || '').length > 100) snippet += '...';
+                refsHtml += '<div class="rag-ref-item" title="' + escapeHtml(src.content || '') + '">' +
+                    '<div class="rag-ref-header">' +
+                    '<span class="rag-ref-name"><i class="fa-solid fa-file-lines"></i> ' + escapeHtml(name) + '</span>' +
+                    '<span class="rag-ref-score">相关度: ' + (score * 100).toFixed(1) + '%</span>' +
+                    '</div>' +
+                    '<div class="rag-ref-snippet">' + escapeHtml(snippet) + '</div>' +
+                    '</div>';
+            });
+
+            refsHtml += '</div></div>';
+
+            var msgBody = lastAssistant.querySelector('.message-body');
+            if (msgBody) {
+                msgBody.insertAdjacentHTML('beforeend', refsHtml);
+            }
+            scrollToBottom();
         }
     }
 
@@ -737,8 +775,44 @@
         updateSendButton();
         scrollToBottom();
 
+        // 自动触发知识库搜索，在聊天区域显示引用来源
+        searchKnowledgeBase(content);
+
         // Send to WebSocket
         sendToWebSocket(content);
+    }
+
+    // ==================== RAG Knowledge Base Search ====================
+    async function searchKnowledgeBase(query) {
+        if (!query || !query.trim()) return;
+        try {
+            var res = await fetch('/api/knowledge-bases/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query, top_k: 3, min_score: 0.1 })
+            });
+            if (!res.ok) return;
+            var results = await res.json();
+            if (results && results.length > 0) {
+                // 在用户消息下方显示引用来源预览
+                var chatArea = $('#chat-area');
+                var lastUserMsg = chatArea.querySelector('.message.user:last-of-type');
+                if (lastUserMsg) {
+                    var existingPreview = lastUserMsg.querySelector('.rag-search-preview');
+                    if (existingPreview) existingPreview.remove();
+
+                    var previewHtml = '<div class="rag-search-preview">' +
+                        '<i class="fa-solid fa-book"></i> 已检索知识库，找到 ' + results.length + ' 条相关内容</div>';
+                    var msgBody = lastUserMsg.querySelector('.message-body');
+                    if (msgBody) {
+                        msgBody.insertAdjacentHTML('beforeend', previewHtml);
+                    }
+                }
+            }
+        } catch (e) {
+            // 知识库搜索失败不影响正常对话
+            console.log('KB search skipped:', e.message);
+        }
     }
 
     function sendToWebSocket(content) {

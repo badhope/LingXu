@@ -16,16 +16,39 @@ import datetime
 import re
 import tempfile
 import shutil
+import traceback
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Callable
 import aiofiles
 from pydantic import BaseModel, Field
+
+# Agent framework imports (lazy-loaded to avoid breaking if unavailable)
+AGENT_FRAMEWORK_AVAILABLE = False
+try:
+    from app.agent.toolcall import ToolCallAgent
+    from app.tool import (
+        Terminate,
+        WebSearch,
+        PythonExecute,
+        StrReplaceEditor,
+        ToolCollection,
+    )
+    from app.llm import LLM
+    from app.schema import Message, Memory, ToolChoice, AgentState
+    from app.config import config as app_config
+    from app.prompt.data import SYSTEM_PROMPT as DATA_SYSTEM_PROMPT
+    AGENT_FRAMEWORK_AVAILABLE = True
+except Exception as e:
+    print(f"[Agent Framework] Import failed, will use fallback: {e}")
 
 try:
     from openai import AsyncOpenAI
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
+
+# RAG module import
+from app.rag import retriever, TFIDFRetriever
 
 app = FastAPI(
     title="DATA-AI - 万能智能助手",
@@ -498,6 +521,20 @@ async def process_document(doc_id: str, file_path: Path, file_ext: str):
         if doc_id in documents:
             documents[doc_id].status = "available"
             documents[doc_id].content = content[:10000] if len(content) > 10000 else content
+
+            # 将文档内容添加到 RAG 检索器
+            if content.strip():
+                kb_id = documents[doc_id].knowledge_base_id
+                doc_name = documents[doc_id].name
+                try:
+                    retriever.add_document(
+                        doc_id=doc_id,
+                        content=content,
+                        metadata={"name": doc_name, "kb_id": kb_id}
+                    )
+                    print(f"[RAG] 文档 {doc_name} ({doc_id}) 已添加到检索库，共 {len(retriever.documents.get(doc_id, []))} 个片段")
+                except Exception as rag_err:
+                    print(f"[RAG] 添加文档到检索库失败: {rag_err}")
             
     except Exception as e:
         if doc_id in documents:
@@ -511,6 +548,25 @@ async def list_documents(kb_id: str):
     kb_docs = [doc.model_dump() for doc in documents.values() if doc.knowledge_base_id == kb_id]
     return JSONResponse(kb_docs)
 
+@app.post("/api/knowledge-bases/search")
+async def search_knowledge_base(request: Request):
+    """搜索知识库 - 使用 RAG 语义检索"""
+    data = await request.json()
+    query = data.get("query", "")
+    top_k = data.get("top_k", 5)
+    min_score = data.get("min_score", 0.1)
+
+    if not query.strip():
+        return JSONResponse([])
+
+    results = retriever.search(query, top_k=top_k, min_score=min_score)
+    return JSONResponse(results)
+
+@app.get("/api/knowledge-bases/rag/stats")
+async def get_rag_stats():
+    """获取 RAG 检索库统计信息"""
+    return JSONResponse(retriever.get_stats())
+
 @app.get("/api/skills")
 async def list_skills():
     return JSONResponse([skill.model_dump() for skill in skills.values()])
@@ -523,13 +579,13 @@ async def generate_skill(request: Request):
     if not purpose:
         raise HTTPException(status_code=400, detail="请提供技能用途描述")
     
-    if not app_settings.get("llm", {}).get("api_key"):
+    if not current_settings.llm.get("api_key"):
         raise HTTPException(status_code=400, detail="请先在设置中配置API Key")
-    
+
     try:
         client = AsyncOpenAI(
-            api_key=app_settings["llm"]["api_key"],
-            base_url=app_settings["llm"].get("base_url", "https://api.openai.com/v1")
+            api_key=current_settings.llm["api_key"],
+            base_url=current_settings.llm.get("base_url", "https://api.openai.com/v1")
         )
         
         prompt = f"""基于以下需求，生成一个AI技能的建议：
@@ -545,7 +601,7 @@ async def generate_skill(request: Request):
 只返回JSON，不要其他内容。"""
         
         response = await client.chat.completions.create(
-            model=app_settings["llm"].get("model", "gpt-4o"),
+            model=current_settings.llm.get("model", "gpt-4o"),
             messages=[{"role": "user", "content": prompt}],
             max_tokens=500,
             temperature=0.7
@@ -723,6 +779,323 @@ async def web_search(query: str, num_results: int = 5) -> str:
     except Exception as e:
         return f"搜索失败: {str(e)}"
 
+# ==================== Agent Framework Integration ====================
+
+# Keywords for detecting tool needs
+_CODE_KEYWORDS = [
+    "代码", "python", "图表", "计算", "数据", "分析", "plot", "chart",
+    "execute", "运行", "编程", "脚本", "函数", "算法", "统计",
+    "可视化", "visualization", "dataframe", "pandas", "numpy",
+]
+_FILE_KEYWORDS = [
+    "文件", "编辑", "读取", "写入", "创建文件", "修改文件",
+    "file", "edit", "read", "write", "create file", "modify",
+    "目录", "folder", "查看文件", "view file",
+]
+
+
+def _detect_tool_needs(message: str, options: dict = None) -> dict:
+    """
+    根据用户消息和选项，检测需要的工具集。
+    返回: {"web_search": bool, "code_execution": bool, "file_edit": bool}
+    """
+    if options is None:
+        options = {}
+    msg_lower = message.lower()
+    return {
+        "web_search": options.get("web_search", False),
+        "code_execution": options.get("code_execution", False) or any(
+            kw in msg_lower for kw in _CODE_KEYWORDS
+        ),
+        "file_edit": any(kw in msg_lower for kw in _FILE_KEYWORDS),
+    }
+
+
+def _build_llm_for_webapp() -> "LLM":
+    """
+    根据 web_app 的 current_settings 构建 LLM 实例。
+    优先使用 Agent 框架的配置，如果 web_settings 有自定义 API key 则覆盖。
+    """
+    try:
+        # 尝试使用 Agent 框架的 LLM 配置
+        llm = LLM(config_name="default")
+        # 如果 web_settings 有自定义的 API key，创建新的 LLM 实例
+        if current_settings.llm.get("api_key"):
+            web_api_key = current_settings.llm["api_key"]
+            web_base_url = current_settings.llm.get("base_url", "")
+            web_model = current_settings.llm.get("model", "")
+            # 如果 web_settings 的配置与 Agent 框架不同，需要覆盖
+            if (web_api_key and web_api_key != llm.api_key) or \
+               (web_base_url and web_base_url != llm.base_url):
+                from app.config import LLMSettings
+                custom_settings = LLMSettings(
+                    model=web_model or llm.model,
+                    base_url=web_base_url or llm.base_url,
+                    api_key=web_api_key,
+                    max_tokens=current_settings.llm.get("max_tokens", llm.max_tokens),
+                    temperature=current_settings.llm.get("temperature", llm.temperature),
+                    api_type=llm.api_type,
+                    api_version=llm.api_version,
+                )
+                llm = LLM(llm_config=custom_settings)
+        return llm
+    except Exception as e:
+        print(f"[Agent Framework] Failed to build LLM: {e}")
+        raise
+
+
+async def run_agent_task(
+    message: str,
+    conversation_id: str = None,
+    options: dict = None,
+    send_func: Callable = None,
+):
+    """
+    使用 Agent 框架处理用户请求。
+
+    Args:
+        message: 用户消息
+        conversation_id: 对话ID
+        options: 选项 {"web_search": bool, "code_execution": bool}
+        send_func: 异步发送函数 send_func(data: dict)
+    """
+    if options is None:
+        options = {}
+
+    async def send(data: dict):
+        """安全的发送函数"""
+        if send_func:
+            try:
+                await send_func(data)
+            except Exception as e:
+                print(f"[WebSocket] Send error: {e}")
+
+    try:
+        # 1. 检测需要的工具
+        tool_needs = _detect_tool_needs(message, options)
+
+        # 2. 构建工具集
+        tools = [Terminate()]
+        if tool_needs["web_search"]:
+            tools.append(WebSearch())
+        if tool_needs["code_execution"]:
+            tools.append(PythonExecute())
+        if tool_needs["file_edit"]:
+            tools.append(StrReplaceEditor())
+
+        tool_collection = ToolCollection(*tools)
+
+        # 3. 构建 LLM 实例
+        llm = _build_llm_for_webapp()
+
+        # 4. 构建系统提示词
+        system_prompt = DATA_SYSTEM_PROMPT.format(directory=str(Path.cwd()))
+
+        # 4.5 RAG 知识库检索 - 如果检索库有文档，自动检索相关内容注入 prompt
+        rag_context = ""
+        if retriever.doc_vectors:
+            rag_results = retriever.search(message, top_k=3, min_score=0.05)
+            if rag_results:
+                rag_context = "\n\n以下是知识库中检索到的相关参考资料：\n"
+                for idx, r in enumerate(rag_results):
+                    source_name = r.get("metadata", {}).get("name", "未知文档")
+                    rag_context += f"\n--- 参考资料 {idx+1} (来源: {source_name}, 相关度: {r['score']}) ---\n"
+                    rag_context += r["content"][:500] + "\n"
+                rag_context += "\n请参考以上知识库资料回答用户问题。如果资料中没有相关信息，请基于你的知识回答，并说明信息不在知识库中。"
+                await send({
+                    "type": "thinking",
+                    "title": "知识库检索",
+                    "content": f"从知识库中检索到 {len(rag_results)} 条相关内容"
+                })
+                # 发送引用来源给前端显示
+                await send({
+                    "type": "rag_sources",
+                    "sources": rag_results
+                })
+
+        # 将 RAG 上下文注入到用户消息中
+        effective_message = message
+        if rag_context:
+            effective_message = message + rag_context
+
+        # 5. 构建对话历史
+        memory = Memory()
+        if conversation_id and conversation_id in conversations:
+            history = conversations[conversation_id]["messages"]
+            for h_msg in history[-20:]:
+                role = h_msg["role"]
+                content = h_msg.get("content", "")
+                if role == "user":
+                    memory.add_message(Message.user_message(content))
+                elif role == "assistant":
+                    memory.add_message(Message.assistant_message(content))
+
+        # 6. 发送初始状态
+        tool_names = [t.name for t in tools]
+        await send({
+            "type": "step",
+            "step": 0,
+            "max_steps": 10,
+            "thinking": f"正在初始化 Agent，可用工具: {', '.join(tool_names)}"
+        })
+
+        # 7. 创建 ToolCallAgent 实例
+        agent = ToolCallAgent(
+            name="web_agent",
+            llm=llm,
+            memory=memory,
+            system_prompt=system_prompt,
+            available_tools=tool_collection,
+            max_steps=10,
+        )
+
+        # 8. 手动执行 Agent 步骤，以便拦截中间状态
+        agent.update_memory("user", effective_message)
+
+        final_response = ""
+        max_steps = agent.max_steps
+
+        async with agent.state_context(AgentState.RUNNING):
+            while agent.current_step < max_steps and agent.state != AgentState.FINISHED:
+                agent.current_step += 1
+                step_num = agent.current_step
+
+                # --- Think phase ---
+                try:
+                    should_act = await agent.think()
+                except Exception as think_err:
+                    await send({
+                        "type": "thinking",
+                        "title": f"Step {step_num}/{max_steps}",
+                        "content": f"思考阶段出错: {str(think_err)[:200]}"
+                    })
+                    break
+
+                # 获取思考内容（最后一条 assistant 消息）
+                thinking_content = ""
+                if agent.messages:
+                    last_assistant = None
+                    for msg in reversed(agent.messages):
+                        if msg.role == "assistant":
+                            last_assistant = msg
+                            break
+                    if last_assistant:
+                        thinking_content = last_assistant.content or ""
+
+                # 发送步骤信息
+                await send({
+                    "type": "step",
+                    "step": step_num,
+                    "max_steps": max_steps,
+                    "thinking": thinking_content[:500] if thinking_content else f"Step {step_num}: 处理中..."
+                })
+
+                if not should_act:
+                    # 没有工具调用，收集最终回复
+                    if thinking_content:
+                        final_response = thinking_content
+                    break
+
+                # --- Act phase: 执行工具调用 ---
+                tool_calls = agent.tool_calls
+                for tc in tool_calls:
+                    tool_name = tc.function.name
+                    tool_input_str = tc.function.arguments or "{}"
+                    try:
+                        tool_input = json.loads(tool_input_str)
+                    except json.JSONDecodeError:
+                        tool_input = {}
+
+                    # 发送工具调用消息
+                    await send({
+                        "type": "tool_call",
+                        "tool": tool_name,
+                        "input": tool_input_str[:2000]
+                    })
+
+                # 执行工具
+                try:
+                    act_result = await agent.act()
+
+                    # 发送工具结果
+                    for tc in tool_calls:
+                        tool_name = tc.function.name
+                        # 从 act_result 中提取对应工具的结果
+                        success = "Error" not in act_result and "error" not in act_result.lower()[:100]
+                        await send({
+                            "type": "tool_result",
+                            "tool": tool_name,
+                            "output": act_result[:3000] if act_result else "",
+                            "success": success
+                        })
+                except Exception as act_err:
+                    await send({
+                        "type": "tool_result",
+                        "tool": tool_name if tool_calls else "unknown",
+                        "output": f"工具执行错误: {str(act_err)[:500]}",
+                        "success": False
+                    })
+
+                # 检查是否卡住
+                if agent.is_stuck():
+                    agent.handle_stuck_state()
+
+        # 9. 收集最终回复
+        if not final_response:
+            # 从 agent 的消息中获取最后的 assistant 回复
+            for msg in reversed(agent.messages):
+                if msg.role == "assistant" and msg.content and not msg.tool_calls:
+                    final_response = msg.content
+                    break
+
+        if not final_response:
+            final_response = "任务已完成，但没有生成文本回复。"
+
+        # 10. 流式输出最终回复
+        await send({"type": "stream_start"})
+        chunk_size = 50
+        for i in range(0, len(final_response), chunk_size):
+            chunk = final_response[i:i + chunk_size]
+            await send({"type": "stream_data", "content": chunk})
+            await asyncio.sleep(0.03)
+        await send({"type": "stream_end"})
+
+        # 11. 保存对话历史
+        if conversation_id and conversation_id in conversations:
+            user_msg = {
+                "id": str(uuid.uuid4()),
+                "role": "user",
+                "content": message,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+            conversations[conversation_id]["messages"].append(user_msg)
+
+            assistant_msg = {
+                "id": str(uuid.uuid4()),
+                "role": "assistant",
+                "content": final_response,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+            conversations[conversation_id]["messages"].append(assistant_msg)
+            conversations[conversation_id]["updated_at"] = datetime.datetime.now().isoformat()
+            if conversations[conversation_id]["title"] == "新对话":
+                conversations[conversation_id]["title"] = message[:20]
+
+        # 12. 清理 Agent 资源
+        try:
+            await agent.cleanup()
+        except Exception:
+            pass
+
+    except Exception as e:
+        error_detail = str(e)[:500]
+        await send({"type": "error", "content": f"Agent 执行失败: {error_detail}"})
+        print(f"[Agent Framework] Error in run_agent_task: {traceback.format_exc()}")
+        raise  # Re-raise so caller can fallback
+
+
+# ==================== Legacy Agent (Fallback) ====================
+
 async def run_universal_agent(websocket: WebSocket, message: str, conversation_id: str = None, options: dict = None):
     """运行通用AI Agent，支持联网搜索和对话历史"""
     if options is None:
@@ -826,15 +1199,32 @@ async def run_universal_agent(websocket: WebSocket, message: str, conversation_i
                 "content": "正在从知识库中检索相关信息..."
             })
 
-            kb_list = ", ".join([kb.name for kb in knowledge_bases.values()])
+            # 使用 RAG 检索器进行语义搜索
+            rag_results = retriever.search(message, top_k=5, min_score=0.05)
 
-            await websocket.send_json({
-                "type": "thinking",
-                "title": "🔍 检索内容",
-                "content": f"可用知识库: {kb_list}"
-            })
+            if rag_results:
+                rag_context_str = ""
+                for idx, r in enumerate(rag_results):
+                    source_name = r.get("metadata", {}).get("name", "未知文档")
+                    rag_context_str += f"\n--- 参考资料 {idx+1} (来源: {source_name}, 相关度: {r['score']}) ---\n"
+                    rag_context_str += r["content"][:800] + "\n"
 
-            kb_prompt = f"用户问题：{message}\n\n可用知识库：{kb_list}\n\n请基于知识库内容回答用户问题。"
+                await websocket.send_json({
+                    "type": "thinking",
+                    "title": "🔍 检索结果",
+                    "content": f"找到 {len(rag_results)} 条相关内容，正在整合分析..."
+                })
+
+                kb_prompt = f"用户问题：{message}\n\n以下是知识库中检索到的相关参考资料：\n{rag_context_str}\n\n请基于以上参考资料回答用户问题。如果资料中没有相关信息，请基于你的知识回答，并说明信息不在知识库中。"
+            else:
+                kb_list = ", ".join([kb.name for kb in knowledge_bases.values()])
+                await websocket.send_json({
+                    "type": "thinking",
+                    "title": "🔍 检索内容",
+                    "content": f"未找到相关内容。可用知识库: {kb_list}"
+                })
+                kb_prompt = f"用户问题：{message}\n\n可用知识库：{kb_list}\n\n知识库中未找到直接相关的内容，请基于你的知识回答用户问题。"
+
             if context_prompt:
                 kb_prompt += context_prompt
             if search_context:
@@ -925,11 +1315,42 @@ async def websocket_endpoint(websocket: WebSocket):
                         "updated_at": datetime.datetime.now().isoformat()
                     }
                     conversations[conversation_id] = conv
-                await run_universal_agent(websocket, content, conversation_id=conversation_id, options=options)
+
+                # 优先使用 Agent 框架，失败时回退到旧的 run_universal_agent
+                if AGENT_FRAMEWORK_AVAILABLE:
+                    try:
+                        await run_agent_task(
+                            message=content,
+                            conversation_id=conversation_id,
+                            options=options,
+                            send_func=websocket.send_json,
+                        )
+                    except Exception as agent_err:
+                        print(f"[WebSocket] Agent framework failed, falling back: {agent_err}")
+                        try:
+                            await websocket.send_json({
+                                "type": "thinking",
+                                "title": "切换模式",
+                                "content": "Agent 框架执行异常，切换到备用模式..."
+                            })
+                        except Exception:
+                            pass
+                        await run_universal_agent(websocket, content, conversation_id=conversation_id, options=options)
+                else:
+                    await run_universal_agent(websocket, content, conversation_id=conversation_id, options=options)
             else:
                 # 兼容旧格式：直接将 data 当作消息内容
                 message = data.get("content", str(data))
-                await run_universal_agent(websocket, message)
+                if AGENT_FRAMEWORK_AVAILABLE:
+                    try:
+                        await run_agent_task(
+                            message=message,
+                            send_func=websocket.send_json,
+                        )
+                    except Exception:
+                        await run_universal_agent(websocket, message)
+                else:
+                    await run_universal_agent(websocket, message)
     except WebSocketDisconnect:
         pass
     except Exception as e:
