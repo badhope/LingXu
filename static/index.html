@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
-    <!-- Sidebar Overlay (mobile) -->
+    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="app-container">
@@ -22,7 +22,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
                 <button class="new-chat-btn" id="new-chat-btn" title="新建对话">
-                    <i class="fa-regular fa-pen-to-square"></i>
+                    <i class="fa-solid fa-plus"></i>
                     <span>新建对话</span>
                 </button>
             </div>
@@ -95,6 +95,9 @@
                     <button class="header-icon-btn" id="header-mcp-btn" title="MCP">
                         <i class="fa-solid fa-plug"></i>
                     </button>
+                    <button class="artifacts-toggle-btn" id="artifacts-toggle-btn" title="Artifacts 预览">
+                        <i class="fa-solid fa-window-restore"></i>
+                    </button>
                     <button class="header-icon-btn" id="header-settings-btn" title="设置">
                         <i class="fa-solid fa-gear"></i>
                     </button>
@@ -130,15 +133,34 @@
                             <div class="suggestion-text">解释什么是 Transformer 架构</div>
                         </div>
                     </div>
+                    <div class="welcome-shortcuts">
+                        <div class="welcome-shortcut-item"><kbd>Enter</kbd> 发送</div>
+                        <div class="welcome-shortcut-item"><kbd>Shift + Enter</kbd> 换行</div>
+                        <div class="welcome-shortcut-item"><kbd>Ctrl + /</kbd> 快捷键</div>
+                    </div>
                 </div>
+
+                <!-- Scroll to Bottom Button -->
+                <button class="scroll-to-bottom-btn" id="scroll-to-bottom-btn" title="滚动到底部">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
             </div>
 
             <!-- Input Area -->
             <div class="input-area" id="input-area">
+                <!-- Message Queue Indicator -->
+                <div class="message-queue-indicator" id="message-queue-indicator">
+                    <i class="fa-solid fa-clock"></i>
+                    <span id="queue-count-text">0 条消息排队中</span>
+                </div>
+
+                <!-- File Preview List -->
+                <div class="file-preview-list" id="file-preview-list"></div>
+
                 <div class="input-container" id="input-container">
                     <div class="input-actions-left">
                         <button class="input-action-btn" id="attach-btn" title="上传附件">
-                            <i class="fa-solid fa-paperclip"></i>
+                            <i class="fa-solid fa-plus"></i>
                         </button>
                         <button class="input-action-btn" id="web-search-toggle" title="联网搜索">
                             <i class="fa-solid fa-globe"></i>
@@ -148,8 +170,11 @@
                         </button>
                     </div>
                     <div class="input-wrapper">
-                        <textarea class="input-box" id="input-box" placeholder="给 DATA-AI 发送消息..." rows="1"></textarea>
+                        <textarea class="input-box" id="input-box" placeholder="发送消息给 DATA-AI..." rows="1"></textarea>
                     </div>
+                    <button class="stop-btn" id="stop-btn" title="停止生成">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
                     <button class="send-btn" id="send-btn" title="发送">
                         <i class="fa-solid fa-arrow-up"></i>
                     </button>
@@ -160,6 +185,24 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- ==================== Artifacts Panel ==================== -->
+    <div class="artifacts-panel" id="artifacts-panel">
+        <div class="artifacts-panel-header">
+            <div class="artifacts-panel-title">
+                <i class="fa-solid fa-window-restore"></i> Artifacts
+            </div>
+            <button class="artifacts-panel-close" id="artifacts-panel-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="artifacts-panel-body" id="artifacts-panel-body">
+            <div class="artifacts-empty">
+                <i class="fa-solid fa-code"></i>
+                <span>代码执行结果将在此显示</span>
+            </div>
+        </div>
     </div>
 
     <!-- ==================== Settings Drawer ==================== -->
@@ -465,7 +508,56 @@
                     <li><kbd>Enter</kbd> - 发送消息</li>
                     <li><kbd>Shift + Enter</kbd> - 换行</li>
                     <li><kbd>Ctrl/Cmd + N</kbd> - 新建对话</li>
+                    <li><kbd>Ctrl/Cmd + /</kbd> - 快捷键帮助</li>
+                    <li><kbd>Escape</kbd> - 关闭面板 / 停止生成</li>
+                    <li><kbd>Up Arrow</kbd> - 编辑最后一条用户消息</li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Keyboard Shortcuts Panel ==================== -->
+    <div class="modal-overlay" id="shortcuts-modal">
+        <div class="shortcuts-panel">
+            <div class="shortcuts-panel-header">
+                <span class="shortcuts-panel-title">键盘快捷键</span>
+                <button class="shortcuts-panel-close" id="shortcuts-modal-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="shortcuts-panel-body">
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">发送消息</span>
+                    <div class="shortcut-keys"><kbd>Enter</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">换行</span>
+                    <div class="shortcut-keys"><kbd>Shift</kbd><kbd>Enter</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">新建对话</span>
+                    <div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>N</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">打开快捷键帮助</span>
+                    <div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>/</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">关闭面板 / 停止生成</span>
+                    <div class="shortcut-keys"><kbd>Esc</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">编辑最后一条用户消息</span>
+                    <div class="shortcut-keys"><kbd>Up</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">打开侧边栏</span>
+                    <div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>B</kbd></div>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-desc">聚焦输入框</span>
+                    <div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>L</kbd></div>
+                </div>
             </div>
         </div>
     </div>

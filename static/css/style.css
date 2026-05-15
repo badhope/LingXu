@@ -1,10 +1,10 @@
-/* ==================== DATA-AI ChatGPT Style Design System ==================== */
+/* ==================== DATA-AI ChatGPT/Claude Style Design System ==================== */
 
 /* ==================== CSS Variables - Theme System ==================== */
 :root,
 [data-theme="dark"] {
-    --bg-primary: #212121;
-    --bg-secondary: #171717;
+    --bg-primary: #171717;
+    --bg-secondary: #212121;
     --bg-tertiary: #2f2f2f;
     --bg-elevated: #3a3a3a;
     --bg-hover: #3a3a3a;
@@ -18,7 +18,7 @@
     --header-bg: #171717;
     --header-border: rgba(255,255,255,0.08);
 
-    --input-bg: #2f2f2f;
+    --input-bg: rgba(32,32,32,0.8);
     --input-border: rgba(255,255,255,0.12);
     --input-border-focus: rgba(255,255,255,0.3);
     --input-placeholder: rgba(255,255,255,0.4);
@@ -35,12 +35,14 @@
     --border-color: rgba(255,255,255,0.08);
     --border-color-light: rgba(255,255,255,0.15);
 
-    --user-msg-bg: #2f2f2f;
+    --user-msg-bg: transparent;
     --assistant-msg-bg: transparent;
 
     --code-bg: #1e1e1e;
     --code-header-bg: #2d2d2d;
     --code-border: rgba(255,255,255,0.08);
+    --code-inline-bg: #272727;
+    --code-inline-color: #eab38a;
 
     --thinking-bg: #1a1a2e;
     --thinking-border: rgba(99, 102, 241, 0.2);
@@ -64,12 +66,15 @@
     --toast-info-bg: #3b82f6;
 
     --hljs-theme: "github-dark";
+
+    --stop-btn-bg: #ef4444;
+    --stop-btn-hover: #dc2626;
 }
 
 [data-theme="light"] {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f7f7f8;
-    --bg-tertiary: #ececec;
+    --bg-primary: #FAF9F6;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f0f0f0;
     --bg-elevated: #e5e5e5;
     --bg-hover: #f0f0f0;
     --bg-active: #e5e5e5;
@@ -79,10 +84,10 @@
     --sidebar-active: #e3e3e3;
     --sidebar-border: rgba(0,0,0,0.08);
 
-    --header-bg: #f7f7f8;
+    --header-bg: #ffffff;
     --header-border: rgba(0,0,0,0.08);
 
-    --input-bg: #ffffff;
+    --input-bg: rgba(255,255,255,0.85);
     --input-border: rgba(0,0,0,0.15);
     --input-border-focus: rgba(0,0,0,0.3);
     --input-placeholder: rgba(0,0,0,0.4);
@@ -99,12 +104,14 @@
     --border-color: rgba(0,0,0,0.08);
     --border-color-light: rgba(0,0,0,0.15);
 
-    --user-msg-bg: #f7f7f8;
+    --user-msg-bg: transparent;
     --assistant-msg-bg: transparent;
 
-    --code-bg: #f6f8fa;
-    --code-header-bg: #ececec;
+    --code-bg: #1e1e1e;
+    --code-header-bg: #2d2d2d;
     --code-border: rgba(0,0,0,0.1);
+    --code-inline-bg: #f0ebe3;
+    --code-inline-color: #b45309;
 
     --thinking-bg: #f0f0ff;
     --thinking-border: rgba(99, 102, 241, 0.2);
@@ -128,6 +135,9 @@
     --toast-info-bg: #3b82f6;
 
     --hljs-theme: "github";
+
+    --stop-btn-bg: #ef4444;
+    --stop-btn-hover: #dc2626;
 }
 
 /* ==================== Reset & Base ==================== */
@@ -175,7 +185,7 @@ body {
     overflow: hidden;
 }
 
-/* ==================== Sidebar ==================== */
+/* ==================== Sidebar - Floating Overlay Mode ==================== */
 .sidebar {
     width: 260px;
     min-width: 260px;
@@ -315,7 +325,6 @@ body {
     transition: background 0.12s;
     position: relative;
     margin-bottom: 1px;
-    group: conv;
 }
 .conv-item:hover {
     background: var(--sidebar-hover);
@@ -331,6 +340,20 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.4;
+}
+.conv-item-actions {
+    display: none;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 2px;
+}
+.conv-item:hover .conv-item-actions {
+    display: flex;
+}
+.conv-item:hover .conv-item-star.starred {
+    display: none;
 }
 .conv-item-star {
     display: none;
@@ -380,9 +403,6 @@ body {
 .conv-item:hover .conv-item-delete {
     display: flex;
 }
-.conv-item:hover .conv-item-star.starred {
-    display: none;
-}
 .conv-item-delete:hover {
     color: var(--toast-error-bg);
     background: var(--bg-active);
@@ -419,7 +439,7 @@ body {
     margin: 6px 0;
 }
 
-/* Sidebar Overlay (mobile) */
+/* Sidebar Overlay - always ready for floating mode */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -638,6 +658,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    position: relative;
 }
 
 /* Welcome Screen */
@@ -667,6 +688,7 @@ body {
     margin: 0 auto 16px;
     font-size: 28px;
     color: white;
+    box-shadow: 0 4px 20px rgba(16, 163, 127, 0.3);
 }
 .welcome-title {
     font-size: 28px;
@@ -717,10 +739,40 @@ body {
     line-height: 1.5;
 }
 
-/* ==================== Messages ==================== */
+/* Welcome keyboard hints */
+.welcome-shortcuts {
+    margin-top: 32px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.welcome-shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.welcome-shortcut-item kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    border: 1px solid var(--border-color-light);
+    border-radius: 4px;
+    background: var(--bg-tertiary);
+    font-size: 11px;
+    font-family: inherit;
+    color: var(--text-secondary);
+}
+
+/* ==================== Messages - ChatGPT/Claude Style ==================== */
 .message {
-    padding: 20px 0;
+    padding: 24px 0;
     animation: msgFadeIn 0.3s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+.message:last-child {
+    border-bottom: none;
 }
 @keyframes msgFadeIn {
     from { opacity: 0; transform: translateY(8px); }
@@ -738,7 +790,7 @@ body {
 .message-avatar {
     width: 28px;
     height: 28px;
-    border-radius: 4px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -751,7 +803,7 @@ body {
     color: white;
 }
 .message.assistant .message-avatar {
-    background: var(--accent-primary);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     color: white;
 }
 .message.system .message-avatar {
@@ -779,9 +831,10 @@ body {
     overflow-wrap: break-word;
 }
 
-/* User message styling */
+/* User message styling - no background, left aligned */
 .message.user .message-content {
     color: var(--text-primary);
+    background: transparent;
 }
 
 /* System message */
@@ -800,7 +853,7 @@ body {
     border-radius: 8px;
 }
 
-/* Message Actions */
+/* Message Actions - hover to show */
 .message-actions {
     display: flex;
     gap: 2px;
@@ -830,6 +883,9 @@ body {
     color: var(--text-primary);
 }
 .message-action-btn.copied {
+    color: var(--accent-primary);
+}
+.message-action-btn.active-feedback {
     color: var(--accent-primary);
 }
 
@@ -1013,19 +1069,20 @@ body {
     font-weight: 600;
 }
 
-/* Inline code */
+/* Inline code - ChatGPT style */
 .message-content code:not(pre code) {
-    background: var(--bg-tertiary);
+    background: var(--code-inline-bg);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.9em;
     font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    color: var(--code-inline-color);
 }
 
-/* Code blocks */
+/* Code blocks - ChatGPT style */
 .code-block-wrapper {
     margin: 12px 0;
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--code-border);
     background: var(--code-bg);
@@ -1077,9 +1134,10 @@ body {
     padding: 0;
     font-size: inherit;
     border-radius: 0;
+    color: var(--text-primary);
 }
 
-/* ==================== Thinking Chain ==================== */
+/* ==================== Thinking Chain - Claude Extended Thinking Style ==================== */
 .thinking-container {
     margin: 8px 0 16px;
     border: 1px solid var(--thinking-border);
@@ -1147,12 +1205,14 @@ body {
     line-height: 1.6;
     overflow: hidden;
     max-height: 300px;
-    transition: max-height 0.25s ease, padding 0.25s ease;
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
 }
 .thinking-content.collapsed {
     max-height: 0;
     padding-top: 0;
     padding-bottom: 0;
+    opacity: 0;
 }
 .thinking-content pre {
     margin: 8px 0;
@@ -1165,10 +1225,33 @@ body {
     font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
 }
 
-/* ==================== Input Area ==================== */
+/* Thinking pulse dots animation */
+.thinking-dots {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    margin-left: 6px;
+}
+.thinking-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--thinking-accent);
+    animation: dotPulse 1.4s infinite ease-in-out;
+}
+.thinking-dots span:nth-child(1) { animation-delay: 0s; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ==================== Input Area - ChatGPT 2025 Composer Style ==================== */
 .input-area {
     padding: 0 24px 16px;
     background: var(--bg-secondary);
+    position: relative;
 }
 .input-container {
     max-width: 768px;
@@ -1178,9 +1261,11 @@ body {
     gap: 8px;
     background: var(--input-bg);
     border: 1px solid var(--input-border);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 8px 8px 8px 4px;
     transition: border-color 0.2s, box-shadow 0.2s;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 .input-container:focus-within {
     border-color: var(--input-border-focus);
@@ -1238,14 +1323,15 @@ body {
     color: var(--input-placeholder);
 }
 
+/* Send button - round, green when ready */
 .send-btn {
     width: 34px;
     height: 34px;
     border: none;
-    background: var(--accent-primary);
-    color: white;
+    background: var(--bg-active);
+    color: var(--text-muted);
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 50%;
     font-size: 14px;
     display: flex;
     align-items: center;
@@ -1254,7 +1340,7 @@ body {
     flex-shrink: 0;
 }
 .send-btn:hover {
-    background: var(--accent-primary-hover);
+    background: var(--bg-active);
 }
 .send-btn:active {
     transform: scale(0.92);
@@ -1266,10 +1352,40 @@ body {
 }
 .send-btn.ready {
     background: var(--accent-primary);
+    color: white;
+}
+.send-btn.ready:hover {
+    background: var(--accent-primary-hover);
 }
 .send-btn.not-ready {
     background: var(--bg-active);
     color: var(--text-muted);
+}
+
+/* Stop button */
+.stop-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: var(--stop-btn-bg);
+    color: white;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+}
+.stop-btn:hover {
+    background: var(--stop-btn-hover);
+}
+.stop-btn:active {
+    transform: scale(0.92);
+}
+.stop-btn.visible {
+    display: flex;
 }
 
 .input-footer {
@@ -1285,6 +1401,343 @@ body {
 .input-container.drag-over {
     border-color: var(--accent-primary);
     background: rgba(16, 163, 127, 0.05);
+}
+
+/* File preview cards */
+.file-preview-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 8px 0 8px;
+    max-width: 768px;
+    margin: 0 auto;
+}
+.file-preview-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    max-width: 200px;
+}
+.file-preview-card .file-icon {
+    font-size: 14px;
+    color: var(--accent-primary);
+    flex-shrink: 0;
+}
+.file-preview-card .file-info {
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
+}
+.file-preview-card .file-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+.file-preview-card .file-size {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+.file-preview-card .file-remove {
+    width: 18px;
+    height: 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.file-preview-card .file-remove:hover {
+    color: var(--toast-error-bg);
+    background: var(--bg-active);
+}
+
+/* Upload progress bar */
+.file-upload-progress {
+    height: 2px;
+    background: var(--bg-tertiary);
+    border-radius: 1px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+.file-upload-progress-bar {
+    height: 100%;
+    background: var(--accent-primary);
+    border-radius: 1px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* Message queue indicator */
+.message-queue-indicator {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    max-width: 768px;
+    margin: 0 auto 4px;
+}
+.message-queue-indicator.visible {
+    display: flex;
+}
+.message-queue-indicator i {
+    color: var(--accent-primary);
+}
+
+/* ==================== Scroll to Bottom Button ==================== */
+.scroll-to-bottom-btn {
+    position: absolute;
+    bottom: 100px;
+    right: 32px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-color-light);
+    border-radius: 50%;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: var(--shadow-md);
+    z-index: 40;
+    transition: background 0.12s, color 0.12s, transform 0.1s;
+}
+.scroll-to-bottom-btn.visible {
+    display: flex;
+}
+.scroll-to-bottom-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* ==================== Feedback Modal ==================== */
+.feedback-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    animation: feedbackFadeIn 0.2s ease;
+}
+@keyframes feedbackFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.feedback-option-btn {
+    padding: 4px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.12s;
+}
+.feedback-option-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    background: rgba(16, 163, 127, 0.08);
+}
+
+/* ==================== Keyboard Shortcuts Panel ==================== */
+.shortcuts-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 480px;
+    background: var(--modal-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    z-index: 650;
+    overflow: hidden;
+    animation: modalIn 0.2s ease;
+}
+.shortcuts-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.shortcuts-panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.shortcuts-panel-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.shortcuts-panel-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+.shortcuts-panel-body {
+    padding: 16px 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.shortcut-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.shortcut-row:last-child {
+    border-bottom: none;
+}
+.shortcut-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.shortcut-keys {
+    display: flex;
+    gap: 4px;
+}
+.shortcut-keys kbd {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--border-color-light);
+    border-radius: 4px;
+    background: var(--bg-tertiary);
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text-primary);
+}
+
+/* ==================== Artifacts Panel ==================== */
+.artifacts-panel {
+    position: fixed;
+    top: 0;
+    right: -480px;
+    width: 460px;
+    max-width: 90vw;
+    height: 100vh;
+    background: var(--drawer-bg);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 450;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+}
+.artifacts-panel.open {
+    right: 0;
+}
+.artifacts-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+.artifacts-panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.artifacts-panel-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.artifacts-panel-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+.artifacts-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+.artifacts-panel-body pre {
+    margin: 0;
+    padding: 16px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+}
+.artifacts-panel-body pre code {
+    color: var(--text-primary);
+}
+.artifacts-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 14px;
+    gap: 8px;
+}
+.artifacts-empty i {
+    font-size: 32px;
+    opacity: 0.5;
+}
+
+/* Artifacts toggle button in header */
+.artifacts-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s, color 0.12s;
+}
+.artifacts-toggle-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+.artifacts-toggle-btn.active {
+    color: var(--accent-primary);
 }
 
 /* ==================== Drawer (Settings Panel) ==================== */
@@ -2042,6 +2495,11 @@ body {
     .header-icon-btn.header-skill-btn,
     .header-icon-btn.header-mcp-btn {
         display: none;
+    }
+
+    .artifacts-panel {
+        width: 100%;
+        max-width: 100vw;
     }
 }
 

@@ -3,18 +3,24 @@
     'use strict';
 
     // ==================== State ====================
-    let ws = null;
-    let appSettings = {};
-    let conversations = {};
-    let currentConvId = null;
-    let isStreaming = false;
-    let messageQueue = [];
-    let reconnectTimer = null;
-    let webSearchEnabled = false;
+    var ws = null;
+    var appSettings = {};
+    var conversations = {};
+    var currentConvId = null;
+    var isStreaming = false;
+    var isGenerating = false;
+    var messageQueue = [];
+    var pendingUserMessages = [];
+    var reconnectTimer = null;
+    var webSearchEnabled = false;
+    var autoScroll = true;
+    var streamRafId = null;
+    var pendingStreamText = '';
+    var attachedFiles = [];
 
     // ==================== DOM References ====================
-    const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => document.querySelectorAll(sel);
+    var $ = function (sel) { return document.querySelector(sel); };
+    var $$ = function (sel) { return document.querySelectorAll(sel); };
 
     // ==================== Utility Functions ====================
     function escapeHtml(str) {
@@ -38,20 +44,35 @@
     }
 
     function debounce(fn, delay) {
-        let timer;
-        return function (...args) {
+        var timer;
+        return function () {
+            var args = arguments;
+            var ctx = this;
             clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
+            timer = setTimeout(function () { fn.apply(ctx, args); }, delay);
         };
+    }
+
+    function getFileIcon(fileName) {
+        var ext = (fileName || '').split('.').pop().toLowerCase();
+        var iconMap = {
+            pdf: 'fa-file-pdf', txt: 'fa-file-lines', md: 'fa-file-lines',
+            docx: 'fa-file-word', doc: 'fa-file-word',
+            csv: 'fa-file-csv', xlsx: 'fa-file-excel', xls: 'fa-file-excel',
+            pptx: 'fa-file-powerpoint', ppt: 'fa-file-powerpoint',
+            png: 'fa-file-image', jpg: 'fa-file-image', jpeg: 'fa-file-image',
+            gif: 'fa-file-image', webp: 'fa-file-image'
+        };
+        return iconMap[ext] || 'fa-file';
     }
 
     // ==================== Toast System ====================
     function showToast(message, type) {
         type = type || 'info';
-        const container = $('#toast-container');
-        const toast = document.createElement('div');
+        var container = $('#toast-container');
+        var toast = document.createElement('div');
         toast.className = 'toast toast-' + type;
-        const icons = { success: 'fa-check', error: 'fa-xmark', info: 'fa-info' };
+        var icons = { success: 'fa-check', error: 'fa-xmark', info: 'fa-info' };
         toast.innerHTML = '<i class="fa-solid ' + (icons[type] || icons.info) + '"></i><span>' + escapeHtml(message) + '</span>';
         container.appendChild(toast);
         setTimeout(function () {
@@ -63,7 +84,7 @@
     // ==================== Markdown & Code Highlighting ====================
     function initMarked() {
         if (typeof marked === 'undefined') return;
-        const renderer = new marked.Renderer();
+        var renderer = new marked.Renderer();
         renderer.code = function (codeObj) {
             var code = codeObj.text || '';
             var lang = codeObj.lang || '';
@@ -80,7 +101,7 @@
             var id = 'code-' + generateId();
             return '<div class="code-block-wrapper">' +
                 '<div class="code-block-header">' +
-                '<span class="code-block-lang">' + escapeHtml(lang) + '</span>' +
+                '<span class="code-block-lang">' + escapeHtml(lang || 'code') + '</span>' +
                 '<button class="code-block-copy" onclick="window.__copyCode(\'' + id + '\', this)">' +
                 '<i class="fa-regular fa-copy"></i> 复制</button>' +
                 '</div>' +
@@ -124,6 +145,56 @@
         } catch (e) {
             return escapeHtml(text).replace(/\n/g, '<br>');
         }
+    }
+
+    // ==================== Auto Scroll ====================
+    function initAutoScroll() {
+        var chatArea = $('#chat-area');
+        if (!chatArea) return;
+
+        chatArea.addEventListener('scroll', function () {
+            var threshold = 50;
+            if (chatArea.scrollTop + chatArea.clientHeight >= chatArea.scrollHeight - threshold) {
+                autoScroll = true;
+                hideScrollToBottomBtn();
+            } else {
+                autoScroll = false;
+                showScrollToBottomBtn();
+            }
+        });
+    }
+
+    function scrollToBottom(smooth) {
+        if (typeof smooth === 'undefined') smooth = true;
+        var chatArea = $('#chat-area');
+        if (!chatArea || !autoScroll) return;
+        chatArea.scrollTo({
+            top: chatArea.scrollHeight,
+            behavior: smooth ? 'smooth' : 'instant'
+        });
+    }
+
+    function showScrollToBottomBtn() {
+        var btn = $('#scroll-to-bottom-btn');
+        if (btn) btn.classList.add('visible');
+    }
+
+    function hideScrollToBottomBtn() {
+        var btn = $('#scroll-to-bottom-btn');
+        if (btn) btn.classList.remove('visible');
+    }
+
+    function initScrollToBottomBtn() {
+        var btn = $('#scroll-to-bottom-btn');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            autoScroll = true;
+            var chatArea = $('#chat-area');
+            if (chatArea) {
+                chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
+            }
+            hideScrollToBottomBtn();
+        });
     }
 
     // ==================== Conversation Management ====================
@@ -211,6 +282,39 @@
         saveConversations();
     }
 
+    // ==================== Export Conversations ====================
+    function exportConversationMarkdown() {
+        if (!currentConvId || !conversations[currentConvId]) return;
+        var conv = conversations[currentConvId];
+        var md = '# ' + escapeHtml(conv.title) + '\n\n';
+        (conv.messages || []).forEach(function (msg) {
+            if (msg.type === 'user') {
+                md += '## 你\n\n' + msg.content + '\n\n';
+            } else if (msg.type === 'assistant') {
+                md += '## DATA-AI\n\n' + msg.content + '\n\n';
+            }
+        });
+        downloadFile(conv.title + '.md', md, 'text/markdown');
+    }
+
+    function exportConversationJSON() {
+        if (!currentConvId || !conversations[currentConvId]) return;
+        var json = JSON.stringify(conversations[currentConvId], null, 2);
+        downloadFile(currentConvId + '.json', json, 'application/json');
+    }
+
+    function downloadFile(filename, content, mimeType) {
+        var blob = new Blob([content], { type: mimeType + ';charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
     // ==================== Render Conversation List ====================
     function renderConversationList(filter) {
         var container = $('#sidebar-conversations');
@@ -275,7 +379,6 @@
 
         container.innerHTML = html;
 
-        // Bind events
         container.querySelectorAll('.conv-item').forEach(function (el) {
             el.addEventListener('click', function (e) {
                 var action = e.target.closest('[data-action]');
@@ -313,7 +416,7 @@
         });
 
         chatArea.innerHTML = html;
-        scrollToBottom();
+        scrollToBottom(false);
         highlightAllCode();
         bindMessageActions();
     }
@@ -341,6 +444,11 @@
             '<div class="suggestion-card" data-prompt="解释什么是 Transformer 架构">' +
             '<div class="suggestion-icon"><i class="fa-solid fa-graduation-cap"></i></div>' +
             '<div class="suggestion-text">解释什么是 Transformer 架构</div></div>' +
+            '</div>' +
+            '<div class="welcome-shortcuts">' +
+            '<div class="welcome-shortcut-item"><kbd>Enter</kbd> 发送</div>' +
+            '<div class="welcome-shortcut-item"><kbd>Shift + Enter</kbd> 换行</div>' +
+            '<div class="welcome-shortcut-item"><kbd>Ctrl + /</kbd> 快捷键</div>' +
             '</div>';
         return div;
     }
@@ -370,6 +478,8 @@
                 '<button class="message-action-btn" data-action="copy" title="复制"><i class="fa-regular fa-copy"></i></button>';
             if (msg.type === 'assistant') {
                 actions += '<button class="message-action-btn" data-action="regenerate" title="重新生成"><i class="fa-solid fa-rotate"></i></button>';
+                actions += '<button class="message-action-btn" data-action="thumbs-up" title="有帮助"><i class="fa-regular fa-thumbs-up"></i></button>';
+                actions += '<button class="message-action-btn" data-action="thumbs-down" title="需改进"><i class="fa-regular fa-thumbs-down"></i></button>';
             }
             if (msg.type === 'user') {
                 actions += '<button class="message-action-btn" data-action="edit" title="编辑"><i class="fa-solid fa-pen"></i></button>';
@@ -396,6 +506,8 @@
                     if (action === 'copy') copyMessageContent(msgEl);
                     else if (action === 'regenerate') regenerateMessage(msgId);
                     else if (action === 'edit') editMessage(msgId);
+                    else if (action === 'thumbs-up') handleFeedback(msgEl, msgId, 'up');
+                    else if (action === 'thumbs-down') handleFeedback(msgEl, msgId, 'down');
                 });
             });
         });
@@ -426,7 +538,6 @@
         var idx = msgs.findIndex(function (m) { return m.id === msgId; });
         if (idx === -1) return;
 
-        // Remove this message and all after it
         var userMsg = null;
         for (var i = idx - 1; i >= 0; i--) {
             if (msgs[i].type === 'user') {
@@ -436,12 +547,10 @@
         }
         if (!userMsg) return;
 
-        // Remove messages from idx onwards
         conversations[currentConvId].messages = msgs.slice(0, idx);
         saveConversations();
         renderChatArea();
 
-        // Re-send
         sendToWebSocket(userMsg.content);
     }
 
@@ -456,19 +565,62 @@
         var inputBox = $('#input-box');
         inputBox.value = msg.content;
         autoResizeTextarea();
+        updateSendButton();
         inputBox.focus();
 
-        // Remove this message and all after it
         conversations[currentConvId].messages = msgs.slice(0, idx);
         saveConversations();
         renderChatArea();
     }
 
-    function scrollToBottom() {
-        var chatArea = $('#chat-area');
-        if (chatArea) {
-            chatArea.scrollTop = chatArea.scrollHeight;
+    // ==================== Feedback (Thumbs Up/Down) ====================
+    function handleFeedback(msgEl, msgId, type) {
+        var existing = msgEl.querySelector('.feedback-options');
+        if (existing) { existing.remove(); return; }
+
+        var feedbackData = loadFeedbackData();
+        var saved = feedbackData[msgId];
+
+        var options = type === 'up'
+            ? ['准确有用', '清晰易懂', '回答完整']
+            : ['不准确', '不相关', '太复杂'];
+
+        var html = '<div class="feedback-options">';
+        options.forEach(function (opt) {
+            var isActive = saved === opt;
+            html += '<button class="feedback-option-btn' + (isActive ? ' active-feedback' : '') + '" data-feedback="' + escapeHtml(opt) + '">' + escapeHtml(opt) + '</button>';
+        });
+        html += '</div>';
+
+        var msgBody = msgEl.querySelector('.message-body');
+        if (msgBody) {
+            msgBody.insertAdjacentHTML('beforeend', html);
+
+            msgBody.querySelectorAll('.feedback-option-btn').forEach(function (fbBtn) {
+                fbBtn.addEventListener('click', function () {
+                    var val = fbBtn.getAttribute('data-feedback');
+                    feedbackData[msgId] = val;
+                    saveFeedbackData(feedbackData);
+                    msgBody.querySelectorAll('.feedback-option-btn').forEach(function (b) {
+                        b.classList.remove('active-feedback');
+                    });
+                    fbBtn.classList.add('active-feedback');
+                    showToast('感谢你的反馈', 'success');
+                });
+            });
         }
+    }
+
+    function loadFeedbackData() {
+        try {
+            return JSON.parse(localStorage.getItem('data-ai-feedback') || '{}');
+        } catch (e) { return {}; }
+    }
+
+    function saveFeedbackData(data) {
+        try {
+            localStorage.setItem('data-ai-feedback', JSON.stringify(data));
+        } catch (e) { /* ignore */ }
     }
 
     function highlightAllCode() {
@@ -543,13 +695,13 @@
             phaseEl.innerHTML =
                 '<div class="thinking-header" onclick="window.__toggleThinking(this)">' +
                 '<div class="thinking-badge">' + phaseNum + '</div>' +
-                '<div class="thinking-title">' + escapeHtml(data.title || '思考中...') + '</div>' +
+                '<div class="thinking-title">' + escapeHtml(data.title || '思考中...') +
+                '<span class="thinking-dots"><span></span><span></span><span></span></span></div>' +
                 '<div class="thinking-toggle"><i class="fa-solid fa-chevron-down"></i></div>' +
                 '</div>' +
                 '<div class="thinking-content">' + renderMarkdown(data.content || '') + '</div>';
 
             thinkingEl.appendChild(phaseEl);
-            highlightAllCode();
             scrollToBottom();
 
         } else if (data.type === 'stream_start') {
@@ -573,31 +725,42 @@
                 '</div></div>';
 
             chatArea.appendChild(msgEl);
+            pendingStreamText = '';
             scrollToBottom();
 
         } else if (data.type === 'stream_data') {
-            var streamingEl = chatArea.querySelector('.message.streaming .stream-text');
-            if (streamingEl) {
-                var currentText = streamingEl.getAttribute('data-raw') || '';
-                currentText += data.content;
-                streamingEl.setAttribute('data-raw', currentText);
-                streamingEl.innerHTML = renderMarkdown(currentText);
-                highlightAllCode();
-                scrollToBottom();
+            pendingStreamText += data.content;
+
+            // Throttle DOM updates with requestAnimationFrame
+            if (!streamRafId) {
+                streamRafId = requestAnimationFrame(function () {
+                    var streamingEl = chatArea.querySelector('.message.streaming .stream-text');
+                    if (streamingEl) {
+                        streamingEl.setAttribute('data-raw', pendingStreamText);
+                        streamingEl.innerHTML = renderMarkdown(pendingStreamText);
+                    }
+                    streamRafId = null;
+                    scrollToBottom(false);
+                });
             }
 
         } else if (data.type === 'stream_end') {
+            // Cancel any pending rAF
+            if (streamRafId) {
+                cancelAnimationFrame(streamRafId);
+                streamRafId = null;
+            }
+
             var streamMsg = chatArea.querySelector('.message.streaming');
             if (streamMsg) {
                 streamMsg.classList.remove('streaming');
                 var streamTextEl = streamMsg.querySelector('.stream-text');
                 if (streamTextEl) {
-                    var finalText = streamTextEl.getAttribute('data-raw') || streamTextEl.textContent;
+                    var finalText = streamTextEl.getAttribute('data-raw') || pendingStreamText;
                     streamTextEl.removeAttribute('data-raw');
                     streamTextEl.innerHTML = renderMarkdown(finalText);
                     highlightAllCode();
 
-                    // Save to conversation
                     if (currentConvId && conversations[currentConvId]) {
                         addMessageToConversation(currentConvId, {
                             id: streamMsg.getAttribute('data-msg-id'),
@@ -608,6 +771,7 @@
                         });
                     }
                 }
+                pendingStreamText = '';
                 bindMessageActions();
             }
             finishProcessing();
@@ -633,6 +797,8 @@
                 '<div class="message-actions">' +
                 '<button class="message-action-btn" data-action="copy" title="复制"><i class="fa-regular fa-copy"></i></button>' +
                 '<button class="message-action-btn" data-action="regenerate" title="重新生成"><i class="fa-solid fa-rotate"></i></button>' +
+                '<button class="message-action-btn" data-action="thumbs-up" title="有帮助"><i class="fa-regular fa-thumbs-up"></i></button>' +
+                '<button class="message-action-btn" data-action="thumbs-down" title="需改进"><i class="fa-regular fa-thumbs-down"></i></button>' +
                 '</div></div></div>';
 
             chatArea.appendChild(msgEl2);
@@ -671,14 +837,12 @@
             finishProcessing();
 
         } else if (data.type === 'rag_sources') {
-            // 知识库引用来源 - 在最新的助手消息中添加引用标签
             var sources = data.sources || [];
             if (sources.length === 0) return;
 
             var lastAssistant = chatArea.querySelector('.message.assistant:last-of-type');
             if (!lastAssistant) return;
 
-            // 检查是否已有引用容器
             var existingRefs = lastAssistant.querySelector('.rag-references');
             if (existingRefs) existingRefs.remove();
 
@@ -719,7 +883,104 @@
 
     function finishProcessing() {
         isStreaming = false;
+        isGenerating = false;
         updateSendButton();
+        updateStopButton();
+        showToast('回复完成', 'success');
+
+        // Process pending user messages
+        processPendingMessages();
+    }
+
+    // ==================== Stop Generation ====================
+    function stopGeneration() {
+        if (!isGenerating) return;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'stop' }));
+        }
+        // Clean up streaming state
+        if (streamRafId) {
+            cancelAnimationFrame(streamRafId);
+            streamRafId = null;
+        }
+        var chatArea = $('#chat-area');
+        var streamMsg = chatArea.querySelector('.message.streaming');
+        if (streamMsg) {
+            streamMsg.classList.remove('streaming');
+            var streamTextEl = streamMsg.querySelector('.stream-text');
+            if (streamTextEl) {
+                var finalText = streamTextEl.getAttribute('data-raw') || pendingStreamText || streamTextEl.textContent;
+                streamTextEl.removeAttribute('data-raw');
+                streamTextEl.innerHTML = renderMarkdown(finalText);
+                highlightAllCode();
+
+                if (currentConvId && conversations[currentConvId]) {
+                    addMessageToConversation(currentConvId, {
+                        id: streamMsg.getAttribute('data-msg-id'),
+                        type: 'assistant',
+                        content: finalText,
+                        rendered: streamTextEl.innerHTML,
+                        timestamp: Date.now()
+                    });
+                }
+            }
+            bindMessageActions();
+        }
+        pendingStreamText = '';
+        var tc = chatArea.querySelector('.thinking-container');
+        if (tc) tc.remove();
+
+        isStreaming = false;
+        isGenerating = false;
+        updateSendButton();
+        updateStopButton();
+        showToast('已停止生成', 'info');
+    }
+
+    function updateStopButton() {
+        var stopBtn = $('#stop-btn');
+        var sendBtn = $('#send-btn');
+        if (!stopBtn || !sendBtn) return;
+
+        if (isGenerating) {
+            stopBtn.classList.add('visible');
+            sendBtn.style.display = 'none';
+        } else {
+            stopBtn.classList.remove('visible');
+            sendBtn.style.display = 'flex';
+        }
+    }
+
+    function initStopButton() {
+        var stopBtn = $('#stop-btn');
+        if (stopBtn) {
+            stopBtn.addEventListener('click', stopGeneration);
+        }
+    }
+
+    // ==================== Message Queue ====================
+    function processPendingMessages() {
+        if (isStreaming || pendingUserMessages.length === 0) {
+            updateQueueIndicator();
+            return;
+        }
+        var nextMsg = pendingUserMessages.shift();
+        updateQueueIndicator();
+        sendToWebSocket(nextMsg);
+    }
+
+    function updateQueueIndicator() {
+        var indicator = $('#message-queue-indicator');
+        var countText = $('#queue-count-text');
+        if (!indicator || !countText) return;
+
+        var count = pendingUserMessages.length;
+        if (count > 0) {
+            countText.textContent = count + ' 条消息排队中';
+            indicator.classList.add('visible');
+        } else {
+            indicator.classList.remove('visible');
+        }
     }
 
     // ==================== Send Message ====================
@@ -775,49 +1036,53 @@
         updateSendButton();
         scrollToBottom();
 
-        // 自动触发知识库搜索，在聊天区域显示引用来源
+        // Search knowledge base
         searchKnowledgeBase(content);
 
-        // Send to WebSocket
-        sendToWebSocket(content);
+        // Send to WebSocket or queue
+        if (isStreaming) {
+            pendingUserMessages.push(content);
+            updateQueueIndicator();
+        } else {
+            sendToWebSocket(content);
+        }
     }
 
     // ==================== RAG Knowledge Base Search ====================
-    async function searchKnowledgeBase(query) {
+    function searchKnowledgeBase(query) {
         if (!query || !query.trim()) return;
-        try {
-            var res = await fetch('/api/knowledge-bases/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query, top_k: 3, min_score: 0.1 })
-            });
+        fetch('/api/knowledge-bases/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: query, top_k: 3, min_score: 0.1 })
+        }).then(function (res) {
             if (!res.ok) return;
-            var results = await res.json();
-            if (results && results.length > 0) {
-                // 在用户消息下方显示引用来源预览
-                var chatArea = $('#chat-area');
-                var lastUserMsg = chatArea.querySelector('.message.user:last-of-type');
-                if (lastUserMsg) {
-                    var existingPreview = lastUserMsg.querySelector('.rag-search-preview');
-                    if (existingPreview) existingPreview.remove();
+            return res.json();
+        }).then(function (results) {
+            if (!results || results.length === 0) return;
+            var chatArea = $('#chat-area');
+            var lastUserMsg = chatArea.querySelector('.message.user:last-of-type');
+            if (lastUserMsg) {
+                var existingPreview = lastUserMsg.querySelector('.rag-search-preview');
+                if (existingPreview) existingPreview.remove();
 
-                    var previewHtml = '<div class="rag-search-preview">' +
-                        '<i class="fa-solid fa-book"></i> 已检索知识库，找到 ' + results.length + ' 条相关内容</div>';
-                    var msgBody = lastUserMsg.querySelector('.message-body');
-                    if (msgBody) {
-                        msgBody.insertAdjacentHTML('beforeend', previewHtml);
-                    }
+                var previewHtml = '<div class="rag-search-preview">' +
+                    '<i class="fa-solid fa-book"></i> 已检索知识库，找到 ' + results.length + ' 条相关内容</div>';
+                var msgBody = lastUserMsg.querySelector('.message-body');
+                if (msgBody) {
+                    msgBody.insertAdjacentHTML('beforeend', previewHtml);
                 }
             }
-        } catch (e) {
-            // 知识库搜索失败不影响正常对话
+        }).catch(function (e) {
             console.log('KB search skipped:', e.message);
-        }
+        });
     }
 
     function sendToWebSocket(content) {
         isStreaming = true;
+        isGenerating = true;
         updateSendButton();
+        updateStopButton();
 
         var payload = {
             content: content,
@@ -879,9 +1144,14 @@
         inputBox.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                if (!isStreaming && inputBox.value.trim()) {
+                if (inputBox.value.trim()) {
                     sendMessage();
                 }
+            }
+            // Up Arrow - edit last user message when input is empty
+            if (e.key === 'ArrowUp' && !inputBox.value.trim()) {
+                e.preventDefault();
+                editLastUserMessage();
             }
         });
 
@@ -899,10 +1169,23 @@
             inputContainer.addEventListener('drop', function (e) {
                 e.preventDefault();
                 inputContainer.classList.remove('drag-over');
-                var files = e.dataTransfer.files;
-                if (files.length > 0) handleFileUpload(files);
+                if (e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files);
             });
         }
+
+        // Paste images
+        inputBox.addEventListener('paste', function (e) {
+            var items = e.clipboardData && e.clipboardData.items;
+            if (!items) return;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    e.preventDefault();
+                    var file = items[i].getAsFile();
+                    if (file) handleFileUpload([file]);
+                    return;
+                }
+            }
+        });
 
         // File input
         var fileInput = $('#file-input');
@@ -949,11 +1232,58 @@
         updateSendButton();
     }
 
+    function editLastUserMessage() {
+        if (!currentConvId || !conversations[currentConvId]) return;
+        var msgs = conversations[currentConvId].messages;
+        for (var i = msgs.length - 1; i >= 0; i--) {
+            if (msgs[i].type === 'user') {
+                editMessage(msgs[i].id);
+                return;
+            }
+        }
+    }
+
+    // ==================== File Upload ====================
     function handleFileUpload(files) {
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
-            showToast('已选择文件: ' + file.name + ' (' + formatFileSize(file.size) + ')', 'info');
+            attachedFiles.push(file);
+            renderFilePreviews();
+            showToast('已添加文件: ' + file.name, 'info');
         }
+    }
+
+    function renderFilePreviews() {
+        var container = $('#file-preview-list');
+        if (!container) return;
+
+        if (attachedFiles.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        var html = '';
+        attachedFiles.forEach(function (file, idx) {
+            var icon = getFileIcon(file.name);
+            html += '<div class="file-preview-card">' +
+                '<i class="fa-solid ' + icon + ' file-icon"></i>' +
+                '<div class="file-info">' +
+                '<div class="file-name">' + escapeHtml(file.name) + '</div>' +
+                '<div class="file-size">' + formatFileSize(file.size) + '</div>' +
+                '</div>' +
+                '<button class="file-remove" data-file-idx="' + idx + '" title="移除"><i class="fa-solid fa-xmark"></i></button>' +
+                '</div>';
+        });
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('.file-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var idx = parseInt(btn.getAttribute('data-file-idx'));
+                attachedFiles.splice(idx, 1);
+                renderFilePreviews();
+            });
+        });
     }
 
     // ==================== Sidebar ====================
@@ -1072,9 +1402,31 @@
         if (helpClose) helpClose.addEventListener('click', function () { helpOverlay.classList.remove('show'); });
         if (helpOverlay) helpOverlay.addEventListener('click', function (e) { if (e.target === helpOverlay) helpOverlay.classList.remove('show'); });
 
+        // Shortcuts modal
+        var shortcutsClose = $('#shortcuts-modal-close');
+        var shortcutsOverlay = $('#shortcuts-modal');
+        if (shortcutsClose) shortcutsClose.addEventListener('click', function () { shortcutsOverlay.classList.remove('show'); });
+        if (shortcutsOverlay) shortcutsOverlay.addEventListener('click', function (e) { if (e.target === shortcutsOverlay) shortcutsOverlay.classList.remove('show'); });
+
         // Image preview
         var imgOverlay = $('#image-preview-overlay');
         if (imgOverlay) imgOverlay.addEventListener('click', function () { imgOverlay.classList.remove('show'); });
+
+        // Artifacts panel
+        var artifactsClose = $('#artifacts-panel-close');
+        var artifactsToggle = $('#artifacts-toggle-btn');
+        if (artifactsClose) artifactsClose.addEventListener('click', function () {
+            var panel = $('#artifacts-panel');
+            if (panel) panel.classList.remove('open');
+            if (artifactsToggle) artifactsToggle.classList.remove('active');
+        });
+        if (artifactsToggle) artifactsToggle.addEventListener('click', function () {
+            var panel = $('#artifacts-panel');
+            if (panel) {
+                panel.classList.toggle('open');
+                artifactsToggle.classList.toggle('active');
+            }
+        });
 
         // Drawer tabs
         initDrawerTabs();
@@ -1160,17 +1512,14 @@
     }
 
     function initDrawerTabs() {
-        // Generic tab switching for all drawers
         $$('.drawer-tabs').forEach(function (tabBar) {
             var drawer = tabBar.closest('.drawer');
             if (!drawer) return;
             tabBar.querySelectorAll('.drawer-tab').forEach(function (tab) {
                 tab.addEventListener('click', function () {
                     var targetId = tab.getAttribute('data-tab');
-                    // Deactivate all tabs in this drawer
                     tabBar.querySelectorAll('.drawer-tab').forEach(function (t) { t.classList.remove('active'); });
                     drawer.querySelectorAll('.drawer-tab-content').forEach(function (c) { c.classList.remove('active'); });
-                    // Activate selected
                     tab.classList.add('active');
                     var target = drawer.querySelector('#' + targetId);
                     if (target) target.classList.add('active');
@@ -1186,7 +1535,6 @@
             localStorage.setItem('data-ai-theme', theme);
         } catch (e) { /* ignore */ }
 
-        // Update highlight.js theme
         var hljsLink = $('#hljs-theme');
         if (hljsLink) {
             if (theme === 'light') {
@@ -1267,7 +1615,6 @@
             });
         }
 
-        // Load current model from settings
         if (appSettings && appSettings.llm) {
             updateModelDisplay(appSettings.llm.model || '');
         }
@@ -1282,7 +1629,6 @@
         var models = providerModels[provider] || [];
         renderModelDropdownList('', models);
 
-        // Auto-select first model
         if (models.length > 0) {
             var modelSelect = $('#setting-model');
             if (modelSelect) {
@@ -1350,15 +1696,16 @@
     }
 
     // ==================== Settings ====================
-    async function loadSettings() {
-        try {
-            var res = await fetch('/api/settings');
+    function loadSettings() {
+        fetch('/api/settings').then(function (res) {
             if (!res.ok) return;
-            appSettings = await res.json();
+            return res.json();
+        }).then(function (data) {
+            appSettings = data;
             populateSettings(appSettings);
-        } catch (e) {
+        }).catch(function (e) {
             console.error('Load settings error:', e);
-        }
+        });
     }
 
     function populateSettings(settings) {
@@ -1395,18 +1742,16 @@
             if (lsEndpoint) lsEndpoint.value = settings.langsmith.endpoint || 'https://api.smith.langchain.com';
         }
 
-        // Update model display
         if (settings.llm && settings.llm.model) {
             updateModelDisplay(settings.llm.model);
         }
 
-        // Update model list based on provider
         if (settings.llm && settings.llm.provider) {
             updateModelList(settings.llm.provider);
         }
     }
 
-    async function saveSettings() {
+    function saveSettings() {
         var provider = $('#setting-provider');
         var model = $('#setting-model');
         var baseUrl = $('#setting-base-url');
@@ -1461,23 +1806,23 @@
             return;
         }
 
-        try {
-            var res = await fetch('/api/settings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(settings)
-            });
+        fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        }).then(function (res) {
             if (!res.ok) {
-                var errData = await res.json().catch(function () { return { detail: '保存失败' }; });
-                throw new Error(errData.detail || '请求失败');
+                return res.json().catch(function () { return { detail: '保存失败' }; }).then(function (errData) {
+                    throw new Error(errData.detail || '请求失败');
+                });
             }
             appSettings = settings;
             closeDrawer('settings-drawer', 'settings-drawer-overlay');
             showToast('设置已保存', 'success');
             updateModelDisplay(settings.llm.model);
-        } catch (e) {
+        }).catch(function (e) {
             showToast('保存失败: ' + e.message, 'error');
-        }
+        });
     }
 
     function resetSettings() {
@@ -1496,17 +1841,16 @@
         if (maxTokens) maxTokens.value = 4096;
         if (temperature) temperature.value = 0.7;
         if (tempValue) tempValue.textContent = '0.7';
-
         updateModelList('aliyun');
         showToast('已重置为默认设置', 'info');
     }
 
     // ==================== Knowledge Base ====================
-    async function loadKnowledgeBases() {
-        try {
-            var res = await fetch('/api/knowledge-bases');
+    function loadKnowledgeBases() {
+        fetch('/api/knowledge-bases').then(function (res) {
             if (!res.ok) return;
-            var kbs = await res.json();
+            return res.json();
+        }).then(function (kbs) {
             var grid = $('#kb-grid');
             if (!grid) return;
 
@@ -1527,12 +1871,12 @@
                     '<span>文档: ' + (kb.document_count || 0) + '</span>' +
                     '</div></div>';
             }).join('');
-        } catch (e) {
+        }).catch(function (e) {
             console.error('Load KB error:', e);
-        }
+        });
     }
 
-    async function createKnowledgeBase() {
+    function createKnowledgeBase() {
         var nameEl = $('#kb-name');
         var descEl = $('#kb-desc');
         if (!nameEl) return;
@@ -1544,38 +1888,37 @@
             return;
         }
 
-        try {
-            var res = await fetch('/api/knowledge-bases', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, description: desc })
-            });
+        fetch('/api/knowledge-bases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, description: desc })
+        }).then(function (res) {
             if (!res.ok) {
-                var err = await res.json().catch(function () { return { detail: '创建失败' }; });
-                throw new Error(err.detail || '请求失败');
+                return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
+                    throw new Error(err.detail || '请求失败');
+                });
             }
             nameEl.value = '';
             if (descEl) descEl.value = '';
             loadKnowledgeBases();
             showToast('知识库「' + name + '」创建成功', 'success');
 
-            // Switch to list tab
             var kbDrawer = $('#kb-drawer');
             if (kbDrawer) {
                 var listTab = kbDrawer.querySelector('[data-tab="kb-tab-list"]');
                 if (listTab) listTab.click();
             }
-        } catch (e) {
+        }).catch(function (e) {
             showToast('创建失败: ' + e.message, 'error');
-        }
+        });
     }
 
     // ==================== Skills ====================
-    async function loadSkills() {
-        try {
-            var res = await fetch('/api/skills');
+    function loadSkills() {
+        fetch('/api/skills').then(function (res) {
             if (!res.ok) return;
-            var skills = await res.json();
+            return res.json();
+        }).then(function (skills) {
             var list = $('#skill-list-content');
             if (!list) return;
 
@@ -1605,9 +1948,9 @@
                     useSkillPrompt(skillId);
                 });
             });
-        } catch (e) {
+        }).catch(function (e) {
             console.error('Load skills error:', e);
-        }
+        });
     }
 
     function useSkillPrompt(skillId) {
@@ -1620,7 +1963,7 @@
         closeDrawer('skill-drawer', 'skill-drawer-overlay');
     }
 
-    async function createSkill() {
+    function createSkill() {
         var nameEl = $('#skill-name');
         var iconEl = $('#skill-icon');
         var descEl = $('#skill-desc');
@@ -1635,15 +1978,15 @@
             return;
         }
 
-        try {
-            var res = await fetch('/api/skills', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, icon: icon, description: desc, parameters: [], prompts: {} })
-            });
+        fetch('/api/skills', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, icon: icon, description: desc, parameters: [], prompts: {} })
+        }).then(function (res) {
             if (!res.ok) {
-                var err = await res.json().catch(function () { return { detail: '创建失败' }; });
-                throw new Error(err.detail || '请求失败');
+                return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
+                    throw new Error(err.detail || '请求失败');
+                });
             }
             nameEl.value = '';
             if (descEl) descEl.value = '';
@@ -1655,12 +1998,12 @@
                 var listTab = skillDrawer.querySelector('[data-tab="skill-tab-list"]');
                 if (listTab) listTab.click();
             }
-        } catch (e) {
+        }).catch(function (e) {
             showToast('创建失败: ' + e.message, 'error');
-        }
+        });
     }
 
-    async function aiGenerateSkill() {
+    function aiGenerateSkill() {
         var purposeEl = $('#skill-purpose');
         var genDiv = $('#ai-generating');
         if (!purposeEl) return;
@@ -1673,15 +2016,14 @@
 
         if (genDiv) genDiv.style.display = 'flex';
 
-        try {
-            var res = await fetch('/api/skills/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ purpose: purpose })
-            });
+        fetch('/api/skills/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ purpose: purpose })
+        }).then(function (res) {
             if (!res.ok) throw new Error('生成失败');
-
-            var result = await res.json();
+            return res.json();
+        }).then(function (result) {
             var nameEl = $('#skill-name');
             var iconEl = $('#skill-icon');
             var descEl = $('#skill-desc');
@@ -1689,19 +2031,19 @@
             if (iconEl) iconEl.value = result.icon || '⚡';
             if (descEl) descEl.value = result.description || '';
             showToast('AI已生成技能建议', 'success');
-        } catch (e) {
+        }).catch(function (e) {
             showToast('AI生成失败: ' + e.message, 'error');
-        } finally {
+        }).finally(function () {
             if (genDiv) genDiv.style.display = 'none';
-        }
+        });
     }
 
     // ==================== MCP ====================
-    async function loadMcpServers() {
-        try {
-            var res = await fetch('/api/mcp/servers');
+    function loadMcpServers() {
+        fetch('/api/mcp/servers').then(function (res) {
             if (!res.ok) return;
-            var servers = await res.json();
+            return res.json();
+        }).then(function (servers) {
             var list = $('#mcp-list-content');
             if (!list) return;
 
@@ -1727,12 +2069,12 @@
                     sw.classList.toggle('on');
                 });
             });
-        } catch (e) {
+        }).catch(function (e) {
             console.error('Load MCP error:', e);
-        }
+        });
     }
 
-    async function createMcpServer() {
+    function createMcpServer() {
         var nameEl = $('#mcp-name');
         var typeEl = $('#mcp-type');
         var commandEl = $('#mcp-command');
@@ -1747,23 +2089,23 @@
             return;
         }
 
-        try {
-            var res = await fetch('/api/mcp/servers', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, type: type, command: command, args: [], enabled: true })
-            });
+        fetch('/api/mcp/servers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, type: type, command: command, args: [], enabled: true })
+        }).then(function (res) {
             if (!res.ok) {
-                var err = await res.json().catch(function () { return { detail: '创建失败' }; });
-                throw new Error(err.detail || '请求失败');
+                return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
+                    throw new Error(err.detail || '请求失败');
+                });
             }
             nameEl.value = '';
             if (commandEl) commandEl.value = '';
             loadMcpServers();
             showToast('MCP服务器「' + name + '」配置成功', 'success');
-        } catch (e) {
+        }).catch(function (e) {
             showToast('配置失败: ' + e.message, 'error');
-        }
+        });
     }
 
     function quickAddMcp(type) {
@@ -1814,16 +2156,51 @@
                 e.preventDefault();
                 createConversation();
             }
-            // Escape: Close drawers/modals
+            // Ctrl/Cmd + /: Shortcuts help
+            if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+                e.preventDefault();
+                var shortcutsModal = $('#shortcuts-modal');
+                if (shortcutsModal) shortcutsModal.classList.add('show');
+            }
+            // Ctrl/Cmd + B: Toggle sidebar
+            if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+                e.preventDefault();
+                var sidebar = $('#sidebar');
+                if (sidebar) {
+                    if (sidebar.classList.contains('open')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                }
+            }
+            // Ctrl/Cmd + L: Focus input
+            if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
+                e.preventDefault();
+                var inputBox = $('#input-box');
+                if (inputBox) inputBox.focus();
+            }
+            // Escape: Close drawers/modals or stop generation
             if (e.key === 'Escape') {
+                // Stop generation first
+                if (isGenerating) {
+                    stopGeneration();
+                    return;
+                }
                 closeDrawer('settings-drawer', 'settings-drawer-overlay');
                 closeDrawer('kb-drawer', 'kb-drawer-overlay');
                 closeDrawer('skill-drawer', 'skill-drawer-overlay');
                 closeDrawer('mcp-drawer', 'mcp-drawer-overlay');
                 var helpModal = $('#help-modal');
                 if (helpModal) helpModal.classList.remove('show');
+                var shortcutsModal = $('#shortcuts-modal');
+                if (shortcutsModal) shortcutsModal.classList.remove('show');
                 var imgPreview = $('#image-preview-overlay');
                 if (imgPreview) imgPreview.classList.remove('show');
+                var artifactsPanel = $('#artifacts-panel');
+                if (artifactsPanel) artifactsPanel.classList.remove('open');
+                var artifactsToggle = $('#artifacts-toggle-btn');
+                if (artifactsToggle) artifactsToggle.classList.remove('active');
                 closeSidebar();
             }
         });
@@ -1835,7 +2212,6 @@
         loadTheme();
         loadConversations();
 
-        // If no conversations, show welcome
         var keys = Object.keys(conversations);
         if (keys.length > 0) {
             currentConvId = keys[keys.length - 1];
@@ -1843,6 +2219,9 @@
 
         renderConversationList();
         renderChatArea();
+        initAutoScroll();
+        initScrollToBottomBtn();
+        initStopButton();
         initSidebar();
         initInputSystem();
         initDrawers();
