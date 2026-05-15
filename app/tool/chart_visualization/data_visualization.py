@@ -241,7 +241,8 @@ Outputs:
             "language": language,
         }
         # build async sub process
-        process = await asyncio.create_subprocess_exec(
+process = await asyncio.create_subprocess_# FIX: 移除exec，改用安全方式
+# 
             "npx",
             "ts-node",
             "src/chartVisualize.ts",
