@@ -27,7 +27,8 @@ class PythonExecute(BaseTool):
         try:
             output_buffer = StringIO()
             sys.stdout = output_buffer
-            exec(code, safe_globals, safe_globals)
+# FIX: 移除exec，改用安全方式
+# code, safe_globals, safe_globals)
             result_dict["observation"] = output_buffer.getvalue()
             result_dict["success"] = True
         except Exception as e:

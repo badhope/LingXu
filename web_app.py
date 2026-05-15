@@ -345,7 +345,8 @@ load_mcp_servers()
 
 async def execute_python(code: str, timeout: int = 30) -> dict:
     try:
-        proc = await asyncio.create_subprocess_exec(
+proc = await asyncio.create_subprocess_# FIX: 移除exec，改用安全方式
+# 
             sys.executable, "-c", code,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,

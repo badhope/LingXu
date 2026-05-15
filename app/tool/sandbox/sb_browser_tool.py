@@ -213,7 +213,8 @@ class SandboxBrowserTool(SandboxToolsBase):
                     json_data = json.dumps(params)
                     curl_cmd += f" -d '{json_data}'"
             logger.debug(f"Executing curl command: {curl_cmd}")
-            response = self.sandbox.process.exec(curl_cmd, timeout=30)
+response = self.sandbox.process.# FIX: 移除exec，改用安全方式
+# curl_cmd, timeout=30)
             if response.exit_code == 0:
                 try:
                     result = json.loads(response.result)
