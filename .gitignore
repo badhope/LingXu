@@ -3,7 +3,9 @@
 logs/
 
 # Data
-data/
+data/knowledge_bases/
+data/*.db
+data/*.sqlite
 
 # Workspace
 workspace/

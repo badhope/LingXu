@@ -1,0 +1,19 @@
+{
+  "id": "literature-skill",
+  "name": "文献摘要专家",
+  "description": "学术论文分析，提取关键信息",
+  "icon": "fa-solid fa-book-open",
+  "parameters": [
+    {
+      "name": "paper_content",
+      "label": "论文内容",
+      "type": "textarea",
+      "required": true,
+      "placeholder": "请粘贴论文内容或摘要..."
+    }
+  ],
+  "prompts": {
+    "system": "你是一位专业的学术研究员，擅长分析学术论文并提取关键信息。",
+    "user": "请分析以下论文并生成摘要：\n\n{{paper_content}}"
+  }
+}

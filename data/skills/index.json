@@ -1,0 +1,106 @@
+{
+  "code_reviewer": {
+    "id": "code_reviewer",
+    "name": "代码审查专家",
+    "description": "智能代码审查，发现潜在问题并提供优化建议",
+    "version": "1.0.0",
+    "author": "DATA-AI Team",
+    "category": "code_generation",
+    "type": "built_in",
+    "icon": "🔍",
+    "status": "published",
+    "created_at": "2026-05-15T11:08:54.731566",
+    "updated_at": "2026-05-15T11:08:54.731762",
+    "parameters": [
+      {
+        "name": "code",
+        "type": "string",
+        "description": "待审查的代码",
+        "required": true
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "description": "编程语言",
+        "required": false,
+        "enum": [
+          "python",
+          "javascript",
+          "typescript"
+        ]
+      }
+    ],
+    "prompts": {
+      "system_prompt": "你是一位资深的代码审查专家，请按照以下标准审查代码：\n1. 检查语法错误和潜在bug\n2. 评估代码风格和最佳实践\n3. 提供性能优化建议\n4. 指出安全隐患"
+    },
+    "tools": []
+  },
+  "data_analyzer": {
+    "id": "data_analyzer",
+    "name": "数据分析助手",
+    "description": "执行数据分析和可视化",
+    "version": "1.0.0",
+    "author": "DATA-AI Team",
+    "category": "data_analysis",
+    "type": "built_in",
+    "icon": "📊",
+    "status": "published",
+    "created_at": "2026-05-15T11:08:54.732160",
+    "updated_at": "2026-05-15T11:08:54.732164",
+    "parameters": [
+      {
+        "name": "data",
+        "type": "string",
+        "description": "数据",
+        "required": true
+      },
+      {
+        "name": "analysis_type",
+        "type": "string",
+        "description": "分析类型",
+        "required": true,
+        "enum": [
+          "summary",
+          "statistics",
+          "visualization"
+        ]
+      }
+    ],
+    "prompts": {},
+    "tools": []
+  },
+  "document_processor": {
+    "id": "document_processor",
+    "name": "文档处理助手",
+    "description": "提取、总结和分析文档内容",
+    "version": "1.0.0",
+    "author": "DATA-AI Team",
+    "category": "document_processing",
+    "type": "built_in",
+    "icon": "📄",
+    "status": "published",
+    "created_at": "2026-05-15T11:08:54.732176",
+    "updated_at": "2026-05-15T11:08:54.732177",
+    "parameters": [
+      {
+        "name": "content",
+        "type": "string",
+        "description": "文档内容",
+        "required": true
+      },
+      {
+        "name": "task",
+        "type": "string",
+        "description": "任务类型",
+        "required": true,
+        "enum": [
+          "summary",
+          "key_points",
+          "translation"
+        ]
+      }
+    ],
+    "prompts": {},
+    "tools": []
+  }
+}
