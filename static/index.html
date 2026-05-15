@@ -1026,18 +1026,102 @@
 
         <!-- Agent Tab -->
         <div class="drawer-tab-content" id="tab-agent">
-          <div class="setting-group">
-            <label class="setting-label">知识库启用</label>
-            <div class="setting-switch on" id="setting-kb-enabled"></div>
+          <div class="drawer-tabs" style="margin-bottom: 16px;">
+            <div class="drawer-tab active" data-tab="agent-tab-config">智能体配置</div>
+            <div class="drawer-tab" data-tab="agent-tab-skills">技能管理</div>
+            <div class="drawer-tab" data-tab="agent-tab-tasks">任务历史</div>
           </div>
-          <div class="setting-group">
-            <label class="setting-label">最大步数</label>
-            <input
-              type="number"
-              class="setting-input"
-              id="setting-max-steps"
-              value="5"
-            />
+
+          <!-- 智能体配置 -->
+          <div class="drawer-tab-content active" id="agent-tab-config">
+            <div class="agent-card">
+              <div class="agent-card-header">
+                <div class="agent-avatar">🤖</div>
+                <div class="agent-info">
+                  <input type="text" class="agent-name-input" id="agent-name" value="智能助手" placeholder="智能体名称">
+                  <p class="agent-desc">基于大语言模型的智能助手</p>
+                </div>
+                <button class="agent-action-btn" id="agent-save-btn">
+                  <i class="fa-solid fa-save"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="setting-section">
+              <h3 class="setting-section-title"><i class="fa-solid fa-gear"></i> 核心配置</h3>
+              <div class="setting-group">
+                <label class="setting-label">最大思考步数</label>
+                <div class="setting-input-group">
+                  <input type="number" class="setting-input" id="setting-max-steps" value="5" min="1" max="20">
+                  <span class="setting-hint">限制智能体的推理深度</span>
+                </div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">温度参数</label>
+                <input type="range" class="setting-range" id="setting-temperature" min="0" max="1" step="0.1" value="0.7">
+                <span class="setting-range-value">0.7</span>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">超时时间(秒)</label>
+                <input type="number" class="setting-input" id="setting-timeout" value="300" min="30" max="600">
+              </div>
+            </div>
+
+            <div class="setting-section">
+              <h3 class="setting-section-title"><i class="fa-solid fa-brain"></i> 能力开关</h3>
+              <div class="setting-group">
+                <label class="setting-label">启用知识库</label>
+                <div class="setting-switch on" id="setting-kb-enabled"></div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">启用工具调用</label>
+                <div class="setting-switch on" id="setting-tools-enabled"></div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">启用网络搜索</label>
+                <div class="setting-switch" id="setting-search-enabled"></div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">启用记忆功能</label>
+                <div class="setting-switch on" id="setting-memory-enabled"></div>
+              </div>
+            </div>
+
+            <div class="setting-section">
+              <h3 class="setting-section-title"><i class="fa-solid fa-scroll"></i> 系统提示词</h3>
+              <div class="setting-group">
+                <textarea class="setting-input setting-textarea large" id="setting-system-prompt" rows="6" placeholder="输入智能体的系统提示词...">你是一个乐于助人的AI助手。请用友好、专业的语言回答用户问题。</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 技能管理 -->
+          <div class="drawer-tab-content" id="agent-tab-skills">
+            <div class="skill-management-panel">
+              <div class="skill-management-header">
+                <h3>已启用技能</h3>
+                <button class="drawer-btn drawer-btn-secondary" id="add-skill-to-agent-btn">
+                  <i class="fa-solid fa-plus"></i> 添加技能
+                </button>
+              </div>
+              <div class="skill-list" id="agent-skill-list"></div>
+            </div>
+          </div>
+
+          <!-- 任务历史 -->
+          <div class="drawer-tab-content" id="agent-tab-tasks">
+            <div class="task-history-panel">
+              <div class="task-history-header">
+                <h3>最近任务</h3>
+                <select class="setting-select" id="task-filter">
+                  <option value="all">全部</option>
+                  <option value="completed">已完成</option>
+                  <option value="running">运行中</option>
+                  <option value="failed">失败</option>
+                </select>
+              </div>
+              <div class="task-list" id="agent-task-list"></div>
+            </div>
           </div>
         </div>
 
@@ -1071,78 +1155,162 @@
         <!-- Skills Tab -->
         <div class="drawer-tab-content" id="tab-skills">
           <div class="drawer-tabs" style="margin-bottom: 16px;">
-            <div class="drawer-tab active" data-tab="skill-tab-list">
-              技能列表
-            </div>
+            <div class="drawer-tab active" data-tab="skill-tab-list">技能列表</div>
             <div class="drawer-tab" data-tab="skill-tab-create">创建技能</div>
+            <div class="drawer-tab" data-tab="skill-tab-marketplace">技能市场</div>
           </div>
+
+          <!-- 技能列表 -->
           <div class="drawer-tab-content active" id="skill-tab-list">
-            <div class="skill-list" id="skill-list-content-settings"></div>
+            <div class="skill-list-header">
+              <div class="skill-search">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="skill-search-input" placeholder="搜索技能...">
+              </div>
+              <select class="skill-filter" id="skill-category-filter">
+                <option value="all">全部分类</option>
+                <option value="writing">写作</option>
+                <option value="coding">编程</option>
+                <option value="analysis">分析</option>
+                <option value="creative">创意</option>
+                <option value="utility">工具</option>
+              </select>
+            </div>
+            <div class="skill-cards-grid" id="skill-list-content-settings"></div>
           </div>
+
+          <!-- 创建/编辑技能 -->
           <div class="drawer-tab-content" id="skill-tab-create">
-            <div class="setting-group">
-              <label class="setting-label">技能用途</label>
-              <input
-                type="text"
-                class="setting-input"
-                id="skill-purpose"
-                placeholder="描述你想要这个技能做什么"
-              />
+            <input type="hidden" id="skill-edit-id">
+            <div class="skill-form-section">
+              <h3 class="skill-form-title"><i class="fa-solid fa-plus"></i> 创建技能</h3>
+
+              <div class="setting-group">
+                <label class="setting-label">技能用途</label>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="skill-purpose"
+                  placeholder="描述你想要这个技能做什么"
+                />
+                <span class="setting-hint">输入描述后点击下方按钮让AI帮你生成技能配置</span>
+              </div>
+
+              <button
+                class="drawer-btn drawer-btn-secondary"
+                style="width: 100%; margin-bottom: 16px"
+                id="ai-generate-skill-btn"
+              >
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AI辅助生成
+              </button>
+
+              <div class="setting-group">
+                <label class="setting-label">技能名称</label>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="skill-name"
+                  placeholder="例如：代码审查专家"
+                />
+              </div>
+
+              <div class="setting-group">
+                <label class="setting-label">分类</label>
+                <select class="setting-select" id="skill-category">
+                  <option value="writing">写作</option>
+                  <option value="coding">编程</option>
+                  <option value="analysis">分析</option>
+                  <option value="creative">创意</option>
+                  <option value="utility">工具</option>
+                </select>
+              </div>
+
+              <div class="setting-group">
+                <label class="setting-label">图标</label>
+                <div class="icon-picker">
+                  <input
+                    type="text"
+                    class="setting-input icon-input"
+                    id="skill-icon"
+                    value="⚡"
+                  />
+                  <div class="icon-presets">
+                    <span class="icon-preset" data-icon="⚡">⚡</span>
+                    <span class="icon-preset" data-icon="📝">📝</span>
+                    <span class="icon-preset" data-icon="💡">💡</span>
+                    <span class="icon-preset" data-icon="🔧">🔧</span>
+                    <span class="icon-preset" data-icon="🎨">🎨</span>
+                    <span class="icon-preset" data-icon="📊">📊</span>
+                    <span class="icon-preset" data-icon="🤝">🤝</span>
+                    <span class="icon-preset" data-icon="🎯">🎯</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <label class="setting-label">描述</label>
+                <textarea
+                  class="setting-input setting-textarea"
+                  id="skill-desc"
+                  placeholder="描述技能的功能和使用场景"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <div class="setting-group">
+                <label class="setting-label">触发关键词</label>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="skill-keywords"
+                  placeholder="用逗号分隔，如：写代码,编程,开发"
+                />
+                <span class="setting-hint">当用户输入包含这些关键词时，自动触发该技能</span>
+              </div>
+
+              <div class="setting-group">
+                <label class="setting-label">技能提示词</label>
+                <textarea
+                  class="setting-input setting-textarea large"
+                  id="skill-prompt"
+                  placeholder="输入技能的详细提示词..."
+                  rows="6"
+                ></textarea>
+              </div>
+
+              <div class="setting-group">
+                <label class="setting-label">启用技能</label>
+                <div class="setting-switch on" id="skill-enabled"></div>
+              </div>
+
+              <div
+                id="ai-generating"
+                style="display: none; margin: 12px 0; padding: 12px; border-radius: 8px;"
+                class="info-banner"
+              >
+                <i class="fa-solid fa-spinner fa-spin"></i> AI正在生成，请稍候...
+              </div>
+
+              <div class="skill-form-actions">
+                <button class="drawer-btn drawer-btn-secondary" id="cancel-skill-btn">取消</button>
+                <button class="drawer-btn drawer-btn-primary" id="create-skill-btn">创建技能</button>
+              </div>
             </div>
-            <button
-              class="drawer-btn drawer-btn-secondary"
-              style="width: 100%; margin-bottom: 16px"
-              id="ai-generate-skill-btn"
-            >
-              <i class="fa-solid fa-wand-magic-sparkles"></i> AI辅助生成
-            </button>
-            <div class="setting-group">
-              <label class="setting-label">技能名称</label>
-              <input
-                type="text"
-                class="setting-input"
-                id="skill-name"
-                placeholder="例如：代码审查专家"
-              />
+          </div>
+
+          <!-- 技能市场 -->
+          <div class="drawer-tab-content" id="skill-tab-marketplace">
+            <div class="marketplace-header">
+              <h3>技能市场</h3>
+              <p class="marketplace-desc">发现并安装新技能</p>
             </div>
-            <div class="setting-group">
-              <label class="setting-label">图标</label>
-              <input
-                type="text"
-                class="setting-input"
-                id="skill-icon"
-                value="⚡"
-                style="max-width: 80px"
-              />
+            <div class="marketplace-categories">
+              <button class="marketplace-category active" data-category="all">全部</button>
+              <button class="marketplace-category" data-category="popular">热门</button>
+              <button class="marketplace-category" data-category="new">最新</button>
+              <button class="marketplace-category" data-category="recommended">推荐</button>
             </div>
-            <div class="setting-group">
-              <label class="setting-label">描述</label>
-              <textarea
-                class="setting-input setting-textarea"
-                id="skill-desc"
-                placeholder="描述技能的功能"
-                rows="3"
-              ></textarea>
-            </div>
-            <div
-              id="ai-generating"
-              style="
-                display: none;
-                margin: 12px 0;
-                padding: 12px;
-                border-radius: 8px;
-              "
-              class="info-banner"
-            >
-              <i class="fa-solid fa-spinner fa-spin"></i> AI正在生成，请稍候...
-            </div>
-            <button
-              class="drawer-btn drawer-btn-primary"
-              style="width: 100%; margin-top: 12px"
-              id="create-skill-btn"
-            >
-              创建技能
-            </button>
+            <div class="marketplace-skills" id="marketplace-skills-list"></div>
           </div>
         </div>
 
@@ -1183,67 +1351,176 @@
 
         <!-- MCP Tab -->
         <div class="drawer-tab-content" id="tab-mcp">
-          <div class="mcp-list" id="mcp-list-content-settings"></div>
-          <div class="section-divider">
-            <span>快速添加</span>
+          <div class="drawer-tabs" style="margin-bottom: 16px;">
+            <div class="drawer-tab active" data-tab="mcp-tab-list">已连接服务器</div>
+            <div class="drawer-tab" data-tab="mcp-tab-add">添加服务器</div>
+            <div class="drawer-tab" data-tab="mcp-tab-gallery">MCP市场</div>
           </div>
-          <div class="mcp-quick-grid">
-            <button class="mcp-quick-btn" data-mcp="filesystem">
-              <i class="fa-solid fa-folder"></i> 文件系统
-            </button>
-            <button class="mcp-quick-btn" data-mcp="github">
-              <i class="fa-brands fa-github"></i> GitHub
-            </button>
-            <button class="mcp-quick-btn" data-mcp="notion">
-              <i class="fa-solid fa-book-open"></i> Notion
-            </button>
-            <button class="mcp-quick-btn" data-mcp="brave">
-              <i class="fa-solid fa-shield-halved"></i> Brave搜索
-            </button>
-            <button class="mcp-quick-btn" data-mcp="sqlite">
-              <i class="fa-solid fa-database"></i> SQLite
-            </button>
-            <button class="mcp-quick-btn" data-mcp="postgres">
-              <i class="fa-solid fa-elephant"></i> PostgreSQL
-            </button>
-            <button class="mcp-quick-btn" data-mcp="slack">
-              <i class="fa-brands fa-slack"></i> Slack
-            </button>
-            <button class="mcp-quick-btn" data-mcp="gmail">
-              <i class="fa-solid fa-envelope"></i> Gmail
-            </button>
+          
+          <!-- MCP列表 -->
+          <div class="drawer-tab-content active" id="mcp-tab-list">
+            <div class="mcp-list-header">
+              <h3>MCP服务器</h3>
+              <span class="mcp-count">已连接 <strong>0</strong> 个服务器</span>
+            </div>
+            <div class="mcp-servers-grid" id="mcp-list-content-settings"></div>
           </div>
-          <div class="section-divider">
-            <span>自定义服务器</span>
+
+          <!-- 添加服务器 -->
+          <div class="drawer-tab-content" id="mcp-tab-add">
+            <input type="hidden" id="mcp-edit-id">
+            <div class="mcp-form-section">
+              <h3 class="mcp-form-title"><i class="fa-solid fa-server"></i> 添加MCP服务器</h3>
+              
+              <div class="setting-group">
+                <label class="setting-label">服务器名称</label>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="mcp-name"
+                  placeholder="例如：本地文件系统"
+                />
+              </div>
+              
+              <div class="setting-group">
+                <label class="setting-label">服务器类型</label>
+                <select class="setting-select" id="mcp-type">
+                  <option value="stdio">标准输入输出 (stdio)</option>
+                  <option value="sse">服务器发送事件 (SSE)</option>
+                  <option value="http">HTTP API</option>
+                  <option value="websocket">WebSocket</option>
+                </select>
+              </div>
+              
+              <div class="setting-group">
+                <label class="setting-label">命令/路径</label>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="mcp-command"
+                  placeholder="例如：npx @mcp/something"
+                />
+                <span class="setting-hint">对于stdio类型，输入命令；对于HTTP类型，输入URL</span>
+              </div>
+              
+              <div class="setting-group">
+                <label class="setting-label">工作目录</label>
+                <input
+                  type="text"
+                  class="setting-input"
+                  id="mcp-cwd"
+                  placeholder="可选，服务器运行的工作目录"
+                />
+              </div>
+              
+              <div class="setting-group">
+                <label class="setting-label">环境变量</label>
+                <textarea
+                  class="setting-input setting-textarea"
+                  id="mcp-env"
+                  placeholder="每行一个，格式: KEY=VALUE"
+                  rows="3"
+                ></textarea>
+              </div>
+              
+              <div class="setting-group">
+                <label class="setting-label">启用服务器</label>
+                <div class="setting-switch on" id="mcp-enabled"></div>
+              </div>
+              
+              <div class="mcp-form-actions">
+                <button class="drawer-btn drawer-btn-secondary" id="test-mcp-btn">
+                  <i class="fa-solid fa-plug"></i> 测试连接
+                </button>
+                <button class="drawer-btn drawer-btn-secondary" id="cancel-mcp-btn">取消</button>
+                <button class="drawer-btn drawer-btn-primary" id="create-mcp-btn">添加服务器</button>
+              </div>
+            </div>
           </div>
-          <div class="setting-group">
-            <label class="setting-label">名称</label>
-            <input
-              type="text"
-              class="setting-input"
-              id="mcp-name"
-              placeholder="例如：本地文件系统"
-            />
+
+          <!-- MCP市场 -->
+          <div class="drawer-tab-content" id="mcp-tab-gallery">
+            <div class="mcp-gallery-header">
+              <h3>MCP工具市场</h3>
+              <p class="mcp-gallery-desc">发现并安装MCP工具</p>
+            </div>
+            
+            <div class="mcp-categories">
+              <button class="mcp-category active" data-category="all">全部</button>
+              <button class="mcp-category" data-category="files">文件管理</button>
+              <button class="mcp-category" data-category="data">数据存储</button>
+              <button class="mcp-category" data-category="api">API集成</button>
+              <button class="mcp-category" data-category="ai">AI工具</button>
+              <button class="mcp-category" data-category="dev">开发工具</button>
+            </div>
+            
+            <div class="mcp-gallery-grid" id="mcp-gallery-content">
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">📁</div>
+                <div class="mcp-gallery-info">
+                  <h4>文件系统</h4>
+                  <p>管理本地文件和目录</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">🗄️</div>
+                <div class="mcp-gallery-info">
+                  <h4>数据库</h4>
+                  <p>SQLite、PostgreSQL等数据库访问</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">🌐</div>
+                <div class="mcp-gallery-info">
+                  <h4>网络搜索</h4>
+                  <p>集成多种搜索引擎</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">📧</div>
+                <div class="mcp-gallery-info">
+                  <h4>邮件服务</h4>
+                  <p>Gmail、Outlook等邮件集成</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">💬</div>
+                <div class="mcp-gallery-info">
+                  <h4>即时通讯</h4>
+                  <p>Slack、Discord等消息集成</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">📝</div>
+                <div class="mcp-gallery-info">
+                  <h4>笔记管理</h4>
+                  <p>Notion、Obsidian等笔记集成</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">☁️</div>
+                <div class="mcp-gallery-info">
+                  <h4>云存储</h4>
+                  <p>Dropbox、Google Drive等云服务</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+              <div class="mcp-gallery-item">
+                <div class="mcp-gallery-icon">🎨</div>
+                <div class="mcp-gallery-info">
+                  <h4>图像生成</h4>
+                  <p>AI图像生成工具集成</p>
+                </div>
+                <button class="mcp-install-btn">安装</button>
+              </div>
+            </div>
           </div>
-          <div class="setting-group">
-            <label class="setting-label">类型</label>
-            <select class="setting-select" id="mcp-type">
-              <option value="stdio">stdio</option>
-              <option value="sse">sse</option>
-            </select>
-          </div>
-          <div class="setting-group">
-            <label class="setting-label">命令</label>
-            <input
-              type="text"
-              class="setting-input"
-              id="mcp-command"
-              placeholder="例如：npx"
-            />
-          </div>
-          <button class="drawer-btn drawer-btn-primary" id="create-mcp-btn">
-            添加服务器
-          </button>
         </div>
       </div>
       <div class="drawer-footer">
