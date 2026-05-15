@@ -348,9 +348,34 @@
               <button
                 class="input-action-btn"
                 id="polish-btn"
-                title="润色文本"
+                title="多语言润色"
               >
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span class="btn-badge">翻译</span>
+              </button>
+              <button
+                class="input-action-btn"
+                id="meeting-btn"
+                title="会议纪要"
+              >
+                <i class="fa-solid fa-file-text"></i>
+                <span class="btn-badge">纪要</span>
+              </button>
+              <button
+                class="input-action-btn"
+                id="summary-btn"
+                title="文献摘要"
+              >
+                <i class="fa-solid fa-book-open"></i>
+                <span class="btn-badge">摘要</span>
+              </button>
+              <button
+                class="input-action-btn"
+                id="memory-btn"
+                title="记忆系统"
+              >
+                <i class="fa-solid fa-brain"></i>
+                <span class="btn-badge">记忆</span>
               </button>
               <button
                 class="input-action-btn"
@@ -1125,6 +1150,288 @@
           </div>
         </div>
 
+        <!-- Polish Panel -->
+        <div class="feature-panel hidden" id="polish-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> 多语言润色</h3>
+            <button class="panel-close" id="polish-panel-close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="polish-language-selector">
+              <div class="language-pair">
+                <select class="language-select" id="polish-from-lang">
+                  <option value="zh">中文</option>
+                  <option value="en">English</option>
+                  <option value="ja">日本語</option>
+                  <option value="ko">한국어</option>
+                  <option value="fr">Français</option>
+                  <option value="de">Deutsch</option>
+                  <option value="es">Español</option>
+                  <option value="ru">Русский</option>
+                </select>
+                <i class="fa-solid fa-arrow-right-arrow-left swap-icon"></i>
+                <select class="language-select" id="polish-to-lang">
+                  <option value="en">English</option>
+                  <option value="zh">中文</option>
+                  <option value="ja">日本語</option>
+                  <option value="ko">한국어</option>
+                  <option value="fr">Français</option>
+                  <option value="de">Deutsch</option>
+                  <option value="es">Español</option>
+                  <option value="ru">Русский</option>
+                </select>
+              </div>
+              <button class="swap-lang-btn" id="swap-lang-btn">
+                <i class="fa-solid fa-arrows-left-right"></i>
+              </button>
+            </div>
+            <div class="polish-modes">
+              <button class="polish-mode-btn active" data-mode="translate">翻译</button>
+              <button class="polish-mode-btn" data-mode="polish">润色</button>
+              <button class="polish-mode-btn" data-mode="summarize">总结</button>
+              <button class="polish-mode-btn" data-mode="expand">扩写</button>
+            </div>
+            <textarea class="polish-input" id="polish-input" placeholder="输入要翻译或润色的文本..."></textarea>
+            <button class="polish-submit-btn" id="polish-submit-btn">
+              <i class="fa-solid fa-magic"></i> 开始处理
+            </button>
+            <div class="polish-output" id="polish-output"></div>
+          </div>
+        </div>
+
+        <!-- Meeting Minutes Panel -->
+        <div class="feature-panel hidden" id="meeting-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-file-text"></i> 会议纪要生成</h3>
+            <button class="panel-close" id="meeting-panel-close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="meeting-input-section">
+              <textarea class="meeting-input" id="meeting-input" placeholder="粘贴会议记录或输入会议内容..."></textarea>
+            </div>
+            <div class="meeting-options">
+              <label class="meeting-option">
+                <input type="checkbox" checked> 提取关键决策
+              </label>
+              <label class="meeting-option">
+                <input type="checkbox" checked> 识别行动项
+              </label>
+              <label class="meeting-option">
+                <input type="checkbox" checked> 生成会议摘要
+              </label>
+              <label class="meeting-option">
+                <input type="checkbox"> 参会人员分析
+              </label>
+            </div>
+            <button class="meeting-submit-btn" id="meeting-submit-btn">
+              <i class="fa-solid fa-file-signature"></i> 生成纪要
+            </button>
+            <div class="meeting-output" id="meeting-output"></div>
+          </div>
+        </div>
+
+        <!-- Literature Summary Panel -->
+        <div class="feature-panel hidden" id="summary-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-book-open"></i> 文献摘要提取</h3>
+            <button class="panel-close" id="summary-panel-close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="summary-input-section">
+              <textarea class="summary-input" id="summary-input" placeholder="粘贴文献内容或输入要分析的文本..."></textarea>
+            </div>
+            <div class="summary-options">
+              <select class="summary-depth-select" id="summary-depth">
+                <option value="brief">简要摘要 (3-5句话)</option>
+                <option value="detailed">详细摘要 (10-15句话)</option>
+                <option value="comprehensive">全面分析</option>
+              </select>
+              <label class="summary-option">
+                <input type="checkbox" checked> 提取关键发现
+              </label>
+              <label class="summary-option">
+                <input type="checkbox" checked> 识别研究方法
+              </label>
+              <label class="summary-option">
+                <input type="checkbox"> 生成参考文献格式
+              </label>
+            </div>
+            <button class="summary-submit-btn" id="summary-submit-btn">
+              <i class="fa-solid fa-search"></i> 提取摘要
+            </button>
+            <div class="summary-output" id="summary-output"></div>
+          </div>
+        </div>
+
+        <!-- Memory System Panel -->
+        <div class="feature-panel hidden" id="memory-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-brain"></i> 记忆系统</h3>
+            <button class="panel-close" id="memory-panel-close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="memory-tabs">
+              <button class="memory-tab active" data-tab="thinking">思维链</button>
+              <button class="memory-tab" data-tab="knowledge">知识图谱</button>
+              <button class="memory-tab" data-tab="memory-files">记忆文件</button>
+              <button class="memory-tab" data-tab="learning">学习进度</button>
+            </div>
+            
+            <!-- Thinking Chain -->
+            <div class="memory-tab-content active" id="memory-thinking">
+              <div class="thinking-chain-container" id="thinking-chain-container"></div>
+              <div class="thinking-stats">
+                <div class="stat-item">
+                  <span class="stat-value">128</span>
+                  <span class="stat-label">思考次数</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">94%</span>
+                  <span class="stat-label">准确率</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">2.3s</span>
+                  <span class="stat-label">平均耗时</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Knowledge Graph -->
+            <div class="memory-tab-content" id="memory-knowledge">
+              <div class="knowledge-graph-container" id="knowledge-graph-container">
+                <svg class="knowledge-graph-svg" viewBox="0 0 400 300">
+                  <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#10a37f"/>
+                    </marker>
+                  </defs>
+                  <circle cx="200" cy="150" r="30" fill="#10a37f" class="kg-node center"/>
+                  <circle cx="100" cy="80" r="20" fill="#6366f1" class="kg-node"/>
+                  <circle cx="300" cy="80" r="20" fill="#f59e0b" class="kg-node"/>
+                  <circle cx="100" cy="220" r="20" fill="#ec4899" class="kg-node"/>
+                  <circle cx="300" cy="220" r="20" fill="#8b5cf6" class="kg-node"/>
+                  <line x1="200" y1="120" x2="100" y2="100" stroke="#10a37f" stroke-width="2" marker-end="url(#arrowhead)"/>
+                  <line x1="200" y1="120" x2="300" y2="100" stroke="#10a37f" stroke-width="2" marker-end="url(#arrowhead)"/>
+                  <line x1="200" y1="180" x2="100" y2="200" stroke="#10a37f" stroke-width="2" marker-end="url(#arrowhead)"/>
+                  <line x1="200" y1="180" x2="300" y2="200" stroke="#10a37f" stroke-width="2" marker-end="url(#arrowhead)"/>
+                  <text x="200" y="155" text-anchor="middle" fill="white" font-size="12">核心知识</text>
+                  <text x="100" y="85" text-anchor="middle" fill="white" font-size="10">技能</text>
+                  <text x="300" y="85" text-anchor="middle" fill="white" font-size="10">工具</text>
+                  <text x="100" y="225" text-anchor="middle" fill="white" font-size="10">用户</text>
+                  <text x="300" y="225" text-anchor="middle" fill="white" font-size="10">历史</text>
+                </svg>
+              </div>
+              <div class="knowledge-stats">
+                <div class="stat-item">
+                  <span class="stat-value">1,247</span>
+                  <span class="stat-label">知识节点</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">2,891</span>
+                  <span class="stat-label">关联关系</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">98%</span>
+                  <span class="stat-label">匹配率</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Memory Files -->
+            <div class="memory-tab-content" id="memory-files">
+              <div class="memory-files-list" id="memory-files-list">
+                <div class="memory-file-item">
+                  <i class="fa-solid fa-file-text"></i>
+                  <div class="file-info">
+                    <span class="file-name">用户偏好记录.md</span>
+                    <span class="file-date">2024-01-15</span>
+                  </div>
+                  <button class="file-action"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="memory-file-item">
+                  <i class="fa-solid fa-file-text"></i>
+                  <div class="file-info">
+                    <span class="file-name">对话历史摘要.md</span>
+                    <span class="file-date">2024-01-14</span>
+                  </div>
+                  <button class="file-action"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="memory-file-item">
+                  <i class="fa-solid fa-file-text"></i>
+                  <div class="file-info">
+                    <span class="file-name">学习进度记录.md</span>
+                    <span class="file-date">2024-01-13</span>
+                  </div>
+                  <button class="file-action"><i class="fa-solid fa-eye"></i></button>
+                </div>
+              </div>
+              <button class="add-memory-btn" id="add-memory-btn">
+                <i class="fa-solid fa-plus"></i> 添加记忆文件
+              </button>
+            </div>
+            
+            <!-- Learning Progress -->
+            <div class="memory-tab-content" id="memory-learning">
+              <div class="learning-progress">
+                <div class="progress-item">
+                  <div class="progress-header">
+                    <span>意图识别</span>
+                    <span class="progress-percent">92%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 92%"></div>
+                  </div>
+                </div>
+                <div class="progress-item">
+                  <div class="progress-header">
+                    <span>知识库检索</span>
+                    <span class="progress-percent">88%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 88%"></div>
+                  </div>
+                </div>
+                <div class="progress-item">
+                  <div class="progress-header">
+                    <span>工具调用</span>
+                    <span class="progress-percent">76%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 76%"></div>
+                  </div>
+                </div>
+                <div class="progress-item">
+                  <div class="progress-header">
+                    <span>用户偏好学习</span>
+                    <span class="progress-percent">84%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 84%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="learning-toggle">
+                <label class="learning-switch">
+                  <input type="checkbox" checked>
+                  <span>启用自动学习</span>
+                </label>
+                <label class="learning-switch">
+                  <input type="checkbox" checked>
+                  <span>启用强化学习</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Display Tab -->
         <div class="drawer-tab-content" id="tab-display">
           <div class="setting-group">
@@ -1356,7 +1663,7 @@
             <div class="drawer-tab" data-tab="mcp-tab-add">添加服务器</div>
             <div class="drawer-tab" data-tab="mcp-tab-gallery">MCP市场</div>
           </div>
-          
+
           <!-- MCP列表 -->
           <div class="drawer-tab-content active" id="mcp-tab-list">
             <div class="mcp-list-header">
@@ -1371,7 +1678,7 @@
             <input type="hidden" id="mcp-edit-id">
             <div class="mcp-form-section">
               <h3 class="mcp-form-title"><i class="fa-solid fa-server"></i> 添加MCP服务器</h3>
-              
+
               <div class="setting-group">
                 <label class="setting-label">服务器名称</label>
                 <input
@@ -1381,7 +1688,7 @@
                   placeholder="例如：本地文件系统"
                 />
               </div>
-              
+
               <div class="setting-group">
                 <label class="setting-label">服务器类型</label>
                 <select class="setting-select" id="mcp-type">
@@ -1391,7 +1698,7 @@
                   <option value="websocket">WebSocket</option>
                 </select>
               </div>
-              
+
               <div class="setting-group">
                 <label class="setting-label">命令/路径</label>
                 <input
@@ -1402,7 +1709,7 @@
                 />
                 <span class="setting-hint">对于stdio类型，输入命令；对于HTTP类型，输入URL</span>
               </div>
-              
+
               <div class="setting-group">
                 <label class="setting-label">工作目录</label>
                 <input
@@ -1412,7 +1719,7 @@
                   placeholder="可选，服务器运行的工作目录"
                 />
               </div>
-              
+
               <div class="setting-group">
                 <label class="setting-label">环境变量</label>
                 <textarea
@@ -1422,12 +1729,12 @@
                   rows="3"
                 ></textarea>
               </div>
-              
+
               <div class="setting-group">
                 <label class="setting-label">启用服务器</label>
                 <div class="setting-switch on" id="mcp-enabled"></div>
               </div>
-              
+
               <div class="mcp-form-actions">
                 <button class="drawer-btn drawer-btn-secondary" id="test-mcp-btn">
                   <i class="fa-solid fa-plug"></i> 测试连接
@@ -1444,7 +1751,7 @@
               <h3>MCP工具市场</h3>
               <p class="mcp-gallery-desc">发现并安装MCP工具</p>
             </div>
-            
+
             <div class="mcp-categories">
               <button class="mcp-category active" data-category="all">全部</button>
               <button class="mcp-category" data-category="files">文件管理</button>
@@ -1453,7 +1760,7 @@
               <button class="mcp-category" data-category="ai">AI工具</button>
               <button class="mcp-category" data-category="dev">开发工具</button>
             </div>
-            
+
             <div class="mcp-gallery-grid" id="mcp-gallery-content">
               <div class="mcp-gallery-item">
                 <div class="mcp-gallery-icon">📁</div>

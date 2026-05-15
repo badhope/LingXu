@@ -1960,6 +1960,13 @@ async def get():
     return FileResponse(html_file)
 
 
+@app.get("/health")
+async def health_check():
+    from datetime import datetime as dt
+
+    return {"status": "healthy", "timestamp": dt.now().isoformat()}
+
+
 # ==================== Model Test API ====================
 class ModelTestRequest(BaseModel):
     provider: str

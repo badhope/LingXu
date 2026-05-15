@@ -1381,6 +1381,17 @@ body {
     color: var(--accent-primary);
     background: rgba(16, 163, 127, 0.1);
 }
+.btn-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 8px;
+    padding: 1px 4px;
+    border-radius: 6px;
+    background: var(--accent-primary);
+    color: white;
+    font-weight: 600;
+}
 
 .input-wrapper {
     flex: 1;
@@ -4050,6 +4061,418 @@ body {
 }
 .marketplace-install-btn:hover, .mcp-install-btn:hover {
     background: var(--primary);
+}
+
+/* ==================== Feature Panels Styles ==================== */
+.feature-panel {
+    position: fixed;
+    top: 80px;
+    right: 0;
+    width: 500px;
+    max-width: 90vw;
+    height: calc(100vh - 80px);
+    background: var(--drawer-bg);
+    border-left: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    animation: slideInRight 0.3s ease;
+}
+.feature-panel.hidden {
+    display: none;
+}
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+.panel-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.panel-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.panel-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+.panel-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* Polish Panel */
+.polish-language-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.language-pair {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.language-select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+}
+.swap-icon {
+    color: var(--text-muted);
+}
+.swap-lang-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-hover);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.swap-lang-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+.polish-modes {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.polish-mode-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.polish-mode-btn.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+.polish-mode-btn:hover:not(.active) {
+    background: var(--bg-active);
+}
+.polish-input, .meeting-input, .summary-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    font-size: 13px;
+    resize: vertical;
+    outline: none;
+    margin-bottom: 12px;
+}
+.polish-submit-btn, .meeting-submit-btn, .summary-submit-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent-primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.polish-submit-btn:hover, .meeting-submit-btn:hover, .summary-submit-btn:hover {
+    background: var(--primary);
+}
+.polish-output, .meeting-output, .summary-output {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--bg-hover);
+    min-height: 100px;
+    display: none;
+}
+.polish-output.active, .meeting-output.active, .summary-output.active {
+    display: block;
+}
+
+/* Meeting Panel */
+.meeting-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.meeting-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+/* Summary Panel */
+.summary-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.summary-depth-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    font-size: 12px;
+    outline: none;
+}
+.summary-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+/* Memory Panel */
+.memory-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: var(--bg-hover);
+    padding: 4px;
+    border-radius: 8px;
+}
+.memory-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.memory-tab.active {
+    background: var(--accent-primary);
+    color: white;
+}
+.memory-tab-content {
+    display: none;
+}
+.memory-tab-content.active {
+    display: block;
+}
+
+/* Thinking Chain */
+.thinking-chain-container {
+    min-height: 150px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--bg-hover);
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.thinking-stats, .knowledge-stats {
+    display: flex;
+    gap: 12px;
+}
+.stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--bg-hover);
+}
+.stat-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 4px;
+}
+.stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Knowledge Graph */
+.knowledge-graph-container {
+    height: 200px;
+    margin-bottom: 16px;
+}
+.knowledge-graph-svg {
+    width: 100%;
+    height: 100%;
+}
+.kg-node {
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.kg-node:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+/* Memory Files */
+.memory-files-list {
+    margin-bottom: 12px;
+}
+.memory-file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background: var(--bg-hover);
+    margin-bottom: 8px;
+}
+.memory-file-item i {
+    color: var(--accent-primary);
+    font-size: 16px;
+}
+.file-info {
+    flex: 1;
+}
+.file-name {
+    display: block;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+.file-date {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+.file-action {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.file-action:hover {
+    background: var(--bg-active);
+    color: var(--accent-primary);
+}
+.add-memory-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.add-memory-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Learning Progress */
+.learning-progress {
+    margin-bottom: 16px;
+}
+.progress-item {
+    margin-bottom: 12px;
+}
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.progress-percent {
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+.progress-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg-active);
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--primary));
+    transition: width 0.5s ease;
+}
+.learning-toggle {
+    display: flex;
+    gap: 16px;
+}
+.learning-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
 }
 
 /* ==================== MCP Panel Styles ==================== */
