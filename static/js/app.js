@@ -956,27 +956,7 @@
         var chatArea = $('#chat-area');
 
         if (data.type === 'thinking') {
-            var thinkingEl = chatArea.querySelector('.thinking-container');
-            if (!thinkingEl) {
-                thinkingEl = document.createElement('div');
-                thinkingEl.className = 'thinking-container';
-                chatArea.appendChild(thinkingEl);
-            }
-
-            var phaseNum = thinkingEl.querySelectorAll('.thinking-item').length + 1;
-            var phaseEl = document.createElement('div');
-            phaseEl.className = 'thinking-item active';
-            phaseEl.innerHTML =
-                '<div class="thinking-header" onclick="window.__toggleThinking(this)">' +
-                '<div class="thinking-badge">' + phaseNum + '</div>' +
-                '<div class="thinking-title">' + escapeHtml(data.title || '思考中...') +
-                '<span class="thinking-dots"><span></span><span></span><span></span></span></div>' +
-                '<div class="thinking-toggle"><i class="fa-solid fa-chevron-down"></i></div>' +
-                '</div>' +
-                '<div class="thinking-content">' + renderMarkdown(data.content || '') + '</div>';
-
-            thinkingEl.appendChild(phaseEl);
-            scrollToBottom();
+            handleThinkingPhase(data, chatArea);
 
         } else if (data.type === 'stream_start') {
             // Remove thinking container
@@ -1149,6 +1129,116 @@
         if (content) content.classList.toggle('collapsed');
         if (toggle) toggle.classList.toggle('collapsed');
     };
+
+    // ==================== Thinking Animation System ====================
+    var thinkingPhases = [];
+    var currentPhaseIndex = 0;
+    var phaseTimestamps = [];
+
+    var PHASE_TYPES = {
+        intent_recognition: { icon: '🧠', label: '意图识别', color: '#8b5cf6' },
+        knowledge_search: { icon: '🔍', label: '知识检索', color: '#3b82f6' },
+        tool_selection: { icon: '🛠️', label: '工具选择', color: '#10a37f' },
+        plan_generation: { icon: '📋', label: '计划生成', color: '#f59e0b' },
+        api_call: { icon: '📡', label: 'API调用', color: '#ef4444' },
+        response_generation: { icon: '✍️', label: '响应生成', color: '#22c55e' },
+        summarization: { icon: '📝', label: '总结整理', color: '#6366f1' },
+        analysis: { icon: '🔬', label: '深度分析', color: '#ec4899' }
+    };
+
+    function handleThinkingPhase(data, chatArea) {
+        var thinkingEl = chatArea.querySelector('.thinking-container');
+        if (!thinkingEl) {
+            thinkingEl = document.createElement('div');
+            thinkingEl.className = 'thinking-container';
+            chatArea.appendChild(thinkingEl);
+            thinkingPhases = [];
+            currentPhaseIndex = 0;
+            phaseTimestamps = [];
+        }
+
+        var phaseType = data.phase || 'analysis';
+        var phaseInfo = PHASE_TYPES[phaseType] || { icon: '🤔', label: '处理中', color: '#6b7280' };
+
+        var phaseNum = thinkingPhases.length + 1;
+        var phaseData = {
+            id: Date.now(),
+            type: phaseType,
+            title: data.title || phaseInfo.label,
+            content: data.content || '',
+            icon: phaseInfo.icon,
+            color: phaseInfo.color,
+            startTime: Date.now()
+        };
+        thinkingPhases.push(phaseData);
+
+        var phaseEl = document.createElement('div');
+        phaseEl.className = 'thinking-item active';
+        phaseEl.setAttribute('data-phase-type', phaseType);
+
+        var progressBar = '';
+        if (data.progress !== undefined) {
+            progressBar = `<div class="thinking-progress"><div class="thinking-progress-bar" style="width: ${data.progress}%"></div></div>`;
+        }
+
+        phaseEl.innerHTML = `
+            <div class="thinking-header" onclick="window.__toggleThinking(this)">
+                <div class="thinking-badge" style="background: ${phaseInfo.color}">${phaseInfo.icon}</div>
+                <div class="thinking-title">
+                    <span class="phase-label">${phaseNum}. ${phaseInfo.label}</span>
+                    <span class="phase-title-text">${escapeHtml(data.title || '')}</span>
+                    <span class="thinking-dots"><span></span><span></span><span></span></span>
+                </div>
+                <div class="thinking-time">0.0s</div>
+                <div class="thinking-toggle"><i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+            ${progressBar}
+            <div class="thinking-content">${renderMarkdown(data.content || '')}</div>
+        `;
+
+        thinkingEl.appendChild(phaseEl);
+
+        updatePhaseTimers();
+        scrollToBottom();
+
+        addLog(`思考阶段: ${phaseInfo.label} - ${data.title || ''}`, 'info');
+    }
+
+    function updatePhaseTimers() {
+        var thinkingItems = document.querySelectorAll('.thinking-item');
+        thinkingItems.forEach(function(item, index) {
+            var timeEl = item.querySelector('.thinking-time');
+            if (timeEl && thinkingPhases[index]) {
+                var elapsed = (Date.now() - thinkingPhases[index].startTime) / 1000;
+                timeEl.textContent = elapsed.toFixed(1) + 's';
+            }
+        });
+
+        if (isStreaming === false) {
+            requestAnimationFrame(updatePhaseTimers);
+        }
+    }
+
+    function simulateThinkingSequence(text, chatArea) {
+        var phases = [
+            { type: 'intent_recognition', title: '正在分析用户意图...', delay: 800 },
+            { type: 'knowledge_search', title: '检索相关知识...', delay: 1200 },
+            { type: 'plan_generation', title: '制定响应计划...', delay: 600 },
+            { type: 'response_generation', title: '生成响应内容...', delay: 400 }
+        ];
+
+        phases.forEach(function(phase, index) {
+            setTimeout(function() {
+                var thinkingEl = chatArea.querySelector('.thinking-container');
+                if (!thinkingEl) return;
+
+                var prevPhase = thinkingEl.querySelector('.thinking-item.active');
+                if (prevPhase) prevPhase.classList.remove('active');
+
+                handleThinkingPhase(phase, chatArea);
+            }, phases.slice(0, index).reduce(function(sum, p) { return sum + p.delay; }, 0));
+        });
+    }
 
     function finishProcessing() {
         isStreaming = false;
@@ -3581,6 +3671,7 @@
 
     // ==================== Advanced Intent Recognition with NLP.js ====================
     var nlpManager = null;
+    var intentModelLoaded = false;
 
     async function initNLPManager() {
         if (!libs.nlpjs) {
@@ -3589,79 +3680,158 @@
         }
 
         try {
-            nlpManager = new libs.nlpjs.NlpManager({ languages: ['zh', 'en'], forceNER: true });
+            nlpManager = new libs.nlpjs.NlpManager({
+                languages: ['zh', 'en'],
+                forceNER: true,
+                nlu: { log: false },
+                autoLoad: false
+            });
 
-            // 图片生成意图
+            // 图片生成意图 - 扩展训练数据
             nlpManager.addDocument('zh', '帮我生成一张图片', 'image_generation');
             nlpManager.addDocument('zh', '画一张猫的图片', 'image_generation');
             nlpManager.addDocument('zh', '生成图片', 'image_generation');
             nlpManager.addDocument('zh', '创建图像', 'image_generation');
             nlpManager.addDocument('zh', '给我画', 'image_generation');
             nlpManager.addDocument('zh', '绘制', 'image_generation');
+            nlpManager.addDocument('zh', 'AI画图', 'image_generation');
+            nlpManager.addDocument('zh', '生成插画', 'image_generation');
+            nlpManager.addDocument('zh', '创作图片', 'image_generation');
+            nlpManager.addDocument('zh', '生成艺术作品', 'image_generation');
             nlpManager.addDocument('en', 'generate an image', 'image_generation');
             nlpManager.addDocument('en', 'create a picture', 'image_generation');
+            nlpManager.addDocument('en', 'draw', 'image_generation');
+            nlpManager.addDocument('en', 'AI art', 'image_generation');
 
             // PPT生成意图
             nlpManager.addDocument('zh', '生成PPT', 'ppt_generation');
             nlpManager.addDocument('zh', '制作演示文稿', 'ppt_generation');
             nlpManager.addDocument('zh', '创建幻灯片', 'ppt_generation');
             nlpManager.addDocument('zh', '做ppt', 'ppt_generation');
+            nlpManager.addDocument('zh', '制作汇报材料', 'ppt_generation');
+            nlpManager.addDocument('zh', '生成演示', 'ppt_generation');
+            nlpManager.addDocument('zh', '幻灯片制作', 'ppt_generation');
             nlpManager.addDocument('en', 'create presentation', 'ppt_generation');
             nlpManager.addDocument('en', 'make ppt', 'ppt_generation');
+            nlpManager.addDocument('en', 'create slides', 'ppt_generation');
+            nlpManager.addDocument('en', 'generate presentation', 'ppt_generation');
 
             // 代码生成意图
             nlpManager.addDocument('zh', '写代码', 'code_generation');
             nlpManager.addDocument('zh', '生成Python代码', 'code_generation');
             nlpManager.addDocument('zh', '帮我写程序', 'code_generation');
             nlpManager.addDocument('zh', '编写代码', 'code_generation');
+            nlpManager.addDocument('zh', '编程', 'code_generation');
+            nlpManager.addDocument('zh', '实现功能', 'code_generation');
+            nlpManager.addDocument('zh', '代码示例', 'code_generation');
+            nlpManager.addDocument('zh', '写个函数', 'code_generation');
             nlpManager.addDocument('en', 'write code', 'code_generation');
             nlpManager.addDocument('en', 'generate python code', 'code_generation');
+            nlpManager.addDocument('en', 'code example', 'code_generation');
+            nlpManager.addDocument('en', 'implement feature', 'code_generation');
 
             // 数据分析意图
             nlpManager.addDocument('zh', '分析数据', 'data_analysis');
             nlpManager.addDocument('zh', '数据可视化', 'data_analysis');
             nlpManager.addDocument('zh', '统计分析', 'data_analysis');
+            nlpManager.addDocument('zh', '数据报告', 'data_analysis');
+            nlpManager.addDocument('zh', '数据处理', 'data_analysis');
+            nlpManager.addDocument('zh', '数据分析报告', 'data_analysis');
             nlpManager.addDocument('en', 'analyze data', 'data_analysis');
             nlpManager.addDocument('en', 'data visualization', 'data_analysis');
+            nlpManager.addDocument('en', 'data report', 'data_analysis');
+            nlpManager.addDocument('en', 'statistical analysis', 'data_analysis');
 
             // 翻译意图
             nlpManager.addDocument('zh', '翻译这段文字', 'translation');
             nlpManager.addDocument('zh', '翻译成英文', 'translation');
             nlpManager.addDocument('zh', '润色文本', 'translation');
+            nlpManager.addDocument('zh', '英译中', 'translation');
+            nlpManager.addDocument('zh', '中译英', 'translation');
+            nlpManager.addDocument('zh', '多语言翻译', 'translation');
+            nlpManager.addDocument('zh', '语言转换', 'translation');
             nlpManager.addDocument('en', 'translate this', 'translation');
             nlpManager.addDocument('en', 'polish text', 'translation');
+            nlpManager.addDocument('en', 'translate to English', 'translation');
+            nlpManager.addDocument('en', 'translate to Chinese', 'translation');
 
             // 会议纪要意图
             nlpManager.addDocument('zh', '总结会议', 'meeting_summary');
             nlpManager.addDocument('zh', '会议纪要', 'meeting_summary');
             nlpManager.addDocument('zh', '会议记录', 'meeting_summary');
+            nlpManager.addDocument('zh', '会议总结', 'meeting_summary');
+            nlpManager.addDocument('zh', '记录会议内容', 'meeting_summary');
+            nlpManager.addDocument('zh', '整理会议纪要', 'meeting_summary');
             nlpManager.addDocument('en', 'meeting summary', 'meeting_summary');
             nlpManager.addDocument('en', 'meeting notes', 'meeting_summary');
+            nlpManager.addDocument('en', 'meeting minutes', 'meeting_summary');
+            nlpManager.addDocument('en', 'summarize meeting', 'meeting_summary');
 
             // 文献摘要意图
             nlpManager.addDocument('zh', '文献摘要', 'literature_review');
             nlpManager.addDocument('zh', '论文分析', 'literature_review');
             nlpManager.addDocument('zh', '研究总结', 'literature_review');
+            nlpManager.addDocument('zh', '学术论文', 'literature_review');
+            nlpManager.addDocument('zh', '论文摘要', 'literature_review');
+            nlpManager.addDocument('zh', '文献综述', 'literature_review');
             nlpManager.addDocument('en', 'literature review', 'literature_review');
             nlpManager.addDocument('en', 'paper summary', 'literature_review');
+            nlpManager.addDocument('en', 'research paper', 'literature_review');
+            nlpManager.addDocument('en', 'academic summary', 'literature_review');
 
             // 图表生成意图
             nlpManager.addDocument('zh', '生成图表', 'chart_generation');
             nlpManager.addDocument('zh', '画柱状图', 'chart_generation');
             nlpManager.addDocument('zh', '折线图', 'chart_generation');
+            nlpManager.addDocument('zh', '饼图', 'chart_generation');
+            nlpManager.addDocument('zh', '条形图', 'chart_generation');
+            nlpManager.addDocument('zh', '数据图表', 'chart_generation');
             nlpManager.addDocument('en', 'create chart', 'chart_generation');
             nlpManager.addDocument('en', 'bar chart', 'chart_generation');
+            nlpManager.addDocument('en', 'line chart', 'chart_generation');
+            nlpManager.addDocument('en', 'pie chart', 'chart_generation');
 
             // 流程图意图
             nlpManager.addDocument('zh', '画流程图', 'flowchart');
             nlpManager.addDocument('zh', '创建架构图', 'flowchart');
             nlpManager.addDocument('zh', 'UML图', 'flowchart');
+            nlpManager.addDocument('zh', '系统架构', 'flowchart');
+            nlpManager.addDocument('zh', '流程图设计', 'flowchart');
+            nlpManager.addDocument('zh', '业务流程', 'flowchart');
             nlpManager.addDocument('en', 'draw flowchart', 'flowchart');
             nlpManager.addDocument('en', 'create diagram', 'flowchart');
+            nlpManager.addDocument('en', 'system architecture', 'flowchart');
+            nlpManager.addDocument('en', 'sequence diagram', 'flowchart');
+
+            // 总结意图
+            nlpManager.addDocument('zh', '总结一下', 'summarize');
+            nlpManager.addDocument('zh', '概括', 'summarize');
+            nlpManager.addDocument('zh', '要点', 'summarize');
+            nlpManager.addDocument('zh', '总结要点', 'summarize');
+            nlpManager.addDocument('en', 'summarize', 'summarize');
+            nlpManager.addDocument('en', 'summary', 'summarize');
+            nlpManager.addDocument('en', 'brief summary', 'summarize');
+
+            // 问题回答意图
+            nlpManager.addDocument('zh', '什么是', 'question');
+            nlpManager.addDocument('zh', '为什么', 'question');
+            nlpManager.addDocument('zh', '如何', 'question');
+            nlpManager.addDocument('zh', '怎样', 'question');
+            nlpManager.addDocument('zh', '请问', 'question');
+            nlpManager.addDocument('en', 'what is', 'question');
+            nlpManager.addDocument('en', 'why', 'question');
+            nlpManager.addDocument('en', 'how to', 'question');
+            nlpManager.addDocument('en', 'explain', 'question');
+
+            // 添加实体识别训练数据
+            nlpManager.addNerRuleOptionTexts('zh', 'topic', ['图片', '代码', 'PPT', '图表', '数据', '翻译', '会议', '论文']);
+            nlpManager.addNerRuleOptionTexts('en', 'topic', ['image', 'code', 'ppt', 'chart', 'data', 'translation', 'meeting', 'paper']);
 
             // 训练模型
             await nlpManager.train();
+            intentModelLoaded = true;
             console.log('[NLP] NLP.js intent classifier trained successfully');
+            addLog('意图识别模型训练完成', 'system');
         } catch (e) {
             console.error('NLP.js initialization failed:', e);
             nlpManager = null;

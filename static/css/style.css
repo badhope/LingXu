@@ -1182,22 +1182,27 @@ body {
 .thinking-container {
     margin: 8px 0 16px;
     border: 1px solid var(--thinking-border);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     background: var(--thinking-bg);
     animation: msgFadeIn 0.3s ease;
+    box-shadow: var(--shadow-sm);
 }
 .thinking-item {
     border-bottom: 1px solid var(--thinking-border);
+    transition: all 0.2s ease;
 }
 .thinking-item:last-child {
     border-bottom: none;
+}
+.thinking-item.active {
+    background: rgba(99, 102, 241, 0.03);
 }
 .thinking-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 14px;
+    padding: 12px 16px;
     cursor: pointer;
     transition: background 0.12s;
     user-select: none;
@@ -1206,30 +1211,52 @@ body {
     background: rgba(99, 102, 241, 0.05);
 }
 .thinking-badge {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--thinking-accent);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
-    color: white;
+    font-size: 14px;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
 }
 .thinking-item.active .thinking-badge {
     animation: thinkPulse 1.5s infinite;
+    transform: scale(1.05);
 }
 @keyframes thinkPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.5); }
-    50% { box-shadow: 0 0 0 6px rgba(99,102,241,0); }
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(99,102,241,0.5); 
+        transform: scale(1.05);
+    }
+    50% { 
+        box-shadow: 0 0 0 8px rgba(99,102,241,0); 
+        transform: scale(1.02);
+    }
 }
 .thinking-title {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.phase-label {
     font-size: 13px;
+    font-weight: 600;
     color: var(--thinking-accent);
-    font-weight: 500;
+}
+.phase-title-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+.thinking-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    min-width: 40px;
+    text-align: right;
 }
 .thinking-toggle {
     font-size: 10px;
@@ -1239,8 +1266,21 @@ body {
 .thinking-toggle.collapsed {
     transform: rotate(-90deg);
 }
+.thinking-progress {
+    height: 3px;
+    background: rgba(0, 0, 0, 0.05);
+    margin: 0 16px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.thinking-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-primary), var(--primary));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
 .thinking-content {
-    padding: 0 14px 10px;
+    padding: 0 16px 12px;
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.6;
