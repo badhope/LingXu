@@ -7,6 +7,7 @@ from app.agent.toolcall import ToolCallAgent
 from app.agent.data import Data
 from app.agent.data_analysis import DataAnalysis
 from app.agent.sandbox_agent import SandboxData
+from app.agent.literature import LiteratureAgent
 
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "Data",
     "DataAnalysis",
     "SandboxData",
+    "LiteratureAgent",
 ]

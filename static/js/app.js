@@ -22,6 +22,164 @@
     var $ = function (sel) { return document.querySelector(sel); };
     var $$ = function (sel) { return document.querySelectorAll(sel); };
 
+    // ==================== Open Source Libraries Initialization ====================
+    var libs = {
+        chartjs: null,
+        mermaid: null,
+        sortable: null,
+        dayjs: null,
+        numeral: null,
+        lodash: null,
+        axios: null,
+        yup: null,
+        anime: null,
+        dropzone: null,
+        cropper: null,
+        pdfjs: null,
+        codemirror: null,
+        io: null,
+        nlpjs: null,
+        winknlp: null,
+        tfidf: null,
+        clipboard: null,
+        toastify: null,
+        swal: null,
+        alpine: null
+    };
+
+    function initLibraries() {
+        if (typeof Chart !== 'undefined') {
+            libs.chartjs = Chart;
+            console.log('[LIB] Chart.js loaded');
+        }
+
+        if (typeof mermaid !== 'undefined') {
+            libs.mermaid = mermaid;
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'dark',
+                flowchart: { useMaxWidth: true },
+                sequence: { useMaxWidth: true }
+            });
+            console.log('[LIB] Mermaid loaded');
+        }
+
+        if (typeof Sortable !== 'undefined') {
+            libs.sortable = Sortable;
+            console.log('[LIB] SortableJS loaded');
+        }
+
+        if (typeof dayjs !== 'undefined') {
+            libs.dayjs = dayjs;
+            console.log('[LIB] DayJS loaded');
+        }
+
+        if (typeof numeral !== 'undefined') {
+            libs.numeral = numeral;
+            console.log('[LIB] Numeral.js loaded');
+        }
+
+        if (typeof _ !== 'undefined') {
+            libs.lodash = _;
+            console.log('[LIB] Lodash loaded');
+        }
+
+        if (typeof axios !== 'undefined') {
+            libs.axios = axios;
+            axios.defaults.baseURL = '/api';
+            axios.defaults.headers.common['Content-Type'] = 'application/json';
+            console.log('[LIB] Axios loaded');
+        }
+
+        if (typeof yup !== 'undefined') {
+            libs.yup = yup;
+            console.log('[LIB] Yup loaded');
+        }
+
+        if (typeof anime !== 'undefined') {
+            libs.anime = anime;
+            console.log('[LIB] Anime.js loaded');
+        }
+
+        if (typeof Dropzone !== 'undefined') {
+            libs.dropzone = Dropzone;
+            Dropzone.autoDiscover = false;
+            console.log('[LIB] Dropzone loaded');
+        }
+
+        if (typeof Cropper !== 'undefined') {
+            libs.cropper = Cropper;
+            console.log('[LIB] Cropper.js loaded');
+        }
+
+        if (typeof pdfjsLib !== 'undefined') {
+            libs.pdfjs = pdfjsLib;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js';
+            console.log('[LIB] PDF.js loaded');
+        }
+
+        if (typeof CodeMirror !== 'undefined') {
+            libs.codemirror = CodeMirror;
+            console.log('[LIB] CodeMirror loaded');
+        }
+
+        if (typeof io !== 'undefined') {
+            libs.io = io;
+            console.log('[LIB] Socket.IO loaded');
+        }
+
+        if (typeof window.nlp !== 'undefined') {
+            libs.nlpjs = window.nlp;
+            console.log('[LIB] NLP.js loaded');
+        }
+
+        if (typeof winkNLP !== 'undefined' && typeof winkEngLiteWebModel !== 'undefined') {
+            libs.winknlp = winkNLP(winkEngLiteWebModel);
+            console.log('[LIB] Wink-NLP loaded');
+        }
+
+        if (typeof TFIDF !== 'undefined') {
+            libs.tfidf = TFIDF;
+            console.log('[LIB] TF-IDF loaded');
+        }
+
+        if (typeof ClipboardJS !== 'undefined') {
+            libs.clipboard = ClipboardJS;
+            initClipboard();
+            console.log('[LIB] Clipboard.js loaded');
+        }
+
+        if (typeof Toastify !== 'undefined') {
+            libs.toastify = Toastify;
+            console.log('[LIB] Toastify loaded');
+        }
+
+        if (typeof Swal !== 'undefined') {
+            libs.swal = Swal;
+            console.log('[LIB] SweetAlert2 loaded');
+        }
+
+        if (typeof Alpine !== 'undefined') {
+            libs.alpine = Alpine;
+            console.log('[LIB] Alpine.js loaded');
+        }
+    }
+
+    function initClipboard() {
+        if (!libs.clipboard) return;
+
+        var clipboard = new libs.clipboard('.copy-btn');
+
+        clipboard.on('success', function(e) {
+            showToast('已复制到剪贴板', 'success');
+            e.clearSelection();
+        });
+
+        clipboard.on('error', function(e) {
+            showToast('复制失败，请手动复制', 'error');
+        });
+    }
+
     // ==================== Utility Functions ====================
     function escapeHtml(str) {
         if (!str) return '';
@@ -69,6 +227,26 @@
     // ==================== Toast System ====================
     function showToast(message, type) {
         type = type || 'info';
+
+        if (libs.toastify) {
+            var bgColor = '#333';
+            if (type === 'success') bgColor = '#27ae60';
+            else if (type === 'error') bgColor = '#e74c3c';
+            else if (type === 'warning') bgColor = '#f39c12';
+            else if (type === 'info') bgColor = '#3498db';
+
+            libs.toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: bgColor,
+                stopOnFocus: true
+            }).showToast();
+            return;
+        }
+
         var container = $('#toast-container');
         var toast = document.createElement('div');
         toast.className = 'toast toast-' + type;
@@ -85,27 +263,41 @@
     function initMarked() {
         if (typeof marked === 'undefined') return;
         var renderer = new marked.Renderer();
-        renderer.code = function (codeObj) {
-            var code = codeObj.text || '';
-            var lang = codeObj.lang || '';
+        renderer.code = function (code, lang, escaped) {
+            var actualCode = code || '';
+            var actualLang = lang || '';
             var highlighted = '';
-            if (lang && typeof hljs !== 'undefined') {
+
+            if (!actualCode.trim()) {
+                actualCode = '// 暂无代码内容';
+                actualLang = 'javascript';
+            }
+
+            if (actualLang && typeof hljs !== 'undefined') {
                 try {
-                    highlighted = hljs.highlight(code, { language: lang }).value;
+                    highlighted = hljs.highlight(actualCode, { language: actualLang }).value;
                 } catch (e) {
-                    highlighted = escapeHtml(code);
+                    highlighted = escapeHtml(actualCode);
                 }
             } else {
-                highlighted = escapeHtml(code);
+                highlighted = escapeHtml(actualCode);
             }
+
             var id = 'code-' + generateId();
-            return '<div class="code-block-wrapper">' +
+            var codeLines = actualCode.split('\n').length;
+            var isLong = codeLines > 10;
+            var collapsedClass = isLong ? 'code-collapsed' : '';
+
+            return '<div class="code-block-wrapper ' + collapsedClass + '" id="code-wrapper-' + id + '">' +
                 '<div class="code-block-header">' +
-                '<span class="code-block-lang">' + escapeHtml(lang || 'code') + '</span>' +
-                '<button class="code-block-copy" onclick="window.__copyCode(\'' + id + '\', this)">' +
+                '<span class="code-block-lang">' + escapeHtml(actualLang || 'code') + '</span>' +
+                '<span class="code-block-lines">' + codeLines + ' 行</span>' +
+                '<button class="code-block-fold" onclick="window.__toggleCodeFold(\'code-wrapper-' + id + '\', this)" title="' + (isLong ? '展开代码' : '折叠代码') + '">' +
+                '<i class="fa-solid fa-chevron-' + (isLong ? 'down' : 'up') + '"></i></button>' +
+                '<button class="code-block-copy" onclick="window.__copyCode(\'' + id + '\', this)" title="复制代码">' +
                 '<i class="fa-regular fa-copy"></i> 复制</button>' +
                 '</div>' +
-                '<pre><code id="' + id + '">' + highlighted + '</code></pre>' +
+                '<pre><code id="' + id + '" class="language-' + actualLang + '">' + highlighted + '</code></pre>' +
                 '</div>';
         };
         renderer.image = function (href, title, text) {
@@ -117,6 +309,26 @@
             gfm: true
         });
     }
+
+    window.__toggleCodeFold = function (wrapperId, btn) {
+        var wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
+
+        var isCollapsed = wrapper.classList.contains('code-collapsed');
+
+        if (isCollapsed) {
+            wrapper.classList.remove('code-collapsed');
+            btn.title = '折叠代码';
+        } else {
+            wrapper.classList.add('code-collapsed');
+            btn.title = '展开代码';
+        }
+
+        var icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = 'fa-solid fa-chevron-' + (isCollapsed ? 'up' : 'down');
+        }
+    };
 
     window.__copyCode = function (id, btn) {
         var codeEl = document.getElementById(id);
@@ -478,6 +690,7 @@
                 '<button class="message-action-btn" data-action="copy" title="复制"><i class="fa-regular fa-copy"></i></button>';
             if (msg.type === 'assistant') {
                 actions += '<button class="message-action-btn" data-action="regenerate" title="重新生成"><i class="fa-solid fa-rotate"></i></button>';
+                actions += '<button class="message-action-btn" data-action="download-ppt" title="下载PPT"><i class="fa-solid fa-file-powerpoint"></i></button>';
                 actions += '<button class="message-action-btn" data-action="thumbs-up" title="有帮助"><i class="fa-regular fa-thumbs-up"></i></button>';
                 actions += '<button class="message-action-btn" data-action="thumbs-down" title="需改进"><i class="fa-regular fa-thumbs-down"></i></button>';
             }
@@ -505,6 +718,7 @@
                     var msgId = msgEl.getAttribute('data-msg-id');
                     if (action === 'copy') copyMessageContent(msgEl);
                     else if (action === 'regenerate') regenerateMessage(msgId);
+                    else if (action === 'download-ppt') window.__generatePPT();
                     else if (action === 'edit') editMessage(msgId);
                     else if (action === 'thumbs-up') handleFeedback(msgEl, msgId, 'up');
                     else if (action === 'thumbs-down') handleFeedback(msgEl, msgId, 'down');
@@ -731,18 +945,13 @@
         } else if (data.type === 'stream_data') {
             pendingStreamText += data.content;
 
-            // Throttle DOM updates with requestAnimationFrame
-            if (!streamRafId) {
-                streamRafId = requestAnimationFrame(function () {
-                    var streamingEl = chatArea.querySelector('.message.streaming .stream-text');
-                    if (streamingEl) {
-                        streamingEl.setAttribute('data-raw', pendingStreamText);
-                        streamingEl.innerHTML = renderMarkdown(pendingStreamText);
-                    }
-                    streamRafId = null;
-                    scrollToBottom(false);
-                });
+            var streamingEl = chatArea.querySelector('.message.streaming .stream-text');
+            if (streamingEl) {
+                streamingEl.setAttribute('data-raw', pendingStreamText);
+                streamingEl.innerHTML = renderMarkdown(pendingStreamText);
             }
+
+            scrollToBottom(true);
 
         } else if (data.type === 'stream_end') {
             // Cancel any pending rAF
@@ -994,6 +1203,16 @@
             createConversation();
         }
 
+        // Handle intent asynchronously
+        handleIntent(content).then(function(intent) {
+            if (intent.handler) {
+                showToast('识别到意图: ' + intent.display, 'info');
+                intent.handler(content);
+            }
+        }).catch(function(err) {
+            console.error('Intent handling error:', err);
+        });
+
         // Add user message to UI
         var chatArea = $('#chat-area');
         var ws4 = $('#welcome-screen');
@@ -1044,17 +1263,20 @@
             pendingUserMessages.push(content);
             updateQueueIndicator();
         } else {
-            sendToWebSocket(content);
+            setTimeout(function () {
+                updateThinkingAnimation(thinkingEl, 2);
+            }, 2000);
+            sendToWebSocket(content, intent);
         }
     }
 
     // ==================== RAG Knowledge Base Search ====================
     function searchKnowledgeBase(query) {
         if (!query || !query.trim()) return;
-        fetch('/api/knowledge-bases/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: query, top_k: 3, min_score: 0.1 })
+        httpPost('/api/knowledge-bases/search', {
+            query: query,
+            top_k: 3,
+            min_score: 0.1
         }).then(function (res) {
             if (!res.ok) return;
             return res.json();
@@ -1078,7 +1300,7 @@
         });
     }
 
-    function sendToWebSocket(content) {
+    function sendToWebSocket(content, intent) {
         isStreaming = true;
         isGenerating = true;
         updateSendButton();
@@ -1087,7 +1309,8 @@
         var payload = {
             content: content,
             options: {
-                web_search: webSearchEnabled
+                web_search: webSearchEnabled,
+                intent: intent ? intent.intent : 'general'
             }
         };
 
@@ -1229,6 +1452,14 @@
             });
         }
 
+        // Polish button
+        var polishBtn = $('#polish-btn');
+        if (polishBtn) {
+            polishBtn.addEventListener('click', function () {
+                polishText();
+            });
+        }
+
         updateSendButton();
     }
 
@@ -1337,23 +1568,14 @@
         var kbBtn = $('#sidebar-kb-btn');
         var skillBtn = $('#sidebar-skill-btn');
         var mcpBtn = $('#sidebar-mcp-btn');
+        var artifactsBtn = $('#sidebar-artifacts-btn');
         var settingsBtn = $('#sidebar-settings-btn');
 
         if (kbBtn) kbBtn.addEventListener('click', function () { openDrawer('kb-drawer', 'kb-drawer-overlay'); loadKnowledgeBases(); closeSidebar(); });
-        if (skillBtn) skillBtn.addEventListener('click', function () { openDrawer('skill-drawer', 'skill-drawer-overlay'); loadSkills(); closeSidebar(); });
-        if (mcpBtn) mcpBtn.addEventListener('click', function () { openDrawer('mcp-drawer', 'mcp-drawer-overlay'); loadMcpServers(); closeSidebar(); });
+        if (skillBtn) skillBtn.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); closeSidebar(); setTimeout(function() { switchTab('tab-skills'); }, 300); });
+        if (mcpBtn) mcpBtn.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); closeSidebar(); setTimeout(function() { switchTab('tab-mcp'); }, 300); });
+        if (artifactsBtn) artifactsBtn.addEventListener('click', function () { var panel = $('#artifacts-panel'); var toggle = $('#artifacts-toggle-btn'); if (panel) panel.classList.toggle('open'); if (toggle) toggle.classList.toggle('active'); closeSidebar(); });
         if (settingsBtn) settingsBtn.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); closeSidebar(); });
-
-        // Header buttons
-        var headerKb = $('#header-kb-btn');
-        var headerSkill = $('#header-skill-btn');
-        var headerMcp = $('#header-mcp-btn');
-        var headerSettings = $('#header-settings-btn');
-
-        if (headerKb) headerKb.addEventListener('click', function () { openDrawer('kb-drawer', 'kb-drawer-overlay'); loadKnowledgeBases(); });
-        if (headerSkill) headerSkill.addEventListener('click', function () { openDrawer('skill-drawer', 'skill-drawer-overlay'); loadSkills(); });
-        if (headerMcp) headerMcp.addEventListener('click', function () { openDrawer('mcp-drawer', 'mcp-drawer-overlay'); loadMcpServers(); });
-        if (headerSettings) headerSettings.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); });
     }
 
     // ==================== Drawer System ====================
@@ -1383,18 +1605,6 @@
         var kbOverlay = $('#kb-drawer-overlay');
         if (kbClose) kbClose.addEventListener('click', function () { closeDrawer('kb-drawer', 'kb-drawer-overlay'); });
         if (kbOverlay) kbOverlay.addEventListener('click', function () { closeDrawer('kb-drawer', 'kb-drawer-overlay'); });
-
-        // Skill drawer
-        var skillClose = $('#skill-drawer-close');
-        var skillOverlay = $('#skill-drawer-overlay');
-        if (skillClose) skillClose.addEventListener('click', function () { closeDrawer('skill-drawer', 'skill-drawer-overlay'); });
-        if (skillOverlay) skillOverlay.addEventListener('click', function () { closeDrawer('skill-drawer', 'skill-drawer-overlay'); });
-
-        // MCP drawer
-        var mcpClose = $('#mcp-drawer-close');
-        var mcpOverlay = $('#mcp-drawer-overlay');
-        if (mcpClose) mcpClose.addEventListener('click', function () { closeDrawer('mcp-drawer', 'mcp-drawer-overlay'); });
-        if (mcpOverlay) mcpOverlay.addEventListener('click', function () { closeDrawer('mcp-drawer', 'mcp-drawer-overlay'); });
 
         // Help modal
         var helpClose = $('#help-modal-close');
@@ -1437,6 +1647,64 @@
         if (saveBtn) saveBtn.addEventListener('click', saveSettings);
         if (resetBtn) resetBtn.addEventListener('click', resetSettings);
 
+        // Model provider selection
+        var providerList = $('#provider-list');
+        if (providerList) {
+            providerList.addEventListener('click', function (e) {
+                var target = e.target.closest('.provider-item');
+                if (target) {
+                    var provider = target.dataset.provider;
+                    selectProvider(provider);
+                }
+            });
+        }
+
+        // Model tag selection
+        var modelTagsContainer = $('#model-tags');
+        if (modelTagsContainer) {
+            modelTagsContainer.addEventListener('click', function (e) {
+                var target = e.target.closest('.model-tag');
+                if (target) {
+                    var tags = target.parentElement.querySelectorAll('.model-tag');
+                    tags.forEach(function (tag) {
+                        tag.classList.remove('active');
+                    });
+                    target.classList.add('active');
+                }
+            });
+        }
+
+        // Custom model add button
+        document.addEventListener('click', function (e) {
+            var addBtn = e.target.closest('.model-tag-add-btn');
+            if (addBtn) {
+                addCustomModel();
+            }
+
+            var input = e.target.closest('.model-tag-input');
+            if (input && e.key === 'Enter') {
+                addCustomModel();
+            }
+        });
+
+        // Model test button
+        var modelTestBtn = $('#model-test-btn');
+        if (modelTestBtn) {
+            modelTestBtn.addEventListener('click', testModelConnection);
+        }
+
+        // Model save button
+        var modelSaveBtn = $('#model-save-btn');
+        if (modelSaveBtn) {
+            modelSaveBtn.addEventListener('click', saveModelSettings);
+        }
+
+        // Voice input button
+        var voiceBtn = $('#voice-btn');
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', toggleVoiceInput);
+        }
+
         // Temperature range
         var tempRange = $('#setting-temperature');
         var tempValue = $('#temperature-value');
@@ -1461,6 +1729,56 @@
                 }
             });
         }
+
+        // Top P range
+        var topPRange = $('#setting-top-p');
+        var topPValue = $('#top-p-value');
+        if (topPRange && topPValue) {
+            topPRange.addEventListener('input', function () {
+                topPValue.textContent = topPRange.value;
+            });
+        }
+
+        // Frequency penalty range
+        var freqPenaltyRange = $('#setting-frequency-penalty');
+        var freqPenaltyValue = $('#frequency-penalty-value');
+        if (freqPenaltyRange && freqPenaltyValue) {
+            freqPenaltyRange.addEventListener('input', function () {
+                freqPenaltyValue.textContent = freqPenaltyRange.value;
+            });
+        }
+
+        // Presence penalty range
+        var presPenaltyRange = $('#setting-presence-penalty');
+        var presPenaltyValue = $('#presence-penalty-value');
+        if (presPenaltyRange && presPenaltyValue) {
+            presPenaltyRange.addEventListener('input', function () {
+                presPenaltyValue.textContent = presPenaltyRange.value;
+            });
+        }
+
+        // Sandbox environment management
+        var addEnvBtn = $('#sandbox-add-env-btn');
+        if (addEnvBtn) {
+            addEnvBtn.addEventListener('click', function () {
+                var envModal = $('#sandbox-env-modal');
+                if (envModal) {
+                    envModal.style.display = envModal.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Sandbox environment install
+        $$('.sandbox-env-install').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var card = btn.closest('.sandbox-env-card');
+                var image = card.getAttribute('data-image');
+                installSandboxEnv(image, btn);
+            });
+        });
+
+        // Load sandbox environments
+        loadSandboxEnvironments();
 
         // Theme options
         $$('.theme-option').forEach(function (btn) {
@@ -1518,14 +1836,35 @@
             tabBar.querySelectorAll('.drawer-tab').forEach(function (tab) {
                 tab.addEventListener('click', function () {
                     var targetId = tab.getAttribute('data-tab');
-                    tabBar.querySelectorAll('.drawer-tab').forEach(function (t) { t.classList.remove('active'); });
-                    drawer.querySelectorAll('.drawer-tab-content').forEach(function (c) { c.classList.remove('active'); });
-                    tab.classList.add('active');
-                    var target = drawer.querySelector('#' + targetId);
-                    if (target) target.classList.add('active');
+                    switchTabInternal(tabBar, drawer, targetId);
                 });
             });
         });
+    }
+
+    function switchTab(tabId) {
+        var drawer = $('#settings-drawer');
+        if (!drawer) return;
+        var tabBar = drawer.querySelector('.drawer-tabs');
+        if (!tabBar) return;
+        switchTabInternal(tabBar, drawer, tabId);
+
+        if (tabId === 'tab-mcp') {
+            loadMcpServers();
+        }
+
+        if (tabId === 'tab-skills') {
+            loadSkills();
+        }
+    }
+
+    function switchTabInternal(tabBar, drawer, targetId) {
+        tabBar.querySelectorAll('.drawer-tab').forEach(function (t) { t.classList.remove('active'); });
+        drawer.querySelectorAll('.drawer-tab-content').forEach(function (c) { c.classList.remove('active'); });
+        var tab = tabBar.querySelector('[data-tab="' + targetId + '"]');
+        if (tab) tab.classList.add('active');
+        var target = drawer.querySelector('#' + targetId);
+        if (target) target.classList.add('active');
     }
 
     // ==================== Theme ====================
@@ -1563,28 +1902,93 @@
             { name: 'qwen-plus-latest', desc: '通义千问 Plus' },
             { name: 'qwen-max', desc: '通义千问 Max' },
             { name: 'qwen-turbo', desc: '通义千问 Turbo' },
-            { name: 'qwen-long', desc: '通义千问 Long' }
+            { name: 'qwen-long', desc: '通义千问 Long' },
+            { name: 'qwen2-7b-instruct', desc: 'Qwen2 7B' },
+            { name: 'qwen2-14b-instruct', desc: 'Qwen2 14B' },
+            { name: 'qwen2-72b-instruct', desc: 'Qwen2 72B' }
         ],
         openai: [
             { name: 'gpt-4o', desc: 'GPT-4o' },
             { name: 'gpt-4o-mini', desc: 'GPT-4o Mini' },
             { name: 'gpt-4-turbo', desc: 'GPT-4 Turbo' },
-            { name: 'gpt-3.5-turbo', desc: 'GPT-3.5 Turbo' }
+            { name: 'gpt-3.5-turbo', desc: 'GPT-3.5 Turbo' },
+            { name: 'gpt-4-turbo-preview', desc: 'GPT-4 Turbo Preview' },
+            { name: 'gpt-4', desc: 'GPT-4' }
         ],
         anthropic: [
             { name: 'claude-sonnet-4-20250514', desc: 'Claude Sonnet 4' },
             { name: 'claude-3-5-sonnet-20241022', desc: 'Claude 3.5 Sonnet' },
+            { name: 'claude-3-opus-20240229', desc: 'Claude 3 Opus' },
+            { name: 'claude-3-sonnet-20240229', desc: 'Claude 3 Sonnet' },
             { name: 'claude-3-haiku-20240307', desc: 'Claude 3 Haiku' }
+        ],
+        google: [
+            { name: 'gemini-1.5-pro', desc: 'Gemini 1.5 Pro' },
+            { name: 'gemini-1.5-flash', desc: 'Gemini 1.5 Flash' },
+            { name: 'gemini-pro', desc: 'Gemini Pro' },
+            { name: 'gemini-pro-vision', desc: 'Gemini Pro Vision' }
+        ],
+        azure: [
+            { name: 'gpt-4o', desc: 'GPT-4o' },
+            { name: 'gpt-4o-mini', desc: 'GPT-4o Mini' },
+            { name: 'gpt-4-turbo', desc: 'GPT-4 Turbo' },
+            { name: 'gpt-35-turbo', desc: 'GPT-3.5 Turbo' }
+        ],
+        baidu: [
+            { name: 'ernie-4.0', desc: '文心一言 4.0' },
+            { name: 'ernie-3.5', desc: '文心一言 3.5' },
+            { name: 'ernie-turbo', desc: '文心一言 Turbo' },
+            { name: 'ernie-longtext', desc: '文心一言 长文本' }
+        ],
+        tencent: [
+            { name: 'hunyuan-pro', desc: '混元大模型' },
+            { name: 'hunyuan-standard', desc: '混元标准版' },
+            { name: 'hunyuan-lite', desc: '混元轻量版' }
+        ],
+        zhipu: [
+            { name: 'glm-4', desc: 'GLM-4' },
+            { name: 'glm-4v', desc: 'GLM-4V' },
+            { name: 'glm-3-turbo', desc: 'GLM-3 Turbo' },
+            { name: 'chatglm3-6b', desc: 'ChatGLM3-6B' }
         ],
         deepseek: [
             { name: 'deepseek-chat', desc: 'DeepSeek Chat' },
-            { name: 'deepseek-reasoner', desc: 'DeepSeek Reasoner' }
+            { name: 'deepseek-reasoner', desc: 'DeepSeek Reasoner' },
+            { name: 'deepseek-math', desc: 'DeepSeek Math' },
+            { name: 'deepseek-coder', desc: 'DeepSeek Coder' }
+        ],
+        minimax: [
+            { name: 'abab6-chat', desc: 'MiniMax ABAB6' },
+            { name: 'abab5-chat', desc: 'MiniMax ABAB5' },
+            { name: 'abab5.5-chat', desc: 'MiniMax ABAB5.5' }
         ],
         ollama: [
             { name: 'llama3', desc: 'Llama 3' },
+            { name: 'llama3.1', desc: 'Llama 3.1' },
             { name: 'qwen2', desc: 'Qwen 2' },
-            { name: 'codellama', desc: 'Code Llama' }
+            { name: 'codellama', desc: 'Code Llama' },
+            { name: 'mistral', desc: 'Mistral' },
+            { name: 'phi3', desc: 'Phi-3' },
+            { name: 'gemma', desc: 'Gemma' }
+        ],
+        custom: [
+            { name: 'custom-model', desc: '自定义模型' }
         ]
+    };
+
+    var providerDefaults = {
+        aliyun: { base_url: 'https://dashscope.aliyuncs.com/compatible-mode/v1', api_version: '' },
+        openai: { base_url: 'https://api.openai.com/v1', api_version: '' },
+        anthropic: { base_url: 'https://api.anthropic.com/v1', api_version: '' },
+        google: { base_url: 'https://generativelanguage.googleapis.com/v1beta', api_version: '' },
+        azure: { base_url: 'https://{region}.openai.azure.com/openai', api_version: '2024-08-01-preview' },
+        baidu: { base_url: 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions', api_version: '' },
+        tencent: { base_url: 'https://hunyuan.tencentcloudapi.com', api_version: '' },
+        zhipu: { base_url: 'https://open.bigmodel.cn/api/paas/v4', api_version: '' },
+        deepseek: { base_url: 'https://api.deepseek.com/v1', api_version: '' },
+        minimax: { base_url: 'https://api.minimax.chat/v1', api_version: '' },
+        ollama: { base_url: 'http://localhost:11434/v1', api_version: '' },
+        custom: { base_url: '', api_version: '' }
     };
 
     function initModelSelector() {
@@ -1627,6 +2031,7 @@
 
     function updateModelList(provider) {
         var models = providerModels[provider] || [];
+        var defaults = providerDefaults[provider] || {};
         renderModelDropdownList('', models);
 
         if (models.length > 0) {
@@ -1641,6 +2046,27 @@
                 });
             }
             updateModelDisplay(models[0].name);
+        }
+
+        var baseUrlInput = $('#setting-base-url');
+        if (baseUrlInput && defaults.base_url) {
+            baseUrlInput.value = defaults.base_url;
+        }
+
+        var apiVersionInput = $('#setting-api-version');
+        var apiVersionGroup = $('#setting-api-version-group');
+        var azureDeploymentGroup = $('#setting-azure-deployment-group');
+
+        if (apiVersionInput && defaults.api_version) {
+            apiVersionInput.value = defaults.api_version;
+        }
+
+        if (provider === 'azure') {
+            if (apiVersionGroup) apiVersionGroup.style.display = 'block';
+            if (azureDeploymentGroup) azureDeploymentGroup.style.display = 'block';
+        } else {
+            if (apiVersionGroup) apiVersionGroup.style.display = 'none';
+            if (azureDeploymentGroup) azureDeploymentGroup.style.display = 'none';
         }
     }
 
@@ -1697,7 +2123,7 @@
 
     // ==================== Settings ====================
     function loadSettings() {
-        fetch('/api/settings').then(function (res) {
+        httpGet('/api/settings').then(function (res) {
             if (!res.ok) return;
             return res.json();
         }).then(function (data) {
@@ -1806,11 +2232,7 @@
             return;
         }
 
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(settings)
-        }).then(function (res) {
+        httpPost('/api/settings', settings).then(function (res) {
             if (!res.ok) {
                 return res.json().catch(function () { return { detail: '保存失败' }; }).then(function (errData) {
                     throw new Error(errData.detail || '请求失败');
@@ -1847,7 +2269,7 @@
 
     // ==================== Knowledge Base ====================
     function loadKnowledgeBases() {
-        fetch('/api/knowledge-bases').then(function (res) {
+        httpGet('/api/knowledge-bases').then(function (res) {
             if (!res.ok) return;
             return res.json();
         }).then(function (kbs) {
@@ -1888,10 +2310,9 @@
             return;
         }
 
-        fetch('/api/knowledge-bases', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, description: desc })
+        httpPost('/api/knowledge-bases', {
+            name: name,
+            description: desc
         }).then(function (res) {
             if (!res.ok) {
                 return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
@@ -1915,37 +2336,41 @@
 
     // ==================== Skills ====================
     function loadSkills() {
-        fetch('/api/skills').then(function (res) {
+        httpGet('/api/skills').then(function (res) {
             if (!res.ok) return;
             return res.json();
         }).then(function (skills) {
-            var list = $('#skill-list-content');
-            if (!list) return;
+            var lists = ['skill-list-content', 'skill-list-content-settings'];
 
-            if (skills.length === 0) {
-                list.innerHTML = '<div style="padding:30px 10px;text-align:center;color:var(--text-muted);font-size:13px;">暂无技能</div>';
-                return;
-            }
+            lists.forEach(function(listId) {
+                var list = $('#' + listId);
+                if (!list) return;
 
-            list.innerHTML = skills.map(function (skill) {
-                return '<div class="skill-item" data-skill-id="' + skill.id + '">' +
-                    '<div class="skill-info">' +
-                    '<div class="skill-icon-box">' + escapeHtml(skill.icon || '⚡') + '</div>' +
-                    '<div class="skill-details">' +
-                    '<h4>' + escapeHtml(skill.name || '未命名') + '</h4>' +
-                    '<p>' + escapeHtml(skill.description || '') + '</p>' +
-                    '</div></div>' +
-                    '<div class="skill-actions">' +
-                    '<button class="skill-use-btn" data-action="use">使用</button>' +
-                    '<span class="skill-badge">' + escapeHtml(skill.type || 'custom') + '</span>' +
-                    '</div></div>';
-            }).join('');
+                if (skills.length === 0) {
+                    list.innerHTML = '<div style="padding:30px 10px;text-align:center;color:var(--text-muted);font-size:13px;">暂无技能</div>';
+                    return;
+                }
 
-            list.querySelectorAll('.skill-use-btn').forEach(function (btn) {
-                btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    var skillId = btn.closest('.skill-item').getAttribute('data-skill-id');
-                    useSkillPrompt(skillId);
+                list.innerHTML = skills.map(function (skill) {
+                    return '<div class="skill-item" data-skill-id="' + skill.id + '">' +
+                        '<div class="skill-info">' +
+                        '<div class="skill-icon-box">' + escapeHtml(skill.icon || '⚡') + '</div>' +
+                        '<div class="skill-details">' +
+                        '<h4>' + escapeHtml(skill.name || '未命名') + '</h4>' +
+                        '<p>' + escapeHtml(skill.description || '') + '</p>' +
+                        '</div></div>' +
+                        '<div class="skill-actions">' +
+                        '<button class="skill-use-btn" data-action="use">使用</button>' +
+                        '<span class="skill-badge">' + escapeHtml(skill.type || 'custom') + '</span>' +
+                        '</div></div>';
+                }).join('');
+
+                list.querySelectorAll('.skill-use-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        var skillId = btn.closest('.skill-item').getAttribute('data-skill-id');
+                        useSkillPrompt(skillId);
+                    });
                 });
             });
         }).catch(function (e) {
@@ -1978,10 +2403,12 @@
             return;
         }
 
-        fetch('/api/skills', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, icon: icon, description: desc, parameters: [], prompts: {} })
+        httpPost('/api/skills', {
+            name: name,
+            icon: icon,
+            description: desc,
+            parameters: [],
+            prompts: {}
         }).then(function (res) {
             if (!res.ok) {
                 return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
@@ -2016,10 +2443,8 @@
 
         if (genDiv) genDiv.style.display = 'flex';
 
-        fetch('/api/skills/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ purpose: purpose })
+        httpPost('/api/skills/generate', {
+            purpose: purpose
         }).then(function (res) {
             if (!res.ok) throw new Error('生成失败');
             return res.json();
@@ -2040,33 +2465,37 @@
 
     // ==================== MCP ====================
     function loadMcpServers() {
-        fetch('/api/mcp/servers').then(function (res) {
+        httpGet('/api/mcp/servers').then(function (res) {
             if (!res.ok) return;
             return res.json();
         }).then(function (servers) {
-            var list = $('#mcp-list-content');
-            if (!list) return;
+            var lists = ['mcp-list-content', 'mcp-list-content-settings'];
 
-            if (servers.length === 0) {
-                list.innerHTML = '<div style="padding:20px 10px;text-align:center;color:var(--text-muted);font-size:13px;">还没有配置MCP服务器</div>';
-                return;
-            }
+            lists.forEach(function(listId) {
+                var list = $('#' + listId);
+                if (!list) return;
 
-            list.innerHTML = servers.map(function (s) {
-                return '<div class="mcp-item">' +
-                    '<div class="skill-info">' +
-                    '<div class="skill-icon-box">' + escapeHtml(s.icon || '🔌') + '</div>' +
-                    '<div class="skill-details">' +
-                    '<h4>' + escapeHtml(s.name) + '</h4>' +
-                    '<p>类型: ' + escapeHtml(s.type) + '</p>' +
-                    '</div></div>' +
-                    '<div class="setting-switch' + (s.enabled ? ' on' : '') + '"></div>' +
-                    '</div>';
-            }).join('');
+                if (servers.length === 0) {
+                    list.innerHTML = '<div style="padding:20px 10px;text-align:center;color:var(--text-muted);font-size:13px;">还没有配置MCP服务器</div>';
+                    return;
+                }
 
-            list.querySelectorAll('.setting-switch').forEach(function (sw) {
-                sw.addEventListener('click', function () {
-                    sw.classList.toggle('on');
+                list.innerHTML = servers.map(function (s) {
+                    return '<div class="mcp-item">' +
+                        '<div class="skill-info">' +
+                        '<div class="skill-icon-box">' + escapeHtml(s.icon || '🔌') + '</div>' +
+                        '<div class="skill-details">' +
+                        '<h4>' + escapeHtml(s.name) + '</h4>' +
+                        '<p>类型: ' + escapeHtml(s.type) + '</p>' +
+                        '</div></div>' +
+                        '<div class="setting-switch' + (s.enabled ? ' on' : '') + '"></div>' +
+                        '</div>';
+                }).join('');
+
+                list.querySelectorAll('.setting-switch').forEach(function (sw) {
+                    sw.addEventListener('click', function () {
+                        sw.classList.toggle('on');
+                    });
                 });
             });
         }).catch(function (e) {
@@ -2089,10 +2518,12 @@
             return;
         }
 
-        fetch('/api/mcp/servers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, type: type, command: command, args: [], enabled: true })
+        httpPost('/api/mcp/servers', {
+            name: name,
+            type: type,
+            command: command,
+            args: [],
+            enabled: true
         }).then(function (res) {
             if (!res.ok) {
                 return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
@@ -2206,6 +2637,1468 @@
         });
     }
 
+    // ==================== Sandbox Environment Management ====================
+    function loadSandboxEnvironments() {
+        httpGet('/api/sandbox/environments').then(function (res) {
+            if (!res.ok) {
+                renderSandboxEnvs([]);
+                return;
+            }
+            return res.json();
+        }).then(function (envs) {
+            renderSandboxEnvs(envs || []);
+        }).catch(function (e) {
+            console.error('Load sandbox envs error:', e);
+            renderSandboxEnvs([]);
+        });
+    }
+
+    function renderSandboxEnvs(envs) {
+        var list = $('#sandbox-envs-list');
+        if (!list) return;
+
+        if (envs.length === 0) {
+            list.innerHTML = '<div style="padding:20px 10px;text-align:center;color:var(--text-muted);font-size:13px;">暂无安装的环境，点击下方按钮添加</div>';
+            return;
+        }
+
+        list.innerHTML = envs.map(function (env) {
+            var statusIcon = env.status === 'installed' ? 'fa-check-circle text-green' : 'fa-circle-dot text-yellow';
+            return '<div class="sandbox-env-item">' +
+                '<div class="sandbox-env-info">' +
+                '<div class="sandbox-env-icon-small"><i class="fa-solid ' + statusIcon + '"></i></div>' +
+                '<div>' +
+                '<div class="sandbox-env-name-small">' + escapeHtml(env.name) + '</div>' +
+                '<div class="sandbox-env-detail">版本: ' + escapeHtml(env.tag) + ' | 大小: ' + formatFileSize(env.size || 0) + '</div>' +
+                '</div></div>' +
+                '<button class="sandbox-env-delete" data-image="' + escapeHtml(env.image) + '"><i class="fa-solid fa-trash"></i></button>' +
+                '</div>';
+        }).join('');
+
+        list.querySelectorAll('.sandbox-env-delete').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var image = btn.getAttribute('data-image');
+                if (confirm('确定要删除这个环境吗？')) {
+                    deleteSandboxEnv(image);
+                }
+            });
+        });
+    }
+
+    function installSandboxEnv(image, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 安装中...';
+
+        httpPost('/api/sandbox/environments/pull', {
+            image: image
+        }).then(function (res) {
+            if (!res.ok) {
+                return res.json().catch(function () { return { detail: '安装失败' }; }).then(function (err) {
+                    throw new Error(err.detail || '请求失败');
+                });
+            }
+            return res.json();
+        }).then(function (result) {
+            showToast('环境安装成功: ' + result.name, 'success');
+            loadSandboxEnvironments();
+        }).catch(function (e) {
+            showToast('安装失败: ' + e.message, 'error');
+        }).finally(function () {
+            btn.disabled = false;
+            btn.innerHTML = '安装';
+        });
+    }
+
+    function deleteSandboxEnv(image) {
+        httpPost('/api/sandbox/environments/delete', {
+            image: image
+        }).then(function (res) {
+            if (!res.ok) {
+                throw new Error('删除失败');
+            }
+            showToast('环境已删除', 'success');
+            loadSandboxEnvironments();
+        }).catch(function (e) {
+            showToast('删除失败: ' + e.message, 'error');
+        });
+    }
+
+    // ==================== Advanced Intent Recognition with NLP.js ====================
+    var nlpManager = null;
+
+    async function initNLPManager() {
+        if (!libs.nlpjs) {
+            console.warn('NLP.js not loaded, falling back to simple pattern matching');
+            return;
+        }
+
+        try {
+            nlpManager = new libs.nlpjs.NlpManager({ languages: ['zh', 'en'], forceNER: true });
+
+            // 图片生成意图
+            nlpManager.addDocument('zh', '帮我生成一张图片', 'image_generation');
+            nlpManager.addDocument('zh', '画一张猫的图片', 'image_generation');
+            nlpManager.addDocument('zh', '生成图片', 'image_generation');
+            nlpManager.addDocument('zh', '创建图像', 'image_generation');
+            nlpManager.addDocument('zh', '给我画', 'image_generation');
+            nlpManager.addDocument('zh', '绘制', 'image_generation');
+            nlpManager.addDocument('en', 'generate an image', 'image_generation');
+            nlpManager.addDocument('en', 'create a picture', 'image_generation');
+
+            // PPT生成意图
+            nlpManager.addDocument('zh', '生成PPT', 'ppt_generation');
+            nlpManager.addDocument('zh', '制作演示文稿', 'ppt_generation');
+            nlpManager.addDocument('zh', '创建幻灯片', 'ppt_generation');
+            nlpManager.addDocument('zh', '做ppt', 'ppt_generation');
+            nlpManager.addDocument('en', 'create presentation', 'ppt_generation');
+            nlpManager.addDocument('en', 'make ppt', 'ppt_generation');
+
+            // 代码生成意图
+            nlpManager.addDocument('zh', '写代码', 'code_generation');
+            nlpManager.addDocument('zh', '生成Python代码', 'code_generation');
+            nlpManager.addDocument('zh', '帮我写程序', 'code_generation');
+            nlpManager.addDocument('zh', '编写代码', 'code_generation');
+            nlpManager.addDocument('en', 'write code', 'code_generation');
+            nlpManager.addDocument('en', 'generate python code', 'code_generation');
+
+            // 数据分析意图
+            nlpManager.addDocument('zh', '分析数据', 'data_analysis');
+            nlpManager.addDocument('zh', '数据可视化', 'data_analysis');
+            nlpManager.addDocument('zh', '统计分析', 'data_analysis');
+            nlpManager.addDocument('en', 'analyze data', 'data_analysis');
+            nlpManager.addDocument('en', 'data visualization', 'data_analysis');
+
+            // 翻译意图
+            nlpManager.addDocument('zh', '翻译这段文字', 'translation');
+            nlpManager.addDocument('zh', '翻译成英文', 'translation');
+            nlpManager.addDocument('zh', '润色文本', 'translation');
+            nlpManager.addDocument('en', 'translate this', 'translation');
+            nlpManager.addDocument('en', 'polish text', 'translation');
+
+            // 会议纪要意图
+            nlpManager.addDocument('zh', '总结会议', 'meeting_summary');
+            nlpManager.addDocument('zh', '会议纪要', 'meeting_summary');
+            nlpManager.addDocument('zh', '会议记录', 'meeting_summary');
+            nlpManager.addDocument('en', 'meeting summary', 'meeting_summary');
+            nlpManager.addDocument('en', 'meeting notes', 'meeting_summary');
+
+            // 文献摘要意图
+            nlpManager.addDocument('zh', '文献摘要', 'literature_review');
+            nlpManager.addDocument('zh', '论文分析', 'literature_review');
+            nlpManager.addDocument('zh', '研究总结', 'literature_review');
+            nlpManager.addDocument('en', 'literature review', 'literature_review');
+            nlpManager.addDocument('en', 'paper summary', 'literature_review');
+
+            // 图表生成意图
+            nlpManager.addDocument('zh', '生成图表', 'chart_generation');
+            nlpManager.addDocument('zh', '画柱状图', 'chart_generation');
+            nlpManager.addDocument('zh', '折线图', 'chart_generation');
+            nlpManager.addDocument('en', 'create chart', 'chart_generation');
+            nlpManager.addDocument('en', 'bar chart', 'chart_generation');
+
+            // 流程图意图
+            nlpManager.addDocument('zh', '画流程图', 'flowchart');
+            nlpManager.addDocument('zh', '创建架构图', 'flowchart');
+            nlpManager.addDocument('zh', 'UML图', 'flowchart');
+            nlpManager.addDocument('en', 'draw flowchart', 'flowchart');
+            nlpManager.addDocument('en', 'create diagram', 'flowchart');
+
+            // 训练模型
+            await nlpManager.train();
+            console.log('[NLP] NLP.js intent classifier trained successfully');
+        } catch (e) {
+            console.error('NLP.js initialization failed:', e);
+            nlpManager = null;
+        }
+    }
+
+    async function recognizeIntent(text) {
+        if (nlpManager) {
+            try {
+                const result = await nlpManager.process('zh', text);
+                if (result.intent && result.score > 0.5) {
+                    console.log(`[NLP] Intent: ${result.intent}, Confidence: ${result.score}`);
+                    return result.intent;
+                }
+            } catch (e) {
+                console.error('NLP processing error:', e);
+            }
+        }
+
+        // Fallback to simple pattern matching
+        return simpleRecognizeIntent(text);
+    }
+
+    function simpleRecognizeIntent(text) {
+        var lowerText = text.toLowerCase();
+
+        var intentPatterns = {
+            'image_generation': [
+                '画', '生成图片', '生成图像', '绘制', '创作图片', '生成一幅画',
+                '给我画', '帮我画', '画一个', 'draw', 'generate image', 'create image'
+            ],
+            'ppt_generation': [
+                '生成ppt', '生成演示', '做ppt', '做演示', '创建ppt', '创建演示',
+                '演示文稿', 'slides', 'presentation', 'ppt'
+            ],
+            'code_generation': [
+                '写代码', '生成代码', '编写代码', '代码', 'function', 'class',
+                '写python', '写javascript', '写java', '写程序', '帮我写'
+            ],
+            'data_analysis': [
+                '分析数据', '数据分析', '统计', '可视化', '图表', '画图',
+                'analyze', 'analysis', 'chart', 'visualization'
+            ],
+            'translation': [
+                '翻译', '润色', '改写', '翻译成', 'translate', 'polish'
+            ],
+            'meeting_summary': [
+                '会议纪要', '会议记录', '会议总结', '会议摘要',
+                'meeting notes', 'meeting summary'
+            ],
+            'literature_review': [
+                '文献', '论文', '摘要', '研究', '学术',
+                'literature', 'paper', 'research', 'academic'
+            ],
+            'chart_generation': [
+                '图表', '折线图', '柱状图', '饼图', '条形图',
+                'chart', 'graph', 'plot', 'visualize', 'diagram'
+            ],
+            'flowchart': [
+                '流程图', '流程', '图表', '架构图', 'UML',
+                'flow', 'flowchart', 'sequence', 'diagram'
+            ],
+            'date_format': [
+                '日期', '时间', '格式化', '转换日期', '日期格式'
+            ],
+            'number_format': [
+                '数字', '格式化', '货币', '百分比', '千分位'
+            ]
+        };
+
+        for (var intent in intentPatterns) {
+            var patterns = intentPatterns[intent];
+            for (var i = 0; i < patterns.length; i++) {
+                if (lowerText.includes(patterns[i])) {
+                    return intent;
+                }
+            }
+        }
+
+        return 'general';
+    }
+
+    async function handleIntent(text) {
+        var intent = await recognizeIntent(text);
+
+        var intentDisplay = {
+            'image_generation': '🎨 图片生成',
+            'ppt_generation': '📊 PPT生成',
+            'code_generation': '💻 代码生成',
+            'data_analysis': '📈 数据分析',
+            'translation': '🌐 翻译润色',
+            'meeting_summary': '📋 会议纪要',
+            'literature_review': '📚 文献摘要',
+            'chart_generation': '📈 图表生成',
+            'flowchart': '🗺️ 流程图',
+            'date_format': '📅 日期处理',
+            'number_format': '🔢 数字格式化',
+            'general': '💬 通用对话'
+        };
+
+        var intentHandlers = {
+            'ppt_generation': handlePPTGeneration,
+            'chart_generation': handleChartGeneration,
+            'flowchart': handleFlowchartGeneration
+        };
+
+        return {
+            intent: intent,
+            display: intentDisplay[intent] || '💬 通用对话',
+            handler: intentHandlers[intent] || null
+        };
+    }
+
+    // ==================== Intent Handlers ====================
+    function handlePPTGeneration(text) {
+        showToast('正在生成PPT...', 'info');
+        generatePPTFromText(text);
+    }
+
+    function handleChartGeneration(text) {
+        if (!libs.chartjs) {
+            showToast('Chart.js 未加载', 'error');
+            return;
+        }
+
+        showToast('正在生成图表...', 'info');
+        generateChartFromText(text);
+    }
+
+    function handleFlowchartGeneration(text) {
+        if (!libs.mermaid) {
+            showToast('Mermaid 未加载', 'error');
+            return;
+        }
+
+        showToast('正在生成流程图...', 'info');
+        generateFlowchartFromText(text);
+    }
+
+    // ==================== PPT Generation with Library ====================
+    function generatePPTFromText(text) {
+        if (!libs.pptxgenjs) {
+            showToast('PPT生成库未加载', 'error');
+            return;
+        }
+
+        var pres = new libs.pptxgenjs();
+        pres.layout = 'LAYOUT_16x9';
+        pres.title = '演示文稿';
+
+        var slide1 = pres.addSlide();
+        slide1.addText(text.substring(0, 50) + '...', {
+            x: 1, y: 3, w: 8, h: 1.5,
+            fontSize: 32, bold: true, color: '000000',
+            align: 'center'
+        });
+
+        var slide2 = pres.addSlide();
+        slide2.addText('目录', {
+            x: 1, y: 2, w: 8, h: 1,
+            fontSize: 28, bold: true, color: '000000'
+        });
+
+        var slide3 = pres.addSlide();
+        slide3.addText('总结', {
+            x: 1, y: 3, w: 8, h: 1,
+            fontSize: 28, bold: true, color: '000000',
+            align: 'center'
+        });
+
+        pres.writeFile({ fileName: 'presentation.pptx' }).then(function() {
+            showToast('PPT生成成功！', 'success');
+        }).catch(function(err) {
+            showToast('PPT生成失败: ' + err.message, 'error');
+        });
+    }
+
+    // ==================== Chart Generation with Chart.js ====================
+    function generateChartFromText(text) {
+        var chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-container';
+        chartContainer.innerHTML = '<canvas id="generated-chart"></canvas>';
+
+        var chatArea = $('#chat-area');
+        chatArea.appendChild(chartContainer);
+
+        var ctx = document.getElementById('generated-chart').getContext('2d');
+        var chartData = extractChartData(text);
+
+        new Chart(ctx, {
+            type: chartData.type || 'bar',
+            data: {
+                labels: chartData.labels || ['A', 'B', 'C', 'D', 'E'],
+                datasets: [{
+                    label: chartData.title || '数据',
+                    data: chartData.data || [12, 19, 3, 5, 2],
+                    backgroundColor: chartData.colors || [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderColor: chartData.borderColors || [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        showToast('图表生成成功！', 'success');
+    }
+
+    function extractChartData(text) {
+        var data = {
+            type: 'bar',
+            title: '数据图表',
+            labels: [],
+            data: [],
+            colors: [],
+            borderColors: []
+        };
+
+        if (text.includes('折线') || text.includes('line')) {
+            data.type = 'line';
+        } else if (text.includes('饼') || text.includes('pie')) {
+            data.type = 'pie';
+        } else if (text.includes('柱状') || text.includes('bar')) {
+            data.type = 'bar';
+        }
+
+        var numPattern = /(\d+(?:\.\d+)?)/g;
+        var numbers = text.match(numPattern);
+        if (numbers && numbers.length > 0) {
+            data.data = numbers.slice(0, 6).map(Number);
+        }
+
+        var labelPattern = /([\u4e00-\u9fa5a-zA-Z]+)/g;
+        var labels = text.match(labelPattern);
+        if (labels && labels.length > 0) {
+            data.labels = labels.slice(0, 6);
+        }
+
+        return data;
+    }
+
+    // ==================== Flowchart Generation with Mermaid ====================
+    function generateFlowchartFromText(text) {
+        var flowchartCode = generateMermaidCode(text);
+
+        var flowchartContainer = document.createElement('div');
+        flowchartContainer.className = 'flowchart-container';
+        flowchartContainer.innerHTML = '<pre class="mermaid">' + flowchartCode + '</pre>';
+
+        var chatArea = $('#chat-area');
+        chatArea.appendChild(flowchartContainer);
+
+        if (libs.mermaid) {
+            libs.mermaid.init();
+        }
+
+        showToast('流程图生成成功！', 'success');
+    }
+
+    function generateMermaidCode(text) {
+        var code = 'flowchart TD\n';
+
+        if (text.includes('开始') || text.includes('start')) {
+            code += '    A[开始] --> B[处理]\n';
+            code += '    B --> C[结束]\n';
+        } else {
+            code += '    A[输入] --> B{判断}\n';
+            code += '    B -->|是| C[操作A]\n';
+            code += '    B -->|否| D[操作B]\n';
+            code += '    C --> E[输出]\n';
+            code += '    D --> E\n';
+        }
+
+        return code;
+    }
+
+    // ==================== Chart.js Integration ====================
+    function createChart(containerId, config) {
+        if (!libs.chartjs) {
+            showToast('Chart.js 未加载', 'error');
+            return null;
+        }
+
+        var ctx = document.getElementById(containerId);
+        if (!ctx) return null;
+
+        try {
+            return new libs.chartjs(ctx, config);
+        } catch (e) {
+            console.error('Chart creation error:', e);
+            showToast('图表创建失败: ' + e.message, 'error');
+            return null;
+        }
+    }
+
+    // ==================== Mermaid Integration ====================
+    function renderMermaid(containerId, code) {
+        if (!libs.mermaid) {
+            showToast('Mermaid 未加载', 'error');
+            return;
+        }
+
+        var container = document.getElementById(containerId);
+        if (!container) return;
+
+        libs.mermaid.render(containerId, code, function(svgCode) {
+            container.innerHTML = svgCode;
+        });
+    }
+
+    // ==================== DayJS Integration ====================
+    function formatDate(date, format) {
+        if (!libs.dayjs) {
+            return new Date(date).toLocaleString();
+        }
+        return libs.dayjs(date).format(format || 'YYYY-MM-DD HH:mm:ss');
+    }
+
+    // ==================== Numeral.js Integration ====================
+    function formatNumber(num, format) {
+        if (!libs.numeral) {
+            return num.toString();
+        }
+        return libs.numeral(num).format(format || '0,0');
+    }
+
+    // ==================== Lodash Integration ====================
+    var debounce = function(func, wait) {
+        if (libs.lodash) {
+            return libs.lodash.debounce(func, wait);
+        }
+        return func;
+    };
+
+    var throttle = function(func, limit) {
+        if (libs.lodash) {
+            return libs.lodash.throttle(func, limit);
+        }
+        return func;
+    };
+
+    // ==================== Axios HTTP Client ====================
+    function httpGet(url, params) {
+        if (libs.axios) {
+            return libs.axios.get(url, { params: params });
+        }
+        return fetch(url + '?' + new URLSearchParams(params)).then(res => res.json());
+    }
+
+    function httpPost(url, data) {
+        if (libs.axios) {
+            return libs.axios.post(url, data);
+        }
+        return fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json());
+    }
+
+    // ==================== Yup Form Validation ====================
+    function validateForm(schema, data) {
+        if (!libs.yup) {
+            console.warn('Yup not loaded, skipping validation');
+            return { valid: true, errors: [] };
+        }
+
+        try {
+            libs.yup.object().shape(schema).validateSync(data, { abortEarly: false });
+            return { valid: true, errors: [] };
+        } catch (err) {
+            return {
+                valid: false,
+                errors: err.errors || [err.message]
+            };
+        }
+    }
+
+    // ==================== Anime.js Animation ====================
+    function animateElement(element, animation) {
+        if (!libs.anime) {
+            console.warn('Anime.js not loaded');
+            return;
+        }
+
+        libs.anime({
+            targets: element,
+            ...animation
+        });
+    }
+
+    // ==================== Dropzone File Upload ====================
+    function initFileUpload(containerId, options) {
+        if (!libs.dropzone) {
+            console.warn('Dropzone not loaded');
+            return null;
+        }
+
+        return new libs.dropzone(`#${containerId}`, {
+            url: options.url || '/api/upload',
+            maxFilesize: options.maxSize || 10,
+            acceptedFiles: options.acceptedFiles || 'image/*,.pdf,.txt',
+            ...options
+        });
+    }
+
+    // ==================== Cropper Image Cropping ====================
+    function initImageCropper(imageId, options) {
+        if (!libs.cropper) {
+            console.warn('Cropper.js not loaded');
+            return null;
+        }
+
+        var image = document.getElementById(imageId);
+        return new libs.cropper(image, {
+            aspectRatio: options.aspectRatio || 1,
+            viewMode: options.viewMode || 1,
+            ...options
+        });
+    }
+
+    // ==================== PDF.js Viewer ====================
+    function renderPDF(url, containerId) {
+        if (!libs.pdfjs) {
+            console.warn('PDF.js not loaded');
+            return;
+        }
+
+        libs.pdfjs.getDocument(url).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+                var container = document.getElementById(containerId);
+                var canvas = document.createElement('canvas');
+                container.appendChild(canvas);
+
+                var viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                page.render({
+                    canvasContext: canvas.getContext('2d'),
+                    viewport: viewport
+                });
+            });
+        });
+    }
+
+    // ==================== CodeMirror Editor ====================
+    function initCodeEditor(textareaId, options) {
+        if (!libs.codemirror) {
+            console.warn('CodeMirror not loaded');
+            return null;
+        }
+
+        return libs.codemirror.fromTextArea(document.getElementById(textareaId), {
+            mode: options.mode || 'javascript',
+            theme: options.theme || 'default',
+            lineNumbers: true,
+            ...options
+        });
+    }
+
+    // ==================== Socket.IO Real-time ====================
+    function connectSocket(url) {
+        if (!libs.io) {
+            console.warn('Socket.IO not loaded');
+            return null;
+        }
+
+        return libs.io(url);
+    }
+
+    // ==================== Text Polish System ====================
+    function polishText() {
+        var inputBox = $('#input-box');
+        var text = inputBox.value.trim();
+
+        if (!text) {
+            showToast('请先输入要润色的文本', 'error');
+            return;
+        }
+
+        var polishBtn = $('#polish-btn');
+        if (polishBtn) {
+            polishBtn.disabled = true;
+            polishBtn.classList.add('polishing');
+        }
+
+        var intent = handleIntent(text);
+        var originalText = text;
+        var polishPhase = 0;
+        var phaseMessages = [
+            '正在分析文本结构...',
+            '检测语法和拼写错误...',
+            '优化表达流畅度...',
+            '保持专业术语准确性...',
+            '润色完成！'
+        ];
+
+        var phaseInterval = setInterval(function() {
+            if (polishPhase < phaseMessages.length - 1) {
+                polishPhase++;
+                inputBox.value = phaseMessages[polishPhase];
+            }
+        }, 600);
+
+        var systemPrompt = '你是一个专业的文本润色专家。请对用户输入的文本进行润色，改进语法、提升表达质量、保持原意。\n\n' +
+            '润色规则：\n' +
+            '1. 纠正语法错误和拼写错误\n' +
+            '2. 优化句子结构，提升表达流畅度\n' +
+            '3. 保持专业术语的准确性\n' +
+            '4. 根据上下文增强表达的准确性\n' +
+            '5. 保持原文的语气和风格\n\n' +
+            '请直接输出润色后的文本，不需要解释。';
+
+        var polishPrompt = '请润色以下文本：\n\n' + text;
+
+        var payload = {
+            content: polishPrompt,
+            options: {
+                web_search: false,
+                intent: 'polish',
+                system_prompt: systemPrompt
+            }
+        };
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(payload));
+        } else {
+            connectWS();
+            setTimeout(function () {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify(payload));
+                }
+            }, 1000);
+        }
+
+        var originalOnMessage = ws ? ws.onmessage : null;
+
+        var polishHandler = function (event) {
+            try {
+                var data = JSON.parse(event.data);
+
+                if (data.type === 'stream_start') {
+                    clearInterval(phaseInterval);
+                    inputBox.value = '正在润色...';
+                    inputBox.disabled = true;
+                } else if (data.type === 'stream_data') {
+                    inputBox.value = data.content;
+                    autoResizeTextarea();
+                } else if (data.type === 'stream_end' || data.type === 'response') {
+                    clearInterval(phaseInterval);
+                    inputBox.value = data.content || originalText;
+                    inputBox.disabled = false;
+                    autoResizeTextarea();
+                    updateSendButton();
+
+                    if (polishBtn) {
+                        polishBtn.disabled = false;
+                        polishBtn.classList.remove('polishing');
+                    }
+
+                    if (data.content && data.content !== originalText) {
+                        showToast('润色完成', 'success');
+                    } else if (!data.content) {
+                        showToast('润色失败：未获取到润色结果', 'error');
+                    }
+
+                    if (ws && originalOnMessage) {
+                        ws.onmessage = originalOnMessage;
+                    }
+                } else if (data.type === 'error') {
+                    clearInterval(phaseInterval);
+                    inputBox.value = originalText;
+                    inputBox.disabled = false;
+
+                    if (polishBtn) {
+                        polishBtn.disabled = false;
+                        polishBtn.classList.remove('polishing');
+                    }
+
+                    if (ws && originalOnMessage) {
+                        ws.onmessage = originalOnMessage;
+                    }
+                }
+            } catch (e) {
+                console.error('Polish error:', e);
+            }
+        };
+
+        if (ws) {
+            var originalHandler = ws.onmessage;
+            ws.onmessage = function (event) {
+                try {
+                    var data = JSON.parse(event.data);
+
+                    if (data.type === 'stream_start' || data.type === 'stream_data' || data.type === 'stream_end' || data.type === 'response' || data.type === 'error') {
+                        polishHandler(event);
+                    } else {
+                        if (originalHandler) originalHandler.call(ws, event);
+                    }
+                } catch (e) {
+                    if (originalHandler) originalHandler.call(ws, event);
+                }
+            };
+        }
+    }
+
+    // ==================== Thinking Animation ====================
+    function showThinkingAnimation(text, intent) {
+        var chatArea = $('#chat-area');
+        var welcome = $('#welcome-screen');
+        if (welcome) welcome.classList.add('hidden');
+
+        var thinkingEl = document.createElement('div');
+        thinkingEl.className = 'thinking-container';
+        thinkingEl.innerHTML =
+            '<div class="thinking-header opacity-0">' +
+            '<div class="thinking-title">' +
+            '<i class="fa-solid fa-brain thinking-brain"></i> ' +
+            '<span>正在分析...</span>' +
+            '</div>' +
+            '<div class="thinking-intent-badge">' + intent.display + '</div>' +
+            '</div>' +
+            '<div class="thinking-phases opacity-0">' +
+            '<div class="thinking-phase">' +
+            '<div class="thinking-phase-icon"><i class="fa-solid fa-search"></i></div>' +
+            '<div class="thinking-phase-text">理解问题</div>' +
+            '</div>' +
+            '<div class="thinking-phase">' +
+            '<div class="thinking-phase-icon"><i class="fa-solid fa-cog"></i></div>' +
+            '<div class="thinking-phase-text">处理中</div>' +
+            '</div>' +
+            '<div class="thinking-phase">' +
+            '<div class="thinking-phase-icon"><i class="fa-solid fa-check"></i></div>' +
+            '<div class="thinking-phase-text">生成回复</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="thinking-detail opacity-0">' +
+            '<div class="thinking-animations">' +
+            '<div class="thinking-dots"><span></span><span></span><span></span></div>' +
+            '</div>' +
+            '<div class="thinking-user-text">' +
+            '<i class="fa-solid fa-user"></i> ' +
+            escapeHtml(text.length > 100 ? text.substring(0, 100) + '...' : text) +
+            '</div>' +
+            '</div>';
+
+        chatArea.appendChild(thinkingEl);
+        scrollToBottom();
+
+        setTimeout(function() {
+            thinkingEl.querySelector('.thinking-header').classList.remove('opacity-0');
+            thinkingEl.querySelector('.thinking-header').classList.add('fade-in');
+        }, 100);
+
+        setTimeout(function() {
+            thinkingEl.querySelector('.thinking-phases').classList.remove('opacity-0');
+            thinkingEl.querySelector('.thinking-phases').classList.add('fade-in');
+
+            setTimeout(function() {
+                var phases = thinkingEl.querySelectorAll('.thinking-phase');
+                if (phases.length > 0) {
+                    phases[0].classList.add('active');
+                }
+            }, 300);
+        }, 400);
+
+        setTimeout(function () {
+            var phases = thinkingEl.querySelectorAll('.thinking-phase');
+            if (phases.length > 0) {
+                phases[0].classList.remove('active');
+                phases[0].classList.add('completed');
+            }
+        }, 1200);
+
+        setTimeout(function () {
+            var phases = thinkingEl.querySelectorAll('.thinking-phase');
+            if (phases.length > 1) {
+                phases[1].classList.add('active');
+            }
+
+            thinkingEl.querySelector('.thinking-detail').classList.remove('opacity-0');
+            thinkingEl.querySelector('.thinking-detail').classList.add('fade-in');
+        }, 1500);
+
+        return thinkingEl;
+    }
+
+    function updateThinkingAnimation(thinkingEl, phase) {
+        if (!thinkingEl) return;
+
+        var phases = thinkingEl.querySelectorAll('.thinking-phase');
+        phases.forEach(function (p, index) {
+            p.classList.remove('active', 'completed');
+            if (index < phase) {
+                p.classList.add('completed');
+            } else if (index === phase) {
+                p.classList.add('active');
+            }
+        });
+
+        if (phase === 2) {
+            var detail = thinkingEl.querySelector('.thinking-detail');
+            if (detail) {
+                detail.innerHTML = '<div class="thinking-text"><i class="fa-solid fa-pen"></i> 正在生成回复...</div>';
+            }
+        }
+    }
+
+    // ==================== Model Settings Functions ====================
+    function selectProvider(provider) {
+        var providerItems = document.querySelectorAll('.provider-item');
+        providerItems.forEach(function (item) {
+            item.classList.remove('active');
+            if (item.dataset.provider === provider) {
+                item.classList.add('active');
+            }
+        });
+
+        var configSections = document.querySelectorAll('.config-section');
+        configSections.forEach(function (section) {
+            section.classList.remove('active');
+        });
+
+        var activeSection = $('#config-' + provider);
+        if (activeSection) {
+            activeSection.classList.add('active');
+        }
+
+        var providerNames = {
+            'openai': 'OpenAI',
+            'anthropic': 'Anthropic',
+            'google': 'Google',
+            'azure': 'Azure OpenAI',
+            'aliyun': '阿里云',
+            'baidu': '百度',
+            'tencent': '腾讯云',
+            'zhipu': '智谱AI',
+            'deepseek': 'DeepSeek',
+            'ollama': 'Ollama',
+            'siliconflow': '硅基流动',
+            'custom': '自定义 API'
+        };
+
+        var configProviderName = document.querySelector('.config-provider-name');
+        if (configProviderName) {
+            configProviderName.textContent = providerNames[provider] || provider;
+        }
+    }
+
+    function testModelConnection() {
+        var activeProvider = document.querySelector('.provider-item.active');
+        if (!activeProvider) {
+            showToast('请先选择一个模型服务商', 'error');
+            return;
+        }
+
+        var provider = activeProvider.dataset.provider;
+        var configSection = $('#config-' + provider);
+        if (!configSection) return;
+
+        var apiKeyInput = configSection.querySelector('input[type="password"]');
+        if (!apiKeyInput || !apiKeyInput.value) {
+            showToast('请填写API Key', 'error');
+            return;
+        }
+
+        var activeModelTag = configSection.querySelector('.model-tag.active');
+        var modelName = activeModelTag ? activeModelTag.dataset.model : '';
+        if (!modelName) {
+            showToast('请选择或输入一个模型', 'error');
+            return;
+        }
+
+        var testBtn = $('#model-test-btn');
+        var originalText = testBtn.innerHTML;
+        testBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 测试中...';
+        testBtn.disabled = true;
+
+        var baseUrlInput = configSection.querySelector('input[placeholder*="url"], input[placeholder*="URL"]');
+        var baseUrl = baseUrlInput ? baseUrlInput.value : '';
+
+        httpPost('/api/model/test', {
+            provider: provider,
+            api_key: apiKeyInput.value,
+            base_url: baseUrl,
+            model: modelInput.value
+        }).then(function (res) {
+            return res.json();
+        }).then(function (data) {
+            updateModelInfoPanel(configSection, data);
+
+            if (data.success) {
+                var statusEl = activeProvider.querySelector('.provider-status');
+                if (statusEl) {
+                    statusEl.classList.remove('offline');
+                    statusEl.classList.add('online');
+                }
+
+                if (data.balance !== undefined) {
+                    showToast(`连接测试成功！余额: ${data.balance}`, 'success');
+                } else {
+                    showToast('连接测试成功！', 'success');
+                }
+            } else {
+                var statusEl = activeProvider.querySelector('.provider-status');
+                if (statusEl) {
+                    statusEl.classList.remove('online');
+                    statusEl.classList.add('offline');
+                }
+
+                var errorMsg = data.error || '未知错误';
+                if (data.balance === 0) {
+                    errorMsg = '余额不足，请先充值';
+                }
+                showToast('连接失败: ' + errorMsg, 'error');
+            }
+        }).catch(function (e) {
+            showToast('测试失败: ' + e.message, 'error');
+            var statusEl = activeProvider.querySelector('.provider-status');
+            if (statusEl) {
+                statusEl.classList.remove('online');
+                statusEl.classList.add('offline');
+            }
+        }).finally(function () {
+            testBtn.innerHTML = originalText;
+            testBtn.disabled = false;
+        });
+    }
+
+    function updateModelInfoPanel(configSection, data) {
+        var infoPanel = configSection.querySelector('.model-info-panel');
+        if (!infoPanel) return;
+
+        var statusEl = infoPanel.querySelector('.model-info-value');
+        if (statusEl) {
+            statusEl.classList.remove('status-pending', 'status-success', 'status-error');
+            if (data.success) {
+                statusEl.classList.add('status-success');
+                statusEl.textContent = '可用';
+            } else {
+                statusEl.classList.add('status-error');
+                statusEl.textContent = '不可用';
+            }
+        }
+
+        var balanceEl = infoPanel.querySelectorAll('.model-info-value')[1];
+        if (balanceEl) {
+            if (data.balance !== undefined) {
+                balanceEl.textContent = data.balance;
+            } else if (data.success) {
+                balanceEl.textContent = 'API未返回余额信息';
+            } else {
+                balanceEl.textContent = '--';
+            }
+        }
+    }
+
+    function addCustomModel() {
+        var activeProvider = document.querySelector('.provider-item.active');
+        if (!activeProvider) return;
+
+        var provider = activeProvider.dataset.provider;
+        var configSection = $('#config-' + provider);
+        if (!configSection) return;
+
+        var inputWrapper = configSection.querySelector('.model-tag-input-wrapper');
+        if (!inputWrapper) return;
+
+        var input = inputWrapper.querySelector('.model-tag-input');
+        var modelName = input.value.trim();
+
+        if (!modelName) {
+            showToast('请输入模型名称', 'error');
+            return;
+        }
+
+        var modelTags = configSection.querySelector('.model-tags');
+        var existingTags = modelTags.querySelectorAll('.model-tag');
+        for (var i = 0; i < existingTags.length; i++) {
+            if (existingTags[i].dataset.model === modelName) {
+                showToast('该模型已存在', 'error');
+                return;
+            }
+        }
+
+        var newTag = document.createElement('span');
+        newTag.className = 'model-tag active';
+        newTag.dataset.model = modelName;
+        newTag.textContent = modelName;
+
+        var addWrapper = modelTags.querySelector('.model-tag-input-wrapper');
+        modelTags.insertBefore(newTag, addWrapper);
+
+        existingTags.forEach(function (tag) {
+            tag.classList.remove('active');
+        });
+
+        input.value = '';
+        showToast('模型已添加', 'success');
+    }
+
+    function saveModelSettings() {
+        var activeProvider = document.querySelector('.provider-item.active');
+        if (!activeProvider) {
+            showToast('请先选择一个模型服务商', 'error');
+            return;
+        }
+
+        var provider = activeProvider.dataset.provider;
+        var configSection = $('#config-' + provider);
+        if (!configSection) return;
+
+        var settings = {
+            provider: provider,
+            api_key: '',
+            base_url: '',
+            models: [],
+            params: {
+                max_tokens: parseInt($('#setting-max-tokens')?.value || '4096'),
+                temperature: parseFloat($('#setting-temperature')?.value || '0.7'),
+                top_p: parseFloat($('#setting-top-p')?.value || '0.9'),
+                top_k: parseInt($('#setting-top-k')?.value || '0'),
+                frequency_penalty: parseFloat($('#setting-frequency-penalty')?.value || '0'),
+                presence_penalty: parseFloat($('#setting-presence-penalty')?.value || '0')
+            }
+        };
+
+        var apiKeyInput = configSection.querySelector('input[type="password"]');
+        if (apiKeyInput) settings.api_key = apiKeyInput.value;
+
+        var baseUrlInput = configSection.querySelector('input[placeholder*="url"], input[placeholder*="URL"]');
+        if (baseUrlInput) settings.base_url = baseUrlInput.value;
+
+        var modelTags = configSection.querySelectorAll('.model-tag');
+        modelTags.forEach(function (tag) {
+            if (tag.classList.contains('active')) {
+                settings.models.push(tag.dataset.model);
+            }
+        });
+
+        httpPost('/api/model/save', settings).then(function (res) {
+            return res.json();
+        }).then(function (data) {
+            if (data.success) {
+                showToast('配置保存成功！', 'success');
+            } else {
+                showToast('保存失败: ' + data.error, 'error');
+            }
+        }).catch(function (e) {
+            showToast('保存失败: ' + e.message, 'error');
+        });
+    }
+
+    // ==================== PPT Generation ====================
+    function generatePPT(presentationData) {
+        if (typeof PptxGenJS === 'undefined') {
+            showToast('PPT生成库加载失败', 'error');
+            return;
+        }
+
+        try {
+            var pres = new PptxGenJS();
+            pres.layout = 'LAYOUT_16x9';
+            pres.title = presentationData.title || '演示文稿';
+            pres.author = 'DATA-AI';
+
+            if (presentationData.cover) {
+                var slide1 = pres.addSlide();
+                slide1.addText(presentationData.cover.title, {
+                    x: 1, y: 3, w: 8, h: 1.5,
+                    fontSize: 36, bold: true, color: '000000',
+                    align: 'center'
+                });
+                if (presentationData.cover.subtitle) {
+                    slide1.addText(presentationData.cover.subtitle, {
+                        x: 1, y: 4.5, w: 8, h: 1,
+                        fontSize: 20, color: '666666',
+                        align: 'center'
+                    });
+                }
+                if (presentationData.cover.speaker) {
+                    slide1.addText(presentationData.cover.speaker, {
+                        x: 1, y: 6, w: 8, h: 0.5,
+                        fontSize: 14, color: '999999',
+                        align: 'center'
+                    });
+                }
+            }
+
+            if (presentationData.tableOfContents && presentationData.tableOfContents.length > 0) {
+                var slide2 = pres.addSlide();
+                slide2.addText('目录', {
+                    x: 1, y: 1.5, w: 8, h: 1,
+                    fontSize: 28, bold: true, color: '000000'
+                });
+
+                var yPos = 2.5;
+                presentationData.tableOfContents.forEach(function(item, index) {
+                    slide2.addText((index + 1) + '. ' + item, {
+                        x: 1.5, y: yPos, w: 7, h: 0.6,
+                        fontSize: 18, color: '333333'
+                    });
+                    yPos += 0.8;
+                });
+            }
+
+            if (presentationData.sections && presentationData.sections.length > 0) {
+                presentationData.sections.forEach(function(section) {
+                    section.slides.forEach(function(slideData) {
+                        var slide = pres.addSlide();
+                        slide.addText(slideData.title, {
+                            x: 1, y: 1, w: 8, h: 0.8,
+                            fontSize: 24, bold: true, color: '000000'
+                        });
+
+                        var yPos = 2;
+                        slideData.points.forEach(function(point) {
+                            slide.addText('• ' + point, {
+                                x: 1.2, y: yPos, w: 7.6, h: 0.5,
+                                fontSize: 16, color: '333333'
+                            });
+                            yPos += 0.6;
+                        });
+                    });
+                });
+            }
+
+            if (presentationData.summary) {
+                var slideN = pres.addSlide();
+                slideN.addText('总结', {
+                    x: 1, y: 1.5, w: 8, h: 1,
+                    fontSize: 28, bold: true, color: '000000'
+                });
+
+                var yPos = 2.5;
+                presentationData.summary.forEach(function(point, index) {
+                    slideN.addText((index + 1) + '. ' + point, {
+                        x: 1.5, y: yPos, w: 7, h: 0.6,
+                        fontSize: 18, color: '333333'
+                    });
+                    yPos += 0.8;
+                });
+            }
+
+            var slideQA = pres.addSlide();
+            slideQA.addText('Q&A', {
+                x: 1, y: 3, w: 8, h: 1.5,
+                fontSize: 36, bold: true, color: '000000',
+                align: 'center'
+            });
+            slideQA.addText('感谢您的聆听！', {
+                x: 1, y: 5, w: 8, h: 0.8,
+                fontSize: 20, color: '666666',
+                align: 'center'
+            });
+
+            var fileName = (presentationData.title || 'presentation') + '.pptx';
+            pres.writeFile({ fileName: fileName }).then(function() {
+                showToast('PPT生成成功！', 'success');
+            }).catch(function(err) {
+                console.error('PPT生成失败:', err);
+                showToast('PPT生成失败: ' + err.message, 'error');
+            });
+        } catch (err) {
+            console.error('PPT生成异常:', err);
+            showToast('PPT生成异常: ' + err.message, 'error');
+        }
+    }
+
+    window.__generatePPT = function() {
+        var chatArea = $('#chat-area');
+        var lastMessage = chatArea.querySelector('.message.assistant:last-child .message-content');
+        if (!lastMessage) {
+            showToast('请先生成PPT大纲', 'error');
+            return;
+        }
+
+        var content = lastMessage.textContent || lastMessage.innerText;
+
+        var presentationData = parsePPTOutline(content);
+        if (presentationData) {
+            generatePPT(presentationData);
+        } else {
+            showToast('无法解析PPT大纲，请确保内容格式正确', 'error');
+        }
+    };
+
+    function parsePPTOutline(content) {
+        var lines = content.split('\n');
+        var data = {
+            title: '',
+            cover: {},
+            tableOfContents: [],
+            sections: [],
+            summary: []
+        };
+
+        var currentSection = null;
+        var currentSlide = null;
+        var inSection = false;
+
+        lines.forEach(function(line) {
+            line = line.trim();
+
+            if (line.startsWith('## 📊')) {
+                data.title = line.replace('## 📊', '').trim();
+            } else if (line.startsWith('### 1. 封面页')) {
+                inSection = 'cover';
+            } else if (line.startsWith('**标题**:')) {
+                data.cover.title = line.replace('**标题**:', '').trim();
+            } else if (line.startsWith('**副标题**:')) {
+                data.cover.subtitle = line.replace('**副标题**:', '').trim();
+            } else if (line.startsWith('**演讲者**:')) {
+                data.cover.speaker = line.replace('**演讲者**:', '').trim();
+            } else if (line.startsWith('### 2. 目录页')) {
+                inSection = 'toc';
+            } else if (line.startsWith('- ') && inSection === 'toc') {
+                data.tableOfContents.push(line.replace('- ', '').trim());
+            } else if (line.startsWith('### 3. 内容页')) {
+                inSection = 'content';
+            } else if (line.startsWith('#### 章节')) {
+                currentSection = { title: line.replace('#### 章节', '').trim(), slides: [] };
+                data.sections.push(currentSection);
+            } else if (line.startsWith('**幻灯片')) {
+                if (currentSection) {
+                    var slideTitle = line.replace(/\*\*幻灯片.*?:\*\*/, '').trim();
+                    currentSlide = { title: slideTitle, points: [] };
+                    currentSection.slides.push(currentSlide);
+                }
+            } else if (line.startsWith('- ') && currentSlide) {
+                currentSlide.points.push(line.replace('- ', '').trim());
+            } else if (line.startsWith('### 4. 总结页')) {
+                inSection = 'summary';
+            } else if (line.startsWith('- ') && inSection === 'summary') {
+                data.summary.push(line.replace('- ', '').trim());
+            }
+        });
+
+        return data.title || data.cover.title ? data : null;
+    }
+
+    // ==================== Speech Recognition ====================
+    var recognition = null;
+    var isListening = false;
+
+    function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            console.warn('浏览器不支持语音识别功能');
+            return false;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'zh-CN';
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = function() {
+            isListening = true;
+            var voiceBtn = $('#voice-btn');
+            var voiceIndicator = $('#voice-indicator');
+            if (voiceBtn) {
+                voiceBtn.classList.add('recording');
+                voiceBtn.innerHTML = '<i class="fa-solid fa-stop"></i>';
+            }
+            if (voiceIndicator) {
+                voiceIndicator.classList.remove('hidden');
+            }
+        };
+
+        recognition.onresult = function(event) {
+            var transcript = '';
+            for (var i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+
+            var inputBox = $('#input-box');
+            if (inputBox) {
+                inputBox.value = transcript;
+                autoResizeTextarea();
+                updateSendButton();
+            }
+
+            var voiceStatusText = $('#voice-status-text');
+            if (voiceStatusText) {
+                voiceStatusText.textContent = '正在聆听... ' + transcript;
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.error('语音识别错误:', event.error);
+            var errorMsg = '';
+
+            switch(event.error) {
+                case 'no-speech':
+                    errorMsg = '没有检测到语音';
+                    break;
+                case 'audio-capture':
+                    errorMsg = '无法访问麦克风';
+                    break;
+                case 'not-allowed':
+                    errorMsg = '麦克风权限被拒绝';
+                    break;
+                case 'network':
+                    errorMsg = '网络连接错误';
+                    break;
+                case 'service-not-allowed':
+                    errorMsg = '语音识别服务不可用';
+                    break;
+                default:
+                    errorMsg = '识别错误: ' + event.error;
+            }
+
+            showToast(errorMsg, 'error');
+            stopListening();
+        };
+
+        recognition.onend = function() {
+            isListening = false;
+            var voiceBtn = $('#voice-btn');
+            var voiceIndicator = $('#voice-indicator');
+            if (voiceBtn) {
+                voiceBtn.classList.remove('recording');
+                voiceBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+            }
+            if (voiceIndicator) {
+                voiceIndicator.classList.add('hidden');
+            }
+        };
+
+        return true;
+    }
+
+    function toggleVoiceInput() {
+        if (!recognition) {
+            var supported = initSpeechRecognition();
+            if (!supported) {
+                showToast('您的浏览器不支持语音识别功能，请使用Chrome或Edge浏览器', 'error');
+                return;
+            }
+        }
+
+        if (isListening) {
+            stopListening();
+        } else {
+            startListening();
+        }
+    }
+
+    function startListening() {
+        if (isListening) return;
+
+        try {
+            recognition.start();
+            showToast('开始聆听，请说话...', 'info');
+        } catch (error) {
+            console.error('启动语音识别失败:', error);
+            showToast('启动语音识别失败，请检查麦克风权限', 'error');
+        }
+    }
+
+    function stopListening() {
+        if (!isListening) return;
+
+        try {
+            recognition.stop();
+        } catch (error) {
+            console.error('停止语音识别失败:', error);
+        }
+    }
+
     // ==================== Init ====================
     function init() {
         initMarked();
@@ -2231,6 +4124,7 @@
 
         connectWS();
         loadSettings();
+        initLibraries();
     }
 
     // Start when DOM is ready
