@@ -1353,17 +1353,7 @@
             createConversation();
         }
 
-        // Handle intent asynchronously
-        handleIntent(content).then(function(intent) {
-            if (intent.handler) {
-                showToast('识别到意图: ' + intent.display, 'info');
-                intent.handler(content);
-            }
-        }).catch(function(err) {
-            console.error('Intent handling error:', err);
-        });
-
-        // Add user message to UI
+        // Add user message to UI immediately
         var chatArea = $('#chat-area');
         var ws4 = $('#welcome-screen');
         if (ws4) ws4.classList.add('hidden');
@@ -1408,16 +1398,25 @@
         // Search knowledge base
         searchKnowledgeBase(content);
 
-        // Send to WebSocket or queue
-        if (isStreaming) {
-            pendingUserMessages.push(content);
-            updateQueueIndicator();
-        } else {
-            setTimeout(function () {
-                updateThinkingAnimation(thinkingEl, 2);
-            }, 2000);
-            sendToWebSocket(content, intent);
-        }
+        // Handle intent and send message
+        handleIntent(content).then(function(intent) {
+            if (intent && intent.handler) {
+                showToast('识别到意图: ' + intent.display, 'info');
+                intent.handler(content);
+                return;
+            }
+
+            // Send to WebSocket or queue
+            if (isStreaming) {
+                pendingUserMessages.push(content);
+                updateQueueIndicator();
+            } else {
+                sendToWebSocket(content, intent);
+            }
+        }).catch(function(err) {
+            console.error('Intent handling error:', err);
+            sendToWebSocket(content, null);
+        });
     }
 
     // ==================== RAG Knowledge Base Search ====================
@@ -1457,6 +1456,7 @@
         updateStopButton();
 
         var payload = {
+            type: 'chat',
             content: content,
             options: {
                 web_search: webSearchEnabled,
@@ -1464,8 +1464,11 @@
             }
         };
 
+        console.log('[WS] Sending message:', payload);
+
         if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify(payload));
+            addLog('发送消息到服务器', 'ws');
         } else {
             messageQueue.push(payload);
             if (!ws || ws.readyState === WebSocket.CLOSED) {

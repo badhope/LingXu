@@ -646,13 +646,26 @@ async def call_llm(prompt: str, settings: Settings) -> str:
         response = await client.chat.completions.create(
             model=settings.llm["model"],
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=settings.llm["max_tokens"],
-            temperature=settings.llm["temperature"],
-            top_p=settings.llm["top_p"],
+            max_tokens=settings.llm.get("max_tokens", 4096),
+            temperature=settings.llm.get("temperature", 0.7),
+            top_p=settings.llm.get("top_p", 0.9),
         )
         return response.choices[0].message.content
     except Exception as e:
-        return f"LLM调用失败: {str(e)}"
+        error_msg = str(e)
+        print(f"[LLM调用失败] {error_msg}")
+        if "401" in error_msg or "unauthorized" in error_msg.lower():
+            return "❌ API Key无效，请检查配置"
+        elif "403" in error_msg or "forbidden" in error_msg.lower():
+            return "❌ API权限不足或余额不足"
+        elif "429" in error_msg:
+            return "❌ 请求过于频繁，请稍后再试"
+        elif "timeout" in error_msg.lower():
+            return "❌ 请求超时，请检查网络连接"
+        elif "connection" in error_msg.lower():
+            return f"❌ 无法连接到API服务，请检查网络和API地址是否正确\n错误: {error_msg[:200]}"
+        else:
+            return f"❌ LLM调用失败: {error_msg[:300]}"
 
 
 async def clean_text(text: str, rules: dict) -> str:
