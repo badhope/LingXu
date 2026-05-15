@@ -177,9 +177,21 @@
             console.log('[LIB] Lucide loaded');
         }
 
-        if (typeof PptxGenJS !== 'undefined') {
-            libs.pptxgen = PptxGenJS;
+        if (typeof PptxGenJS !== 'undefined' || typeof pptxgen !== 'undefined') {
+            libs.pptxgen = PptxGenJS || pptxgen;
             console.log('[LIB] PptxGenJS loaded');
+        }
+    }
+
+    function checkPPTLibrary() {
+        if (!libs.pptxgen) {
+            showToast('正在加载PPT生成库...', 'info');
+            setTimeout(function() {
+                if (typeof pptxgen !== 'undefined') {
+                    libs.pptxgen = pptxgen;
+                    showToast('PPT生成库加载成功！', 'success');
+                }
+            }, 1000);
         }
     }
 
@@ -707,6 +719,9 @@
             actions = '<div class="message-actions">' +
                 '<button class="message-action-btn" data-action="copy" title="复制"><i class="fa-regular fa-copy"></i></button>';
             if (msg.type === 'assistant') {
+                actions += '<button class="message-action-btn speech-btn" data-action="speak" title="朗读"><i class="fa-solid fa-volume-high"></i></button>';
+                actions += '<button class="message-action-btn" data-action="reaction" title="表情反应"><i class="fa-regular fa-face-smile"></i></button>';
+                actions += '<button class="message-action-btn" data-action="quick-reply" title="快捷回复"><i class="fa-regular fa-message-circle"></i></button>';
                 actions += '<button class="message-action-btn" data-action="regenerate" title="重新生成"><i class="fa-solid fa-rotate"></i></button>';
                 actions += '<button class="message-action-btn" data-action="download-ppt" title="下载PPT"><i class="fa-solid fa-file-powerpoint"></i></button>';
                 actions += '<button class="message-action-btn" data-action="thumbs-up" title="有帮助"><i class="fa-regular fa-thumbs-up"></i></button>';
@@ -740,9 +755,36 @@
                     else if (action === 'edit') editMessage(msgId);
                     else if (action === 'thumbs-up') handleFeedback(msgEl, msgId, 'up');
                     else if (action === 'thumbs-down') handleFeedback(msgEl, msgId, 'down');
+                    else if (action === 'speak') speakMessage(msgEl, btn);
+                    else if (action === 'reaction') showReactionPicker(msgId);
+                    else if (action === 'quick-reply') showQuickReplies(msgId);
                 });
             });
         });
+    }
+
+    function speakMessage(msgEl, btn) {
+        var contentEl = msgEl.querySelector('.message-content');
+        if (!contentEl) return;
+
+        var text = contentEl.innerText || contentEl.textContent;
+        if (!text.trim()) return;
+
+        var allSpeechBtns = document.querySelectorAll('[data-action="speak"]');
+        allSpeechBtns.forEach(function(b) {
+            b.classList.remove('speaking');
+            b.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        });
+
+        btn.classList.add('speaking');
+        btn.innerHTML = '<i class="fa-solid fa-stop"></i>';
+
+        speak(text);
+
+        setTimeout(function() {
+            btn.classList.remove('speaking');
+            btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        }, text.length * 100 + 500);
     }
 
     function copyMessageContent(msgEl) {
@@ -1587,13 +1629,809 @@
         var skillBtn = $('#sidebar-skill-btn');
         var mcpBtn = $('#sidebar-mcp-btn');
         var artifactsBtn = $('#sidebar-artifacts-btn');
+        var logsBtn = $('#sidebar-logs-btn');
         var settingsBtn = $('#sidebar-settings-btn');
 
         if (kbBtn) kbBtn.addEventListener('click', function () { openDrawer('kb-drawer', 'kb-drawer-overlay'); loadKnowledgeBases(); closeSidebar(); });
         if (skillBtn) skillBtn.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); closeSidebar(); setTimeout(function() { switchTab('tab-skills'); }, 300); });
         if (mcpBtn) mcpBtn.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); closeSidebar(); setTimeout(function() { switchTab('tab-mcp'); }, 300); });
         if (artifactsBtn) artifactsBtn.addEventListener('click', function () { var panel = $('#artifacts-panel'); var toggle = $('#artifacts-toggle-btn'); if (panel) panel.classList.toggle('open'); if (toggle) toggle.classList.toggle('active'); closeSidebar(); });
+        if (logsBtn) logsBtn.addEventListener('click', function () { var panel = $('#logs-panel'); if (panel) panel.classList.add('open'); closeSidebar(); });
         if (settingsBtn) settingsBtn.addEventListener('click', function () { openDrawer('settings-drawer', 'settings-drawer-overlay'); closeSidebar(); });
+    }
+
+    // ==================== Log System ====================
+    var logs = [];
+    var currentLogFilter = 'all';
+    var logSearchQuery = '';
+    var LOG_TYPE_DISPLAY = {
+        debug: '调试',
+        info: '信息',
+        success: '成功',
+        warning: '警告',
+        error: '错误',
+        api: 'API',
+        ws: 'WS',
+        system: '系统'
+    };
+
+    function addLog(message, type, meta) {
+        type = type || 'info';
+        var now = new Date();
+        var log = {
+            id: Date.now() + Math.random().toString(36).substr(2, 9),
+            time: now.toLocaleTimeString('zh-CN', { hour12: false }),
+            timestamp: now.toISOString(),
+            message: message,
+            type: type,
+            meta: meta || null,
+            details: null
+        };
+        logs.unshift(log);
+
+        if (logs.length > 5000) {
+            logs = logs.slice(0, 5000);
+        }
+
+        renderLogs();
+        updateLogStats();
+
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function addAPILog(method, url, status, duration) {
+        addLog(`${method} ${url} - ${status} (${duration}ms)`, 'api', {
+            method: method,
+            url: url,
+            status: status,
+            duration: duration
+        });
+    }
+
+    function addWSLog(event, data) {
+        var msg = `WebSocket ${event}`;
+        if (data) {
+            try {
+                var parsed = typeof data === 'string' ? JSON.parse(data) : data;
+                if (parsed.type) {
+                    msg += ` [${parsed.type}]`;
+                }
+            } catch (e) {
+                msg += ` (${data.length} bytes)`;
+            }
+        }
+        addLog(msg, 'ws');
+    }
+
+    function addSystemLog(message) {
+        addLog(message, 'system');
+    }
+
+    function updateLogStats() {
+        var statsEl = $('#logs-panel-stats');
+        if (!statsEl) return;
+
+        var stats = {
+            total: logs.length,
+            error: logs.filter(l => l.type === 'error').length,
+            warning: logs.filter(l => l.type === 'warning').length
+        };
+        statsEl.textContent = `${stats.total} 条日志 | ${stats.error} 错误 | ${stats.warning} 警告`;
+    }
+
+    function renderLogs() {
+        var panelBody = $('#logs-panel-body');
+        if (!panelBody) return;
+
+        var filteredLogs = logs.filter(function(log) {
+            if (currentLogFilter !== 'all' && log.type !== currentLogFilter) {
+                return false;
+            }
+            if (logSearchQuery) {
+                var query = logSearchQuery.toLowerCase();
+                return log.message.toLowerCase().includes(query);
+            }
+            return true;
+        });
+
+        if (filteredLogs.length === 0) {
+            panelBody.innerHTML = '<div class="logs-empty"><i class="fa-solid fa-file-text"></i><span>' +
+                (logSearchQuery ? '没有找到匹配的日志' : '暂无日志') + '</span></div>';
+            return;
+        }
+
+        panelBody.innerHTML = filteredLogs.map(function(log) {
+            var metaHtml = '';
+            var expanderHtml = '';
+
+            if (log.meta) {
+                metaHtml = '<div class="log-meta">';
+                Object.keys(log.meta).forEach(function(key) {
+                    metaHtml += `<span>${key}: ${log.meta[key]}</span>`;
+                });
+                metaHtml += '</div>';
+            }
+
+            if (log.details) {
+                expanderHtml = '<div class="log-expander"><pre>' + escapeHtml(JSON.stringify(log.details, null, 2)) + '</pre></div>';
+            }
+
+            return `
+                <div class="log-entry ${log.type}" data-log-id="${log.id}" onclick="window.__toggleLogDetails('${log.id}')">
+                    <div class="log-header">
+                        <span class="log-time">${log.time}</span>
+                        <span class="log-type ${log.type}">${LOG_TYPE_DISPLAY[log.type] || log.type}</span>
+                        <span class="log-timestamp">${log.timestamp}</span>
+                    </div>
+                    <div class="log-message">${escapeHtml(log.message)}</div>
+                    ${metaHtml}
+                    ${expanderHtml}
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.__toggleLogDetails = function(logId) {
+        var entry = document.querySelector(`[data-log-id="${logId}"]`);
+        if (entry) {
+            entry.classList.toggle('expanded');
+        }
+    };
+
+    function initLogsPanel() {
+        var closeBtn = $('#logs-panel-close');
+        var clearBtn = $('#logs-panel-clear');
+        var exportBtn = $('#logs-panel-export');
+        var searchInput = $('#logs-search-input');
+        var filterBtns = document.querySelectorAll('.log-filter-btn');
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                var panel = $('#logs-panel');
+                if (panel) panel.classList.remove('open');
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                logs = [];
+                renderLogs();
+                updateLogStats();
+                addLog('日志已清空', 'success');
+            });
+        }
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportLogs);
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce(function() {
+                logSearchQuery = searchInput.value.trim();
+                renderLogs();
+            }, 150));
+        }
+
+        filterBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                currentLogFilter = btn.dataset.filter;
+                renderLogs();
+            });
+        });
+    }
+
+    function exportLogs() {
+        if (logs.length === 0) {
+            showToast('没有日志可导出', 'info');
+            return;
+        }
+
+        var exportData = logs.map(function(log) {
+            return {
+                timestamp: log.timestamp,
+                time: log.time,
+                type: log.type,
+                message: log.message,
+                meta: log.meta
+            };
+        });
+
+        downloadFile('logs.json', JSON.stringify(exportData, null, 2), 'application/json');
+        showToast('日志已导出', 'success');
+    }
+
+    // ==================== Learning System ====================
+    var learningData = {
+        feedbacks: [],
+        patterns: [],
+        preferences: {}
+    };
+
+    function initLearningSystem() {
+        loadLearningData();
+        addLog('学习系统初始化完成', 'system');
+    }
+
+    function loadLearningData() {
+        try {
+            var stored = localStorage.getItem('ai-learning-data');
+            if (stored) {
+                learningData = JSON.parse(stored);
+                addLog('学习数据加载成功', 'info');
+            }
+        } catch (e) {
+            addLog('学习数据加载失败: ' + e.message, 'error');
+        }
+    }
+
+    function saveLearningData() {
+        try {
+            localStorage.setItem('ai-learning-data', JSON.stringify(learningData));
+        } catch (e) {
+            addLog('学习数据保存失败: ' + e.message, 'error');
+        }
+    }
+
+    function addUserFeedback(messageId, feedbackType, comment) {
+        var feedback = {
+            id: Date.now(),
+            messageId: messageId,
+            type: feedbackType,
+            comment: comment || '',
+            timestamp: new Date().toISOString()
+        };
+        learningData.feedbacks.push(feedback);
+
+        if (learningData.feedbacks.length > 1000) {
+            learningData.feedbacks = learningData.feedbacks.slice(-1000);
+        }
+
+        analyzeFeedbackPatterns();
+        saveLearningData();
+        addLog(`用户反馈: ${feedbackType} - ${messageId}`, 'system');
+    }
+
+    function analyzeFeedbackPatterns() {
+        var patternAnalysis = {
+            positive: 0,
+            negative: 0,
+            suggestions: []
+        };
+
+        learningData.feedbacks.forEach(function(fb) {
+            if (fb.type === 'thumbs_up') patternAnalysis.positive++;
+            if (fb.type === 'thumbs_down') patternAnalysis.negative++;
+            if (fb.type === 'suggestion' && fb.comment) {
+                patternAnalysis.suggestions.push(fb.comment);
+            }
+        });
+
+        addLog(`反馈分析: 正面${patternAnalysis.positive}条, 负面${patternAnalysis.negative}条`, 'info');
+        return patternAnalysis;
+    }
+
+    function analyzeConversationHistory() {
+        var analysis = {
+            totalMessages: messages.length,
+            topics: [],
+            frequentPatterns: {},
+            responseTimeStats: []
+        };
+
+        messages.forEach(function(msg) {
+            if (msg.role === 'user') {
+                var topic = classifyTopic(msg.content);
+                if (topic) {
+                    analysis.topics.push(topic);
+                    analysis.frequentPatterns[topic] =
+                        (analysis.frequentPatterns[topic] || 0) + 1;
+                }
+            }
+            if (msg.responseTime) {
+                analysis.responseTimeStats.push(msg.responseTime);
+            }
+        });
+
+        return analysis;
+    }
+
+    function classifyTopic(text) {
+        var topicKeywords = {
+            '总结': ['总结', '概括', '摘要', '要点'],
+            '翻译': ['翻译', '润色', '语言', '英文', '中文'],
+            'PPT': ['PPT', '幻灯片', '演示', '汇报'],
+            '代码': ['代码', '编程', '开发', 'function', 'import'],
+            '图表': ['图表', '可视化', '图表生成', '数据图'],
+            '问题解决': ['问题', '错误', 'bug', '修复', '怎么办'],
+            '知识问答': ['什么是', '如何', '为什么', '原理'],
+            '创意生成': ['写', '创作', '生成', '设计']
+        };
+
+        for (var topic in topicKeywords) {
+            if (topicKeywords[topic].some(function(kw) {
+                return text.includes(kw);
+            })) {
+                return topic;
+            }
+        }
+        return '其他';
+    }
+
+    function getLearningInsights() {
+        var feedbackAnalysis = analyzeFeedbackPatterns();
+        var conversationAnalysis = analyzeConversationHistory();
+
+        return {
+            feedback: feedbackAnalysis,
+            conversation: conversationAnalysis,
+            suggestions: generateSuggestions(feedbackAnalysis, conversationAnalysis)
+        };
+    }
+
+    function generateSuggestions(feedback, conversation) {
+        var suggestions = [];
+
+        if (feedback.negative > feedback.positive * 0.5) {
+            suggestions.push('建议检查最近的负面反馈，优化响应质量');
+        }
+
+        var topTopics = Object.entries(conversation.frequentPatterns)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
+
+        if (topTopics.length > 0) {
+            suggestions.push(`用户最常讨论的话题: ${topTopics.map(t => t[0]).join(', ')}`);
+        }
+
+        return suggestions;
+    }
+
+    function learnFromInteraction(userMessage, response, success) {
+        var learningEntry = {
+            id: Date.now(),
+            userInput: userMessage,
+            response: response,
+            success: success,
+            timestamp: new Date().toISOString(),
+            intent: detectIntent(userMessage)
+        };
+
+        if (!learningData.patterns.some(function(p) {
+            return p.userInput === userMessage;
+        })) {
+            learningData.patterns.push(learningEntry);
+            if (learningData.patterns.length > 500) {
+                learningData.patterns = learningData.patterns.slice(-500);
+            }
+            saveLearningData();
+        }
+    }
+
+    function detectIntent(text) {
+        var intents = {
+            'summarize': ['总结', '概括', '摘要'],
+            'translate': ['翻译', '润色', '翻译为', '英文'],
+            'generate_ppt': ['生成PPT', 'PPT', '幻灯片'],
+            'generate_code': ['写代码', '代码', '编程'],
+            'generate_chart': ['图表', '可视化', '图表生成'],
+            'question': ['什么是', '为什么', '如何', '怎样'],
+            'complaint': ['不行', '不好', '错误', '失败'],
+            'praise': ['好', '棒', '不错', '优秀']
+        };
+
+        for (var intent in intents) {
+            if (intents[intent].some(function(kw) {
+                return text.includes(kw);
+            })) {
+                return intent;
+            }
+        }
+        return 'unknown';
+    }
+
+    // ==================== Error Handling System ====================
+    var errorHandler = {
+        errors: [],
+        retryCount: {},
+        maxRetries: 3,
+        rateLimitReset: null
+    };
+
+    function initErrorHandling() {
+        window.addEventListener('error', handleGlobalError);
+        window.addEventListener('unhandledrejection', handlePromiseRejection);
+        addLog('异常处理系统初始化完成', 'system');
+    }
+
+    function handleGlobalError(event) {
+        logError('global', event.message, {
+            filename: event.filename,
+            lineno: event.lineno,
+            colno: event.colno,
+            error: event.error
+        });
+    }
+
+    function handlePromiseRejection(event) {
+        logError('promise', event.reason ? event.reason.message || event.reason : 'Unknown', {
+            reason: event.reason
+        });
+    }
+
+    function logError(type, message, details) {
+        var error = {
+            id: Date.now(),
+            type: type,
+            message: message,
+            details: details,
+            timestamp: new Date().toISOString()
+        };
+
+        errorHandler.errors.push(error);
+        if (errorHandler.errors.length > 500) {
+            errorHandler.errors = errorHandler.errors.slice(-500);
+        }
+
+        addLog(`[ERROR] ${type}: ${message}`, 'error');
+
+        if (type === 'api') {
+            handleAPIError(message, details);
+        }
+    }
+
+    function handleAPIError(message, details) {
+        if (message.includes('429') || message.includes('rate limit')) {
+            errorHandler.rateLimitReset = Date.now() + 60000;
+            addLog('API限流，等待60秒后重试', 'warning');
+        }
+
+        if (details && details.status === 500) {
+            triggerRetry(details.url, details.options, details.retryCount || 0);
+        }
+    }
+
+    function triggerRetry(url, options, count) {
+        if (count >= errorHandler.maxRetries) {
+            addLog(`重试失败 ${count} 次，放弃请求: ${url}`, 'error');
+            return;
+        }
+
+        var delay = Math.pow(2, count) * 1000;
+        addLog(`重试第 ${count + 1} 次，延迟 ${delay}ms: ${url}`, 'warning');
+
+        setTimeout(function() {
+            fetch(url, options)
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Retry failed');
+                    addLog(`重试成功: ${url}`, 'success');
+                })
+                .catch(function() {
+                    triggerRetry(url, options, count + 1);
+                });
+        }, delay);
+    }
+
+    function safeFetch(url, options) {
+        var retries = errorHandler.retryCount[url] || 0;
+
+        return fetch(url, options)
+            .then(function(response) {
+                if (response.status === 429) {
+                    throw new Error('Rate limited');
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                errorHandler.retryCount[url] = 0;
+                return response;
+            })
+            .catch(function(error) {
+                addLog(`请求失败: ${url} - ${error.message}`, 'error');
+
+                if (retries < errorHandler.maxRetries) {
+                    errorHandler.retryCount[url] = retries + 1;
+                    return new Promise(function(resolve) {
+                        setTimeout(function() {
+                            resolve(safeFetch(url, options));
+                        }, Math.pow(2, retries) * 1000);
+                    });
+                }
+
+                throw error;
+            });
+    }
+
+    // ==================== Memory & Cache System ====================
+    var memoryCache = {
+        shortTerm: {},
+        longTerm: {},
+        contextWindow: []
+    };
+
+    function initMemorySystem() {
+        loadLongTermMemory();
+        addLog('记忆系统初始化完成', 'system');
+    }
+
+    function loadLongTermMemory() {
+        try {
+            var stored = localStorage.getItem('ai-longterm-memory');
+            if (stored) {
+                memoryCache.longTerm = JSON.parse(stored);
+            }
+        } catch (e) {
+            addLog('长期记忆加载失败: ' + e.message, 'error');
+        }
+    }
+
+    function saveLongTermMemory() {
+        try {
+            localStorage.setItem('ai-longterm-memory', JSON.stringify(memoryCache.longTerm));
+        } catch (e) {
+            addLog('长期记忆保存失败: ' + e.message, 'error');
+        }
+    }
+
+    function addToContext(message) {
+        memoryCache.contextWindow.push({
+            id: Date.now(),
+            content: message,
+            timestamp: new Date().toISOString()
+        });
+
+        if (memoryCache.contextWindow.length > 20) {
+            memoryCache.contextWindow = memoryCache.contextWindow.slice(-20);
+        }
+    }
+
+    function getContext() {
+        return memoryCache.contextWindow.map(function(m) {
+            return m.content;
+        }).join('\n');
+    }
+
+    function remember(key, value, duration) {
+        var expires = duration ? Date.now() + duration : null;
+
+        memoryCache.shortTerm[key] = {
+            value: value,
+            expires: expires,
+            timestamp: new Date().toISOString()
+        };
+
+        cleanExpiredCache();
+    }
+
+    function recall(key) {
+        cleanExpiredCache();
+        var item = memoryCache.shortTerm[key];
+        return item ? item.value : null;
+    }
+
+    function cleanExpiredCache() {
+        var now = Date.now();
+        for (var key in memoryCache.shortTerm) {
+            if (memoryCache.shortTerm[key].expires &&
+                memoryCache.shortTerm[key].expires < now) {
+                delete memoryCache.shortTerm[key];
+            }
+        }
+    }
+
+    function storeLongTerm(key, value) {
+        memoryCache.longTerm[key] = {
+            value: value,
+            timestamp: new Date().toISOString(),
+            accessCount: 1
+        };
+        saveLongTermMemory();
+    }
+
+    function retrieveLongTerm(key) {
+        var item = memoryCache.longTerm[key];
+        if (item) {
+            item.accessCount++;
+            saveLongTermMemory();
+            return item.value;
+        }
+        return null;
+    }
+
+    function getRelevantMemory(query) {
+        var relevant = [];
+
+        for (var key in memoryCache.longTerm) {
+            if (key.toLowerCase().includes(query.toLowerCase()) ||
+                JSON.stringify(memoryCache.longTerm[key].value).toLowerCase().includes(query.toLowerCase())) {
+                relevant.push({
+                    key: key,
+                    value: memoryCache.longTerm[key].value,
+                    score: memoryCache.longTerm[key].accessCount
+                });
+            }
+        }
+
+        return relevant.sort((a, b) => b.score - a.score).slice(0, 5);
+    }
+
+    // ==================== Speech Synthesis System ====================
+    var speechSynthesisSupported = false;
+    var voices = [];
+    var currentVoice = null;
+
+    function initSpeechSynthesis() {
+        if ('speechSynthesis' in window) {
+            speechSynthesisSupported = true;
+
+            var loadVoices = function() {
+                voices = window.speechSynthesis.getVoices();
+                currentVoice = voices.find(function(v) {
+                    return v.lang.startsWith('zh') || v.lang.startsWith('zh-CN');
+                }) || voices[0];
+                addLog('语音合成引擎就绪', 'system');
+            };
+
+            loadVoices();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = loadVoices;
+            }
+        } else {
+            addLog('浏览器不支持语音合成', 'warning');
+        }
+    }
+
+    function speak(text, rate) {
+        if (!speechSynthesisSupported) {
+            showToast('浏览器不支持语音合成', 'warning');
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = currentVoice;
+        utterance.rate = rate || 0.8;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        utterance.onstart = function() {
+            addLog('开始语音合成', 'info');
+        };
+
+        utterance.onend = function() {
+            addLog('语音合成完成', 'info');
+        };
+
+        utterance.onerror = function(event) {
+            addLog('语音合成错误: ' + event.error, 'error');
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeaking() {
+        if (speechSynthesisSupported) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    // ==================== Quick Replies System ====================
+    var quickReplies = [
+        { text: '继续', trigger: '继续' },
+        { text: '详细说明', trigger: '详细说明' },
+        { text: '举个例子', trigger: '举个例子' },
+        { text: '总结一下', trigger: '总结一下' },
+        { text: '换个说法', trigger: '换个说法' },
+        { text: '好的', trigger: '好的' },
+        { text: '我明白了', trigger: '我明白了' },
+        { text: '还有问题', trigger: '还有问题' }
+    ];
+
+    function initQuickReplies() {
+        addLog('快捷回复系统初始化', 'system');
+    }
+
+    function showQuickReplies(messageId) {
+        var messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (!messageEl) return;
+
+        var existingReplies = messageEl.querySelector('.quick-replies');
+        if (existingReplies) {
+            existingReplies.remove();
+            return;
+        }
+
+        var repliesContainer = document.createElement('div');
+        repliesContainer.className = 'quick-replies';
+
+        quickReplies.forEach(function(reply) {
+            var button = document.createElement('button');
+            button.className = 'quick-reply-btn';
+            button.textContent = reply.text;
+            button.addEventListener('click', function() {
+                sendMessage(reply.trigger);
+                repliesContainer.remove();
+            });
+            repliesContainer.appendChild(button);
+        });
+
+        var messageActions = messageEl.querySelector('.message-actions');
+        if (messageActions) {
+            messageActions.appendChild(repliesContainer);
+        }
+    }
+
+    // ==================== Emoji Reactions System ====================
+    var availableReactions = ['👍', '👎', '❤️', '😂', '😮', '🎉'];
+
+    function addReaction(messageId, emoji) {
+        var messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (!messageEl) return;
+
+        var reactionsContainer = messageEl.querySelector('.message-reactions');
+        if (!reactionsContainer) {
+            reactionsContainer = document.createElement('div');
+            reactionsContainer.className = 'message-reactions';
+            var messageActions = messageEl.querySelector('.message-actions');
+            if (messageActions) {
+                messageActions.appendChild(reactionsContainer);
+            }
+        }
+
+        var existingReaction = reactionsContainer.querySelector(`[data-emoji="${emoji}"]`);
+        if (existingReaction) {
+            var count = parseInt(existingReaction.dataset.count) || 1;
+            existingReaction.dataset.count = count + 1;
+            existingReaction.innerHTML = emoji + ' ' + (count + 1);
+        } else {
+            var reactionBtn = document.createElement('button');
+            reactionBtn.className = 'reaction-btn';
+            reactionBtn.dataset.emoji = emoji;
+            reactionBtn.dataset.count = 1;
+            reactionBtn.innerHTML = emoji + ' 1';
+            reactionsContainer.appendChild(reactionBtn);
+        }
+
+        if (emoji === '👍') {
+            addUserFeedback(messageId, 'thumbs_up');
+        } else if (emoji === '👎') {
+            addUserFeedback(messageId, 'thumbs_down');
+        }
+
+        addLog(`用户添加表情反应: ${emoji}`, 'system');
+    }
+
+    function showReactionPicker(messageId) {
+        var messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (!messageEl) return;
+
+        var pickerEl = document.createElement('div');
+        pickerEl.className = 'reaction-picker';
+
+        availableReactions.forEach(function(emoji) {
+            var btn = document.createElement('button');
+            btn.className = 'reaction-picker-btn';
+            btn.textContent = emoji;
+            btn.addEventListener('click', function() {
+                addReaction(messageId, emoji);
+                pickerEl.remove();
+            });
+            pickerEl.appendChild(btn);
+        });
+
+        var messageActions = messageEl.querySelector('.message-actions');
+        if (messageActions) {
+            messageActions.appendChild(pickerEl);
+        }
+
+        document.addEventListener('click', function closePicker(e) {
+            if (!pickerEl.contains(e.target)) {
+                pickerEl.remove();
+                document.removeEventListener('click', closePicker);
+            }
+        });
     }
 
     // ==================== Drawer System ====================
@@ -2965,12 +3803,12 @@
 
     // ==================== PPT Generation with Library ====================
     function generatePPTFromText(text) {
-        if (!libs.pptxgenjs) {
+        if (!libs.pptxgen) {
             showToast('PPT生成库未加载', 'error');
             return;
         }
 
-        var pres = new libs.pptxgenjs();
+        var pres = new libs.pptxgen();
         pres.layout = 'LAYOUT_16x9';
         pres.title = '演示文稿';
 
@@ -3799,13 +4637,14 @@
 
     // ==================== PPT Generation ====================
     function generatePPT(presentationData) {
-        if (typeof PptxGenJS === 'undefined') {
+        var pptxLib = libs.pptxgen || window.PptxGenJS || window.pptxgen;
+        if (!pptxLib) {
             showToast('PPT生成库加载失败', 'error');
             return;
         }
 
         try {
-            var pres = new PptxGenJS();
+            var pres = new pptxLib();
             pres.layout = 'LAYOUT_16x9';
             pres.title = presentationData.title || '演示文稿';
             pres.author = 'DATA-AI';
@@ -4117,6 +4956,23 @@
         }
     }
 
+    // ==================== Quick Actions ====================
+    window.__quickAction = function(actionType) {
+        var inputBox = $('#input-box');
+        if (!inputBox) return;
+
+        var prompts = {
+            'chart': '帮我创建一个图表，数据如下：\n- 一月: 120\n- 二月: 180\n- 三月: 240\n- 四月: 190\n- 五月: 310',
+            'ppt': '帮我生成一个关于人工智能的PPT大纲，包括封面、目录和3个主要章节',
+            'flowchart': '帮我画一个流程图：开始→输入→处理→判断→输出→结束'
+        };
+
+        if (prompts[actionType]) {
+            inputBox.value = prompts[actionType];
+            showToast('已自动填充提示词', 'info');
+        }
+    };
+
     // ==================== Init ====================
     function init() {
         initMarked();
@@ -4139,10 +4995,18 @@
         initModelSelector();
         initWelcomeSuggestions();
         initKeyboardShortcuts();
+        initLogsPanel();
 
         connectWS();
         loadSettings();
         initLibraries();
+
+        initLearningSystem();
+        initErrorHandling();
+        initMemorySystem();
+        initSpeechSynthesis();
+
+        addLog('应用初始化完成', 'system');
     }
 
     // Start when DOM is ready

@@ -99,7 +99,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
     <!-- PptxGenJS - PPT生成 -->
-    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.min.js"></script>
+    <script src="https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
   </head>
   <body>
     <!-- Sidebar Overlay -->
@@ -167,6 +167,10 @@
           <div class="sidebar-bottom-item" id="sidebar-artifacts-btn" title="Artifacts 预览">
             <i class="fa-solid fa-window-restore"></i>
             <span>Artifacts</span>
+          </div>
+          <div class="sidebar-bottom-item" id="sidebar-logs-btn" title="系统日志">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>系统日志</span>
           </div>
           <div class="sidebar-bottom-divider"></div>
           <div
@@ -319,6 +323,30 @@
               </button>
               <button
                 class="input-action-btn"
+                id="generate-chart-btn"
+                title="生成图表"
+                onclick="window.__quickAction('chart')"
+              >
+                <i class="fa-solid fa-chart-bar"></i>
+              </button>
+              <button
+                class="input-action-btn"
+                id="generate-ppt-btn"
+                title="生成PPT"
+                onclick="window.__quickAction('ppt')"
+              >
+                <i class="fa-solid fa-file-powerpoint"></i>
+              </button>
+              <button
+                class="input-action-btn"
+                id="generate-flowchart-btn"
+                title="生成流程图"
+                onclick="window.__quickAction('flowchart')"
+              >
+                <i class="fa-solid fa-sitemap"></i>
+              </button>
+              <button
+                class="input-action-btn"
                 id="polish-btn"
                 title="润色文本"
               >
@@ -387,6 +415,48 @@
         <div class="artifacts-empty">
           <i class="fa-solid fa-code"></i>
           <span>代码执行结果将在此显示</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Logs Panel ==================== -->
+    <div class="logs-panel" id="logs-panel">
+      <div class="logs-panel-header">
+        <div class="logs-panel-title">
+          <i class="fa-solid fa-file-lines"></i> 系统日志
+        </div>
+        <span class="logs-panel-stats" id="logs-panel-stats">0 条日志</span>
+        <div class="logs-panel-search">
+          <input type="text" id="logs-search-input" placeholder="搜索日志..." />
+          <i class="fa-solid fa-search"></i>
+        </div>
+        <div class="logs-panel-filters">
+          <button class="log-filter-btn active" data-filter="all">全部</button>
+          <button class="log-filter-btn" data-filter="debug">调试</button>
+          <button class="log-filter-btn" data-filter="info">信息</button>
+          <button class="log-filter-btn" data-filter="success">成功</button>
+          <button class="log-filter-btn" data-filter="warning">警告</button>
+          <button class="log-filter-btn" data-filter="error">错误</button>
+          <button class="log-filter-btn" data-filter="api">API</button>
+          <button class="log-filter-btn" data-filter="ws">WebSocket</button>
+          <button class="log-filter-btn" data-filter="system">系统</button>
+        </div>
+        <div class="logs-panel-actions">
+          <button class="logs-panel-export" id="logs-panel-export">
+            <i class="fa-solid fa-download"></i> 导出
+          </button>
+          <button class="logs-panel-clear" id="logs-panel-clear">
+            <i class="fa-solid fa-trash"></i> 清空
+          </button>
+          <button class="logs-panel-close" id="logs-panel-close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div class="logs-panel-body" id="logs-panel-body">
+        <div class="logs-empty">
+          <i class="fa-solid fa-file-text"></i>
+          <span>暂无日志</span>
         </div>
       </div>
     </div>
