@@ -44,7 +44,10 @@
         clipboard: null,
         toastify: null,
         swal: null,
-        alpine: null
+        alpine: null,
+        transformers: null,
+        lucide: null,
+        pptxgen: null
     };
 
     function initLibraries() {
@@ -162,6 +165,21 @@
         if (typeof Alpine !== 'undefined') {
             libs.alpine = Alpine;
             console.log('[LIB] Alpine.js loaded');
+        }
+
+        if (typeof window.transformers !== 'undefined') {
+            libs.transformers = window.transformers;
+            console.log('[LIB] Transformers.js loaded');
+        }
+
+        if (typeof lucide !== 'undefined') {
+            libs.lucide = lucide;
+            console.log('[LIB] Lucide loaded');
+        }
+
+        if (typeof PptxGenJS !== 'undefined') {
+            libs.pptxgen = PptxGenJS;
+            console.log('[LIB] PptxGenJS loaded');
         }
     }
 
