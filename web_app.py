@@ -1312,6 +1312,39 @@ def _detect_tool_needs(message: str, options: dict = None) -> dict:
     }
 
 
+def _detect_and_apply_skill(message: str) -> "Skill | None":
+    """
+    根据用户消息检测匹配的技能。
+    匹配逻辑：
+    1. 检查消息中是否包含技能的关键词
+    2. 如果匹配，返回技能对象
+    """
+    if not skills:
+        return None
+
+    msg_lower = message.lower()
+
+    for skill in skills.values():
+        if not skill.enabled:
+            continue
+
+        # 检查技能关键词
+        keywords = skill.parameters.get("keywords", [])
+        if not isinstance(keywords, list):
+            keywords = []
+
+        # 检查技能名称是否在消息中
+        if skill.name and skill.name.lower() in msg_lower:
+            return skill
+
+        # 检查关键词
+        for keyword in keywords:
+            if keyword.lower() in msg_lower:
+                return skill
+
+    return None
+
+
 def _build_llm_for_webapp() -> "LLM":
     """
     根据 web_app 的 current_settings 构建 LLM 实例。
@@ -1393,10 +1426,26 @@ async def run_agent_task(
         # 3. 构建 LLM 实例
         llm = _build_llm_for_webapp()
 
-        # 4. 构建系统提示词
-        system_prompt = DATA_SYSTEM_PROMPT.format(directory=str(Path.cwd()))
+        # 4. 检测并应用匹配的技能
+        matched_skill = _detect_and_apply_skill(message)
+        skill_prompt = ""
+        if matched_skill:
+            await send(
+                {
+                    "type": "thinking",
+                    "title": "技能匹配",
+                    "content": f"匹配到技能: {matched_skill.name}",
+                }
+            )
+            if matched_skill.prompts.get("system_prompt"):
+                skill_prompt = matched_skill.prompts["system_prompt"] + "\n\n"
 
-        # 4.5 RAG 知识库检索 - 如果检索库有文档，自动检索相关内容注入 prompt
+        # 5. 构建系统提示词
+        system_prompt = DATA_SYSTEM_PROMPT.format(directory=str(Path.cwd()))
+        if skill_prompt:
+            system_prompt = skill_prompt + "\n" + system_prompt
+
+        # 6. RAG 知识库检索 - 如果检索库有文档，自动检索相关内容注入 prompt
         rag_context = ""
         if retriever.doc_vectors:
             rag_results = retriever.search(message, top_k=3, min_score=0.05)

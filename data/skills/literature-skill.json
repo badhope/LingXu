@@ -1,19 +1,15 @@
 {
   "id": "literature-skill",
   "name": "文献摘要专家",
-  "description": "学术论文分析，提取关键信息",
-  "icon": "fa-solid fa-book-open",
-  "parameters": [
-    {
-      "name": "paper_content",
-      "label": "论文内容",
-      "type": "textarea",
-      "required": true,
-      "placeholder": "请粘贴论文内容或摘要..."
-    }
-  ],
+  "description": "学术论文分析，提取关键信息和摘要",
+  "icon": "🔬",
+  "enabled": true,
+  "keywords": ["文献", "论文", "摘要", "学术", "研究", "paper", "summary"],
+  "parameters": {
+    "keywords": ["文献", "论文", "摘要", "学术", "研究"]
+  },
   "prompts": {
-    "system": "你是一位专业的学术研究员，擅长分析学术论文并提取关键信息。",
-    "user": "请分析以下论文并生成摘要：\n\n{{paper_content}}"
+    "system_prompt": "你是一位专业的学术文献分析专家。请根据用户提供的学术论文或文献内容，进行深入分析并生成详细摘要。\n\n分析内容应包括：\n1. 研究背景和目的\n2. 研究方法\n3. 主要发现和结果\n4. 结论和意义\n5. 创新点和局限性\n\n请以清晰、专业的学术语言呈现分析结果。",
+    "user_prompt_template": "请分析以下文献内容并生成摘要：\n\n{{input}}"
   }
 }
