@@ -2253,9 +2253,9 @@ body {
 .drawer {
     position: fixed;
     top: 0;
-    right: -420px;
-    width: 400px;
-    max-width: 90vw;
+    right: -620px;
+    width: 600px;
+    max-width: 85vw;
     height: 100vh;
     background: var(--drawer-bg);
     display: flex;
