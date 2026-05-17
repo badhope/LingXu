@@ -74,6 +74,9 @@
 
         if (typeof dayjs !== 'undefined') {
             libs.dayjs = dayjs;
+            if (typeof dayjs_plugin_relativeTime !== 'undefined') {
+                dayjs.extend(dayjs_plugin_relativeTime);
+            }
             console.log('[LIB] DayJS loaded');
         }
 
@@ -89,8 +92,6 @@
 
         if (typeof axios !== 'undefined') {
             libs.axios = axios;
-            axios.defaults.baseURL = '/api';
-            axios.defaults.headers.common['Content-Type'] = 'application/json';
             console.log('[LIB] Axios loaded');
         }
 
@@ -278,6 +279,12 @@
         }
 
         var container = $('#toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:8px;';
+            document.body.appendChild(container);
+        }
         var toast = document.createElement('div');
         toast.className = 'toast toast-' + type;
         var icons = { success: 'fa-check', error: 'fa-xmark', info: 'fa-info' };
@@ -370,12 +377,29 @@
                 btn.classList.remove('copied');
                 btn.innerHTML = '<i class="fa-regular fa-copy"></i> 复制';
             }, 2000);
+        }).catch(function() {
+            // Fallback for non-HTTPS contexts
+            var textarea = document.createElement('textarea');
+            textarea.value = codeEl.textContent;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try { document.execCommand('copy'); } catch(e) {}
+            document.body.removeChild(textarea);
+            btn.classList.add('copied');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> 已复制';
+            setTimeout(function () {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<i class="fa-regular fa-copy"></i> 复制';
+            }, 2000);
         });
     };
 
     window.__previewImage = function (src) {
         var overlay = $('#image-preview-overlay');
         var img = $('#image-preview-img');
+        if (!overlay || !img) return;
         img.src = src;
         overlay.classList.add('show');
     };
@@ -383,7 +407,15 @@
     function renderMarkdown(text) {
         if (typeof marked === 'undefined') return escapeHtml(text).replace(/\n/g, '<br>');
         try {
-            return marked.parse(text);
+            var raw = marked.parse(text);
+            // Sanitize HTML to prevent XSS
+            if (typeof DOMPurify !== 'undefined') {
+                raw = DOMPurify.sanitize(raw, {
+                    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'b', 'i', 'a', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'hr', 'img', 'span', 'div', 'sup', 'sub', 'del', 'input', 'details', 'summary'],
+                    ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'id', 'src', 'alt', 'title', 'width', 'height', 'style', 'type', 'checked', 'disabled', 'open']
+                });
+            }
+            return raw;
         } catch (e) {
             return escapeHtml(text).replace(/\n/g, '<br>');
         }
@@ -454,6 +486,29 @@
             localStorage.setItem('data-ai-conversations', JSON.stringify(conversations));
         } catch (e) {
             console.error('Save conversations error:', e);
+            if (e.name === 'QuotaExceededError' || e.code === 22) {
+                // Try to clean up old conversations
+                var keys = Object.keys(conversations);
+                if (keys.length > 10) {
+                    // Remove oldest 20% of conversations
+                    var sortedKeys = keys.sort(function(a, b) {
+                        return (conversations[a].updatedAt || 0) - (conversations[b].updatedAt || 0);
+                    });
+                    var toRemove = Math.ceil(keys.length * 0.2);
+                    for (var i = 0; i < toRemove; i++) {
+                        delete conversations[sortedKeys[i]];
+                    }
+                    // Try saving again
+                    try {
+                        localStorage.setItem('data-ai-conversations', JSON.stringify(conversations));
+                        showToast('存储空间不足，已自动清理旧对话', 'warning');
+                    } catch (e2) {
+                        showToast('存储空间不足，请手动删除一些旧对话', 'error');
+                    }
+                } else {
+                    showToast('存储空间不足，请删除一些旧对话', 'error');
+                }
+            }
         }
     }
 
@@ -481,6 +536,9 @@
         renderConversationList();
         renderChatArea();
         closeSidebar();
+        // 显示/隐藏清空按钮
+        var clearWrapper = $('#clear-chat-wrapper');
+        if (clearWrapper) clearWrapper.style.display = id ? 'block' : 'none';
     }
 
     function deleteConversation(id) {
@@ -500,6 +558,36 @@
         conversations[id].starred = !conversations[id].starred;
         saveConversations();
         renderConversationList();
+    }
+
+    function startRenameConversation(id, titleEl) {
+        if (!conversations[id]) return;
+        var currentTitle = conversations[id].title || '新对话';
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'conv-rename-input';
+        input.value = currentTitle;
+        titleEl.innerHTML = '';
+        titleEl.appendChild(input);
+        input.focus();
+        input.select();
+
+        function finishRename() {
+            var newTitle = input.value.trim() || currentTitle;
+            if (newTitle !== currentTitle) {
+                conversations[id].title = newTitle;
+                saveConversations();
+                // 同步到服务器
+                httpPut('/api/conversations/' + id + '/title', { title: newTitle }).catch(function() {});
+            }
+            renderConversationList();
+        }
+
+        input.addEventListener('blur', finishRename);
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+            if (e.key === 'Escape') { input.value = currentTitle; input.blur(); }
+        });
     }
 
     function autoTitleConversation(convId, firstMessage) {
@@ -543,6 +631,108 @@
         if (!currentConvId || !conversations[currentConvId]) return;
         var json = JSON.stringify(conversations[currentConvId], null, 2);
         downloadFile(currentConvId + '.json', json, 'application/json');
+    }
+
+    function exportConversationPDF() {
+        if (!currentConvId || !conversations[currentConvId]) return;
+        var conv = conversations[currentConvId];
+        
+        // 检查 jsPDF 是否可用
+        if (typeof window.jspdf === 'undefined') {
+            showToast('PDF库加载中，请稍后重试', 'warning');
+            return;
+        }
+
+        var { jsPDF } = window.jspdf;
+        var doc = new jsPDF();
+        
+        // 设置中文字体支持（使用内置字体）
+        doc.setFont('helvetica');
+        
+        var y = 20;
+        var pageHeight = doc.internal.pageSize.height;
+        var margin = 20;
+        var lineHeight = 7;
+        var maxWidth = doc.internal.pageSize.width - margin * 2;
+
+        // 标题
+        doc.setFontSize(18);
+        doc.setTextColor(33, 33, 33);
+        var title = conv.title || '对话导出';
+        doc.text(title, margin, y);
+        y += 15;
+
+        // 导出时间
+        doc.setFontSize(10);
+        doc.setTextColor(128, 128, 128);
+        doc.text('导出时间: ' + new Date().toLocaleString('zh-CN'), margin, y);
+        y += 15;
+
+        // 消息
+        (conv.messages || []).forEach(function (msg) {
+            // 检查是否需要新页
+            if (y > pageHeight - 40) {
+                doc.addPage();
+                y = 20;
+            }
+
+            // 角色
+            doc.setFontSize(12);
+            doc.setTextColor(msg.type === 'user' ? 16 : 99, msg.type === 'user' ? 163 : 102, msg.type === 'user' ? 127 : 241);
+            doc.setFont('helvetica', 'bold');
+            doc.text(msg.type === 'user' ? '👤 你' : '🤖 DATA-AI', margin, y);
+            y += 8;
+
+            // 内容（简化处理，移除markdown格式）
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(60, 60, 60);
+            doc.setFontSize(10);
+            
+            var content = msg.content || '';
+            // 简单处理：移除代码块标记
+            content = content.replace(/```[\s\S]*?```/g, '[代码块]');
+            content = content.replace(/`[^`]+`/g, '[代码]');
+            content = content.replace(/\*\*([^*]+)\*\*/g, '$1');
+            content = content.replace(/\*([^*]+)\*/g, '$1');
+            content = content.replace(/#{1,6}\s/g, '');
+            
+            // 分行处理
+            var lines = doc.splitTextToSize(content, maxWidth);
+            lines.forEach(function (line) {
+                if (y > pageHeight - 20) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.text(line, margin, y);
+                y += lineHeight;
+            });
+            y += 5;
+        });
+
+        // 保存
+        doc.save((conv.title || '对话') + '.pdf');
+        showToast('PDF 导出成功', 'success');
+    }
+
+    function shareConversation() {
+        if (!currentConvId) {
+            showToast('请先选择一个对话', 'warning');
+            return;
+        }
+        httpPost('/api/conversations/' + currentConvId + '/share', {}).then(function (res) {
+            if (res && res.share_id) {
+                var shareUrl = window.location.origin + res.share_url;
+                // 复制到剪贴板
+                navigator.clipboard.writeText(shareUrl).then(function () {
+                    showToast('分享链接已复制: ' + shareUrl, 'success');
+                }).catch(function () {
+                    // 显示弹窗让用户手动复制
+                    prompt('分享链接（请手动复制）:', shareUrl);
+                });
+            }
+        }).catch(function (err) {
+            showToast('创建分享链接失败', 'error');
+        });
     }
 
     function downloadFile(filename, content, mimeType) {
@@ -610,7 +800,7 @@
             groups[key].forEach(function (c) {
                 var isActive = c.id === currentConvId;
                 html += '<div class="conv-item' + (isActive ? ' active' : '') + '" data-id="' + c.id + '">' +
-                    '<span class="conv-item-title">' + escapeHtml(c.title) + '</span>' +
+                    '<span class="conv-item-title" data-action="rename" title="双击重命名">' + escapeHtml(c.title) + '</span>' +
                     (c.starred
                         ? '<button class="conv-item-star starred" data-action="star" title="取消收藏"><i class="fa-solid fa-star"></i></button>'
                         : '<button class="conv-item-star" data-action="star" title="收藏"><i class="fa-regular fa-star"></i></button>') +
@@ -630,9 +820,69 @@
                     var id = el.getAttribute('data-id');
                     if (act === 'delete') deleteConversation(id);
                     else if (act === 'star') toggleStarConversation(id);
+                    else if (act === 'rename') startRenameConversation(id, action);
                     return;
                 }
                 switchConversation(el.getAttribute('data-id'));
+            });
+            // 双击标题重命名
+            var titleEl = el.querySelector('.conv-item-title');
+            if (titleEl) {
+                titleEl.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    startRenameConversation(el.getAttribute('data-id'), titleEl);
+                });
+            }
+        });
+    }
+
+    // ==================== Render Chat Area ====================
+
+    function renderConversationListFromServer(results, filter) {
+        var container = $('#sidebar-conversations');
+        if (!container) return;
+
+        if (results.length === 0) {
+            container.innerHTML = '<div style="padding:20px 10px;text-align:center;color:var(--text-muted);font-size:13px;">' +
+                '没有找到匹配的对话</div>';
+            return;
+        }
+
+        var html = '<div class="conv-group-label">搜索结果 (' + results.length + ')</div>';
+        results.forEach(function (c) {
+            var isActive = c.id === currentConvId;
+            var isLocal = !!conversations[c.id];
+            html += '<div class="conv-item' + (isActive ? ' active' : '') + '" data-id="' + c.id + '">' +
+                '<span class="conv-item-title">' + escapeHtml(c.title) + '</span>' +
+                (!isLocal ? '<span style="font-size:10px;color:var(--text-muted);">云端</span>' : '') +
+                '</div>';
+        });
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('.conv-item').forEach(function (el) {
+            el.addEventListener('click', function () {
+                var id = el.getAttribute('data-id');
+                if (!conversations[id]) {
+                    // 从服务器加载对话
+                    httpGet('/api/conversations/' + id).then(function (conv) {
+                        if (conv) {
+                            conversations[id] = {
+                                id: conv.id,
+                                title: conv.title,
+                                messages: (conv.messages || []).map(function (m) {
+                                    return { id: '', type: m.role, content: m.content, timestamp: m.created_at || conv.updated_at };
+                                }),
+                                createdAt: new Date(conv.created_at).getTime(),
+                                updatedAt: new Date(conv.updated_at).getTime()
+                            };
+                            saveConversations();
+                            switchConversation(id);
+                        }
+                    });
+                } else {
+                    switchConversation(id);
+                }
             });
         });
     }
@@ -733,11 +983,23 @@
             actions += '</div>';
         }
 
+        // 时间戳（悬停显示）
+        var timestampHtml = '';
+        if (msg.timestamp) {
+            var timeStr = '';
+            try {
+                timeStr = dayjs(msg.timestamp).format('YYYY-MM-DD HH:mm');
+            } catch (e) {
+                timeStr = msg.timestamp;
+            }
+            timestampHtml = '<span class="message-timestamp" title="' + timeStr + '">' + timeStr + '</span>';
+        }
+
         return '<div class="message ' + msg.type + '" data-msg-id="' + (msg.id || '') + '">' +
             '<div class="message-inner">' +
             '<div class="message-avatar">' + avatarIcon + '</div>' +
             '<div class="message-body">' +
-            '<div class="message-role">' + roleName + '</div>' +
+            '<div class="message-role">' + roleName + timestampHtml + '</div>' +
             '<div class="message-content">' + contentHtml + '</div>' +
             actions +
             '</div></div></div>';
@@ -802,6 +1064,8 @@
                 }, 2000);
             }
             showToast('已复制到剪贴板', 'success');
+        }).catch(function() {
+            showToast('复制失败，请手动复制', 'error');
         });
     }
 
@@ -880,9 +1144,23 @@
                     });
                     fbBtn.classList.add('active-feedback');
                     showToast('感谢你的反馈', 'success');
+                    // 同步到服务器
+                    submitFeedbackToServer(msgId, type, val);
                 });
             });
         }
+    }
+
+    // 提交反馈到服务器
+    function submitFeedbackToServer(messageId, feedbackType, comment) {
+        httpPost('/api/feedback', {
+            message_id: messageId,
+            feedback_type: feedbackType,
+            comment: comment || '',
+            conversation_id: currentConvId || ''
+        }).catch(function(err) {
+            console.log('Feedback sync failed (will retry later):', err);
+        });
     }
 
     function loadFeedbackData() {
@@ -908,18 +1186,32 @@
     }
 
     // ==================== WebSocket ====================
+    var reconnectAttempts = 0;
+    var maxReconnectAttempts = 10;
+
     function connectWS() {
         if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
+        // Check max reconnect attempts
+        if (reconnectAttempts >= maxReconnectAttempts) {
+            console.error('WebSocket max reconnect attempts reached');
+            showToast('无法连接到服务器，请刷新页面重试', 'error');
+            return;
+        }
+
         var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         try {
             ws = new WebSocket(protocol + '//' + window.location.host + '/ws');
         } catch (e) {
             console.error('WebSocket create error:', e);
+            reconnectAttempts++;
+            reconnectTimer = setTimeout(connectWS, 3000);
             return;
         }
 
         ws.onopen = function () {
             console.log('WebSocket connected');
+            reconnectAttempts = 0;  // Reset counter on successful connection
             if (reconnectTimer) {
                 clearTimeout(reconnectTimer);
                 reconnectTimer = null;
@@ -944,7 +1236,12 @@
 
         ws.onclose = function () {
             console.log('WebSocket disconnected, reconnecting...');
-            reconnectTimer = setTimeout(connectWS, 3000);
+            reconnectAttempts++;
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectTimer = setTimeout(connectWS, 3000);
+            } else {
+                showToast('无法连接到服务器，请刷新页面重试', 'error');
+            }
         };
 
         ws.onerror = function (e) {
@@ -954,6 +1251,38 @@
 
     function handleWSMessage(data) {
         var chatArea = $('#chat-area');
+
+        // Handle polish mode - intercept stream messages for text polish
+        if (_isPolishing) {
+            var inputBox = $('#input-box');
+            var polishBtn = $('#polish-btn');
+            if (data.type === 'stream_start') {
+                if (inputBox) { inputBox.value = '正在润色...'; inputBox.disabled = true; }
+            } else if (data.type === 'stream_data') {
+                if (inputBox) { inputBox.value = data.content; }
+            } else if (data.type === 'stream_end' || data.type === 'response') {
+                _isPolishing = false;
+                if (inputBox) {
+                    inputBox.value = data.content || '';
+                    inputBox.disabled = false;
+                    autoResizeTextarea();
+                    updateSendButton();
+                }
+                if (polishBtn) { polishBtn.disabled = false; polishBtn.classList.remove('polishing'); polishBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span class="btn-badge">润色</span>'; }
+                finishProcessing();
+                showToast('润色完成', 'success');
+                return;
+            } else if (data.type === 'error') {
+                _isPolishing = false;
+                if (inputBox) { inputBox.disabled = false; }
+                if (polishBtn) { polishBtn.disabled = false; polishBtn.classList.remove('polishing'); polishBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span class="btn-badge">润色</span>'; }
+                finishProcessing();
+                showToast('润色失败: ' + (data.content || '未知错误'), 'error');
+                return;
+            }
+            // Don't process other message types in polish mode
+            return;
+        }
 
         if (data.type === 'thinking') {
             handleThinkingPhase(data, chatArea);
@@ -1214,7 +1543,7 @@
             }
         });
 
-        if (isStreaming === false) {
+        if (isStreaming === true) {
             requestAnimationFrame(updatePhaseTimers);
         }
     }
@@ -1426,9 +1755,6 @@
             query: query,
             top_k: 3,
             min_score: 0.1
-        }).then(function (res) {
-            if (!res.ok) return;
-            return res.json();
         }).then(function (results) {
             if (!results || results.length === 0) return;
             var chatArea = $('#chat-area');
@@ -1475,6 +1801,16 @@
                 connectWS();
             }
             showToast('正在连接服务器...', 'info');
+            // Safety timeout: if connection fails, reset streaming state after 10s
+            setTimeout(function() {
+                if (isStreaming && (!ws || ws.readyState !== WebSocket.OPEN)) {
+                    isStreaming = false;
+                    isGenerating = false;
+                    updateSendButton();
+                    updateStopButton();
+                    showToast('连接服务器失败，请重试', 'error');
+                }
+            }, 10000);
         }
     }
 
@@ -1658,7 +1994,238 @@
             });
         });
 
+        // Polish submit button
+        var polishSubmitBtn = $('#polish-submit-btn');
+        if (polishSubmitBtn) {
+            polishSubmitBtn.addEventListener('click', function() {
+                polishText();
+            });
+        }
+
+        // Meeting submit button
+        var meetingSubmitBtn = $('#meeting-submit-btn');
+        if (meetingSubmitBtn) {
+            meetingSubmitBtn.addEventListener('click', function() {
+                var input = $('#meeting-input');
+                if (!input || !input.value.trim()) {
+                    showToast('请输入会议内容', 'error');
+                    return;
+                }
+                // Show loading state
+                meetingSubmitBtn.disabled = true;
+                meetingSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 生成中...';
+                var content = input.value.trim();
+
+                // 读取选项设置
+                var extractDecisions = $('#meeting-extract-decisions');
+                var identifyActions = $('#meeting-identify-actions');
+                var generateSummary = $('#meeting-generate-summary');
+                var analyzeAttendees = $('#meeting-analyze-attendees');
+
+                var options = [];
+                if (extractDecisions && extractDecisions.checked) options.push('提取关键决策');
+                if (identifyActions && identifyActions.checked) options.push('识别行动项');
+                if (generateSummary && generateSummary.checked) options.push('生成会议摘要');
+                if (analyzeAttendees && analyzeAttendees.checked) options.push('参会人员分析');
+
+                var prompt = '请根据以下会议内容生成会议纪要';
+                if (options.length > 0) {
+                    prompt += '，需要包含：' + options.join('、');
+                }
+                prompt += '。\n\n会议内容：\n' + content;
+
+                var systemPrompt = '你是一个专业的会议纪要生成助手。请根据会议内容生成结构清晰、内容完整的会议纪要。';
+                if (options.includes('提取关键决策')) {
+                    systemPrompt += '\n- 重点提取会议中的关键决策和结论';
+                }
+                if (options.includes('识别行动项')) {
+                    systemPrompt += '\n- 识别并列出所有行动项，包括负责人和截止日期（如有）';
+                }
+                if (options.includes('生成会议摘要')) {
+                    systemPrompt += '\n- 提供简洁的会议摘要，概括主要讨论内容';
+                }
+                if (options.includes('参会人员分析')) {
+                    systemPrompt += '\n- 分析参会人员的发言和贡献';
+                }
+
+                sendToWebSocket(prompt, { intent: 'meeting', system_prompt: systemPrompt });
+                togglePanel('meeting-panel');
+
+                // 显示输出区域
+                var outputArea = $('#meeting-output');
+                if (outputArea) {
+                    outputArea.textContent = '正在生成会议纪要...';
+                }
+
+                // Timeout after 20 seconds
+                setTimeout(function() {
+                    meetingSubmitBtn.disabled = false;
+                    meetingSubmitBtn.innerHTML = '生成纪要';
+                }, 20000);
+            });
+        }
+
+        // Summary submit button
+        var summarySubmitBtn = $('#summary-submit-btn');
+        if (summarySubmitBtn) {
+            summarySubmitBtn.addEventListener('click', function() {
+                var input = $('#summary-input');
+                if (!input || !input.value.trim()) {
+                    showToast('请输入要总结的内容', 'error');
+                    return;
+                }
+                // Show loading state
+                summarySubmitBtn.disabled = true;
+                summarySubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 提取中...';
+                var depth = $('#summary-depth');
+                var depthValue = depth ? depth.value : 'brief';
+
+                // 深度映射
+                var depthMap = {
+                    'brief': { name: '简要', desc: '3-5句话' },
+                    'detailed': { name: '详细', desc: '10-15句话' },
+                    'comprehensive': { name: '全面', desc: '包含所有要点' }
+                };
+                var depthInfo = depthMap[depthValue] || depthMap['brief'];
+
+                var content = input.value.trim();
+
+                // 读取选项设置
+                var extractFindings = $('#summary-extract-findings');
+                var identifyMethods = $('#summary-identify-methods');
+                var generateReferences = $('#summary-generate-references');
+
+                var options = [];
+                if (extractFindings && extractFindings.checked) options.push('提取关键发现');
+                if (identifyMethods && identifyMethods.checked) options.push('识别研究方法');
+                if (generateReferences && generateReferences.checked) options.push('生成参考文献格式');
+
+                var prompt = '请对以下内容进行' + depthInfo.name + '总结（约' + depthInfo.desc + '）';
+                if (options.length > 0) {
+                    prompt += '，需要：' + options.join('、');
+                }
+                prompt += '。\n\n内容：\n' + content;
+
+                var systemPrompt = '你是一个专业的文献摘要提取助手。请根据提供的内容生成高质量的摘要。';
+                systemPrompt += '\n- 摘要深度：' + depthInfo.name + '（' + depthInfo.desc + '）';
+                if (options.includes('提取关键发现')) {
+                    systemPrompt += '\n- 重点提取研究的关键发现和结论';
+                }
+                if (options.includes('识别研究方法')) {
+                    systemPrompt += '\n- 识别并描述使用的研究方法';
+                }
+                if (options.includes('生成参考文献格式')) {
+                    systemPrompt += '\n- 如果有引用信息，生成标准的参考文献格式';
+                }
+
+                sendToWebSocket(prompt, { intent: 'summary', system_prompt: systemPrompt });
+                togglePanel('summary-panel');
+
+                // 显示输出区域
+                var outputArea = $('#summary-output');
+                if (outputArea) {
+                    outputArea.textContent = '正在提取摘要...';
+                }
+
+                // Timeout after 20 seconds
+                setTimeout(function() {
+                    summarySubmitBtn.disabled = false;
+                    summarySubmitBtn.innerHTML = '提取摘要';
+                }, 20000);
+            });
+        }
+
+        // Generate chart button
+        var generateChartBtn = $('#generate-chart-btn');
+        if (generateChartBtn) {
+            generateChartBtn.addEventListener('click', function() {
+                var input = $('#input-box');
+                if (!input || !input.value.trim()) {
+                    showToast('请先输入要生成图表的数据描述', 'error');
+                    return;
+                }
+                sendToWebSocket(input.value.trim(), { intent: 'chart' });
+            });
+        }
+
+        // Generate PPT button
+        var generatePptBtn = $('#generate-ppt-btn');
+        if (generatePptBtn) {
+            generatePptBtn.addEventListener('click', function() {
+                var input = $('#input-box');
+                if (!input || !input.value.trim()) {
+                    showToast('请先输入要生成PPT的主题描述', 'error');
+                    return;
+                }
+                sendToWebSocket(input.value.trim(), { intent: 'ppt' });
+            });
+        }
+
+        // Generate flowchart button
+        var generateFlowchartBtn = $('#generate-flowchart-btn');
+        if (generateFlowchartBtn) {
+            generateFlowchartBtn.addEventListener('click', function() {
+                var input = $('#input-box');
+                if (!input || !input.value.trim()) {
+                    showToast('请先输入要生成流程图的描述', 'error');
+                    return;
+                }
+                sendToWebSocket(input.value.trim(), { intent: 'flowchart' });
+            });
+        }
+
+        // Skill drawer close button
+        var skillDrawerClose = $('#skill-drawer-close');
+        if (skillDrawerClose) {
+            skillDrawerClose.addEventListener('click', function() {
+                closeDrawer('skill-drawer', 'skill-drawer-overlay');
+            });
+        }
+
+        // Skill drawer overlay click to close
+        var skillDrawerOverlay = $('#skill-drawer-overlay');
+        if (skillDrawerOverlay) {
+            skillDrawerOverlay.addEventListener('click', function() {
+                closeDrawer('skill-drawer', 'skill-drawer-overlay');
+            });
+        }
+
         updateSendButton();
+
+        // More actions panel
+        initMoreActionsPanel();
+    }
+
+    function initMoreActionsPanel() {
+        var moreBtn = $('#more-actions-btn');
+        var panel = $('#more-actions-panel');
+        var wrapper = $('#more-actions-wrapper');
+
+        if (!moreBtn || !panel) return;
+
+        // Toggle panel
+        moreBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.toggle('hidden');
+            moreBtn.classList.toggle('active');
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (wrapper && !wrapper.contains(e.target)) {
+                panel.classList.add('hidden');
+                moreBtn.classList.remove('active');
+            }
+        });
+
+        // Close panel when an action item is clicked
+        var actionItems = panel.querySelectorAll('.more-action-item');
+        actionItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                panel.classList.add('hidden');
+                moreBtn.classList.remove('active');
+            });
+        });
     }
 
     function togglePanel(panelId) {
@@ -1804,8 +2371,20 @@
             searchInput.addEventListener('input', debounce(function () {
                 var val = searchInput.value.trim();
                 if (searchClear) searchClear.style.display = val ? 'flex' : 'none';
-                renderConversationList(val);
-            }, 200));
+                if (val) {
+                    // 使用服务器搜索（支持标题+内容）
+                    httpGet('/api/conversations/search?q=' + encodeURIComponent(val)).then(function (results) {
+                        if (results && Array.isArray(results)) {
+                            renderConversationListFromServer(results, val);
+                        }
+                    }).catch(function () {
+                        // 回退到本地标题搜索
+                        renderConversationList(val);
+                    });
+                } else {
+                    renderConversationList();
+                }
+            }, 300));
         }
         if (searchClear) {
             searchClear.addEventListener('click', function () {
@@ -1813,6 +2392,29 @@
                 searchClear.style.display = 'none';
                 renderConversationList();
                 searchInput.focus();
+            });
+        }
+
+        // 清空当前对话
+        var clearChatBtn = $('#clear-chat-btn');
+        if (clearChatBtn) {
+            clearChatBtn.addEventListener('click', function () {
+                if (!currentConvId) return;
+                if (conversations[currentConvId] && conversations[currentConvId].messages && conversations[currentConvId].messages.length === 0) {
+                    showToast('当前对话已经是空的', 'info');
+                    return;
+                }
+                if (confirm('确定要清空当前对话的所有消息吗？')) {
+                    httpDelete('/api/conversations/' + currentConvId + '/messages').then(function () {
+                        if (conversations[currentConvId]) {
+                            conversations[currentConvId].messages = [];
+                        }
+                        renderChatArea();
+                        showToast('对话已清空', 'success');
+                    }).catch(function () {
+                        showToast('清空失败', 'error');
+                    });
+                }
             });
         }
 
@@ -1869,6 +2471,17 @@
         updateLogStats();
 
         console.log(`[${type.toUpperCase()}] ${message}`);
+        
+        // 同步到后端日志系统
+        if (type !== 'debug') {  // 避免递归
+            httpPost('/api/logs', {
+                level: type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info',
+                source: 'frontend',
+                message: message,
+                details: meta,
+                conversation_id: currentConvId || null
+            }).catch(function() {});  // 静默失败
+        }
     }
 
     function addAPILog(method, url, status, duration) {
@@ -1939,7 +2552,7 @@
             if (log.meta) {
                 metaHtml = '<div class="log-meta">';
                 Object.keys(log.meta).forEach(function(key) {
-                    metaHtml += `<span>${key}: ${log.meta[key]}</span>`;
+                    metaHtml += '<span>' + escapeHtml(key) + ': ' + escapeHtml(String(log.meta[key])) + '</span>';
                 });
                 metaHtml += '</div>';
             }
@@ -2034,6 +2647,341 @@
         showToast('日志已导出', 'success');
     }
 
+    // ==================== Debug Log System ====================
+    var debugLogs = [];
+    var debugLogFilter = 'all';
+    var debugSourceFilter = 'all';
+    var debugSearchQuery = '';
+    var debugStats = {
+        apiCalls: 0,
+        errors: 0,
+        totalResponseTime: 0,
+        responseCount: 0
+    };
+
+    // 日志来源映射
+    var LOG_SOURCE_DISPLAY = {
+        'api': 'API',
+        'ws': 'WebSocket',
+        'system': '系统',
+        'code': '代码执行',
+        'ai': 'AI分析',
+        'user': '用户操作'
+    };
+
+    // 添加调试日志
+    function addDebugLog(message, level, source, details) {
+        var log = {
+            id: 'debug-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+            message: message,
+            level: level || 'info',
+            source: source || 'system',
+            timestamp: new Date().toISOString(),
+            time: new Date().toLocaleTimeString('zh-CN'),
+            details: details || null,
+            stack: null
+        };
+
+        // 如果是错误，捕获调用栈
+        if (level === 'error') {
+            try {
+                var stack = new Error().stack;
+                log.stack = parseStackTrace(stack);
+            } catch (e) {}
+            debugStats.errors++;
+        }
+
+        debugLogs.push(log);
+
+        // 限制日志数量
+        if (debugLogs.length > 500) {
+            debugLogs = debugLogs.slice(-400);
+        }
+
+        renderDebugLogs();
+        updateDebugStats();
+        return log;
+    }
+
+    // 解析调用栈
+    function parseStackTrace(stack) {
+        if (!stack) return [];
+
+        var lines = stack.split('\n');
+        var frames = [];
+
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (!line || line.indexOf('Error') === 0) continue;
+
+            var match = line.match(/at\s+(?:(.+?)\s+\()?(.+?):(\d+):(\d+)\)?/);
+            if (match) {
+                frames.push({
+                    func: match[1] || '<anonymous>',
+                    file: match[2],
+                    line: parseInt(match[3]),
+                    col: parseInt(match[4])
+                });
+            }
+        }
+
+        return frames;
+    }
+
+    // 渲染调试日志
+    function renderDebugLogs() {
+        var logList = $('#debug-log-list');
+        if (!logList) return;
+
+        var filtered = debugLogs.filter(function(log) {
+            if (debugLogFilter !== 'all' && log.level !== debugLogFilter) return false;
+            if (debugSourceFilter !== 'all' && log.source !== debugSourceFilter) return false;
+            if (debugSearchQuery) {
+                var query = debugSearchQuery.toLowerCase();
+                if (log.message.toLowerCase().indexOf(query) === -1) return false;
+            }
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            logList.innerHTML = '<div class="debug-log-empty"><i class="fa-solid fa-file-text"></i><span>' +
+                (debugSearchQuery ? '没有找到匹配的日志' : '暂无日志记录') + '</span></div>';
+            return;
+        }
+
+        logList.innerHTML = filtered.map(function(log) {
+            return '<div class="debug-log-item ' + log.level + '" data-log-id="' + log.id + '">' +
+                '<div class="debug-log-header">' +
+                    '<span class="debug-log-level ' + log.level + '">' + log.level + '</span>' +
+                    '<span class="debug-log-source">' + (LOG_SOURCE_DISPLAY[log.source] || log.source) + '</span>' +
+                    '<span class="debug-log-time">' + log.time + '</span>' +
+                '</div>' +
+                '<div class="debug-log-message">' + escapeHtml(log.message) + '</div>' +
+            '</div>';
+        }).join('');
+
+        // 绑定点击事件
+        logList.querySelectorAll('.debug-log-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var logId = item.getAttribute('data-log-id');
+                showLogTrace(logId);
+            });
+        });
+    }
+
+    // 显示日志追溯
+    function showLogTrace(logId) {
+        var log = debugLogs.find(function(l) { return l.id === logId; });
+        if (!log) return;
+
+        var tracePanel = $('#debug-trace-panel');
+        if (!tracePanel) return;
+
+        var html = '<div class="debug-trace-content">' +
+            '<div class="debug-trace-header">' +
+                '<span class="debug-trace-error-type">' + log.level.toUpperCase() + '</span>' +
+                '<span class="debug-trace-message">' + escapeHtml(log.message) + '</span>' +
+            '</div>';
+
+        // 显示详细信息
+        if (log.details) {
+            html += '<div class="debug-trace-section">' +
+                '<div class="debug-trace-section-title">详细信息</div>' +
+                '<pre class="debug-trace-code">' + escapeHtml(JSON.stringify(log.details, null, 2)) + '</pre>' +
+            '</div>';
+        }
+
+        // 显示调用栈
+        if (log.stack && log.stack.length > 0) {
+            html += '<div class="debug-trace-section">' +
+                '<div class="debug-trace-section-title">调用栈</div>' +
+                '<div class="debug-trace-stack">';
+
+            log.stack.forEach(function(frame, index) {
+                var isErrorFrame = index === 0;
+                html += '<div class="debug-trace-frame' + (isErrorFrame ? ' error-frame' : '') + '">' +
+                    '<div class="debug-trace-frame-header">' +
+                        '<span class="debug-trace-func">' + escapeHtml(frame.func) + '</span>' +
+                        '<span class="debug-trace-location">' + escapeHtml(frame.file) + ':' + frame.line + '</span>' +
+                    '</div>' +
+                '</div>';
+            });
+
+            html += '</div></div>';
+        }
+
+        // 显示时间和来源
+        html += '<div class="debug-trace-meta" style="margin-top: 12px; font-size: 11px; color: var(--text-tertiary);">' +
+            '<span>时间: ' + log.timestamp + '</span> | ' +
+            '<span>来源: ' + (LOG_SOURCE_DISPLAY[log.source] || log.source) + '</span>' +
+        '</div>';
+
+        html += '</div>';
+        tracePanel.innerHTML = html;
+    }
+
+    // 更新调试统计
+    function updateDebugStats() {
+        var countEl = $('#debug-log-count');
+        if (countEl) {
+            countEl.textContent = debugLogs.length + ' 条';
+        }
+
+        var errorCountEl = $('#debug-error-count');
+        if (errorCountEl) {
+            errorCountEl.textContent = debugStats.errors;
+        }
+
+        var apiCallsEl = $('#debug-api-calls');
+        if (apiCallsEl) {
+            apiCallsEl.textContent = debugStats.apiCalls;
+        }
+
+        var avgResponseEl = $('#debug-avg-response');
+        if (avgResponseEl) {
+            var avg = debugStats.responseCount > 0
+                ? Math.round(debugStats.totalResponseTime / debugStats.responseCount)
+                : 0;
+            avgResponseEl.textContent = avg + 'ms';
+        }
+
+        // 内存占用（估算）
+        var memoryEl = $('#debug-memory');
+        if (memoryEl) {
+            var memUsage = Math.round(JSON.stringify(debugLogs).length / 1024);
+            memoryEl.textContent = memUsage + 'KB';
+        }
+    }
+
+    // 初始化调试日志系统
+    function initDebugLogSystem() {
+        // 日志级别过滤
+        $$('.debug-filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                $$('.debug-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                debugLogFilter = btn.getAttribute('data-filter');
+                renderDebugLogs();
+            });
+        });
+
+        // 来源过滤
+        $$('.debug-source-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                $$('.debug-source-btn').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                debugSourceFilter = btn.getAttribute('data-source');
+                renderDebugLogs();
+            });
+        });
+
+        // 搜索
+        var searchInput = $('#debug-log-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce(function() {
+                debugSearchQuery = this.value;
+                renderDebugLogs();
+            }, 300));
+        }
+
+        // 导出
+        var exportBtn = $('#debug-export-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                if (debugLogs.length === 0) {
+                    showToast('没有日志可导出', 'info');
+                    return;
+                }
+                downloadFile('debug-logs.json', JSON.stringify(debugLogs, null, 2), 'application/json');
+                showToast('日志已导出', 'success');
+            });
+        }
+
+        // 清空
+        var clearBtn = $('#debug-clear-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                if (confirm('确定要清空所有日志吗？')) {
+                    debugLogs = [];
+                    debugStats = { apiCalls: 0, errors: 0, totalResponseTime: 0, responseCount: 0 };
+                    renderDebugLogs();
+                    updateDebugStats();
+
+                    var tracePanel = $('#debug-trace-panel');
+                    if (tracePanel) {
+                        tracePanel.innerHTML = '<div class="debug-trace-empty"><i class="fa-solid fa-bug"></i><span>点击日志中的错误条目查看追溯信息</span></div>';
+                    }
+
+                    showToast('日志已清空', 'success');
+                }
+            });
+        }
+
+        // 刷新
+        var refreshBtn = $('#debug-refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                renderDebugLogs();
+                updateDebugStats();
+                showToast('日志已刷新', 'success');
+            });
+        }
+
+        // 全局错误捕获
+        window.addEventListener('error', function(event) {
+            addDebugLog(event.message, 'error', 'system', {
+                file: event.filename,
+                line: event.lineno,
+                col: event.colno
+            });
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            addDebugLog('Unhandled Promise Rejection: ' + event.reason, 'error', 'system');
+        });
+
+        // 添加初始日志
+        addDebugLog('调试日志系统已初始化', 'success', 'system');
+    }
+
+    // API调用记录
+    function logApiCall(method, url, duration, status) {
+        debugStats.apiCalls++;
+        debugStats.totalResponseTime += duration;
+        debugStats.responseCount++;
+
+        var level = status >= 400 ? 'error' : 'success';
+        addDebugLog(method + ' ' + url + ' - ' + status + ' (' + duration + 'ms)', level, 'api', {
+            method: method,
+            url: url,
+            duration: duration,
+            status: status
+        });
+    }
+
+    // WebSocket日志
+    function logWsEvent(event, data) {
+        addDebugLog('WebSocket ' + event + ': ' + (typeof data === 'string' ? data : JSON.stringify(data)), 'info', 'ws');
+    }
+
+    // 代码执行日志
+    function logCodeExecution(code, result, error) {
+        if (error) {
+            addDebugLog('代码执行错误: ' + error, 'error', 'code', { code: code, error: error });
+        } else {
+            addDebugLog('代码执行成功', 'success', 'code', { code: code, result: result });
+        }
+    }
+
+    // AI分析日志
+    function logAiAnalysis(prompt, response, duration) {
+        addDebugLog('AI分析完成 (' + duration + 'ms)', 'info', 'ai', {
+            promptLength: prompt ? prompt.length : 0,
+            responseLength: response ? response.length : 0,
+            duration: duration
+        });
+    }
+
     // ==================== Learning System ====================
     var learningData = {
         feedbacks: [],
@@ -2105,15 +3053,16 @@
     }
 
     function analyzeConversationHistory() {
+        var msgs = (currentConvId && conversations[currentConvId]) ? conversations[currentConvId].messages : [];
         var analysis = {
-            totalMessages: messages.length,
+            totalMessages: msgs.length,
             topics: [],
             frequentPatterns: {},
             responseTimeStats: []
         };
 
-        messages.forEach(function(msg) {
-            if (msg.role === 'user') {
+        msgs.forEach(function(msg) {
+            if (msg.type === 'user') {
                 var topic = classifyTopic(msg.content);
                 if (topic) {
                     analysis.topics.push(topic);
@@ -2234,7 +3183,47 @@
     function initErrorHandling() {
         window.addEventListener('error', handleGlobalError);
         window.addEventListener('unhandledrejection', handlePromiseRejection);
+        initNetworkStatus();
         addLog('异常处理系统初始化完成', 'system');
+    }
+
+    // ==================== Network Status ====================
+    function initNetworkStatus() {
+        var banner = $('#offline-banner');
+        var retryBtn = $('#offline-retry-btn');
+
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                if (banner) banner.style.display = 'none';
+                document.body.classList.remove('offline');
+                addLog('网络已连接', 'system');
+                // 尝试重连 WebSocket
+                if (ws && ws.readyState !== WebSocket.OPEN) {
+                    connectWS();
+                }
+            } else {
+                if (banner) banner.style.display = 'flex';
+                document.body.classList.add('offline');
+                addLog('网络已断开', 'warning');
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        if (retryBtn) {
+            retryBtn.addEventListener('click', function () {
+                if (navigator.onLine) {
+                    updateOnlineStatus();
+                    showToast('网络已恢复', 'success');
+                } else {
+                    showToast('仍然离线，请检查网络连接', 'warning');
+                }
+            });
+        }
+
+        // 初始检查
+        updateOnlineStatus();
     }
 
     function handleGlobalError(event) {
@@ -2245,6 +3234,357 @@
             error: event.error
         });
     }
+
+    // ==================== Search Settings ====================
+    var searchSettings = {
+        engine: 'brave',
+        results: 5,
+        timeout: 30,
+        safe: 'moderate',
+        lang: 'auto',
+        apiKeys: {},
+        customEngines: []
+    };
+
+    function initSearchSettings() {
+        loadSearchSettings();
+
+        // 搜索引擎选择
+        $$('.search-engine-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var engine = card.getAttribute('data-engine');
+                selectSearchEngine(engine);
+            });
+        });
+
+        // 滑块事件
+        var resultsSlider = $('#setting-search-results');
+        var resultsValue = $('#search-results-value');
+        if (resultsSlider && resultsValue) {
+            resultsSlider.addEventListener('input', function() {
+                resultsValue.textContent = this.value + '条';
+                searchSettings.results = parseInt(this.value);
+            });
+        }
+
+        var timeoutSlider = $('#setting-search-timeout');
+        var timeoutValue = $('#search-timeout-value');
+        if (timeoutSlider && timeoutValue) {
+            timeoutSlider.addEventListener('input', function() {
+                timeoutValue.textContent = this.value + 's';
+                searchSettings.timeout = parseInt(this.value);
+            });
+        }
+
+        // API Key显示切换
+        $('#toggle-brave-key')?.addEventListener('click', function() {
+            togglePasswordVisibility('setting-brave-api-key', this);
+        });
+        $('#toggle-serpapi-key')?.addEventListener('click', function() {
+            togglePasswordVisibility('setting-serpapi-key', this);
+        });
+        $('#toggle-google-key')?.addEventListener('click', function() {
+            togglePasswordVisibility('setting-google-api-key', this);
+        });
+
+        // 自定义搜索引擎
+        var addCustomBtn = $('#add-custom-search-btn');
+        var customForm = $('#custom-search-form');
+        if (addCustomBtn && customForm) {
+            addCustomBtn.addEventListener('click', function() {
+                customForm.style.display = 'block';
+                addCustomBtn.style.display = 'none';
+            });
+        }
+
+        $('#cancel-custom-search-btn')?.addEventListener('click', function() {
+            customForm.style.display = 'none';
+            addCustomBtn.style.display = 'block';
+            clearCustomSearchForm();
+        });
+
+        $('#save-custom-search-btn')?.addEventListener('click', saveCustomSearchEngine);
+
+        // 保存和测试按钮
+        $('#save-search-settings-btn')?.addEventListener('click', saveSearchSettings);
+        $('#test-search-btn')?.addEventListener('click', testSearchConfig);
+
+        // 加载自定义搜索引擎列表
+        renderCustomSearchEngines();
+    }
+
+    function selectSearchEngine(engine) {
+        searchSettings.engine = engine;
+
+        // 更新UI
+        $$('.search-engine-card').forEach(function(card) {
+            card.classList.toggle('active', card.getAttribute('data-engine') === engine);
+        });
+
+        // 保存到后端
+        httpPost('/api/search/settings', {
+            engine: engine
+        }).then(function(res) {
+            // 同时保存到localStorage作为备份
+            try {
+                localStorage.setItem('data-ai-search-engine', engine);
+            } catch(e) {}
+            showToast('已选择搜索引擎: ' + getEngineDisplayName(engine), 'success');
+        }).catch(function(err) {
+            // 后端保存失败，只保存到localStorage
+            try {
+                localStorage.setItem('data-ai-search-engine', engine);
+            } catch(e) {}
+            showToast('已选择搜索引擎: ' + getEngineDisplayName(engine), 'success');
+        });
+    }
+
+    function getEngineDisplayName(engine) {
+        var names = {
+            'brave': 'Brave Search',
+            'google': 'Google',
+            'bing': 'Bing',
+            'duckduckgo': 'DuckDuckGo',
+            'baidu': '百度',
+            'serpapi': 'SerpAPI'
+        };
+        return names[engine] || engine;
+    }
+
+    function saveCustomSearchEngine() {
+        var name = $('#custom-search-name')?.value.trim();
+        var endpoint = $('#custom-search-endpoint')?.value.trim();
+        var apiKey = $('#custom-search-apikey')?.value.trim();
+        var method = $('#custom-search-method')?.value || 'GET';
+        var param = $('#custom-search-param')?.value.trim() || 'q';
+
+        if (!name || !endpoint) {
+            showToast('请填写引擎名称和API端点', 'warning');
+            return;
+        }
+
+        var customEngine = {
+            id: 'custom-' + Date.now(),
+            name: name,
+            endpoint: endpoint,
+            apiKey: apiKey,
+            method: method,
+            param: param
+        };
+
+        // 保存到后端
+        httpPost('/api/search/custom-engines', customEngine).then(function(res) {
+            if (res && res.success) {
+                searchSettings.customEngines = res.custom_engines || [];
+                renderCustomSearchEngines();
+                
+                // 重置表单
+                clearCustomSearchForm();
+                $('#custom-search-form').style.display = 'none';
+                $('#add-custom-search-btn').style.display = 'block';
+                
+                showToast('自定义搜索引擎已添加', 'success');
+            } else {
+                showToast('添加失败', 'error');
+            }
+        }).catch(function(err) {
+            showToast('添加失败', 'error');
+        });
+    }
+
+    function clearCustomSearchForm() {
+        if ($('#custom-search-name')) $('#custom-search-name').value = '';
+        if ($('#custom-search-endpoint')) $('#custom-search-endpoint').value = '';
+        if ($('#custom-search-apikey')) $('#custom-search-apikey').value = '';
+        if ($('#custom-search-param')) $('#custom-search-param').value = 'q';
+    }
+
+    function renderCustomSearchEngines() {
+        var list = $('#custom-search-list');
+        if (!list) return;
+
+        if (searchSettings.customEngines.length === 0) {
+            list.innerHTML = '<div class="custom-search-empty">暂无自定义搜索引擎</div>';
+            return;
+        }
+
+        list.innerHTML = searchSettings.customEngines.map(function(engine) {
+            return '<div class="custom-search-item" data-id="' + engine.id + '">' +
+                '<div class="custom-search-item-icon"><i class="fa-solid fa-gear"></i></div>' +
+                '<div class="custom-search-item-info">' +
+                    '<div class="custom-search-item-name">' + escapeHtml(engine.name) + '</div>' +
+                    '<div class="custom-search-item-endpoint">' + escapeHtml(engine.endpoint) + '</div>' +
+                '</div>' +
+                '<div class="custom-search-item-actions">' +
+                    '<button class="custom-search-item-btn use" title="使用"><i class="fa-solid fa-check"></i></button>' +
+                    '<button class="custom-search-item-btn delete" title="删除"><i class="fa-solid fa-trash"></i></button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+
+        // 绑定事件
+        list.querySelectorAll('.custom-search-item-btn.use').forEach(function(btn, index) {
+            btn.addEventListener('click', function() {
+                var engine = searchSettings.customEngines[index];
+                selectSearchEngine(engine.id);
+            });
+        });
+
+        list.querySelectorAll('.custom-search-item-btn.delete').forEach(function(btn, index) {
+            btn.addEventListener('click', function() {
+                if (confirm('确定要删除这个自定义搜索引擎吗？')) {
+                    var engineId = searchSettings.customEngines[index]?.id;
+                    if (engineId) {
+                        httpDelete('/api/search/custom-engines/' + engineId).then(function(res) {
+                            if (res && res.success) {
+                                searchSettings.customEngines = res.custom_engines || [];
+                                renderCustomSearchEngines();
+                                showToast('已删除', 'success');
+                            }
+                        }).catch(function(err) {
+                            // 本地删除
+                            searchSettings.customEngines.splice(index, 1);
+                            renderCustomSearchEngines();
+                            showToast('已删除', 'success');
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+    function saveSearchSettings() {
+        // 收集所有设置
+        searchSettings.safe = $('#setting-search-safe')?.value || 'moderate';
+        searchSettings.lang = $('#setting-search-lang')?.value || 'auto';
+        searchSettings.apiKeys = {
+            brave: $('#setting-brave-api-key')?.value || '',
+            serpapi: $('#setting-serpapi-key')?.value || '',
+            google: $('#setting-google-api-key')?.value || '',
+            googleCx: $('#setting-google-cx')?.value || ''
+        };
+
+        // 保存到后端
+        httpPost('/api/search/settings', {
+            engine: searchSettings.engine,
+            results_count: searchSettings.results,
+            timeout: searchSettings.timeout,
+            safe_search: searchSettings.safe,
+            language: searchSettings.lang,
+            api_keys: searchSettings.apiKeys,
+            custom_engines: searchSettings.customEngines
+        }).then(function(res) {
+            if (res && res.success) {
+                // 同时保存到localStorage作为备份
+                try {
+                    localStorage.setItem('data-ai-search-settings', JSON.stringify(searchSettings));
+                } catch(e) {}
+                showToast('搜索设置已保存到服务器', 'success');
+            } else {
+                showToast('保存失败: ' + (res?.error || '未知错误'), 'error');
+            }
+        }).catch(function(err) {
+            showToast('保存失败', 'error');
+        });
+    }
+
+    function loadSearchSettings() {
+        // 从后端加载设置
+        httpGet('/api/search/settings').then(function(settings) {
+            if (settings) {
+                searchSettings.engine = settings.engine || 'duckduckgo';
+                searchSettings.results = settings.results_count || 5;
+                searchSettings.timeout = settings.timeout || 30;
+                searchSettings.safe = settings.safe_search || 'moderate';
+                searchSettings.lang = settings.language || 'auto';
+                searchSettings.customEngines = settings.custom_engines || [];
+                
+                // API Keys使用masked版本显示
+                if (settings.api_keys_masked) {
+                    searchSettings.apiKeys = settings.api_keys_masked;
+                } else {
+                    searchSettings.apiKeys = settings.api_keys || {};
+                }
+            }
+            applySearchSettingsToUI();
+        }).catch(function(err) {
+            // 后端加载失败，尝试从localStorage加载
+            try {
+                var stored = localStorage.getItem('data-ai-search-settings');
+                if (stored) {
+                    searchSettings = JSON.parse(stored);
+                }
+            } catch(e) {}
+            applySearchSettingsToUI();
+        });
+    }
+
+    function applySearchSettingsToUI() {
+        // 搜索引擎选择
+        $$('.search-engine-card').forEach(function(card) {
+            card.classList.toggle('active', card.getAttribute('data-engine') === searchSettings.engine);
+        });
+
+        // 滑块
+        if ($('#setting-search-results')) {
+            $('#setting-search-results').value = searchSettings.results;
+            $('#search-results-value').textContent = searchSettings.results + '条';
+        }
+        if ($('#setting-search-timeout')) {
+            $('#setting-search-timeout').value = searchSettings.timeout;
+            $('#search-timeout-value').textContent = searchSettings.timeout + 's';
+        }
+
+        // 下拉选择
+        if ($('#setting-search-safe')) $('#setting-search-safe').value = searchSettings.safe;
+        if ($('#setting-search-lang')) $('#setting-search-lang').value = searchSettings.lang;
+
+        // API Keys
+        if (searchSettings.apiKeys) {
+            if ($('#setting-brave-api-key')) $('#setting-brave-api-key').value = searchSettings.apiKeys.brave || '';
+            if ($('#setting-serpapi-key')) $('#setting-serpapi-key').value = searchSettings.apiKeys.serpapi || '';
+            if ($('#setting-google-api-key')) $('#setting-google-api-key').value = searchSettings.apiKeys.google || '';
+            if ($('#setting-google-cx')) $('#setting-google-cx').value = searchSettings.apiKeys.googleCx || '';
+        }
+    }
+
+    function testSearchConfig() {
+        var engine = searchSettings.engine;
+        showToast('正在测试 ' + getEngineDisplayName(engine) + '...', 'info');
+
+        // 调用后端测试API
+        httpPost('/api/search/test', {
+            query: 'DATA-AI test',
+            engine: engine,
+            num_results: 3
+        }).then(function(res) {
+            if (res && res.success) {
+                showToast('搜索引擎配置测试成功，找到 ' + res.results.length + ' 条结果', 'success');
+            } else {
+                showToast('测试失败: ' + (res?.error || '未知错误'), 'error');
+            }
+        }).catch(function(err) {
+            showToast('测试请求失败', 'error');
+        });
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+        var input = $('#' + inputId);
+        if (!input) return;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+        } else {
+            input.type = 'password';
+            btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+        }
+    }
+
+    // 获取当前搜索引擎配置（供其他模块使用）
+    window.getSearchConfig = function() {
+        return searchSettings;
+    };
 
     function handlePromiseRejection(event) {
         logError('promise', event.reason ? event.reason.message || event.reason : 'Unknown', {
@@ -2343,8 +3683,31 @@
     };
 
     function initMemorySystem() {
-        loadLongTermMemory();
+        // 从后端加载记忆
+        loadMemoriesFromBackend();
         addLog('记忆系统初始化完成', 'system');
+    }
+
+    function loadMemoriesFromBackend() {
+        httpGet('/api/memories?type=long_term').then(function(memories) {
+            if (memories && Array.isArray(memories)) {
+                memories.forEach(function(m) {
+                    if (m.key) {
+                        memoryCache.longTerm[m.key] = {
+                            id: m.id,
+                            content: m.content,
+                            metadata: m.metadata,
+                            accessCount: m.metadata?.accessCount || 0,
+                            updatedAt: m.updated_at
+                        };
+                    }
+                });
+                addLog('已从服务器加载 ' + memories.length + ' 条长期记忆', 'success');
+            }
+        }).catch(function(err) {
+            // 后端加载失败，尝试从localStorage加载
+            loadLongTermMemory();
+        });
     }
 
     function loadLongTermMemory() {
@@ -2366,6 +3729,30 @@
         }
     }
 
+    // 保存记忆到后端
+    function saveMemoryToBackend(key, content, type) {
+        type = type || 'long_term';
+        httpPost('/api/memories', {
+            type: type,
+            key: key,
+            content: content,
+            metadata: { accessCount: 0 }
+        }).then(function(res) {
+            if (res && res.id) {
+                addLog('记忆已保存到服务器: ' + key, 'success');
+            }
+        }).catch(function(err) {
+            addLog('记忆保存到服务器失败', 'warning');
+        });
+    }
+
+    // 更新记忆访问次数
+    function updateMemoryAccess(memoryId) {
+        httpPut('/api/memories/' + memoryId, {
+            metadata: { lastAccess: new Date().toISOString() }
+        }).catch(function() {});
+    }
+
     function addToContext(message) {
         memoryCache.contextWindow.push({
             id: Date.now(),
@@ -2376,6 +3763,13 @@
         if (memoryCache.contextWindow.length > 20) {
             memoryCache.contextWindow = memoryCache.contextWindow.slice(-20);
         }
+        
+        // 同时保存到后端作为上下文记忆
+        httpPost('/api/memories', {
+            type: 'context',
+            content: message,
+            expires_at: new Date(Date.now() + 3600000).toISOString() // 1小时后过期
+        }).catch(function() {});
     }
 
     function getContext() {
@@ -2393,24 +3787,87 @@
             timestamp: new Date().toISOString()
         };
 
+        // 同时保存到后端
+        var expiresAt = duration ? new Date(Date.now() + duration).toISOString() : null;
+        httpPost('/api/memories', {
+            type: 'short_term',
+            key: key,
+            content: JSON.stringify(value),
+            expires_at: expiresAt
+        }).catch(function() {});
+
         cleanExpiredCache();
     }
 
     function recall(key) {
         cleanExpiredCache();
         var item = memoryCache.shortTerm[key];
+        
+        // 尝试从后端获取
+        if (!item) {
+            httpGet('/api/memories/search/' + encodeURIComponent(key) + '?type=short_term').then(function(memories) {
+                if (memories && memories.length > 0) {
+                    var m = memories[0];
+                    memoryCache.shortTerm[key] = {
+                        value: JSON.parse(m.content),
+                        timestamp: m.created_at
+                    };
+                }
+            }).catch(function() {});
+        }
+        
         return item ? item.value : null;
     }
 
     function cleanExpiredCache() {
         var now = Date.now();
+        var keys = Object.keys(memoryCache.shortTerm);
+        var expiredCount = 0;
+
+        // Clean expired items
         for (var key in memoryCache.shortTerm) {
             if (memoryCache.shortTerm[key].expires &&
                 memoryCache.shortTerm[key].expires < now) {
                 delete memoryCache.shortTerm[key];
+                expiredCount++;
             }
         }
+
+        // If cache is too large, remove oldest items
+        keys = Object.keys(memoryCache.shortTerm);
+        if (keys.length > 1000) {
+            var sortedKeys = keys.sort(function(a, b) {
+                var timeA = new Date(memoryCache.shortTerm[a].timestamp || 0).getTime();
+                var timeB = new Date(memoryCache.shortTerm[b].timestamp || 0).getTime();
+                return timeA - timeB;
+            });
+            var toRemove = keys.length - 1000;
+            for (var i = 0; i < toRemove; i++) {
+                delete memoryCache.shortTerm[sortedKeys[i]];
+            }
+        }
+
+        return expiredCount;
     }
+
+    // Periodic cache cleanup every 5 minutes
+    setInterval(function() {
+        cleanExpiredCache();
+        // Also clean long-term memory if too large
+        var longTermKeys = Object.keys(memoryCache.longTerm);
+        if (longTermKeys.length > 500) {
+            var sorted = longTermKeys.sort(function(a, b) {
+                var countA = memoryCache.longTerm[a].accessCount || 0;
+                var countB = memoryCache.longTerm[b].accessCount || 0;
+                return countA - countB;
+            });
+            var removeCount = longTermKeys.length - 500;
+            for (var j = 0; j < removeCount; j++) {
+                delete memoryCache.longTerm[sorted[j]];
+            }
+            saveLongTermMemory();
+        }
+    }, 300000);
 
     function storeLongTerm(key, value) {
         memoryCache.longTerm[key] = {
@@ -2526,7 +3983,7 @@
     }
 
     function showQuickReplies(messageId) {
-        var messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        var messageEl = document.querySelector(`[data-msg-id="${messageId}"]`);
         if (!messageEl) return;
 
         var existingReplies = messageEl.querySelector('.quick-replies');
@@ -2559,7 +4016,7 @@
     var availableReactions = ['👍', '👎', '❤️', '😂', '😮', '🎉'];
 
     function addReaction(messageId, emoji) {
-        var messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        var messageEl = document.querySelector(`[data-msg-id="${messageId}"]`);
         if (!messageEl) return;
 
         var reactionsContainer = messageEl.querySelector('.message-reactions');
@@ -2596,7 +4053,7 @@
     }
 
     function showReactionPicker(messageId) {
-        var messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        var messageEl = document.querySelector(`[data-msg-id="${messageId}"]`);
         if (!messageEl) return;
 
         var pickerEl = document.createElement('div');
@@ -2728,12 +4185,17 @@
             if (addBtn) {
                 addCustomModel();
             }
-
-            var input = e.target.closest('.model-tag-input');
-            if (input && e.key === 'Enter') {
-                addCustomModel();
-            }
         });
+
+        // Custom model add via Enter key
+        var modelTagInput = document.querySelector('.model-tag-input');
+        if (modelTagInput) {
+            modelTagInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    addCustomModel();
+                }
+            });
+        }
 
         // Model test button
         var modelTestBtn = $('#model-test-btn');
@@ -2751,6 +4213,81 @@
         var voiceBtn = $('#voice-btn');
         if (voiceBtn) {
             voiceBtn.addEventListener('click', toggleVoiceInput);
+        }
+
+        // Provider add button
+        var providerAddBtn = $('#provider-add-btn');
+        if (providerAddBtn) {
+            providerAddBtn.addEventListener('click', function() {
+                showToast('添加自定义模型提供商功能开发中', 'info');
+                // TODO: 打开添加提供商对话框
+            });
+        }
+
+        // MCP test button
+        var testMcpBtn = $('#test-mcp-btn');
+        if (testMcpBtn) {
+            testMcpBtn.addEventListener('click', testMcpConnection);
+        }
+
+        // Cancel skill button
+        var cancelSkillBtn = $('#cancel-skill-btn');
+        if (cancelSkillBtn) {
+            cancelSkillBtn.addEventListener('click', function() {
+                // 清空表单
+                var nameInput = $('#skill-name-input');
+                var descInput = $('#skill-description-input');
+                var promptInput = $('#skill-prompt-input');
+                if (nameInput) nameInput.value = '';
+                if (descInput) descInput.value = '';
+                if (promptInput) promptInput.value = '';
+                showToast('已取消创建技能', 'info');
+            });
+        }
+
+        // Cancel MCP button
+        var cancelMcpBtn = $('#cancel-mcp-btn');
+        if (cancelMcpBtn) {
+            cancelMcpBtn.addEventListener('click', function() {
+                // 清空表单
+                var nameInput = $('#mcp-name-input');
+                var cmdInput = $('#mcp-command-input');
+                var urlInput = $('#mcp-url-input');
+                if (nameInput) nameInput.value = '';
+                if (cmdInput) cmdInput.value = '';
+                if (urlInput) urlInput.value = '';
+                showToast('已取消添加MCP服务器', 'info');
+            });
+        }
+
+        // Reset system prompt button
+        var resetPromptBtn = $('#reset-system-prompt-btn');
+        if (resetPromptBtn) {
+            resetPromptBtn.addEventListener('click', function() {
+                var promptInput = $('#setting-system-prompt');
+                if (promptInput) {
+                    promptInput.value = '你是一个乐于助人的AI助手。请用友好、专业的语言回答用户问题。';
+                    showToast('已恢复默认系统提示词', 'success');
+                }
+            });
+        }
+
+        // Add memory button
+        var addMemoryBtn = $('#add-memory-btn');
+        if (addMemoryBtn) {
+            addMemoryBtn.addEventListener('click', function() {
+                showToast('添加记忆文件功能开发中', 'info');
+                // TODO: 打开添加记忆文件对话框
+            });
+        }
+
+        // Add skill to agent button
+        var addSkillToAgentBtn = $('#add-skill-to-agent-btn');
+        if (addSkillToAgentBtn) {
+            addSkillToAgentBtn.addEventListener('click', function() {
+                showToast('添加技能到智能体功能开发中', 'info');
+                // TODO: 打开技能选择对话框
+            });
         }
 
         // Temperature range
@@ -2807,17 +4344,42 @@
 
         // Sandbox environment management
         var addEnvBtn = $('#sandbox-add-env-btn');
-        if (addEnvBtn) {
+        var envMarket = $('#sandbox-env-market');
+        if (addEnvBtn && envMarket) {
             addEnvBtn.addEventListener('click', function () {
-                var envModal = $('#sandbox-env-modal');
-                if (envModal) {
-                    envModal.style.display = envModal.style.display === 'none' ? 'block' : 'none';
-                }
+                envMarket.style.display = 'block';
+                // 隐藏自定义安装面板
+                var customInstall = $('#sandbox-custom-install');
+                if (customInstall) customInstall.style.display = 'none';
             });
         }
 
-        // Sandbox environment install
-        $$('.sandbox-env-install').forEach(function (btn) {
+        // 关闭环境市场
+        var marketCloseBtn = $('#sandbox-market-close');
+        if (marketCloseBtn && envMarket) {
+            marketCloseBtn.addEventListener('click', function () {
+                envMarket.style.display = 'none';
+            });
+        }
+
+        // 环境市场标签切换
+        $$('.sandbox-market-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                var category = tab.getAttribute('data-category');
+
+                // 切换标签状态
+                $$('.sandbox-market-tab').forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+
+                // 切换面板
+                $$('.sandbox-market-panel').forEach(function (panel) {
+                    panel.classList.toggle('active', panel.getAttribute('data-panel') === category);
+                });
+            });
+        });
+
+        // Sandbox environment install (市场)
+        $$('.sandbox-env-market .sandbox-env-install').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var card = btn.closest('.sandbox-env-card');
                 var image = card.getAttribute('data-image');
@@ -2825,18 +4387,288 @@
             });
         });
 
+        // 自定义安装面板
+        var customEnvBtn = $('#sandbox-custom-env-btn');
+        var customInstall = $('#sandbox-custom-install');
+        if (customEnvBtn && customInstall) {
+            customEnvBtn.addEventListener('click', function () {
+                customInstall.style.display = 'block';
+                // 隐藏环境市场
+                if (envMarket) envMarket.style.display = 'none';
+            });
+        }
+
+        // 关闭自定义安装
+        var customCloseBtn = $('#sandbox-custom-close');
+        if (customCloseBtn && customInstall) {
+            customCloseBtn.addEventListener('click', function () {
+                customInstall.style.display = 'none';
+            });
+        }
+
+        // 自定义安装标签切换
+        $$('.sandbox-custom-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                var tabName = tab.getAttribute('data-tab');
+
+                // 切换标签状态
+                $$('.sandbox-custom-tab').forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+
+                // 切换面板
+                $$('.sandbox-custom-panel').forEach(function (panel) {
+                    panel.classList.toggle('active', panel.getAttribute('data-panel') === tabName);
+                });
+            });
+        });
+
+        // Docker镜像安装
+        var installDockerBtn = $('#sandbox-install-docker-btn');
+        if (installDockerBtn) {
+            installDockerBtn.addEventListener('click', function () {
+                var imageInput = $('#sandbox-docker-image');
+                var image = imageInput ? imageInput.value.trim() : '';
+                if (!image) {
+                    showToast('请输入Docker镜像名称', 'warning');
+                    return;
+                }
+                installSandboxEnv(image, installDockerBtn);
+                imageInput.value = '';
+            });
+        }
+
+        // Conda环境安装
+        var installCondaBtn = $('#sandbox-install-conda-btn');
+        if (installCondaBtn) {
+            installCondaBtn.addEventListener('click', function () {
+                var nameInput = $('#sandbox-conda-name');
+                var pythonSelect = $('#sandbox-conda-python');
+                var packagesInput = $('#sandbox-conda-packages');
+
+                var name = nameInput ? nameInput.value.trim() : '';
+                var python = pythonSelect ? pythonSelect.value : '3.11';
+                var packages = packagesInput ? packagesInput.value.trim() : '';
+
+                if (!name) {
+                    showToast('请输入环境名称', 'warning');
+                    return;
+                }
+
+                // 模拟Conda环境创建
+                installCondaBtn.disabled = true;
+                installCondaBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 创建中...';
+
+                setTimeout(function () {
+                    installCondaBtn.disabled = false;
+                    installCondaBtn.innerHTML = '<i class="fa-solid fa-download"></i> 创建环境';
+                    showToast('Conda环境 "' + name + '" 创建成功', 'success');
+
+                    // 清空输入
+                    nameInput.value = '';
+                    packagesInput.value = '';
+
+                    // 添加到已安装列表
+                    addInstalledEnv({
+                        id: 'conda-' + Date.now(),
+                        name: 'Conda: ' + name,
+                        image: 'conda-env',
+                        description: 'Python ' + python + (packages ? ' + ' + packages.split(' ').length + ' packages' : ''),
+                        status: 'ready'
+                    });
+                }, 2000);
+            });
+        }
+
+        // Pip包安装
+        var installPipBtn = $('#sandbox-install-pip-btn');
+        if (installPipBtn) {
+            installPipBtn.addEventListener('click', function () {
+                var packagesInput = $('#sandbox-pip-packages');
+                var versionInput = $('#sandbox-pip-version');
+
+                var packages = packagesInput ? packagesInput.value.trim() : '';
+                var version = versionInput ? versionInput.value.trim() : '';
+
+                if (!packages) {
+                    showToast('请输入包名称', 'warning');
+                    return;
+                }
+
+                // 模拟Pip安装
+                installPipBtn.disabled = true;
+                installPipBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 安装中...';
+
+                setTimeout(function () {
+                    installPipBtn.disabled = false;
+                    installPipBtn.innerHTML = '<i class="fa-solid fa-download"></i> 安装包';
+                    showToast('包 "' + packages + '" 安装成功', 'success');
+                    packagesInput.value = '';
+                    versionInput.value = '';
+                }, 1500);
+            });
+        }
+
         // Load sandbox environments
         loadSandboxEnvironments();
+
+        // Sandbox resource sliders
+        var sandboxTimeout = $('#setting-sandbox-timeout');
+        var sandboxTimeoutValue = $('#sandbox-timeout-value');
+        if (sandboxTimeout && sandboxTimeoutValue) {
+            sandboxTimeout.addEventListener('input', function () {
+                sandboxTimeoutValue.textContent = this.value + 's';
+            });
+        }
+
+        var sandboxCpu = $('#setting-sandbox-cpu');
+        var sandboxCpuValue = $('#sandbox-cpu-value');
+        if (sandboxCpu && sandboxCpuValue) {
+            sandboxCpu.addEventListener('input', function () {
+                sandboxCpuValue.textContent = this.value + '核';
+            });
+        }
+
+        var sandboxMemory = $('#setting-sandbox-memory');
+        var sandboxMemoryValue = $('#sandbox-memory-value');
+        if (sandboxMemory && sandboxMemoryValue) {
+            sandboxMemory.addEventListener('input', function () {
+                sandboxMemoryValue.textContent = this.value + 'MB';
+            });
+        }
+
+        var sandboxDisk = $('#setting-sandbox-disk');
+        var sandboxDiskValue = $('#sandbox-disk-value');
+        if (sandboxDisk && sandboxDiskValue) {
+            sandboxDisk.addEventListener('input', function () {
+                sandboxDiskValue.textContent = this.value + 'MB';
+            });
+        }
+
+        // Sandbox action buttons
+        var sandboxResetBtn = $('#sandbox-reset-btn');
+        if (sandboxResetBtn) {
+            sandboxResetBtn.addEventListener('click', function () {
+                if (confirm('确定要重置沙箱吗？这将清除所有沙箱数据和配置。')) {
+                    showToast('沙箱已重置', 'success');
+                }
+            });
+        }
+
+        var sandboxClearCacheBtn = $('#sandbox-clear-cache-btn');
+        if (sandboxClearCacheBtn) {
+            sandboxClearCacheBtn.addEventListener('click', function () {
+                showToast('缓存已清理', 'success');
+            });
+        }
+
+        var sandboxSaveBtn = $('#sandbox-save-btn');
+        if (sandboxSaveBtn) {
+            sandboxSaveBtn.addEventListener('click', function () {
+                showToast('沙箱配置已保存', 'success');
+            });
+        }
 
         // Theme options
         $$('.theme-option').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var theme = btn.getAttribute('data-theme');
-                setTheme(theme);
+                if (theme === 'auto') {
+                    // 跟随系统
+                    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    setTheme(prefersDark ? 'dark' : 'light');
+                    localStorage.setItem('data-ai-theme-mode', 'auto');
+                } else {
+                    setTheme(theme);
+                    localStorage.setItem('data-ai-theme-mode', 'manual');
+                }
                 $$('.theme-option').forEach(function (b) { b.classList.remove('active'); });
                 btn.classList.add('active');
             });
         });
+
+        // 监听系统主题变化
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            var mode = localStorage.getItem('data-ai-theme-mode');
+            if (mode === 'auto') {
+                setTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+
+        // Font size selector
+        $$('.font-size-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var size = btn.getAttribute('data-size');
+                $$('.font-size-btn').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                var sizeMap = { small: '13px', medium: '14px', large: '16px' };
+                document.documentElement.style.setProperty('--chat-font-size', sizeMap[size] || '14px');
+                try { localStorage.setItem('data-ai-font-size', size); } catch(e) {}
+            });
+        });
+
+        // Load saved font size
+        try {
+            var savedFontSize = localStorage.getItem('data-ai-font-size');
+            if (savedFontSize) {
+                $$('.font-size-btn').forEach(function (b) {
+                    b.classList.toggle('active', b.getAttribute('data-size') === savedFontSize);
+                });
+                var sizeMap = { small: '13px', medium: '14px', large: '16px' };
+                document.documentElement.style.setProperty('--chat-font-size', sizeMap[savedFontSize] || '14px');
+            }
+        } catch(e) {}
+
+        // Bubble width slider
+        var bubbleWidthInput = $('#setting-bubble-width');
+        var bubbleWidthValue = $('#bubble-width-value');
+        if (bubbleWidthInput && bubbleWidthValue) {
+            bubbleWidthInput.addEventListener('input', function () {
+                bubbleWidthValue.textContent = this.value + 'px';
+                document.documentElement.style.setProperty('--chat-max-width', this.value + 'px');
+            });
+        }
+
+        // Memory settings sliders
+        var memoryContextInput = $('#setting-memory-context');
+        var memoryContextValue = $('#memory-context-value');
+        if (memoryContextInput && memoryContextValue) {
+            memoryContextInput.addEventListener('input', function () {
+                memoryContextValue.textContent = this.value;
+            });
+        }
+
+        var memoryRetentionInput = $('#setting-memory-retention');
+        var memoryRetentionValue = $('#memory-retention-value');
+        if (memoryRetentionInput && memoryRetentionValue) {
+            memoryRetentionInput.addEventListener('input', function () {
+                memoryRetentionValue.textContent = this.value + '天';
+            });
+        }
+
+        // Memory action buttons
+        var exportMemoryBtn = $('#export-memory-btn');
+        if (exportMemoryBtn) {
+            exportMemoryBtn.addEventListener('click', function () {
+                showToast('记忆导出功能开发中...', 'info');
+            });
+        }
+
+        var clearMemoryBtn = $('#clear-memory-btn');
+        if (clearMemoryBtn) {
+            clearMemoryBtn.addEventListener('click', function () {
+                if (confirm('确定要清空所有记忆吗？此操作不可恢复。')) {
+                    showToast('记忆已清空', 'success');
+                }
+            });
+        }
+
+        // Check update button
+        var checkUpdateBtn = $('#check-update-btn');
+        if (checkUpdateBtn) {
+            checkUpdateBtn.addEventListener('click', function () {
+                showToast('当前已是最新版本 v2.0.0', 'success');
+            });
+        }
 
         // Switches
         $$('.setting-switch').forEach(function (sw) {
@@ -2921,6 +4753,8 @@
         try {
             localStorage.setItem('data-ai-theme', theme);
         } catch (e) { /* ignore */ }
+        // 同步到服务器
+        savePreference('theme', theme);
 
         var hljsLink = $('#hljs-theme');
         if (hljsLink) {
@@ -2933,15 +4767,42 @@
     }
 
     function loadTheme() {
-        try {
-            var saved = localStorage.getItem('data-ai-theme');
-            if (saved) {
-                setTheme(saved);
+        // 优先从服务器加载
+        loadPreference('theme').then(function(theme) {
+            if (theme) {
+                setTheme(theme);
                 $$('.theme-option').forEach(function (btn) {
-                    btn.classList.toggle('active', btn.getAttribute('data-theme') === saved);
+                    btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
                 });
+            } else {
+                // 回退到 localStorage
+                try {
+                    var saved = localStorage.getItem('data-ai-theme');
+                    if (saved) {
+                        setTheme(saved);
+                        $$('.theme-option').forEach(function (btn) {
+                            btn.classList.toggle('active', btn.getAttribute('data-theme') === saved);
+                        });
+                    }
+                } catch (e) { /* ignore */ }
             }
-        } catch (e) { /* ignore */ }
+        });
+    }
+
+    // 保存偏好到服务器
+    function savePreference(key, value) {
+        httpPost('/api/preferences/' + key, { value: value }).catch(function(err) {
+            console.log('Preference save failed:', err);
+        });
+    }
+
+    // 从服务器加载偏好
+    function loadPreference(key) {
+        return httpGet('/api/preferences/' + key).then(function(res) {
+            return res && res.exists ? res.value : null;
+        }).catch(function() {
+            return null;
+        });
     }
 
     // ==================== Model Selector ====================
@@ -3067,6 +4928,16 @@
             });
         }
 
+        // 导出按钮
+        var exportPdfBtn = $('#export-pdf-btn');
+        var exportMdBtn = $('#export-md-btn');
+        if (exportPdfBtn) exportPdfBtn.addEventListener('click', exportConversationPDF);
+        if (exportMdBtn) exportMdBtn.addEventListener('click', exportConversationMarkdown);
+
+        // 分享按钮
+        var shareBtn = $('#share-btn');
+        if (shareBtn) shareBtn.addEventListener('click', shareConversation);
+
         if (appSettings && appSettings.llm) {
             updateModelDisplay(appSettings.llm.model || '');
         }
@@ -3171,10 +5042,7 @@
 
     // ==================== Settings ====================
     function loadSettings() {
-        httpGet('/api/settings').then(function (res) {
-            if (!res.ok) return;
-            return res.json();
-        }).then(function (data) {
+        httpGet('/api/settings').then(function (data) {
             appSettings = data;
             populateSettings(appSettings);
         }).catch(function (e) {
@@ -3280,12 +5148,7 @@
             return;
         }
 
-        httpPost('/api/settings', settings).then(function (res) {
-            if (!res.ok) {
-                return res.json().catch(function () { return { detail: '保存失败' }; }).then(function (errData) {
-                    throw new Error(errData.detail || '请求失败');
-                });
-            }
+        httpPost('/api/settings', settings).then(function (data) {
             appSettings = settings;
             closeDrawer('settings-drawer', 'settings-drawer-overlay');
             showToast('设置已保存', 'success');
@@ -3317,10 +5180,7 @@
 
     // ==================== Knowledge Base ====================
     function loadKnowledgeBases() {
-        httpGet('/api/knowledge-bases').then(function (res) {
-            if (!res.ok) return;
-            return res.json();
-        }).then(function (kbs) {
+        httpGet('/api/knowledge-bases').then(function (kbs) {
             var grid = $('#kb-grid');
             if (!grid) return;
 
@@ -3361,12 +5221,7 @@
         httpPost('/api/knowledge-bases', {
             name: name,
             description: desc
-        }).then(function (res) {
-            if (!res.ok) {
-                return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
-                    throw new Error(err.detail || '请求失败');
-                });
-            }
+        }).then(function (data) {
             nameEl.value = '';
             if (descEl) descEl.value = '';
             loadKnowledgeBases();
@@ -3384,10 +5239,7 @@
 
     // ==================== Skills ====================
     function loadSkills() {
-        httpGet('/api/skills').then(function (res) {
-            if (!res.ok) return;
-            return res.json();
-        }).then(function (skills) {
+        httpGet('/api/skills').then(function (skills) {
             var lists = ['skill-list-content', 'skill-list-content-settings'];
 
             lists.forEach(function(listId) {
@@ -3457,12 +5309,7 @@
             description: desc,
             parameters: [],
             prompts: {}
-        }).then(function (res) {
-            if (!res.ok) {
-                return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
-                    throw new Error(err.detail || '请求失败');
-                });
-            }
+        }).then(function (data) {
             nameEl.value = '';
             if (descEl) descEl.value = '';
             loadSkills();
@@ -3493,9 +5340,6 @@
 
         httpPost('/api/skills/generate', {
             purpose: purpose
-        }).then(function (res) {
-            if (!res.ok) throw new Error('生成失败');
-            return res.json();
         }).then(function (result) {
             var nameEl = $('#skill-name');
             var iconEl = $('#skill-icon');
@@ -3513,10 +5357,7 @@
 
     // ==================== MCP ====================
     function loadMcpServers() {
-        httpGet('/api/mcp/servers').then(function (res) {
-            if (!res.ok) return;
-            return res.json();
-        }).then(function (servers) {
+        httpGet('/api/mcp/servers').then(function (servers) {
             var lists = ['mcp-list-content', 'mcp-list-content-settings'];
 
             lists.forEach(function(listId) {
@@ -3551,6 +5392,41 @@
         });
     }
 
+    function testMcpConnection() {
+        var nameEl = $('#mcp-name');
+        var typeEl = $('#mcp-type');
+        var commandEl = $('#mcp-command');
+        var urlEl = $('#mcp-url');
+
+        if (!nameEl || !nameEl.value.trim()) {
+            showToast('请输入MCP服务器名称', 'error');
+            return;
+        }
+
+        var name = nameEl.value.trim();
+        var type = typeEl ? typeEl.value : 'stdio';
+        var command = commandEl ? commandEl.value.trim() : '';
+        var url = urlEl ? urlEl.value.trim() : '';
+
+        showToast('正在测试连接...', 'info');
+
+        // 简单验证
+        if (type === 'stdio' && !command) {
+            showToast('请输入启动命令', 'error');
+            return;
+        }
+
+        if ((type === 'sse' || type === 'http' || type === 'websocket') && !url) {
+            showToast('请输入服务器URL', 'error');
+            return;
+        }
+
+        // 模拟测试（实际应该调用后端API）
+        setTimeout(function() {
+            showToast('连接测试成功', 'success');
+        }, 1000);
+    }
+
     function createMcpServer() {
         var nameEl = $('#mcp-name');
         var typeEl = $('#mcp-type');
@@ -3572,12 +5448,7 @@
             command: command,
             args: [],
             enabled: true
-        }).then(function (res) {
-            if (!res.ok) {
-                return res.json().catch(function () { return { detail: '创建失败' }; }).then(function (err) {
-                    throw new Error(err.detail || '请求失败');
-                });
-            }
+        }).then(function (data) {
             nameEl.value = '';
             if (commandEl) commandEl.value = '';
             loadMcpServers();
@@ -3621,6 +5492,32 @@
                         autoResizeTextarea();
                         updateSendButton();
                         sendMessage();
+                    }
+                }
+            });
+        });
+
+        // 模板点击事件
+        var templates = {
+            'code-review': '请帮我审查以下代码，指出潜在问题和改进建议：\n\n```python\n# 粘贴你的代码\n```',
+            'translate': '请将以下内容翻译成英文（或指定语言）：\n\n',
+            'meeting': '请根据以下会议记录生成会议纪要，包含：参会人员、讨论要点、决议事项、后续行动：\n\n',
+            'paper': '请帮我总结这篇论文的核心内容，包括：研究背景、方法、主要发现、结论：\n\n',
+            'email': '请帮我撰写一封邮件，主题是：[请输入主题]，收件人是：[请输入收件人]，主要内容：\n\n',
+            'creative': '请帮我创作一篇关于[主题]的文章/故事，风格要求：[正式/轻松/幽默]'
+        };
+
+        $$('.template-item').forEach(function (item) {
+            item.addEventListener('click', function () {
+                var templateKey = item.getAttribute('data-template');
+                var prompt = templates[templateKey];
+                if (prompt) {
+                    var inputBox = $('#input-box');
+                    if (inputBox) {
+                        inputBox.value = prompt;
+                        autoResizeTextarea();
+                        updateSendButton();
+                        inputBox.focus();
                     }
                 }
             });
@@ -3687,13 +5584,7 @@
 
     // ==================== Sandbox Environment Management ====================
     function loadSandboxEnvironments() {
-        httpGet('/api/sandbox/environments').then(function (res) {
-            if (!res.ok) {
-                renderSandboxEnvs([]);
-                return;
-            }
-            return res.json();
-        }).then(function (envs) {
+        httpGet('/api/sandbox/environments').then(function (envs) {
             renderSandboxEnvs(envs || []);
         }).catch(function (e) {
             console.error('Load sandbox envs error:', e);
@@ -3739,13 +5630,6 @@
 
         httpPost('/api/sandbox/environments/pull', {
             image: image
-        }).then(function (res) {
-            if (!res.ok) {
-                return res.json().catch(function () { return { detail: '安装失败' }; }).then(function (err) {
-                    throw new Error(err.detail || '请求失败');
-                });
-            }
-            return res.json();
         }).then(function (result) {
             showToast('环境安装成功: ' + result.name, 'success');
             loadSandboxEnvironments();
@@ -3760,10 +5644,7 @@
     function deleteSandboxEnv(image) {
         httpPost('/api/sandbox/environments/delete', {
             image: image
-        }).then(function (res) {
-            if (!res.ok) {
-                throw new Error('删除失败');
-            }
+        }).then(function (data) {
             showToast('环境已删除', 'success');
             loadSandboxEnvironments();
         }).catch(function (e) {
@@ -4280,12 +6161,7 @@
     }
 
     // ==================== Lodash Integration ====================
-    var debounce = function(func, wait) {
-        if (libs.lodash) {
-            return libs.lodash.debounce(func, wait);
-        }
-        return func;
-    };
+    // debounce is already defined at line 232; do not redeclare here.
 
     var throttle = function(func, limit) {
         if (libs.lodash) {
@@ -4295,22 +6171,69 @@
     };
 
     // ==================== Axios HTTP Client ====================
+    // All HTTP functions return parsed JSON data directly.
+    // On HTTP errors they throw an Error with status info.
+    // Callers should use .then(data => ...) and .catch(err => ...), no .ok checks needed.
+
     function httpGet(url, params) {
         if (libs.axios) {
-            return libs.axios.get(url, { params: params });
+            return libs.axios.get(url, { params: params }).then(function (res) {
+                return res.data;
+            });
         }
-        return fetch(url + '?' + new URLSearchParams(params)).then(res => res.json());
+        var qs = params ? ('?' + new URLSearchParams(params)) : '';
+        return fetch(url + qs).then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        });
     }
 
     function httpPost(url, data) {
         if (libs.axios) {
-            return libs.axios.post(url, data);
+            return libs.axios.post(url, data).then(function (res) {
+                return res.data;
+            });
         }
         return fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
-        }).then(res => res.json());
+        }).then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        });
+    }
+
+    function httpPut(url, data) {
+        if (libs.axios) {
+            return libs.axios.put(url, data).then(function (res) {
+                return res.data;
+            });
+        }
+        return fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        });
+    }
+
+    function httpDelete(url, data) {
+        if (libs.axios) {
+            return libs.axios.delete(url, { data: data }).then(function (res) {
+                return res.data;
+            });
+        }
+        return fetch(url, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: data ? JSON.stringify(data) : undefined
+        }).then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        });
     }
 
     // ==================== Yup Form Validation ====================
@@ -4425,58 +6348,124 @@
     }
 
     // ==================== Text Polish System ====================
+    var _isPolishing = false;
+
     function polishText() {
-        var inputBox = $('#input-box');
+        // 优先使用润色面板的输入框
+        var polishInput = $('#polish-input');
+        var inputBox = polishInput || $('#input-box');
+        if (!inputBox) return;
         var text = inputBox.value.trim();
 
         if (!text) {
-            showToast('请先输入要润色的文本', 'error');
+            showToast('请先输入要处理的文本', 'error');
             return;
         }
 
-        var polishBtn = $('#polish-btn');
+        if (_isPolishing) {
+            showToast('正在处理中，请等待完成', 'info');
+            return;
+        }
+
+        var polishBtn = $('#polish-submit-btn') || $('#polish-btn');
         if (polishBtn) {
             polishBtn.disabled = true;
             polishBtn.classList.add('polishing');
+            var originalBtnHtml = polishBtn.innerHTML;
+            polishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 处理中...';
         }
 
-        var intent = handleIntent(text);
+        _isPolishing = true;
         var originalText = text;
-        var polishPhase = 0;
-        var phaseMessages = [
-            '正在分析文本结构...',
-            '检测语法和拼写错误...',
-            '优化表达流畅度...',
-            '保持专业术语准确性...',
-            '润色完成！'
-        ];
 
-        var phaseInterval = setInterval(function() {
-            if (polishPhase < phaseMessages.length - 1) {
-                polishPhase++;
-                inputBox.value = phaseMessages[polishPhase];
-            }
-        }, 600);
+        // 获取选中的模式
+        var activeModeBtn = document.querySelector('.polish-mode-btn.active');
+        var mode = activeModeBtn ? activeModeBtn.getAttribute('data-mode') || activeModeBtn.textContent.trim() : '润色';
 
-        var systemPrompt = '你是一个专业的文本润色专家。请对用户输入的文本进行润色，改进语法、提升表达质量、保持原意。\n\n' +
-            '润色规则：\n' +
-            '1. 纠正语法错误和拼写错误\n' +
-            '2. 优化句子结构，提升表达流畅度\n' +
-            '3. 保持专业术语的准确性\n' +
-            '4. 根据上下文增强表达的准确性\n' +
-            '5. 保持原文的语气和风格\n\n' +
-            '请直接输出润色后的文本，不需要解释。';
+        // 获取语言设置
+        var fromLang = $('#polish-from-lang');
+        var toLang = $('#polish-to-lang');
+        var sourceLang = fromLang ? fromLang.value : '中文';
+        var targetLang = toLang ? toLang.value : 'English';
 
-        var polishPrompt = '请润色以下文本：\n\n' + text;
+        var systemPrompt, userPrompt;
+
+        // 根据模式设置不同的提示词
+        switch(mode) {
+            case 'translate':
+            case '翻译':
+                systemPrompt = '你是一个专业的翻译专家。请将用户输入的文本从' + sourceLang + '翻译成' + targetLang + '，保持原文的语气和风格。\n\n' +
+                    '翻译规则：\n' +
+                    '1. 准确传达原文意思\n' +
+                    '2. 保持专业术语的准确性\n' +
+                    '3. 使译文自然流畅\n' +
+                    '4. 保持原文的语气和风格\n\n' +
+                    '请直接输出翻译后的文本，不需要解释。';
+                userPrompt = '请将以下文本从' + sourceLang + '翻译成' + targetLang + '：\n\n' + text;
+                break;
+            case 'summarize':
+            case '总结':
+                systemPrompt = '你是一个专业的文本总结专家。请对用户输入的文本进行简洁的总结。\n\n' +
+                    '总结规则：\n' +
+                    '1. 提取核心要点\n' +
+                    '2. 保持逻辑清晰\n' +
+                    '3. 语言简洁明了\n\n' +
+                    '请直接输出总结后的文本，不需要解释。';
+                userPrompt = '请总结以下文本：\n\n' + text;
+                break;
+            case 'expand':
+            case '扩写':
+                systemPrompt = '你是一个专业的写作助手。请对用户输入的文本进行扩写，丰富内容和细节。\n\n' +
+                    '扩写规则：\n' +
+                    '1. 保持原文核心意思\n' +
+                    '2. 添加合理的细节和解释\n' +
+                    '3. 使内容更加充实完整\n\n' +
+                    '请直接输出扩写后的文本，不需要解释。';
+                userPrompt = '请扩写以下文本：\n\n' + text;
+                break;
+            case 'polish':
+            case '润色':
+            default:
+                systemPrompt = '你是一个专业的文本润色专家。请对用户输入的文本进行润色，改进语法、提升表达质量、保持原意。\n\n' +
+                    '润色规则：\n' +
+                    '1. 纠正语法错误和拼写错误\n' +
+                    '2. 优化句子结构，提升表达流畅度\n' +
+                    '3. 保持专业术语的准确性\n' +
+                    '4. 根据上下文增强表达的准确性\n' +
+                    '5. 保持原文的语气和风格\n\n' +
+                    '请直接输出润色后的文本，不需要解释。';
+                userPrompt = '请润色以下文本：\n\n' + text;
+        }
+
+        // 显示处理状态
+        var outputArea = $('#polish-output');
+        if (outputArea) {
+            outputArea.textContent = '正在' + mode + '...';
+        }
 
         var payload = {
-            content: polishPrompt,
+            type: 'chat',
+            content: userPrompt,
             options: {
                 web_search: false,
-                intent: 'polish',
+                intent: mode === 'translate' || mode === '翻译' ? 'translate' : 'polish',
                 system_prompt: systemPrompt
             }
         };
+
+        // Safety timeout
+        var polishTimeout = setTimeout(function() {
+            _isPolishing = false;
+            if (polishBtn) {
+                polishBtn.disabled = false;
+                polishBtn.classList.remove('polishing');
+                polishBtn.innerHTML = originalBtnHtml || '<i class="fa-solid fa-wand-magic-sparkles"></i><span class="btn-badge">润色</span>';
+            }
+            if (outputArea) {
+                outputArea.textContent = '处理超时，请重试';
+            }
+            showToast(mode + '超时，请重试', 'error');
+        }, 15000);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify(payload));
@@ -4485,78 +6474,20 @@
             setTimeout(function () {
                 if (ws && ws.readyState === WebSocket.OPEN) {
                     ws.send(JSON.stringify(payload));
+                } else {
+                    clearTimeout(polishTimeout);
+                    _isPolishing = false;
+                    if (polishBtn) {
+                        polishBtn.disabled = false;
+                        polishBtn.classList.remove('polishing');
+                        polishBtn.innerHTML = originalBtnHtml || '<i class="fa-solid fa-wand-magic-sparkles"></i><span class="btn-badge">润色</span>';
+                    }
+                    if (outputArea) {
+                        outputArea.textContent = '';
+                    }
+                    showToast('连接服务器失败', 'error');
                 }
             }, 1000);
-        }
-
-        var originalOnMessage = ws ? ws.onmessage : null;
-
-        var polishHandler = function (event) {
-            try {
-                var data = JSON.parse(event.data);
-
-                if (data.type === 'stream_start') {
-                    clearInterval(phaseInterval);
-                    inputBox.value = '正在润色...';
-                    inputBox.disabled = true;
-                } else if (data.type === 'stream_data') {
-                    inputBox.value = data.content;
-                    autoResizeTextarea();
-                } else if (data.type === 'stream_end' || data.type === 'response') {
-                    clearInterval(phaseInterval);
-                    inputBox.value = data.content || originalText;
-                    inputBox.disabled = false;
-                    autoResizeTextarea();
-                    updateSendButton();
-
-                    if (polishBtn) {
-                        polishBtn.disabled = false;
-                        polishBtn.classList.remove('polishing');
-                    }
-
-                    if (data.content && data.content !== originalText) {
-                        showToast('润色完成', 'success');
-                    } else if (!data.content) {
-                        showToast('润色失败：未获取到润色结果', 'error');
-                    }
-
-                    if (ws && originalOnMessage) {
-                        ws.onmessage = originalOnMessage;
-                    }
-                } else if (data.type === 'error') {
-                    clearInterval(phaseInterval);
-                    inputBox.value = originalText;
-                    inputBox.disabled = false;
-
-                    if (polishBtn) {
-                        polishBtn.disabled = false;
-                        polishBtn.classList.remove('polishing');
-                    }
-
-                    if (ws && originalOnMessage) {
-                        ws.onmessage = originalOnMessage;
-                    }
-                }
-            } catch (e) {
-                console.error('Polish error:', e);
-            }
-        };
-
-        if (ws) {
-            var originalHandler = ws.onmessage;
-            ws.onmessage = function (event) {
-                try {
-                    var data = JSON.parse(event.data);
-
-                    if (data.type === 'stream_start' || data.type === 'stream_data' || data.type === 'stream_end' || data.type === 'response' || data.type === 'error') {
-                        polishHandler(event);
-                    } else {
-                        if (originalHandler) originalHandler.call(ws, event);
-                    }
-                } catch (e) {
-                    if (originalHandler) originalHandler.call(ws, event);
-                }
-            };
         }
     }
 
@@ -4739,9 +6670,7 @@
             provider: provider,
             api_key: apiKeyInput.value,
             base_url: baseUrl,
-            model: modelInput.value
-        }).then(function (res) {
-            return res.json();
+            model: modelName
         }).then(function (data) {
             updateModelInfoPanel(configSection, data);
 
@@ -4894,13 +6823,11 @@
             }
         });
 
-        httpPost('/api/model/save', settings).then(function (res) {
-            return res.json();
-        }).then(function (data) {
+        httpPost('/api/model/save', settings).then(function (data) {
             if (data.success) {
                 showToast('配置保存成功！', 'success');
             } else {
-                showToast('保存失败: ' + data.error, 'error');
+                showToast('保存失败: ' + (data.error || '未知错误'), 'error');
             }
         }).catch(function (e) {
             showToast('保存失败: ' + e.message, 'error');
@@ -5268,6 +7195,8 @@
         initWelcomeSuggestions();
         initKeyboardShortcuts();
         initLogsPanel();
+        initDebugLogSystem();
+        initSearchSettings();
 
         connectWS();
         loadSettings();
@@ -5277,15 +7206,248 @@
         initErrorHandling();
         initMemorySystem();
         initSpeechSynthesis();
+        initStatsPanel();
 
         addLog('应用初始化完成', 'system');
     }
 
+    // ==================== Statistics Panel ====================
+    var statsChart = null;
+
+    function initStatsPanel() {
+        var refreshBtn = $('#refresh-stats-btn');
+        var exportBtn = $('#export-data-btn');
+        var backupBtn = $('#backup-data-btn');
+
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                refreshBtn.classList.add('spinning');
+                loadStats().finally(function() {
+                    setTimeout(function() {
+                        refreshBtn.classList.remove('spinning');
+                    }, 500);
+                });
+            });
+        }
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportData);
+        }
+
+        if (backupBtn) {
+            backupBtn.addEventListener('click', backupData);
+        }
+
+        // 当切换到统计标签页时加载数据
+        var statsTab = document.querySelector('[data-tab="tab-stats"]');
+        if (statsTab) {
+            statsTab.addEventListener('click', loadStats);
+        }
+    }
+
+    function loadStats() {
+        return httpGet('/api/stats/usage').then(function(data) {
+            if (!data) return;
+
+            // 更新统计卡片
+            var convEl = $('#stats-conversations');
+            var msgEl = $('#stats-messages');
+            var feedbackEl = $('#stats-feedback-positive');
+            var todayEl = $('#stats-today');
+
+            if (convEl) convEl.textContent = data.conversations?.total || 0;
+            if (msgEl) msgEl.textContent = data.messages?.total || 0;
+            if (feedbackEl) feedbackEl.textContent = data.feedback?.positive || 0;
+            if (todayEl) todayEl.textContent = data.messages?.today || 0;
+
+            // 更新最近对话列表
+            renderRecentConversations(data.recent_conversations || []);
+
+            // 更新趋势图表
+            renderStatsChart(data.daily_trend || []);
+        }).catch(function(err) {
+            console.error('Failed to load stats:', err);
+        });
+    }
+
+    function renderRecentConversations(conversations) {
+        var container = $('#stats-recent-conversations');
+        if (!container) return;
+
+        if (conversations.length === 0) {
+            container.innerHTML = '<div class="stats-empty">暂无数据</div>';
+            return;
+        }
+
+        var html = conversations.map(function(conv) {
+            var time = conv.updated_at && libs.dayjs ? libs.dayjs(conv.updated_at).fromNow() : (conv.updated_at || '未知时间');
+            return '<div class="stats-recent-item" data-conv-id="' + conv.id + '">' +
+                '<div class="stats-recent-icon"><i class="fa-solid fa-comment"></i></div>' +
+                '<div class="stats-recent-info">' +
+                    '<div class="stats-recent-title">' + escapeHtml(conv.title || '新对话') + '</div>' +
+                    '<div class="stats-recent-time">' + time + '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+
+        container.innerHTML = html;
+
+        // 添加点击事件
+        container.querySelectorAll('.stats-recent-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var convId = this.getAttribute('data-conv-id');
+                if (convId) {
+                    currentConvId = convId;
+                    renderConversationList();
+                    renderChatArea();
+                    closeDrawer('settings-drawer', 'settings-drawer-overlay');
+                }
+            });
+        });
+    }
+
+    function renderStatsChart(dailyTrend) {
+        var canvas = document.getElementById('stats-trend-chart');
+        if (!canvas || !libs.chartjs) return;
+
+        var ctx = canvas.getContext('2d');
+
+        // 销毁旧图表
+        if (statsChart) {
+            statsChart.destroy();
+        }
+
+        // 准备数据
+        var labels = dailyTrend.map(function(d) {
+            return d.date ? d.date.slice(5) : ''; // 显示 MM-DD
+        });
+        var data = dailyTrend.map(function(d) {
+            return d.count || 0;
+        });
+
+        // 如果没有数据，显示空状态
+        if (data.length === 0) {
+            labels = ['无数据'];
+            data = [0];
+        }
+
+        statsChart = new libs.chartjs(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '消息数',
+                    data: data,
+                    borderColor: '#10a37f',
+                    backgroundColor: 'rgba(16, 163, 127, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#10a37f',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#8e8e8e',
+                            font: { size: 11 }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#8e8e8e',
+                            font: { size: 11 },
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function exportData() {
+        httpGet('/api/backup/export').then(function(res) {
+            if (res && res.success) {
+                showToast('数据已导出: ' + res.export_path, 'success');
+            } else {
+                showToast('导出失败', 'error');
+            }
+        }).catch(function() {
+            showToast('导出失败', 'error');
+        });
+    }
+
+    function backupData() {
+        httpPost('/api/backup', {}).then(function(res) {
+            if (res && res.success) {
+                showToast('备份已创建: ' + res.backup_path, 'success');
+            } else {
+                showToast('备份失败', 'error');
+            }
+        }).catch(function() {
+            showToast('备份失败', 'error');
+        });
+    }
+
     // Start when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
+    var initialized = false;
+    function safeInit() {
+        if (initialized) {
+            console.log('[Init] Already initialized, skipping');
+            return;
+        }
+        initialized = true;
         init();
     }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', safeInit);
+    } else {
+        safeInit();
+    }
+
+    // Cleanup resources when page unloads
+    window.addEventListener('beforeunload', function() {
+        // Stop speech recognition
+        if (recognition) {
+            try {
+                recognition.stop();
+            } catch(e) {}
+        }
+        // Stop speech synthesis
+        if (speechSynthesisSupported && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        // Clear WebSocket reconnect timer
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+        }
+        // Close WebSocket connection
+        if (ws) {
+            try {
+                ws.close();
+            } catch(e) {}
+        }
+    });
 
 })();

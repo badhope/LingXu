@@ -4,8 +4,9 @@ import sys
 import uvicorn
 
 # 确保当前目录正确
-os.chdir(r"C:\Users\X1882\Desktop\GitHub\DATA-AI")
-sys.path.insert(0, r"C:\Users\X1882\Desktop\GitHub\DATA-AI")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir(BASE_DIR)
+sys.path.insert(0, BASE_DIR)
 
 # 启动服务器
 if __name__ == "__main__":

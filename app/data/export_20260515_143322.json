@@ -1,0 +1,31 @@
+{
+  "conversations": [
+    {
+      "id": "08080b99-18b5-4cbd-baca-c2b6c0ccede2",
+      "title": "测试对话",
+      "created_at": "2026-05-15T13:53:00.073818",
+      "updated_at": "2026-05-15T13:53:13.175706",
+      "messages": [
+        {
+          "role": "user",
+          "content": "你好，这是一条测试消息",
+          "created_at": "2026-05-15T13:53:13.175706"
+        }
+      ]
+    }
+  ],
+  "feedbacks": [
+    {
+      "id": 1,
+      "message_id": "test1",
+      "conversation_id": "",
+      "feedback_type": "up",
+      "comment": "很好",
+      "created_at": "2026-05-15T13:53:22.977408"
+    }
+  ],
+  "preferences": {
+    "theme": "dark"
+  },
+  "exported_at": "2026-05-15T14:33:22.781723"
+}

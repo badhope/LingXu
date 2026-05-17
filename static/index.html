@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DATA-AI - 万能智能助手</title>
     <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/components.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
@@ -14,14 +15,20 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <!-- Markdown 渲染 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+
+    <!-- XSS 防护 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+
+    <!-- 代码高亮 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@4.0.1/dist/pptxgen.bundle.min.js"></script>
 
     <!-- 图表库 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
-    <!-- 流程图/图表渲染 -->
+    <!-- 流程图渲染 -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
 
     <!-- 拖拽排序 -->
@@ -29,18 +36,10 @@
 
     <!-- 日期处理 -->
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
-
-    <!-- 数字格式化 -->
-    <script src="https://cdn.jsdelivr.net/npm/numeral@2.0.6/numeral.min.js"></script>
-
-    <!-- 防抖节流 -->
-    <script src="https://cdn.jsdelivr.net/npm/lodash-es@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/relativeTime.min.js"></script>
 
     <!-- HTTP客户端 -->
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
-
-    <!-- 表单验证 -->
-    <script src="https://cdn.jsdelivr.net/npm/yup@1.4.0/dist/yup.min.js"></script>
 
     <!-- 动画库 -->
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
@@ -48,60 +47,30 @@
     <!-- 文件上传 -->
     <script src="https://cdn.jsdelivr.net/npm/dropzone@6.5.0/dist/dropzone-min.js"></script>
 
-    <!-- 图片裁剪 -->
-    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
-
     <!-- PDF处理 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js"></script>
 
-    <!-- 代码编辑器 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js"></script>
+    <!-- PPT生成 -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@4.0.1/dist/pptxgen.bundle.min.js"></script>
 
-    <!-- WebSocket封装 -->
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <!-- PDF导出 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- NLP.js - 意图识别和自然语言处理 -->
-    <script src="https://cdn.jsdelivr.net/npm/node-nlp@4.26.1/dist/browser/nlp.min.js"></script>
-
-    <!-- wink-nlp - 轻量级NLP库 -->
-    <script src="https://cdn.jsdelivr.net/npm/wink-nlp@2.4.0/dist/wink-nlp.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/wink-eng-lite-web-model@1.8.0/dist/wink-eng-lite-web-model.min.js"></script>
-
-    <!-- TF-IDF 文本相似度 -->
-    <script src="https://cdn.jsdelivr.net/npm/tfidf@5.0.0/dist/tfidf.min.js"></script>
-
-    <!-- Alpine.js - 轻量级交互框架 -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
-
-    <!-- Clipboard.js - 复制到剪贴板 -->
-    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
-
-    <!-- Lucide Icons - 现代图标库 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/font/lucide.css">
-
-    <!-- Toastify - 轻量级通知库 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.js"></script>
-
-    <!-- SweetAlert2 - 漂亮的弹窗 -->
+    <!-- SweetAlert2 - 弹窗 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
 
-    <!-- Transformers.js - 浏览器端AI模型 -->
-    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js"></script>
-
-    <!-- Chart.js 插件 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-
-    <!-- Lucide Icons JS -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/lucide.min.js"></script>
-
-    <!-- SortableJS -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
-    <!-- PptxGenJS - PPT生成 -->
-    <script src="https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <!-- 数字格式化 -->
+    <script src="https://cdn.jsdelivr.net/npm/numeral@2.0.6/numeral.min.js"></script>
   </head>
   <body>
+    <!-- 离线提示条 -->
+    <div class="offline-banner" id="offline-banner" style="display:none;">
+      <i class="fa-solid fa-wifi-slash"></i>
+      <span>网络连接已断开，部分功能可能不可用</span>
+      <button class="offline-retry-btn" id="offline-retry-btn"><i class="fa-solid fa-rotate"></i> 重试</button>
+    </div>
+
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
@@ -146,31 +115,45 @@
         <div class="sidebar-conversations" id="sidebar-conversations">
           <!-- 对话列表由JS渲染 -->
         </div>
+        <div class="sidebar-clear-chat-wrapper" id="clear-chat-wrapper" style="display:none;">
+          <button class="clear-chat-btn" id="clear-chat-btn">
+            <i class="fa-solid fa-broom"></i> 清空当前对话
+          </button>
+        </div>
 
         <div class="sidebar-bottom">
+          <!-- 高频功能：独立页面 -->
+          <div class="sidebar-section-title">核心功能</div>
+          <a href="/static/pages/agents.html" class="sidebar-bottom-item" title="智能体管理">
+            <i class="fa-solid fa-robot"></i>
+            <span>智能体</span>
+          </a>
+          <a href="/static/pages/skills.html" class="sidebar-bottom-item" title="技能库">
+            <i class="fa-solid fa-bolt"></i>
+            <span>技能库</span>
+          </a>
+          <a href="/static/pages/prompts.html" class="sidebar-bottom-item" title="提示词管理">
+            <i class="fa-solid fa-scroll"></i>
+            <span>提示词</span>
+          </a>
+          <a href="/static/pages/rules.html" class="sidebar-bottom-item" title="规则引擎">
+            <i class="fa-solid fa-gavel"></i>
+            <span>规则引擎</span>
+          </a>
+          <a href="/static/pages/mcp.html" class="sidebar-bottom-item" title="MCP工具">
+            <i class="fa-solid fa-plug"></i>
+            <span>MCP工具</span>
+          </a>
+          <div class="sidebar-bottom-divider"></div>
+          <!-- 其他功能 -->
+          <div class="sidebar-section-title">其他</div>
           <div class="sidebar-bottom-item" id="sidebar-kb-btn" title="知识库">
             <i class="fa-solid fa-book"></i>
             <span>知识库</span>
           </div>
-          <div
-            class="sidebar-bottom-item"
-            id="sidebar-skill-btn"
-            title="技能系统"
-          >
-            <i class="fa-solid fa-bolt"></i>
-            <span>技能系统</span>
-          </div>
-          <div class="sidebar-bottom-item" id="sidebar-mcp-btn" title="MCP工具">
-            <i class="fa-solid fa-plug"></i>
-            <span>MCP工具</span>
-          </div>
-          <div class="sidebar-bottom-item" id="sidebar-artifacts-btn" title="Artifacts 预览">
+          <div class="sidebar-bottom-item" id="sidebar-artifacts-btn" data-toggle="artifacts" title="Artifacts 预览">
             <i class="fa-solid fa-window-restore"></i>
             <span>Artifacts</span>
-          </div>
-          <div class="sidebar-bottom-item" id="sidebar-logs-btn" title="系统日志">
-            <i class="fa-solid fa-file-lines"></i>
-            <span>系统日志</span>
           </div>
           <div class="sidebar-bottom-divider"></div>
           <div
@@ -216,7 +199,17 @@
               </div>
             </div>
           </div>
-          <div class="chat-header-right"></div>
+          <div class="chat-header-right">
+            <button class="header-action-btn" id="share-btn" title="分享对话">
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+            <button class="header-action-btn" id="export-pdf-btn" title="导出PDF">
+              <i class="fa-solid fa-file-pdf"></i>
+            </button>
+            <button class="header-action-btn" id="export-md-btn" title="导出Markdown">
+              <i class="fa-solid fa-file-lines"></i>
+            </button>
+          </div>
         </header>
 
         <!-- Chat Area -->
@@ -270,6 +263,38 @@
                 <div class="suggestion-text">解释什么是 Transformer 架构</div>
               </div>
             </div>
+
+            <!-- 对话模板 -->
+            <div class="welcome-templates">
+              <div class="welcome-templates-title">快速开始</div>
+              <div class="template-list">
+                <div class="template-item" data-template="code-review">
+                  <i class="fa-solid fa-magnifying-glass-code"></i>
+                  <span>代码审查</span>
+                </div>
+                <div class="template-item" data-template="translate">
+                  <i class="fa-solid fa-language"></i>
+                  <span>翻译助手</span>
+                </div>
+                <div class="template-item" data-template="meeting">
+                  <i class="fa-solid fa-users"></i>
+                  <span>会议纪要</span>
+                </div>
+                <div class="template-item" data-template="paper">
+                  <i class="fa-solid fa-book-open"></i>
+                  <span>论文摘要</span>
+                </div>
+                <div class="template-item" data-template="email">
+                  <i class="fa-solid fa-envelope"></i>
+                  <span>邮件撰写</span>
+                </div>
+                <div class="template-item" data-template="creative">
+                  <i class="fa-solid fa-lightbulb"></i>
+                  <span>创意写作</span>
+                </div>
+              </div>
+            </div>
+
             <div class="welcome-shortcuts">
               <div class="welcome-shortcut-item"><kbd>Enter</kbd> 发送</div>
               <div class="welcome-shortcut-item">
@@ -321,69 +346,48 @@
               >
                 <i class="fa-solid fa-bolt"></i>
               </button>
-              <button
-                class="input-action-btn"
-                id="generate-chart-btn"
-                title="生成图表"
-                onclick="window.__quickAction('chart')"
-              >
-                <i class="fa-solid fa-chart-bar"></i>
-              </button>
-              <button
-                class="input-action-btn"
-                id="generate-ppt-btn"
-                title="生成PPT"
-                onclick="window.__quickAction('ppt')"
-              >
-                <i class="fa-solid fa-file-powerpoint"></i>
-              </button>
-              <button
-                class="input-action-btn"
-                id="generate-flowchart-btn"
-                title="生成流程图"
-                onclick="window.__quickAction('flowchart')"
-              >
-                <i class="fa-solid fa-sitemap"></i>
-              </button>
-              <button
-                class="input-action-btn"
-                id="polish-btn"
-                title="多语言润色"
-              >
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span class="btn-badge">翻译</span>
-              </button>
-              <button
-                class="input-action-btn"
-                id="meeting-btn"
-                title="会议纪要"
-              >
-                <i class="fa-solid fa-file-text"></i>
-                <span class="btn-badge">纪要</span>
-              </button>
-              <button
-                class="input-action-btn"
-                id="summary-btn"
-                title="文献摘要"
-              >
-                <i class="fa-solid fa-book-open"></i>
-                <span class="btn-badge">摘要</span>
-              </button>
-              <button
-                class="input-action-btn"
-                id="memory-btn"
-                title="记忆系统"
-              >
-                <i class="fa-solid fa-brain"></i>
-                <span class="btn-badge">记忆</span>
-              </button>
-              <button
-                class="input-action-btn"
-                id="voice-btn"
-                title="语音输入"
-              >
-                <i class="fa-solid fa-microphone"></i>
-              </button>
+              <!-- 更多功能按钮 -->
+              <div class="more-actions-wrapper" id="more-actions-wrapper">
+                <button class="input-action-btn" id="more-actions-btn" title="更多功能">
+                  <i class="fa-solid fa-ellipsis"></i>
+                </button>
+                <div class="more-actions-panel hidden" id="more-actions-panel">
+                  <div class="more-actions-grid">
+                    <button class="more-action-item" id="generate-chart-btn" title="生成图表">
+                      <i class="fa-solid fa-chart-bar"></i>
+                      <span>图表</span>
+                    </button>
+                    <button class="more-action-item" id="generate-ppt-btn" title="生成PPT">
+                      <i class="fa-solid fa-file-powerpoint"></i>
+                      <span>PPT</span>
+                    </button>
+                    <button class="more-action-item" id="generate-flowchart-btn" title="生成流程图">
+                      <i class="fa-solid fa-sitemap"></i>
+                      <span>流程图</span>
+                    </button>
+                    <button class="more-action-item" id="polish-btn" title="文本润色">
+                      <i class="fa-solid fa-wand-magic-sparkles"></i>
+                      <span>润色</span>
+                    </button>
+                    <button class="more-action-item" id="meeting-btn" title="会议纪要">
+                      <i class="fa-solid fa-file-lines"></i>
+                      <span>会议</span>
+                    </button>
+                    <button class="more-action-item" id="summary-btn" title="文献摘要">
+                      <i class="fa-solid fa-book-open"></i>
+                      <span>摘要</span>
+                    </button>
+                    <button class="more-action-item" id="memory-btn" title="记忆系统">
+                      <i class="fa-solid fa-brain"></i>
+                      <span>记忆</span>
+                    </button>
+                    <button class="more-action-item" id="voice-btn" title="语音输入（开发中）" disabled>
+                      <i class="fa-solid fa-microphone"></i>
+                      <span>语音</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="input-wrapper">
               <textarea
@@ -426,6 +430,9 @@
       </main>
     </div>
 
+    <!-- ==================== Chart Canvas ==================== -->
+    <canvas id="generated-chart" style="display:none;"></canvas>
+
     <!-- ==================== Artifacts Panel ==================== -->
     <div class="artifacts-panel" id="artifacts-panel">
       <div class="artifacts-panel-header">
@@ -440,48 +447,6 @@
         <div class="artifacts-empty">
           <i class="fa-solid fa-code"></i>
           <span>代码执行结果将在此显示</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== Logs Panel ==================== -->
-    <div class="logs-panel" id="logs-panel">
-      <div class="logs-panel-header">
-        <div class="logs-panel-title">
-          <i class="fa-solid fa-file-lines"></i> 系统日志
-        </div>
-        <span class="logs-panel-stats" id="logs-panel-stats">0 条日志</span>
-        <div class="logs-panel-search">
-          <input type="text" id="logs-search-input" placeholder="搜索日志..." />
-          <i class="fa-solid fa-search"></i>
-        </div>
-        <div class="logs-panel-filters">
-          <button class="log-filter-btn active" data-filter="all">全部</button>
-          <button class="log-filter-btn" data-filter="debug">调试</button>
-          <button class="log-filter-btn" data-filter="info">信息</button>
-          <button class="log-filter-btn" data-filter="success">成功</button>
-          <button class="log-filter-btn" data-filter="warning">警告</button>
-          <button class="log-filter-btn" data-filter="error">错误</button>
-          <button class="log-filter-btn" data-filter="api">API</button>
-          <button class="log-filter-btn" data-filter="ws">WebSocket</button>
-          <button class="log-filter-btn" data-filter="system">系统</button>
-        </div>
-        <div class="logs-panel-actions">
-          <button class="logs-panel-export" id="logs-panel-export">
-            <i class="fa-solid fa-download"></i> 导出
-          </button>
-          <button class="logs-panel-clear" id="logs-panel-clear">
-            <i class="fa-solid fa-trash"></i> 清空
-          </button>
-          <button class="logs-panel-close" id="logs-panel-close">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-      <div class="logs-panel-body" id="logs-panel-body">
-        <div class="logs-empty">
-          <i class="fa-solid fa-file-text"></i>
-          <span>暂无日志</span>
         </div>
       </div>
     </div>
@@ -503,20 +468,70 @@
           <div class="drawer-tab" data-tab="tab-sandbox">
             <i class="fa-solid fa-cube"></i> 沙箱
           </div>
-          <div class="drawer-tab" data-tab="tab-agent">
-            <i class="fa-solid fa-brain"></i> 智能体
-          </div>
           <div class="drawer-tab" data-tab="tab-display">
             <i class="fa-solid fa-palette"></i> 显示
           </div>
-          <div class="drawer-tab" data-tab="tab-skills">
-            <i class="fa-solid fa-bolt"></i> 技能系统
-          </div>
           <div class="drawer-tab" data-tab="tab-langsmith">
-            <i class="fa-solid fa-bug"></i> 调试
+            <i class="fa-solid fa-bug"></i> 调试日志
           </div>
-          <div class="drawer-tab" data-tab="tab-mcp">
-            <i class="fa-solid fa-plug"></i> MCP工具
+          <div class="drawer-tab" data-tab="tab-search">
+            <i class="fa-solid fa-magnifying-glass"></i> 搜索
+          </div>
+          <div class="drawer-tab" data-tab="tab-stats">
+            <i class="fa-solid fa-chart-pie"></i> 统计
+          </div>
+          <div class="drawer-tab" data-tab="tab-memory">
+            <i class="fa-solid fa-brain"></i> 记忆
+          </div>
+          <div class="drawer-tab" data-tab="tab-about">
+            <i class="fa-solid fa-circle-info"></i> 关于
+          </div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="settings-quick-links">
+          <div class="quick-links-title">快捷入口</div>
+          <div class="quick-links-grid">
+            <a href="/static/pages/agents.html" class="quick-link-item">
+              <div class="quick-link-icon"><i class="fa-solid fa-robot"></i></div>
+              <div class="quick-link-info">
+                <span class="quick-link-name">智能体管理</span>
+                <span class="quick-link-desc">创建和管理AI智能体</span>
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="/static/pages/skills.html" class="quick-link-item">
+              <div class="quick-link-icon"><i class="fa-solid fa-bolt"></i></div>
+              <div class="quick-link-info">
+                <span class="quick-link-name">技能库</span>
+                <span class="quick-link-desc">浏览和管理技能模板</span>
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="/static/pages/prompts.html" class="quick-link-item">
+              <div class="quick-link-icon"><i class="fa-solid fa-scroll"></i></div>
+              <div class="quick-link-info">
+                <span class="quick-link-name">提示词管理</span>
+                <span class="quick-link-desc">管理提示词模板库</span>
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="/static/pages/rules.html" class="quick-link-item">
+              <div class="quick-link-icon"><i class="fa-solid fa-gavel"></i></div>
+              <div class="quick-link-info">
+                <span class="quick-link-name">规则引擎</span>
+                <span class="quick-link-desc">配置自动化规则</span>
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="/static/pages/mcp.html" class="quick-link-item">
+              <div class="quick-link-icon"><i class="fa-solid fa-plug"></i></div>
+              <div class="quick-link-info">
+                <span class="quick-link-name">MCP工具</span>
+                <span class="quick-link-desc">管理MCP工具集成</span>
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
           </div>
         </div>
 
@@ -979,6 +994,23 @@
                         <span class="range-value" id="presence-penalty-value">0</span>
                       </div>
                     </div>
+
+                    <!-- 系统提示词 -->
+                    <div class="setting-group" style="margin-top:16px;">
+                      <label class="setting-label">
+                        <i class="fa-solid fa-scroll"></i> 自定义系统提示词
+                        <span class="setting-hint">（留空使用默认提示词）</span>
+                      </label>
+                      <textarea
+                        class="setting-textarea"
+                        id="setting-system-prompt"
+                        rows="6"
+                        placeholder="输入自定义系统提示词，将覆盖默认的系统提示词...&#10;&#10;示例：你是一个专业的Python编程助手，请用简洁的代码回答问题。"
+                      ></textarea>
+                      <div class="setting-hint" style="margin-top:4px;">
+                        <button class="setting-link" id="reset-system-prompt-btn">恢复默认</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -987,165 +1019,382 @@
                 <button class="drawer-btn drawer-btn-secondary" id="model-test-btn"><i class="fa-solid fa-check-circle"></i> 测试连接</button>
                 <button class="drawer-btn drawer-btn-primary" id="model-save-btn"><i class="fa-solid fa-save"></i> 保存配置</button>
               </div>
+
+              <div id="setting-provider-group" style="display:none;">
+                <label>提供商</label>
+                <select id="setting-provider">
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="google">Google</option>
+                  <option value="azure">Azure</option>
+                  <option value="aliyun">阿里云</option>
+                  <option value="baidu">百度</option>
+                  <option value="tencent">腾讯</option>
+                  <option value="zhipu">智谱</option>
+                  <option value="deepseek">DeepSeek</option>
+                  <option value="ollama">Ollama</option>
+                  <option value="siliconflow">SiliconFlow</option>
+                  <option value="custom">自定义</option>
+                </select>
+              </div>
+              <div id="setting-model-group" style="display:none;">
+                <label>模型</label>
+                <input type="text" id="setting-model" placeholder="输入模型名称">
+              </div>
+              <div id="setting-api-version-group" style="display:none;">
+                <label>API 版本</label>
+                <input type="text" id="setting-api-version" placeholder="例如: 2024-01-01-preview">
+              </div>
+              <div id="setting-azure-deployment-group" style="display:none;">
+                <label>Azure 部署名称</label>
+                <input type="text" id="setting-azure-deployment" placeholder="输入部署名称">
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Sandbox Tab -->
         <div class="drawer-tab-content" id="tab-sandbox">
-          <div class="setting-group">
-            <label class="setting-label">启用沙箱</label>
-            <div class="setting-switch on" id="setting-sandbox-enabled"></div>
-          </div>
-          <div class="setting-group">
-            <label class="setting-label">执行超时 (秒)</label>
-            <input
-              type="number"
-              class="setting-input"
-              id="setting-sandbox-timeout"
-              value="60"
-            />
-          </div>
-          <div class="section-divider">
-            <span>沙箱环境</span>
-          </div>
-          <div class="setting-group">
-            <label class="setting-label">已安装环境</label>
-            <div class="sandbox-envs-list" id="sandbox-envs-list">
-              <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> 加载中...</div>
+          <div class="sandbox-section">
+            <div class="sandbox-section-title"><i class="fa-solid fa-power-off"></i> 基本设置</div>
+            <div class="setting-group">
+              <label class="setting-label">启用沙箱</label>
+              <div class="setting-switch on" id="setting-sandbox-enabled"></div>
             </div>
-          </div>
-          <button class="drawer-btn drawer-btn-secondary" id="sandbox-add-env-btn" style="width: 100%; margin-top: 8px;">
-            <i class="fa-solid fa-plus"></i> 添加更多环境
-          </button>
-          <div class="setting-group sandbox-env-modal" id="sandbox-env-modal" style="display: none;">
-            <label class="setting-label">选择要安装的环境</label>
-            <div class="sandbox-env-grid" id="sandbox-env-grid">
-              <div class="sandbox-env-card" data-image="python:3.11-slim">
-                <div class="sandbox-env-icon"><i class="fa-brands fa-python"></i></div>
-                <div class="sandbox-env-name">Python 3.11</div>
-                <div class="sandbox-env-desc">Python数据科学环境</div>
-                <button class="sandbox-env-install">安装</button>
-              </div>
-              <div class="sandbox-env-card" data-image="node:20-slim">
-                <div class="sandbox-env-icon"><i class="fa-brands fa-node-js"></i></div>
-                <div class="sandbox-env-name">Node.js 20</div>
-                <div class="sandbox-env-desc">JavaScript运行环境</div>
-                <button class="sandbox-env-install">安装</button>
-              </div>
-              <div class="sandbox-env-card" data-image="ubuntu:22.04">
-                <div class="sandbox-env-icon"><i class="fa-brands fa-ubuntu"></i></div>
-                <div class="sandbox-env-name">Ubuntu 22.04</div>
-                <div class="sandbox-env-desc">Ubuntu基础环境</div>
-                <button class="sandbox-env-install">安装</button>
-              </div>
-              <div class="sandbox-env-card" data-image="data-ai-sandbox:latest">
-                <div class="sandbox-env-icon"><i class="fa-solid fa-box"></i></div>
-                <div class="sandbox-env-name">DATA-AI Sandbox</div>
-                <div class="sandbox-env-desc">DATA-AI专用环境</div>
-                <button class="sandbox-env-install">安装</button>
+            <div class="setting-group">
+              <label class="setting-label">执行超时 (秒)</label>
+              <div class="range-wrapper">
+                <input type="range" class="setting-range" id="setting-sandbox-timeout" min="10" max="300" step="10" value="60" />
+                <span class="range-value" id="sandbox-timeout-value">60s</span>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Agent Tab -->
-        <div class="drawer-tab-content" id="tab-agent">
-          <div class="drawer-tabs" style="margin-bottom: 16px;">
-            <div class="drawer-tab active" data-tab="agent-tab-config">智能体配置</div>
-            <div class="drawer-tab" data-tab="agent-tab-skills">技能管理</div>
-            <div class="drawer-tab" data-tab="agent-tab-tasks">任务历史</div>
+          <div class="sandbox-section">
+            <div class="sandbox-section-title"><i class="fa-solid fa-microchip"></i> 资源限制</div>
+            <div class="setting-group">
+              <label class="setting-label">CPU 核心数</label>
+              <div class="range-wrapper">
+                <input type="range" class="setting-range" id="setting-sandbox-cpu" min="0.5" max="8" step="0.5" value="2" />
+                <span class="range-value" id="sandbox-cpu-value">2核</span>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">内存限制 (MB)</label>
+              <div class="range-wrapper">
+                <input type="range" class="setting-range" id="setting-sandbox-memory" min="128" max="8192" step="128" value="1024" />
+                <span class="range-value" id="sandbox-memory-value">1024MB</span>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">磁盘限制 (MB)</label>
+              <div class="range-wrapper">
+                <input type="range" class="setting-range" id="setting-sandbox-disk" min="100" max="10000" step="100" value="500" />
+                <span class="range-value" id="sandbox-disk-value">500MB</span>
+              </div>
+            </div>
           </div>
 
-          <!-- 智能体配置 -->
-          <div class="drawer-tab-content active" id="agent-tab-config">
-            <div class="agent-card">
-              <div class="agent-card-header">
-                <div class="agent-avatar">🤖</div>
-                <div class="agent-info">
-                  <input type="text" class="agent-name-input" id="agent-name" value="智能助手" placeholder="智能体名称">
-                  <p class="agent-desc">基于大语言模型的智能助手</p>
+          <div class="sandbox-section">
+            <div class="sandbox-section-title"><i class="fa-solid fa-shield-halved"></i> 安全策略</div>
+            <div class="setting-group">
+              <label class="setting-label">网络访问</label>
+              <select class="setting-select" id="setting-sandbox-network">
+                <option value="none">禁止网络访问</option>
+                <option value="limited" selected>限制访问（仅白名单）</option>
+                <option value="full">允许全部访问</option>
+              </select>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">允许文件系统写入</label>
+              <div class="setting-switch on" id="setting-sandbox-fs-write"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">允许执行系统命令</label>
+              <div class="setting-switch" id="setting-sandbox-sys-cmd"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">代码执行前确认</label>
+              <div class="setting-switch on" id="setting-sandbox-confirm"></div>
+            </div>
+          </div>
+
+          <div class="sandbox-section">
+            <div class="sandbox-section-title"><i class="fa-solid fa-box-open"></i> 沙箱环境</div>
+            <div class="setting-group">
+              <label class="setting-label">已安装环境</label>
+              <div class="sandbox-envs-list" id="sandbox-envs-list">
+                <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> 加载中...</div>
+              </div>
+            </div>
+            <div class="sandbox-env-actions">
+              <button class="drawer-btn drawer-btn-secondary" id="sandbox-add-env-btn">
+                <i class="fa-solid fa-plus"></i> 浏览环境市场
+              </button>
+              <button class="drawer-btn drawer-btn-secondary" id="sandbox-custom-env-btn">
+                <i class="fa-solid fa-terminal"></i> 自定义安装
+              </button>
+            </div>
+
+            <!-- 环境市场 -->
+            <div class="sandbox-env-market" id="sandbox-env-market" style="display: none;">
+              <div class="sandbox-market-header">
+                <label class="setting-label">环境市场</label>
+                <button class="sandbox-market-close" id="sandbox-market-close"><i class="fa-solid fa-times"></i></button>
+              </div>
+              <div class="sandbox-market-tabs">
+                <button class="sandbox-market-tab active" data-category="language">编程语言</button>
+                <button class="sandbox-market-tab" data-category="database">数据库</button>
+                <button class="sandbox-market-tab" data-category="tool">工具</button>
+                <button class="sandbox-market-tab" data-category="ml">机器学习</button>
+              </div>
+              <div class="sandbox-market-content">
+                <!-- 编程语言 -->
+                <div class="sandbox-market-panel active" data-panel="language">
+                  <div class="sandbox-env-grid">
+                    <div class="sandbox-env-card" data-image="python:3.12-slim" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-python"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Python 3.12</div>
+                        <div class="sandbox-env-desc">最新Python环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="python:3.11-slim" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-python"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Python 3.11</div>
+                        <div class="sandbox-env-desc">稳定Python环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="node:20-slim" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-node-js"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Node.js 20</div>
+                        <div class="sandbox-env-desc">JavaScript运行环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="node:18-slim" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-node-js"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Node.js 18</div>
+                        <div class="sandbox-env-desc">LTS版本</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="golang:1.21" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-golang"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Go 1.21</div>
+                        <div class="sandbox-env-desc">Go语言环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="rust:1.75" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-rust"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Rust 1.75</div>
+                        <div class="sandbox-env-desc">Rust语言环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="openjdk:21" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-java"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Java 21</div>
+                        <div class="sandbox-env-desc">OpenJDK LTS</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="php:8.3" data-category="language">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-php"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">PHP 8.3</div>
+                        <div class="sandbox-env-desc">PHP运行环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                  </div>
                 </div>
-                <button class="agent-action-btn" id="agent-save-btn">
-                  <i class="fa-solid fa-save"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="setting-section">
-              <h3 class="setting-section-title"><i class="fa-solid fa-gear"></i> 核心配置</h3>
-              <div class="setting-group">
-                <label class="setting-label">最大思考步数</label>
-                <div class="setting-input-group">
-                  <input type="number" class="setting-input" id="setting-max-steps" value="5" min="1" max="20">
-                  <span class="setting-hint">限制智能体的推理深度</span>
+                <!-- 数据库 -->
+                <div class="sandbox-market-panel" data-panel="database">
+                  <div class="sandbox-env-grid">
+                    <div class="sandbox-env-card" data-image="postgres:16" data-category="database">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-database"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">PostgreSQL 16</div>
+                        <div class="sandbox-env-desc">关系型数据库</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="mysql:8.0" data-category="database">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-database"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">MySQL 8.0</div>
+                        <div class="sandbox-env-desc">关系型数据库</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="redis:7" data-category="database">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-server"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Redis 7</div>
+                        <div class="sandbox-env-desc">内存数据库</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="mongo:7" data-category="database">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-database"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">MongoDB 7</div>
+                        <div class="sandbox-env-desc">文档数据库</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- 工具 -->
+                <div class="sandbox-market-panel" data-panel="tool">
+                  <div class="sandbox-env-grid">
+                    <div class="sandbox-env-card" data-image="ubuntu:22.04" data-category="tool">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-ubuntu"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Ubuntu 22.04</div>
+                        <div class="sandbox-env-desc">Linux基础环境</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="alpine:latest" data-category="tool">
+                      <div class="sandbox-env-icon"><i class="fa-brands fa-linux"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Alpine Linux</div>
+                        <div class="sandbox-env-desc">轻量级Linux</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="nginx:alpine" data-category="tool">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-globe"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Nginx</div>
+                        <div class="sandbox-env-desc">Web服务器</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- 机器学习 -->
+                <div class="sandbox-market-panel" data-panel="ml">
+                  <div class="sandbox-env-grid">
+                    <div class="sandbox-env-card" data-image="tensorflow/tensorflow:latest" data-category="ml">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-brain"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">TensorFlow</div>
+                        <div class="sandbox-env-desc">深度学习框架</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="pytorch/pytorch:latest" data-category="ml">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-fire"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">PyTorch</div>
+                        <div class="sandbox-env-desc">深度学习框架</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                    <div class="sandbox-env-card" data-image="jupyter/datascience-notebook" data-category="ml">
+                      <div class="sandbox-env-icon"><i class="fa-solid fa-book"></i></div>
+                      <div class="sandbox-env-info">
+                        <div class="sandbox-env-name">Jupyter</div>
+                        <div class="sandbox-env-desc">数据科学笔记本</div>
+                      </div>
+                      <button class="sandbox-env-install">安装</button>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="setting-group">
-                <label class="setting-label">温度参数</label>
-                <input type="range" class="setting-range" id="setting-temperature" min="0" max="1" step="0.1" value="0.7">
-                <span class="setting-range-value">0.7</span>
-              </div>
-              <div class="setting-group">
-                <label class="setting-label">超时时间(秒)</label>
-                <input type="number" class="setting-input" id="setting-timeout" value="300" min="30" max="600">
-              </div>
             </div>
 
-            <div class="setting-section">
-              <h3 class="setting-section-title"><i class="fa-solid fa-brain"></i> 能力开关</h3>
-              <div class="setting-group">
-                <label class="setting-label">启用知识库</label>
-                <div class="setting-switch on" id="setting-kb-enabled"></div>
+            <!-- 自定义安装 -->
+            <div class="sandbox-custom-install" id="sandbox-custom-install" style="display: none;">
+              <div class="sandbox-custom-header">
+                <label class="setting-label">自定义安装</label>
+                <button class="sandbox-custom-close" id="sandbox-custom-close"><i class="fa-solid fa-times"></i></button>
               </div>
-              <div class="setting-group">
-                <label class="setting-label">启用工具调用</label>
-                <div class="setting-switch on" id="setting-tools-enabled"></div>
+              <div class="sandbox-custom-tabs">
+                <button class="sandbox-custom-tab active" data-tab="docker">Docker镜像</button>
+                <button class="sandbox-custom-tab" data-tab="conda">Conda环境</button>
+                <button class="sandbox-custom-tab" data-tab="pip">Pip包</button>
               </div>
-              <div class="setting-group">
-                <label class="setting-label">启用网络搜索</label>
-                <div class="setting-switch" id="setting-search-enabled"></div>
-              </div>
-              <div class="setting-group">
-                <label class="setting-label">启用记忆功能</label>
-                <div class="setting-switch on" id="setting-memory-enabled"></div>
-              </div>
-            </div>
-
-            <div class="setting-section">
-              <h3 class="setting-section-title"><i class="fa-solid fa-scroll"></i> 系统提示词</h3>
-              <div class="setting-group">
-                <textarea class="setting-input setting-textarea large" id="setting-system-prompt" rows="6" placeholder="输入智能体的系统提示词...">你是一个乐于助人的AI助手。请用友好、专业的语言回答用户问题。</textarea>
+              <div class="sandbox-custom-content">
+                <div class="sandbox-custom-panel active" data-panel="docker">
+                  <div class="form-group">
+                    <label>Docker镜像名称</label>
+                    <input type="text" class="setting-input" id="sandbox-docker-image" placeholder="例如: python:3.11-slim, node:20-alpine">
+                    <div class="form-hint">支持 Docker Hub 上的任意镜像</div>
+                  </div>
+                  <button class="drawer-btn drawer-btn-primary" id="sandbox-install-docker-btn">
+                    <i class="fa-solid fa-download"></i> 拉取镜像
+                  </button>
+                </div>
+                <div class="sandbox-custom-panel" data-panel="conda">
+                  <div class="form-group">
+                    <label>环境名称</label>
+                    <input type="text" class="setting-input" id="sandbox-conda-name" placeholder="例如: myenv">
+                  </div>
+                  <div class="form-group">
+                    <label>Python版本</label>
+                    <select class="setting-select" id="sandbox-conda-python">
+                      <option value="3.12">Python 3.12</option>
+                      <option value="3.11" selected>Python 3.11</option>
+                      <option value="3.10">Python 3.10</option>
+                      <option value="3.9">Python 3.9</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>额外包 (可选)</label>
+                    <input type="text" class="setting-input" id="sandbox-conda-packages" placeholder="例如: numpy pandas matplotlib">
+                  </div>
+                  <button class="drawer-btn drawer-btn-primary" id="sandbox-install-conda-btn">
+                    <i class="fa-solid fa-download"></i> 创建环境
+                  </button>
+                </div>
+                <div class="sandbox-custom-panel" data-panel="pip">
+                  <div class="form-group">
+                    <label>目标环境</label>
+                    <select class="setting-select" id="sandbox-pip-target">
+                      <option value="default">默认环境</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>包名称</label>
+                    <input type="text" class="setting-input" id="sandbox-pip-packages" placeholder="例如: requests beautifulsoup4">
+                  </div>
+                  <div class="form-group">
+                    <label>版本要求 (可选)</label>
+                    <input type="text" class="setting-input" id="sandbox-pip-version" placeholder="例如: >=2.0.0, <3.0.0">
+                  </div>
+                  <button class="drawer-btn drawer-btn-primary" id="sandbox-install-pip-btn">
+                    <i class="fa-solid fa-download"></i> 安装包
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- 技能管理 -->
-          <div class="drawer-tab-content" id="agent-tab-skills">
-            <div class="skill-management-panel">
-              <div class="skill-management-header">
-                <h3>已启用技能</h3>
-                <button class="drawer-btn drawer-btn-secondary" id="add-skill-to-agent-btn">
-                  <i class="fa-solid fa-plus"></i> 添加技能
-                </button>
-              </div>
-              <div class="skill-list" id="agent-skill-list"></div>
-            </div>
-          </div>
-
-          <!-- 任务历史 -->
-          <div class="drawer-tab-content" id="agent-tab-tasks">
-            <div class="task-history-panel">
-              <div class="task-history-header">
-                <h3>最近任务</h3>
-                <select class="setting-select" id="task-filter">
-                  <option value="all">全部</option>
-                  <option value="completed">已完成</option>
-                  <option value="running">运行中</option>
-                  <option value="failed">失败</option>
-                </select>
-              </div>
-              <div class="task-list" id="agent-task-list"></div>
+          <div class="sandbox-section">
+            <div class="sandbox-section-title"><i class="fa-solid fa-list-check"></i> 操作</div>
+            <div class="sandbox-actions">
+              <button class="drawer-btn drawer-btn-secondary" id="sandbox-reset-btn">
+                <i class="fa-solid fa-rotate-right"></i> 重置沙箱
+              </button>
+              <button class="drawer-btn drawer-btn-secondary" id="sandbox-clear-cache-btn">
+                <i class="fa-solid fa-broom"></i> 清理缓存
+              </button>
+              <button class="drawer-btn drawer-btn-primary" id="sandbox-save-btn">
+                <i class="fa-solid fa-save"></i> 保存配置
+              </button>
             </div>
           </div>
         </div>
@@ -1193,7 +1442,7 @@
               <button class="polish-mode-btn" data-mode="summarize">总结</button>
               <button class="polish-mode-btn" data-mode="expand">扩写</button>
             </div>
-            <textarea class="polish-input" id="polish-input" placeholder="输入要翻译或润色的文本..."></textarea>
+            <textarea class="polish-input" id="polish-input" placeholder="输入要处理的文本（支持翻译、润色、总结、扩写）..."></textarea>
             <button class="polish-submit-btn" id="polish-submit-btn">
               <i class="fa-solid fa-magic"></i> 开始处理
             </button>
@@ -1434,402 +1683,662 @@
 
         <!-- Display Tab -->
         <div class="drawer-tab-content" id="tab-display">
-          <div class="setting-group">
-            <label class="setting-label">主题模式</label>
-            <div class="theme-switcher">
-              <button class="theme-option active" data-theme="dark">
-                <i class="fa-solid fa-moon"></i> 暗色
-              </button>
-              <button class="theme-option" data-theme="light">
-                <i class="fa-solid fa-sun"></i> 亮色
-              </button>
+          <div class="display-section">
+            <div class="display-section-title"><i class="fa-solid fa-palette"></i> 外观</div>
+            <div class="setting-group">
+              <label class="setting-label">主题模式</label>
+              <div class="theme-switcher">
+                <button class="theme-option active" data-theme="dark">
+                  <i class="fa-solid fa-moon"></i> 暗色
+                </button>
+                <button class="theme-option" data-theme="light">
+                  <i class="fa-solid fa-sun"></i> 亮色
+                </button>
+                <button class="theme-option" data-theme="auto">
+                  <i class="fa-solid fa-circle-half-stroke"></i> 跟随系统
+                </button>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">字体大小</label>
+              <div class="font-size-selector">
+                <button class="font-size-btn" data-size="small">小</button>
+                <button class="font-size-btn active" data-size="medium">中</button>
+                <button class="font-size-btn" data-size="large">大</button>
+              </div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">气泡宽度</label>
+              <div class="range-wrapper">
+                <input type="range" class="setting-range" id="setting-bubble-width" min="600" max="1200" step="100" value="900" />
+                <span class="range-value" id="bubble-width-value">900px</span>
+              </div>
             </div>
           </div>
-          <div class="setting-group">
-            <label class="setting-label">显示思考链</label>
-            <div class="setting-switch on" id="setting-thinking-chain"></div>
+
+          <div class="display-section">
+            <div class="display-section-title"><i class="fa-solid fa-message"></i> 对话</div>
+            <div class="setting-group">
+              <label class="setting-label">显示思考链</label>
+              <div class="setting-switch on" id="setting-thinking-chain"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">显示消息时间</label>
+              <div class="setting-switch" id="setting-show-time"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">连续对话模式</label>
+              <div class="setting-switch on" id="setting-continuous-chat"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">发送后自动滚动</label>
+              <div class="setting-switch on" id="setting-auto-scroll"></div>
+            </div>
           </div>
-          <div class="setting-group">
-            <label class="setting-label">代码高亮</label>
-            <div class="setting-switch on" id="setting-code-highlight"></div>
+
+          <div class="display-section">
+            <div class="display-section-title"><i class="fa-solid fa-code"></i> 渲染</div>
+            <div class="setting-group">
+              <label class="setting-label">代码高亮</label>
+              <div class="setting-switch on" id="setting-code-highlight"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">Markdown渲染</label>
+              <div class="setting-switch on" id="setting-markdown-render"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">数学公式渲染</label>
+              <div class="setting-switch on" id="setting-math-render"></div>
+            </div>
           </div>
-          <div class="setting-group">
-            <label class="setting-label">Markdown渲染</label>
-            <div class="setting-switch on" id="setting-markdown-render"></div>
+
+          <div class="display-section">
+            <div class="display-section-title"><i class="fa-solid fa-bell"></i> 通知</div>
+            <div class="setting-group">
+              <label class="setting-label">声音提醒</label>
+              <div class="setting-switch" id="setting-sound"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">桌面通知</label>
+              <div class="setting-switch" id="setting-desktop-notification"></div>
+            </div>
           </div>
         </div>
 
-        <!-- Skills Tab -->
-        <div class="drawer-tab-content" id="tab-skills">
-          <div class="drawer-tabs" style="margin-bottom: 16px;">
-            <div class="drawer-tab active" data-tab="skill-tab-list">技能列表</div>
-            <div class="drawer-tab" data-tab="skill-tab-create">创建技能</div>
-            <div class="drawer-tab" data-tab="skill-tab-marketplace">技能市场</div>
-          </div>
-
-          <!-- 技能列表 -->
-          <div class="drawer-tab-content active" id="skill-tab-list">
-            <div class="skill-list-header">
-              <div class="skill-search">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" id="skill-search-input" placeholder="搜索技能...">
-              </div>
-              <select class="skill-filter" id="skill-category-filter">
-                <option value="all">全部分类</option>
-                <option value="writing">写作</option>
-                <option value="coding">编程</option>
-                <option value="analysis">分析</option>
-                <option value="creative">创意</option>
-                <option value="utility">工具</option>
+        <!-- Debug & Logs Tab -->
+        <div class="drawer-tab-content" id="tab-langsmith">
+          <div class="debug-section">
+            <div class="debug-section-title"><i class="fa-solid fa-sliders"></i> 调试配置</div>
+            <div class="setting-group">
+              <label class="setting-label">启用调试模式</label>
+              <div class="setting-switch on" id="setting-debug-enabled"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">日志级别</label>
+              <select class="setting-select" id="setting-log-level">
+                <option value="debug">调试 (Debug)</option>
+                <option value="info" selected>信息 (Info)</option>
+                <option value="warning">警告 (Warning)</option>
+                <option value="error">错误 (Error)</option>
               </select>
             </div>
-            <div class="skill-cards-grid" id="skill-list-content-settings"></div>
+            <div class="setting-group">
+              <label class="setting-label">自动捕获异常</label>
+              <div class="setting-switch on" id="setting-catch-exceptions"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">记录API调用</label>
+              <div class="setting-switch on" id="setting-log-api"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">记录WebSocket</label>
+              <div class="setting-switch on" id="setting-log-ws"></div>
+            </div>
           </div>
 
-          <!-- 创建/编辑技能 -->
-          <div class="drawer-tab-content" id="skill-tab-create">
-            <input type="hidden" id="skill-edit-id">
-            <div class="skill-form-section">
-              <h3 class="skill-form-title"><i class="fa-solid fa-plus"></i> 创建技能</h3>
+          <div class="debug-section">
+            <div class="debug-section-title"><i class="fa-solid fa-link"></i> LangSmith 追踪</div>
+            <div class="setting-group">
+              <label class="setting-label">启用 LangSmith</label>
+              <div class="setting-switch" id="setting-langsmith-enabled"></div>
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">API Key</label>
+              <input type="password" class="setting-input" id="setting-langsmith-api-key" placeholder="lsv2_..." />
+            </div>
+            <div class="setting-group">
+              <label class="setting-label">项目名称</label>
+              <input type="text" class="setting-input" id="setting-langsmith-project" value="dataagent" />
+            </div>
+          </div>
 
-              <div class="setting-group">
-                <label class="setting-label">技能用途</label>
-                <input
-                  type="text"
-                  class="setting-input"
-                  id="skill-purpose"
-                  placeholder="描述你想要这个技能做什么"
-                />
-                <span class="setting-hint">输入描述后点击下方按钮让AI帮你生成技能配置</span>
+          <!-- 日志查看器 -->
+          <div class="debug-section">
+            <div class="debug-section-title">
+              <i class="fa-solid fa-file-lines"></i> 实时日志
+              <span class="debug-log-count" id="debug-log-count">0 条</span>
+            </div>
+            <div class="debug-log-controls">
+              <input type="text" class="debug-log-search" id="debug-log-search" placeholder="搜索日志..." />
+              <div class="debug-log-filters">
+                <button class="debug-filter-btn active" data-filter="all">全部</button>
+                <button class="debug-filter-btn" data-filter="debug">调试</button>
+                <button class="debug-filter-btn" data-filter="info">信息</button>
+                <button class="debug-filter-btn" data-filter="success">成功</button>
+                <button class="debug-filter-btn" data-filter="warning">警告</button>
+                <button class="debug-filter-btn error" data-filter="error">错误</button>
               </div>
-
-              <button
-                class="drawer-btn drawer-btn-secondary"
-                style="width: 100%; margin-bottom: 16px"
-                id="ai-generate-skill-btn"
-              >
-                <i class="fa-solid fa-wand-magic-sparkles"></i> AI辅助生成
+              <div class="debug-log-source-filters">
+                <button class="debug-source-btn active" data-source="all">全部来源</button>
+                <button class="debug-source-btn" data-source="api">API</button>
+                <button class="debug-source-btn" data-source="ws">WebSocket</button>
+                <button class="debug-source-btn" data-source="system">系统</button>
+                <button class="debug-source-btn" data-source="code">代码执行</button>
+                <button class="debug-source-btn" data-source="ai">AI分析</button>
+              </div>
+            </div>
+            <div class="debug-log-list" id="debug-log-list">
+              <div class="debug-log-empty">
+                <i class="fa-solid fa-file-text"></i>
+                <span>暂无日志记录</span>
+              </div>
+            </div>
+            <div class="debug-log-actions">
+              <button class="debug-action-btn" id="debug-export-btn">
+                <i class="fa-solid fa-download"></i> 导出日志
               </button>
+              <button class="debug-action-btn" id="debug-clear-btn">
+                <i class="fa-solid fa-trash"></i> 清空日志
+              </button>
+              <button class="debug-action-btn primary" id="debug-refresh-btn">
+                <i class="fa-solid fa-rotate"></i> 刷新
+              </button>
+            </div>
+          </div>
 
-              <div class="setting-group">
-                <label class="setting-label">技能名称</label>
-                <input
-                  type="text"
-                  class="setting-input"
-                  id="skill-name"
-                  placeholder="例如：代码审查专家"
-                />
+          <!-- 错误追溯面板 -->
+          <div class="debug-section">
+            <div class="debug-section-title"><i class="fa-solid fa-magnifying-glass-chart"></i> 错误追溯</div>
+            <div class="debug-trace-panel" id="debug-trace-panel">
+              <div class="debug-trace-empty">
+                <i class="fa-solid fa-bug"></i>
+                <span>点击日志中的错误条目查看追溯信息</span>
               </div>
+            </div>
+          </div>
 
-              <div class="setting-group">
-                <label class="setting-label">分类</label>
-                <select class="setting-select" id="skill-category">
-                  <option value="writing">写作</option>
-                  <option value="coding">编程</option>
-                  <option value="analysis">分析</option>
-                  <option value="creative">创意</option>
-                  <option value="utility">工具</option>
-                </select>
+          <!-- 性能监控 -->
+          <div class="debug-section">
+            <div class="debug-section-title"><i class="fa-solid fa-gauge-high"></i> 性能监控</div>
+            <div class="debug-perf-grid">
+              <div class="debug-perf-card">
+                <div class="debug-perf-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="debug-perf-info">
+                  <div class="debug-perf-value" id="debug-avg-response">0ms</div>
+                  <div class="debug-perf-label">平均响应</div>
+                </div>
               </div>
+              <div class="debug-perf-card">
+                <div class="debug-perf-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="debug-perf-info">
+                  <div class="debug-perf-value" id="debug-api-calls">0</div>
+                  <div class="debug-perf-label">API调用</div>
+                </div>
+              </div>
+              <div class="debug-perf-card">
+                <div class="debug-perf-icon"><i class="fa-solid fa-exclamation-triangle"></i></div>
+                <div class="debug-perf-info">
+                  <div class="debug-perf-value error" id="debug-error-count">0</div>
+                  <div class="debug-perf-label">错误数</div>
+                </div>
+              </div>
+              <div class="debug-perf-card">
+                <div class="debug-perf-icon"><i class="fa-solid fa-memory"></i></div>
+                <div class="debug-perf-info">
+                  <div class="debug-perf-value" id="debug-memory">0MB</div>
+                  <div class="debug-perf-label">内存占用</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              <div class="setting-group">
-                <label class="setting-label">图标</label>
-                <div class="icon-picker">
-                  <input
-                    type="text"
-                    class="setting-input icon-input"
-                    id="skill-icon"
-                    value="⚡"
-                  />
-                  <div class="icon-presets">
-                    <span class="icon-preset" data-icon="⚡">⚡</span>
-                    <span class="icon-preset" data-icon="📝">📝</span>
-                    <span class="icon-preset" data-icon="💡">💡</span>
-                    <span class="icon-preset" data-icon="🔧">🔧</span>
-                    <span class="icon-preset" data-icon="🎨">🎨</span>
-                    <span class="icon-preset" data-icon="📊">📊</span>
-                    <span class="icon-preset" data-icon="🤝">🤝</span>
-                    <span class="icon-preset" data-icon="🎯">🎯</span>
+        <!-- Memory Tab -->
+        <div class="drawer-tab-content" id="tab-memory">
+          <div class="memory-settings-container">
+            <div class="memory-section">
+              <div class="memory-section-title"><i class="fa-solid fa-database"></i> 记忆存储</div>
+              <div class="memory-stats-grid">
+                <div class="memory-stat-card">
+                  <div class="memory-stat-icon"><i class="fa-solid fa-comments"></i></div>
+                  <div class="memory-stat-info">
+                    <div class="memory-stat-value" id="memory-conversations">0</div>
+                    <div class="memory-stat-label">对话记忆</div>
+                  </div>
+                </div>
+                <div class="memory-stat-card">
+                  <div class="memory-stat-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                  <div class="memory-stat-info">
+                    <div class="memory-stat-value" id="memory-insights">0</div>
+                    <div class="memory-stat-label">洞察提取</div>
+                  </div>
+                </div>
+                <div class="memory-stat-card">
+                  <div class="memory-stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+                  <div class="memory-stat-info">
+                    <div class="memory-stat-value" id="memory-files">0</div>
+                    <div class="memory-stat-label">记忆文件</div>
+                  </div>
+                </div>
+                <div class="memory-stat-card">
+                  <div class="memory-stat-icon"><i class="fa-solid fa-hard-drive"></i></div>
+                  <div class="memory-stat-info">
+                    <div class="memory-stat-value" id="memory-storage">0MB</div>
+                    <div class="memory-stat-label">存储占用</div>
                   </div>
                 </div>
               </div>
+            </div>
 
+            <div class="memory-section">
+              <div class="memory-section-title"><i class="fa-solid fa-sliders"></i> 记忆设置</div>
               <div class="setting-group">
-                <label class="setting-label">描述</label>
-                <textarea
-                  class="setting-input setting-textarea"
-                  id="skill-desc"
-                  placeholder="描述技能的功能和使用场景"
-                  rows="3"
-                ></textarea>
+                <label class="setting-label">启用长期记忆</label>
+                <div class="setting-switch on" id="setting-long-term-memory"></div>
               </div>
-
               <div class="setting-group">
-                <label class="setting-label">触发关键词</label>
-                <input
-                  type="text"
-                  class="setting-input"
-                  id="skill-keywords"
-                  placeholder="用逗号分隔，如：写代码,编程,开发"
-                />
-                <span class="setting-hint">当用户输入包含这些关键词时，自动触发该技能</span>
+                <label class="setting-label">自动提取洞察</label>
+                <div class="setting-switch on" id="setting-auto-insights"></div>
               </div>
-
               <div class="setting-group">
-                <label class="setting-label">技能提示词</label>
-                <textarea
-                  class="setting-input setting-textarea large"
-                  id="skill-prompt"
-                  placeholder="输入技能的详细提示词..."
-                  rows="6"
-                ></textarea>
+                <label class="setting-label">记忆上下文长度</label>
+                <div class="range-wrapper">
+                  <input type="range" class="setting-range" id="setting-memory-context" min="5" max="50" step="5" value="20" />
+                  <span class="range-value" id="memory-context-value">20</span>
+                </div>
               </div>
-
               <div class="setting-group">
-                <label class="setting-label">启用技能</label>
-                <div class="setting-switch on" id="skill-enabled"></div>
-              </div>
-
-              <div
-                id="ai-generating"
-                style="display: none; margin: 12px 0; padding: 12px; border-radius: 8px;"
-                class="info-banner"
-              >
-                <i class="fa-solid fa-spinner fa-spin"></i> AI正在生成，请稍候...
-              </div>
-
-              <div class="skill-form-actions">
-                <button class="drawer-btn drawer-btn-secondary" id="cancel-skill-btn">取消</button>
-                <button class="drawer-btn drawer-btn-primary" id="create-skill-btn">创建技能</button>
+                <label class="setting-label">记忆保留天数</label>
+                <div class="range-wrapper">
+                  <input type="range" class="setting-range" id="setting-memory-retention" min="7" max="365" step="7" value="90" />
+                  <span class="range-value" id="memory-retention-value">90天</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- 技能市场 -->
-          <div class="drawer-tab-content" id="skill-tab-marketplace">
-            <div class="marketplace-header">
-              <h3>技能市场</h3>
-              <p class="marketplace-desc">发现并安装新技能</p>
+            <div class="memory-section">
+              <div class="memory-section-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 智能学习</div>
+              <div class="setting-group">
+                <label class="setting-label">学习用户偏好</label>
+                <div class="setting-switch on" id="setting-learn-preferences"></div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">优化回复风格</label>
+                <div class="setting-switch on" id="setting-optimize-style"></div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">自动话题关联</label>
+                <div class="setting-switch" id="setting-topic-linking"></div>
+              </div>
             </div>
-            <div class="marketplace-categories">
-              <button class="marketplace-category active" data-category="all">全部</button>
-              <button class="marketplace-category" data-category="popular">热门</button>
-              <button class="marketplace-category" data-category="new">最新</button>
-              <button class="marketplace-category" data-category="recommended">推荐</button>
+
+            <div class="memory-section">
+              <div class="memory-section-title"><i class="fa-solid fa-shield-halved"></i> 隐私与安全</div>
+              <div class="setting-group">
+                <label class="setting-label">本地加密存储</label>
+                <div class="setting-switch on" id="setting-local-encrypt"></div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">敏感信息过滤</label>
+                <div class="setting-switch on" id="setting-sensitive-filter"></div>
+              </div>
+              <div class="memory-actions">
+                <button class="memory-action-btn" id="export-memory-btn">
+                  <i class="fa-solid fa-download"></i> 导出记忆
+                </button>
+                <button class="memory-action-btn danger" id="clear-memory-btn">
+                  <i class="fa-solid fa-trash"></i> 清空记忆
+                </button>
+              </div>
             </div>
-            <div class="marketplace-skills" id="marketplace-skills-list"></div>
           </div>
         </div>
 
-        <!-- LangSmith Tab -->
-        <div class="drawer-tab-content" id="tab-langsmith">
-          <div class="setting-group">
-            <label class="setting-label">启用 LangSmith</label>
-            <div class="setting-switch" id="setting-langsmith-enabled"></div>
-          </div>
-          <div class="setting-group">
-            <label class="setting-label">API Key</label>
-            <input
-              type="password"
-              class="setting-input"
-              id="setting-langsmith-api-key"
-              placeholder="lsv2_..."
-            />
-          </div>
-          <div class="setting-group">
-            <label class="setting-label">项目名称</label>
-            <input
-              type="text"
-              class="setting-input"
-              id="setting-langsmith-project"
-              value="dataagent"
-            />
-          </div>
-          <div class="setting-group">
-            <label class="setting-label">端点</label>
-            <input
-              type="text"
-              class="setting-input"
-              id="setting-langsmith-endpoint"
-              value="https://api.smith.langchain.com"
-            />
+        <!-- About Tab -->
+        <div class="drawer-tab-content" id="tab-about">
+          <div class="about-container">
+            <div class="about-header">
+              <div class="about-logo">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <h2 class="about-title">DATA-AI</h2>
+              <p class="about-version">版本 2.0.0</p>
+              <p class="about-tagline">万能智能助手，让AI触手可及</p>
+            </div>
+
+            <div class="about-section">
+              <div class="about-section-title">系统信息</div>
+              <div class="about-info-list">
+                <div class="about-info-item">
+                  <span class="about-info-label">前端版本</span>
+                  <span class="about-info-value">v2.0.0</span>
+                </div>
+                <div class="about-info-item">
+                  <span class="about-info-label">后端版本</span>
+                  <span class="about-info-value">v2.0.0</span>
+                </div>
+                <div class="about-info-item">
+                  <span class="about-info-label">构建时间</span>
+                  <span class="about-info-value">2026-05-17</span>
+                </div>
+                <div class="about-info-item">
+                  <span class="about-info-label">运行环境</span>
+                  <span class="about-info-value">Web</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="about-section">
+              <div class="about-section-title">技术栈</div>
+              <div class="about-tech-stack">
+                <span class="about-tech-tag">Python</span>
+                <span class="about-tech-tag">FastAPI</span>
+                <span class="about-tech-tag">WebSocket</span>
+                <span class="about-tech-tag">LangChain</span>
+                <span class="about-tech-tag">OpenAI API</span>
+                <span class="about-tech-tag">Claude API</span>
+                <span class="about-tech-tag">MCP</span>
+              </div>
+            </div>
+
+            <div class="about-section">
+              <div class="about-section-title">开源协议</div>
+              <p class="about-license">本项目基于 MIT 协议开源</p>
+              <div class="about-links">
+                <a href="#" class="about-link">
+                  <i class="fa-brands fa-github"></i> GitHub 仓库
+                </a>
+                <a href="#" class="about-link">
+                  <i class="fa-solid fa-book"></i> 使用文档
+                </a>
+                <a href="#" class="about-link">
+                  <i class="fa-solid fa-bug"></i> 问题反馈
+                </a>
+              </div>
+            </div>
+
+            <div class="about-section">
+              <div class="about-section-title">开发团队</div>
+              <p class="about-team">DATA-AI Team © 2026</p>
+              <p class="about-thanks">感谢所有开源社区贡献者</p>
+            </div>
+
+            <div class="about-footer">
+              <button class="about-check-update-btn" id="check-update-btn">
+                <i class="fa-solid fa-rotate"></i> 检查更新
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- MCP Tab -->
-        <div class="drawer-tab-content" id="tab-mcp">
-          <div class="drawer-tabs" style="margin-bottom: 16px;">
-            <div class="drawer-tab active" data-tab="mcp-tab-list">已连接服务器</div>
-            <div class="drawer-tab" data-tab="mcp-tab-add">添加服务器</div>
-            <div class="drawer-tab" data-tab="mcp-tab-gallery">MCP市场</div>
-          </div>
-
-          <!-- MCP列表 -->
-          <div class="drawer-tab-content active" id="mcp-tab-list">
-            <div class="mcp-list-header">
-              <h3>MCP服务器</h3>
-              <span class="mcp-count">已连接 <strong>0</strong> 个服务器</span>
-            </div>
-            <div class="mcp-servers-grid" id="mcp-list-content-settings"></div>
-          </div>
-
-          <!-- 添加服务器 -->
-          <div class="drawer-tab-content" id="mcp-tab-add">
-            <input type="hidden" id="mcp-edit-id">
-            <div class="mcp-form-section">
-              <h3 class="mcp-form-title"><i class="fa-solid fa-server"></i> 添加MCP服务器</h3>
-
+        <!-- 搜索配置标签页 -->
+        <div class="drawer-tab-content" id="tab-search">
+          <div class="search-settings-container">
+            <!-- 搜索引擎选择 -->
+            <div class="search-section">
+              <div class="search-section-title"><i class="fa-solid fa-globe"></i> 搜索引擎</div>
               <div class="setting-group">
-                <label class="setting-label">服务器名称</label>
-                <input
-                  type="text"
-                  class="setting-input"
-                  id="mcp-name"
-                  placeholder="例如：本地文件系统"
-                />
+                <label class="setting-label">默认搜索引擎</label>
+                <div class="search-engine-grid" id="search-engine-grid">
+                  <div class="search-engine-card active" data-engine="brave">
+                    <div class="search-engine-icon" style="background: #fb542b;"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="search-engine-info">
+                      <div class="search-engine-name">Brave Search</div>
+                      <div class="search-engine-desc">隐私优先的搜索引擎</div>
+                    </div>
+                    <div class="search-engine-check"><i class="fa-solid fa-check"></i></div>
+                  </div>
+                  <div class="search-engine-card" data-engine="google">
+                    <div class="search-engine-icon" style="background: #4285f4;"><i class="fa-brands fa-google"></i></div>
+                    <div class="search-engine-info">
+                      <div class="search-engine-name">Google</div>
+                      <div class="search-engine-desc">全球最大的搜索引擎</div>
+                    </div>
+                    <div class="search-engine-check"><i class="fa-solid fa-check"></i></div>
+                  </div>
+                  <div class="search-engine-card" data-engine="bing">
+                    <div class="search-engine-icon" style="background: #008373;"><i class="fa-brands fa-microsoft"></i></div>
+                    <div class="search-engine-info">
+                      <div class="search-engine-name">Bing</div>
+                      <div class="search-engine-desc">微软搜索引擎</div>
+                    </div>
+                    <div class="search-engine-check"><i class="fa-solid fa-check"></i></div>
+                  </div>
+                  <div class="search-engine-card" data-engine="duckduckgo">
+                    <div class="search-engine-icon" style="background: #de5833;"><i class="fa-solid fa-duck"></i></div>
+                    <div class="search-engine-info">
+                      <div class="search-engine-name">DuckDuckGo</div>
+                      <div class="search-engine-desc">不追踪用户的搜索引擎</div>
+                    </div>
+                    <div class="search-engine-check"><i class="fa-solid fa-check"></i></div>
+                  </div>
+                  <div class="search-engine-card" data-engine="baidu">
+                    <div class="search-engine-icon" style="background: #2932e1;"><i class="fa-solid fa-paw"></i></div>
+                    <div class="search-engine-info">
+                      <div class="search-engine-name">百度</div>
+                      <div class="search-engine-desc">中文搜索引擎</div>
+                    </div>
+                    <div class="search-engine-check"><i class="fa-solid fa-check"></i></div>
+                  </div>
+                  <div class="search-engine-card" data-engine="serpapi">
+                    <div class="search-engine-icon" style="background: #6366f1;"><i class="fa-solid fa-robot"></i></div>
+                    <div class="search-engine-info">
+                      <div class="search-engine-name">SerpAPI</div>
+                      <div class="search-engine-desc">API聚合搜索引擎</div>
+                    </div>
+                    <div class="search-engine-check"><i class="fa-solid fa-check"></i></div>
+                  </div>
+                </div>
               </div>
+            </div>
 
+            <!-- 搜索设置 -->
+            <div class="search-section">
+              <div class="search-section-title"><i class="fa-solid fa-sliders"></i> 搜索设置</div>
               <div class="setting-group">
-                <label class="setting-label">服务器类型</label>
-                <select class="setting-select" id="mcp-type">
-                  <option value="stdio">标准输入输出 (stdio)</option>
-                  <option value="sse">服务器发送事件 (SSE)</option>
-                  <option value="http">HTTP API</option>
-                  <option value="websocket">WebSocket</option>
+                <label class="setting-label">搜索结果数量</label>
+                <div class="range-wrapper">
+                  <input type="range" class="setting-range" id="setting-search-results" min="3" max="20" step="1" value="5" />
+                  <span class="range-value" id="search-results-value">5条</span>
+                </div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">搜索超时 (秒)</label>
+                <div class="range-wrapper">
+                  <input type="range" class="setting-range" id="setting-search-timeout" min="5" max="60" step="5" value="30" />
+                  <span class="range-value" id="search-timeout-value">30s</span>
+                </div>
+              </div>
+              <div class="setting-group">
+                <label class="setting-label">安全搜索</label>
+                <select class="setting-select" id="setting-search-safe">
+                  <option value="strict">严格</option>
+                  <option value="moderate" selected>中等</option>
+                  <option value="off">关闭</option>
                 </select>
               </div>
-
               <div class="setting-group">
-                <label class="setting-label">命令/路径</label>
-                <input
-                  type="text"
-                  class="setting-input"
-                  id="mcp-command"
-                  placeholder="例如：npx @mcp/something"
-                />
-                <span class="setting-hint">对于stdio类型，输入命令；对于HTTP类型，输入URL</span>
+                <label class="setting-label">搜索语言</label>
+                <select class="setting-select" id="setting-search-lang">
+                  <option value="zh-CN">中文</option>
+                  <option value="en">英文</option>
+                  <option value="auto" selected>自动检测</option>
+                </select>
               </div>
+            </div>
 
+            <!-- API配置 -->
+            <div class="search-section">
+              <div class="search-section-title"><i class="fa-solid fa-key"></i> API配置</div>
               <div class="setting-group">
-                <label class="setting-label">工作目录</label>
-                <input
-                  type="text"
-                  class="setting-input"
-                  id="mcp-cwd"
-                  placeholder="可选，服务器运行的工作目录"
-                />
+                <label class="setting-label">Brave API Key</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="setting-input" id="setting-brave-api-key" placeholder="输入Brave Search API Key" />
+                  <button class="password-toggle-btn" id="toggle-brave-key"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="form-hint">用于Brave Search，<a href="https://brave.com/search/api/" target="_blank">获取API Key</a></div>
               </div>
-
               <div class="setting-group">
-                <label class="setting-label">环境变量</label>
-                <textarea
-                  class="setting-input setting-textarea"
-                  id="mcp-env"
-                  placeholder="每行一个，格式: KEY=VALUE"
-                  rows="3"
-                ></textarea>
+                <label class="setting-label">SerpAPI Key</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="setting-input" id="setting-serpapi-key" placeholder="输入SerpAPI Key" />
+                  <button class="password-toggle-btn" id="toggle-serpapi-key"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="form-hint">用于SerpAPI，<a href="https://serpapi.com/" target="_blank">获取API Key</a></div>
               </div>
-
               <div class="setting-group">
-                <label class="setting-label">启用服务器</label>
-                <div class="setting-switch on" id="mcp-enabled"></div>
+                <label class="setting-label">Google Custom Search API Key</label>
+                <div class="password-input-wrapper">
+                  <input type="password" class="setting-input" id="setting-google-api-key" placeholder="输入Google API Key" />
+                  <button class="password-toggle-btn" id="toggle-google-key"><i class="fa-solid fa-eye"></i></button>
+                </div>
+                <div class="form-hint">用于Google搜索，<a href="https://developers.google.com/custom-search/v1/overview" target="_blank">获取API Key</a></div>
               </div>
+              <div class="setting-group">
+                <label class="setting-label">Google Custom Search Engine ID</label>
+                <input type="text" class="setting-input" id="setting-google-cx" placeholder="输入Search Engine ID" />
+              </div>
+            </div>
 
-              <div class="mcp-form-actions">
-                <button class="drawer-btn drawer-btn-secondary" id="test-mcp-btn">
-                  <i class="fa-solid fa-plug"></i> 测试连接
+            <!-- 自定义搜索引擎 -->
+            <div class="search-section">
+              <div class="search-section-title"><i class="fa-solid fa-plus-circle"></i> 自定义搜索引擎</div>
+              <div class="custom-search-list" id="custom-search-list">
+                <div class="custom-search-empty">暂无自定义搜索引擎</div>
+              </div>
+              <button class="drawer-btn drawer-btn-secondary" id="add-custom-search-btn" style="width: 100%; margin-top: 12px;">
+                <i class="fa-solid fa-plus"></i> 添加自定义搜索引擎
+              </button>
+              <div class="custom-search-form" id="custom-search-form" style="display: none;">
+                <div class="form-group">
+                  <label>引擎名称</label>
+                  <input type="text" class="setting-input" id="custom-search-name" placeholder="例如: 我的搜索" />
+                </div>
+                <div class="form-group">
+                  <label>API端点</label>
+                  <input type="text" class="setting-input" id="custom-search-endpoint" placeholder="例如: https://api.example.com/search" />
+                </div>
+                <div class="form-group">
+                  <label>API Key (可选)</label>
+                  <input type="password" class="setting-input" id="custom-search-apikey" placeholder="输入API Key" />
+                </div>
+                <div class="form-group">
+                  <label>请求方法</label>
+                  <select class="setting-select" id="custom-search-method">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>查询参数名</label>
+                  <input type="text" class="setting-input" id="custom-search-param" placeholder="例如: q, query" value="q" />
+                </div>
+                <div class="form-actions">
+                  <button class="drawer-btn drawer-btn-secondary" id="cancel-custom-search-btn">取消</button>
+                  <button class="drawer-btn drawer-btn-primary" id="save-custom-search-btn">保存</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="search-section">
+              <div class="search-section-title"><i class="fa-solid fa-floppy-disk"></i> 保存配置</div>
+              <div class="search-actions">
+                <button class="drawer-btn drawer-btn-primary" id="save-search-settings-btn">
+                  <i class="fa-solid fa-save"></i> 保存搜索设置
                 </button>
-                <button class="drawer-btn drawer-btn-secondary" id="cancel-mcp-btn">取消</button>
-                <button class="drawer-btn drawer-btn-primary" id="create-mcp-btn">添加服务器</button>
+                <button class="drawer-btn drawer-btn-secondary" id="test-search-btn">
+                  <i class="fa-solid fa-vial"></i> 测试搜索
+                </button>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- MCP市场 -->
-          <div class="drawer-tab-content" id="mcp-tab-gallery">
-            <div class="mcp-gallery-header">
-              <h3>MCP工具市场</h3>
-              <p class="mcp-gallery-desc">发现并安装MCP工具</p>
+        <!-- 统计标签页 -->
+        <div class="drawer-tab-content" id="tab-stats">
+          <div class="stats-container">
+            <div class="stats-header">
+              <h3><i class="fa-solid fa-chart-line"></i> 使用统计</h3>
+              <button class="stats-refresh-btn" id="refresh-stats-btn" title="刷新统计">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
             </div>
 
-            <div class="mcp-categories">
-              <button class="mcp-category active" data-category="all">全部</button>
-              <button class="mcp-category" data-category="files">文件管理</button>
-              <button class="mcp-category" data-category="data">数据存储</button>
-              <button class="mcp-category" data-category="api">API集成</button>
-              <button class="mcp-category" data-category="ai">AI工具</button>
-              <button class="mcp-category" data-category="dev">开发工具</button>
+            <!-- 统计卡片 -->
+            <div class="stats-cards">
+              <div class="stats-card">
+                <div class="stats-card-icon"><i class="fa-solid fa-comments"></i></div>
+                <div class="stats-card-info">
+                  <div class="stats-card-value" id="stats-conversations">0</div>
+                  <div class="stats-card-label">总对话数</div>
+                </div>
+              </div>
+              <div class="stats-card">
+                <div class="stats-card-icon"><i class="fa-solid fa-message"></i></div>
+                <div class="stats-card-info">
+                  <div class="stats-card-value" id="stats-messages">0</div>
+                  <div class="stats-card-label">总消息数</div>
+                </div>
+              </div>
+              <div class="stats-card">
+                <div class="stats-card-icon"><i class="fa-solid fa-thumbs-up"></i></div>
+                <div class="stats-card-info">
+                  <div class="stats-card-value" id="stats-feedback-positive">0</div>
+                  <div class="stats-card-label">正面反馈</div>
+                </div>
+              </div>
+              <div class="stats-card">
+                <div class="stats-card-icon"><i class="fa-solid fa-calendar-day"></i></div>
+                <div class="stats-card-info">
+                  <div class="stats-card-value" id="stats-today">0</div>
+                  <div class="stats-card-label">今日消息</div>
+                </div>
+              </div>
             </div>
 
-            <div class="mcp-gallery-grid" id="mcp-gallery-content">
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">📁</div>
-                <div class="mcp-gallery-info">
-                  <h4>文件系统</h4>
-                  <p>管理本地文件和目录</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
+            <!-- 趋势图表 -->
+            <div class="stats-section">
+              <h4>近7天消息趋势</h4>
+              <div class="stats-chart-container">
+                <canvas id="stats-trend-chart"></canvas>
               </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">🗄️</div>
-                <div class="mcp-gallery-info">
-                  <h4>数据库</h4>
-                  <p>SQLite、PostgreSQL等数据库访问</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
+            </div>
+
+            <!-- 最近对话 -->
+            <div class="stats-section">
+              <h4>最近活跃对话</h4>
+              <div class="stats-recent-list" id="stats-recent-conversations">
+                <div class="stats-empty">暂无数据</div>
               </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">🌐</div>
-                <div class="mcp-gallery-info">
-                  <h4>网络搜索</h4>
-                  <p>集成多种搜索引擎</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
-              </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">📧</div>
-                <div class="mcp-gallery-info">
-                  <h4>邮件服务</h4>
-                  <p>Gmail、Outlook等邮件集成</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
-              </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">💬</div>
-                <div class="mcp-gallery-info">
-                  <h4>即时通讯</h4>
-                  <p>Slack、Discord等消息集成</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
-              </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">📝</div>
-                <div class="mcp-gallery-info">
-                  <h4>笔记管理</h4>
-                  <p>Notion、Obsidian等笔记集成</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
-              </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">☁️</div>
-                <div class="mcp-gallery-info">
-                  <h4>云存储</h4>
-                  <p>Dropbox、Google Drive等云服务</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
-              </div>
-              <div class="mcp-gallery-item">
-                <div class="mcp-gallery-icon">🎨</div>
-                <div class="mcp-gallery-info">
-                  <h4>图像生成</h4>
-                  <p>AI图像生成工具集成</p>
-                </div>
-                <button class="mcp-install-btn">安装</button>
+            </div>
+
+            <!-- 数据管理 -->
+            <div class="stats-section">
+              <h4>数据管理</h4>
+              <div class="stats-actions">
+                <button class="stats-action-btn" id="export-data-btn">
+                  <i class="fa-solid fa-download"></i> 导出数据
+                </button>
+                <button class="stats-action-btn" id="backup-data-btn">
+                  <i class="fa-solid fa-floppy-disk"></i> 创建备份
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div class="drawer-footer">
         <button class="drawer-btn drawer-btn-secondary" id="reset-settings-btn">
           重置默认
@@ -1888,6 +2397,16 @@
     </div>
 
     <!-- ==================== Skill Panel ==================== -->
+    <div id="skill-drawer-overlay" class="drawer-overlay"></div>
+    <div id="skill-drawer" class="drawer">
+      <div class="drawer-header">
+        <h3>技能管理</h3>
+        <button id="skill-drawer-close" class="drawer-close-btn">&times;</button>
+      </div>
+      <div id="skill-list-content" class="drawer-body">
+      </div>
+    </div>
+
     <!-- ==================== Help Modal ==================== -->
     <div class="modal-overlay" id="help-modal">
       <div class="modal">

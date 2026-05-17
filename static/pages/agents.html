@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体管理 - DATA-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/pages.css" />
+</head>
+<body>
+    <div class="page-container">
+        <!-- 页面头部 -->
+        <header class="page-header">
+            <div class="page-header-left">
+                <button class="back-btn" onclick="history.back()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="page-title">
+                    <i class="fa-solid fa-robot"></i>
+                    智能体管理
+                </h1>
+            </div>
+            <div class="page-header-right">
+                <button class="btn btn-primary" id="create-agent-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    创建智能体
+                </button>
+            </div>
+        </header>
+
+        <!-- 智能体列表 -->
+        <div class="page-content">
+            <div class="agent-grid" id="agent-grid">
+                <!-- 默认智能体 -->
+                <div class="agent-card active" data-agent-id="default">
+                    <div class="agent-card-header">
+                        <div class="agent-avatar">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="agent-status online"></div>
+                    </div>
+                    <div class="agent-card-body">
+                        <h3 class="agent-name">智能助手</h3>
+                        <p class="agent-desc">默认智能助手，支持通用对话和代码执行</p>
+                        <div class="agent-tags">
+                            <span class="tag">通用</span>
+                            <span class="tag">代码</span>
+                        </div>
+                    </div>
+                    <div class="agent-card-footer">
+                        <span class="agent-model">
+                            <i class="fa-solid fa-microchip"></i>
+                            qwen-plus-latest
+                        </span>
+                        <div class="agent-actions">
+                            <button class="action-btn" title="编辑">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="action-btn" title="复制">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                            <button class="action-btn danger" title="删除">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 代码专家 -->
+                <div class="agent-card" data-agent-id="coder">
+                    <div class="agent-card-header">
+                        <div class="agent-avatar coder">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <div class="agent-status online"></div>
+                    </div>
+                    <div class="agent-card-body">
+                        <h3 class="agent-name">代码专家</h3>
+                        <p class="agent-desc">专注于代码编写、调试和优化</p>
+                        <div class="agent-tags">
+                            <span class="tag">编程</span>
+                            <span class="tag">调试</span>
+                        </div>
+                    </div>
+                    <div class="agent-card-footer">
+                        <span class="agent-model">
+                            <i class="fa-solid fa-microchip"></i>
+                            gpt-4
+                        </span>
+                        <div class="agent-actions">
+                            <button class="action-btn" title="编辑">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="action-btn" title="复制">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                            <button class="action-btn danger" title="删除">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文档助手 -->
+                <div class="agent-card" data-agent-id="writer">
+                    <div class="agent-card-header">
+                        <div class="agent-avatar writer">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <div class="agent-status online"></div>
+                    </div>
+                    <div class="agent-card-body">
+                        <h3 class="agent-name">文档助手</h3>
+                        <p class="agent-desc">帮助撰写、编辑和优化各类文档</p>
+                        <div class="agent-tags">
+                            <span class="tag">写作</span>
+                            <span class="tag">文档</span>
+                        </div>
+                    </div>
+                    <div class="agent-card-footer">
+                        <span class="agent-model">
+                            <i class="fa-solid fa-microchip"></i>
+                            claude-3-opus
+                        </span>
+                        <div class="agent-actions">
+                            <button class="action-btn" title="编辑">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="action-btn" title="复制">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                            <button class="action-btn danger" title="删除">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加新智能体卡片 -->
+                <div class="agent-card add-card" id="add-agent-card">
+                    <div class="add-card-content">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>创建新智能体</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑智能体模态框 -->
+    <div class="modal-overlay hidden" id="agent-modal-overlay">
+        <div class="modal" id="agent-modal">
+            <div class="modal-header">
+                <h2 id="agent-modal-title">创建智能体</h2>
+                <button class="modal-close-btn" id="agent-modal-close">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="agent-form">
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-info-circle"></i>
+                            基本信息
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="agent-name">智能体名称 *</label>
+                                <input type="text" id="agent-name" name="name" 
+                                       placeholder="例如：代码审查专家" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="agent-icon">图标</label>
+                                <div class="icon-picker">
+                                    <input type="text" id="agent-icon" name="icon" 
+                                           value="🤖" readonly>
+                                    <div class="icon-list">
+                                        <span class="icon-option active" data-icon="🤖">🤖</span>
+                                        <span class="icon-option" data-icon="💻">💻</span>
+                                        <span class="icon-option" data-icon="📝">📝</span>
+                                        <span class="icon-option" data-icon="🎨">🎨</span>
+                                        <span class="icon-option" data-icon="📊">📊</span>
+                                        <span class="icon-option" data-icon="🔬">🔬</span>
+                                        <span class="icon-option" data-icon="📚">📚</span>
+                                        <span class="icon-option" data-icon="🔧">🔧</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="agent-description">描述</label>
+                            <textarea id="agent-description" name="description" rows="2"
+                                      placeholder="简要描述这个智能体的用途和特点"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 模型配置 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-microchip"></i>
+                            模型配置
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="agent-provider">模型服务商</label>
+                                <select id="agent-provider" name="provider">
+                                    <option value="openai">OpenAI</option>
+                                    <option value="anthropic">Anthropic</option>
+                                    <option value="aliyun" selected>阿里云</option>
+                                    <option value="zhipu">智谱</option>
+                                    <option value="deepseek">DeepSeek</option>
+                                    <option value="custom">自定义</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="agent-model">模型</label>
+                                <select id="agent-model" name="model">
+                                    <option value="qwen-plus-latest" selected>qwen-plus-latest</option>
+                                    <option value="qwen-max">qwen-max</option>
+                                    <option value="gpt-4">gpt-4</option>
+                                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                                    <option value="claude-3-opus">claude-3-opus</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="agent-temperature">温度 (Temperature)</label>
+                                <div class="range-input">
+                                    <input type="range" id="agent-temperature" name="temperature"
+                                           min="0" max="2" step="0.1" value="0.7">
+                                    <span class="range-value" id="temperature-value">0.7</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="agent-max-tokens">最大Token</label>
+                                <input type="number" id="agent-max-tokens" name="max_tokens"
+                                       value="4096" min="256" max="128000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 系统提示词 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-message"></i>
+                            系统提示词
+                        </h3>
+                        <div class="form-group">
+                            <label for="agent-system-prompt">系统提示词 *</label>
+                            <textarea id="agent-system-prompt" name="system_prompt" rows="6"
+                                      placeholder="定义智能体的角色、行为和能力..."
+                                      required>你是一个乐于助人的AI助手。请用友好、专业的语言回答用户问题。</textarea>
+                            <div class="form-hint">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                系统提示词定义了智能体的角色和行为方式
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 能力配置 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-sliders"></i>
+                            能力配置
+                        </h3>
+                        <div class="capability-grid">
+                            <label class="capability-item">
+                                <input type="checkbox" name="capabilities" value="code_execution" checked>
+                                <span class="capability-label">
+                                    <i class="fa-solid fa-code"></i>
+                                    代码执行
+                                </span>
+                            </label>
+                            <label class="capability-item">
+                                <input type="checkbox" name="capabilities" value="web_search">
+                                <span class="capability-label">
+                                    <i class="fa-solid fa-globe"></i>
+                                    联网搜索
+                                </span>
+                            </label>
+                            <label class="capability-item">
+                                <input type="checkbox" name="capabilities" value="knowledge_base" checked>
+                                <span class="capability-label">
+                                    <i class="fa-solid fa-database"></i>
+                                    知识库检索
+                                </span>
+                            </label>
+                            <label class="capability-item">
+                                <input type="checkbox" name="capabilities" value="file_analysis">
+                                <span class="capability-label">
+                                    <i class="fa-solid fa-file"></i>
+                                    文件分析
+                                </span>
+                            </label>
+                            <label class="capability-item">
+                                <input type="checkbox" name="capabilities" value="chart_generation">
+                                <span class="capability-label">
+                                    <i class="fa-solid fa-chart-bar"></i>
+                                    图表生成
+                                </span>
+                            </label>
+                            <label class="capability-item">
+                                <input type="checkbox" name="capabilities" value="mcp_tools">
+                                <span class="capability-label">
+                                    <i class="fa-solid fa-plug"></i>
+                                    MCP工具
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 已启用技能 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            已启用技能
+                        </h3>
+                        <div class="skills-container" id="agent-skills-container">
+                            <div class="skill-chip">
+                                <span>代码审查</span>
+                                <button type="button" class="skill-remove-btn">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="skill-chip">
+                                <span>文档生成</span>
+                                <button type="button" class="skill-remove-btn">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                            <button type="button" class="skill-add-btn" id="add-skill-btn">
+                                <i class="fa-solid fa-plus"></i>
+                                添加技能
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="agent-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary" id="agent-save-btn">
+                    <i class="fa-solid fa-check"></i>
+                    保存智能体
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="/static/js/pages/agents.js"></script>
+</body>
+</html>

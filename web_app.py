@@ -5,14 +5,17 @@ DATA-AI - 万能智能助手 Web Interface
 
 import asyncio
 import datetime
+import hashlib
 import json
 import os
 import re
 import shutil
 import sys
 import tempfile
+import time
 import traceback
 import uuid
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
@@ -72,10 +75,11 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 BASE_DIR = Path(__file__).parent
 CONFIG_DIR = BASE_DIR / "config"
@@ -87,6 +91,97 @@ SETTINGS_FILE = CONFIG_DIR / "web_config.json"
 
 for dir_path in [CONFIG_DIR, DATA_DIR, KNOWLEDGE_DIR, SKILLS_DIR]:
     dir_path.mkdir(parents=True, exist_ok=True)
+
+
+# ==================== 安全中间件 ====================
+
+# --- 简易 Token 认证 ---
+AUTH_TOKEN_FILE = CONFIG_DIR / "auth_token.txt"
+_auth_token: Optional[str] = None
+
+
+def _get_auth_token() -> Optional[str]:
+    """获取认证 token（首次启动自动生成）"""
+    global _auth_token
+    if _auth_token is not None:
+        return _auth_token
+    if AUTH_TOKEN_FILE.exists():
+        _auth_token = AUTH_TOKEN_FILE.read_text().strip()
+    else:
+        _auth_token = hashlib.sha256(os.urandom(32)).hexdigest()[:24]
+        AUTH_TOKEN_FILE.write_text(_auth_token)
+        print(f"[Auth] 首次启动，已生成访问令牌: {_auth_token}")
+        print(f"[Auth] 令牌已保存到: {AUTH_TOKEN_FILE}")
+    return _auth_token
+
+
+def verify_token(request: Request) -> bool:
+    """验证请求中的认证 token"""
+    token = request.headers.get("X-Auth-Token", "") or request.query_params.get("token", "")
+    expected = _get_auth_token()
+    if not expected:
+        return True
+    return token == expected
+
+
+# --- 速率限制器 ---
+_rate_limit_store: Dict[str, List[float]] = defaultdict(list)
+_RATE_LIMIT_MAX_CLIENTS = 10000  # Max tracked clients to prevent unbounded growth
+
+
+def check_rate_limit(client_id: str, max_requests: int = 60, window_seconds: int = 60) -> bool:
+    """检查请求频率是否超限"""
+    now = time.time()
+    cutoff = now - window_seconds
+    _rate_limit_store[client_id] = [
+        t for t in _rate_limit_store[client_id] if t > cutoff
+    ]
+    if len(_rate_limit_store[client_id]) >= max_requests:
+        return False
+    _rate_limit_store[client_id].append(now)
+    # Prevent unbounded growth: remove oldest clients if too many
+    if len(_rate_limit_store) > _RATE_LIMIT_MAX_CLIENTS:
+        oldest_clients = sorted(_rate_limit_store.keys(),
+                                key=lambda k: max(_rate_limit_store[k]) if _rate_limit_store[k] else 0)
+        for k in oldest_clients[:len(_rate_limit_store) - _RATE_LIMIT_MAX_CLIENTS]:
+            del _rate_limit_store[k]
+    return True
+
+
+@app.middleware("http")
+async def security_middleware(request: Request, call_next):
+    """安全中间件：认证 + 速率限制"""
+    path = request.url.path
+
+    # 豁免路径
+    skip_paths = {"/", "/favicon.ico", "/docs", "/openapi.json", "/health"}
+    if path.startswith("/static") or path.startswith("/share") or path in skip_paths:
+        return await call_next(request)
+
+    # 认证检查（可选，通过环境变量启用）
+    if os.environ.get("DATA_AI_AUTH_ENABLED", "false").lower() == "true":
+        if not verify_token(request):
+            return JSONResponse(
+                status_code=401,
+                content={"detail": "未授权访问，请提供有效的认证令牌"},
+            )
+
+    # 速率限制
+    client_id = request.client.host if request.client else "unknown"
+    if path == "/ws":
+        if not check_rate_limit(client_id, max_requests=10, window_seconds=60):
+            return JSONResponse(status_code=429, content={"detail": "请求过于频繁"})
+    elif path.startswith("/api/model/test") or path.startswith("/api/sandbox"):
+        if not check_rate_limit(client_id, max_requests=10, window_seconds=60):
+            return JSONResponse(status_code=429, content={"detail": "请求过于频繁"})
+    else:
+        if not check_rate_limit(client_id, max_requests=120, window_seconds=60):
+            return JSONResponse(status_code=429, content={"detail": "请求过于频繁"})
+
+    response = await call_next(request)
+    return response
+
+# ==================== 配置 ====================
 
 
 class Settings(BaseModel):
@@ -144,6 +239,7 @@ class Settings(BaseModel):
             "endpoint": "https://api.smith.langchain.com",
         }
     )
+    system_prompt: str = ""  # 自定义系统提示词，留空使用默认
 
 
 class KnowledgeBase(BaseModel):
@@ -197,6 +293,7 @@ class Skill(BaseModel):
     type: str = "custom"
     icon: str = "⚡"
     status: str = "published"
+    enabled: bool = True
     created_at: str
     updated_at: str
     parameters: List[Dict[str, Any]] = Field(default_factory=list)
@@ -222,9 +319,24 @@ knowledge_bases: Dict[str, KnowledgeBase] = {}
 documents: Dict[str, Document] = {}
 skills: Dict[str, Skill] = {}
 mcp_servers: Dict[str, MCPServer] = {}
-conversations: Dict[str, dict] = (
-    {}
-)  # {conv_id: {"id": str, "title": str, "messages": [...], "created_at": str, "updated_at": str}}
+# 持久化存储（SQLite）
+from app.storage import (
+    create_conversation as db_create_conversation,
+    get_conversation as db_get_conversation,
+    list_conversations as db_list_conversations,
+    update_conversation_title as db_update_conversation_title,
+    delete_conversation as db_delete_conversation,
+    add_message as db_add_message,
+    get_conversation_messages as db_get_conversation_messages,
+    add_feedback as db_add_feedback,
+    get_feedback_stats as db_get_feedback_stats,
+    set_preference as db_set_preference,
+    get_preference as db_get_preference,
+    init_db as db_init,
+    migrate_from_memory as db_migrate_from_memory,
+)
+
+# 对话数据已迁移到 SQLite 持久化存储（app/storage.py）
 
 
 def load_settings():
@@ -611,6 +723,7 @@ load_mcp_servers()
 
 
 async def execute_python(code: str, timeout: int = 30) -> dict:
+    tmpdir = tempfile.mkdtemp(prefix="dataagent_")
     try:
         proc = await asyncio.create_subprocess_exec(
             sys.executable,
@@ -618,7 +731,7 @@ async def execute_python(code: str, timeout: int = 30) -> dict:
             code,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
-            cwd=tempfile.mkdtemp(prefix="dataagent_"),
+            cwd=tmpdir,
             env={**os.environ, "MPLBACKEND": "Agg", "PYTHONIOENCODING": "utf-8"},
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
@@ -632,6 +745,12 @@ async def execute_python(code: str, timeout: int = 30) -> dict:
         return {"success": False, "error": "执行超时"}
     except Exception as e:
         return {"success": False, "error": str(e)}
+    finally:
+        # Clean up temp directory
+        try:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        except Exception:
+            pass
 
 
 async def call_llm(prompt: str, settings: Settings) -> str:
@@ -650,6 +769,8 @@ async def call_llm(prompt: str, settings: Settings) -> str:
             temperature=settings.llm.get("temperature", 0.7),
             top_p=settings.llm.get("top_p", 0.9),
         )
+        if not response.choices:
+            return "模型返回了空响应"
         return response.choices[0].message.content
     except Exception as e:
         error_msg = str(e)
@@ -684,16 +805,27 @@ async def clean_text(text: str, rules: dict) -> str:
 
 @app.get("/api/settings")
 async def get_settings():
-    return JSONResponse(current_settings.model_dump())
+    settings_data = current_settings.model_dump()
+    # Mask API key for security
+    if settings_data.get("llm") and settings_data["llm"].get("api_key"):
+        key = settings_data["llm"]["api_key"]
+        if key and len(key) > 8:
+            settings_data["llm"]["api_key"] = key[:4] + "****" + key[-4:]
+        elif key:
+            settings_data["llm"]["api_key"] = "****"
+    return JSONResponse(settings_data)
 
 
 @app.post("/api/settings")
 async def update_settings(request: Request):
     global current_settings
-    data = await request.json()
-    current_settings = Settings(**data)
-    save_settings(current_settings)
-    return JSONResponse({"success": True, "settings": current_settings.model_dump()})
+    try:
+        data = await request.json()
+        current_settings = Settings(**data)
+        save_settings(current_settings)
+        return JSONResponse({"success": True, "settings": current_settings.model_dump()})
+    except Exception as e:
+        return JSONResponse({"success": False, "error": f"设置更新失败: {str(e)}"}, status_code=400)
 
 
 @app.get("/api/knowledge-bases")
@@ -730,11 +862,65 @@ async def create_knowledge_base(request: Request):
     return JSONResponse(kb.model_dump())
 
 
+@app.get("/api/knowledge-bases/rag/stats")
+async def get_rag_stats():
+    """获取 RAG 检索库统计信息"""
+    return JSONResponse(retriever.get_stats())
+
+
 @app.get("/api/knowledge-bases/{kb_id}")
 async def get_knowledge_base(kb_id: str):
     if kb_id not in knowledge_bases:
         raise HTTPException(status_code=404, detail="知识库不存在")
     return JSONResponse(knowledge_bases[kb_id].model_dump())
+
+
+@app.post("/api/upload")
+async def general_upload(file: UploadFile = File(...)):
+    """通用文件上传端点（兼容 Dropzone 默认 URL）"""
+    allowed_extensions = {
+        ".pdf", ".txt", ".md", ".docx", ".csv", ".xlsx", ".xls", ".ppt", ".pptx",
+    }
+    max_size = 50 * 1024 * 1024  # 50MB
+
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail=f"不支持的文件格式: {file_ext}。支持的格式: {', '.join(allowed_extensions)}",
+        )
+
+    file.file.seek(0, 2)
+    size = file.file.tell()
+    file.file.seek(0)
+
+    if size > max_size:
+        raise HTTPException(
+            status_code=400,
+            detail=f"文件过大: {size / 1024 / 1024:.2f}MB。最大支持 {max_size / 1024 / 1024}MB",
+        )
+
+    upload_dir = DATA_DIR / "uploads" / "general"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    doc_id = str(uuid.uuid4())
+    file_path = upload_dir / f"{doc_id}{file_ext}"
+
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        return JSONResponse({
+            "success": True,
+            "id": doc_id,
+            "filename": file.filename,
+            "file_path": str(file_path),
+            "size": size,
+            "message": "文件上传成功",
+        })
+    except Exception as e:
+        if file_path.exists():
+            file_path.unlink()
+        raise HTTPException(status_code=500, detail=f"文件上传失败: {str(e)}")
 
 
 @app.post("/api/knowledge-bases/{kb_id}/documents")
@@ -772,7 +958,7 @@ async def upload_document(kb_id: str, file: UploadFile = File(...)):
             detail=f"文件过大: {size / 1024 / 1024:.2f}MB。最大支持 {max_size / 1024 / 1024}MB",
         )
 
-    upload_dir = Path("data/uploads") / kb_id
+    upload_dir = DATA_DIR / "uploads" / kb_id
     upload_dir.mkdir(parents=True, exist_ok=True)
 
     doc_id = str(uuid.uuid4())
@@ -817,7 +1003,7 @@ async def process_document(doc_id: str, file_path: Path, file_ext: str):
         elif file_ext == ".csv":
             import pandas as pd
 
-            df = pd.read_csv(file_path)
+            df = await asyncio.to_thread(pd.read_csv, file_path)
             content = df.to_string()
 
         if doc_id in documents:
@@ -873,10 +1059,7 @@ async def search_knowledge_base(request: Request):
     return JSONResponse(results)
 
 
-@app.get("/api/knowledge-bases/rag/stats")
-async def get_rag_stats():
-    """获取 RAG 检索库统计信息"""
-    return JSONResponse(retriever.get_stats())
+
 
 
 @app.get("/api/skills")
@@ -920,9 +1103,9 @@ async def generate_skill(request: Request):
             temperature=0.7,
         )
 
+        if not response.choices:
+            raise HTTPException(status_code=500, detail="模型返回了空响应")
         result_text = response.choices[0].message.content.strip()
-
-        import re
 
         json_match = re.search(r"\{.*\}", result_text, re.DOTALL)
         if json_match:
@@ -937,27 +1120,30 @@ async def generate_skill(request: Request):
 
 @app.post("/api/skills")
 async def create_skill(request: Request):
-    data = await request.json()
-    skill_id = data.get("id", str(uuid.uuid4()))
-    now = datetime.datetime.now().isoformat()
-    skill = Skill(
-        id=skill_id,
-        name=data.get("name", "未命名技能"),
-        description=data.get("description", ""),
-        version=data.get("version", "1.0.0"),
-        author=data.get("author", ""),
-        category=data.get("category", "custom"),
-        type=data.get("type", "custom"),
-        icon=data.get("icon", "⚡"),
-        created_at=now,
-        updated_at=now,
-        parameters=data.get("parameters", []),
-        prompts=data.get("prompts", {}),
-        tools=data.get("tools", []),
-    )
-    skills[skill_id] = skill
-    save_skills()
-    return JSONResponse(skill.model_dump())
+    try:
+        data = await request.json()
+        skill_id = data.get("id", str(uuid.uuid4()))
+        now = datetime.datetime.now().isoformat()
+        skill = Skill(
+            id=skill_id,
+            name=data.get("name", "未命名技能"),
+            description=data.get("description", ""),
+            version=data.get("version", "1.0.0"),
+            author=data.get("author", ""),
+            category=data.get("category", "custom"),
+            type=data.get("type", "custom"),
+            icon=data.get("icon", "⚡"),
+            created_at=now,
+            updated_at=now,
+            parameters=data.get("parameters", []),
+            prompts=data.get("prompts", {}),
+            tools=data.get("tools", []),
+        )
+        skills[skill_id] = skill
+        save_skills()
+        return JSONResponse(skill.model_dump())
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"创建技能失败: {str(e)}")
 
 
 @app.get("/api/skills/{skill_id}")
@@ -993,26 +1179,31 @@ async def list_mcp_servers():
 
 @app.post("/api/mcp/servers")
 async def create_mcp_server(request: Request):
-    data = await request.json()
-    server_id = data.get("id", str(uuid.uuid4()))
-    server = MCPServer(
-        id=server_id,
-        name=data.get("name", "未命名服务器"),
-        type=data.get("type", "stdio"),
-        command=data.get("command", ""),
-        args=data.get("args", []),
-        url=data.get("url", ""),
-        env=data.get("env", {}),
-        enabled=data.get("enabled", True),
-        icon=data.get("icon", "🔌"),
-    )
-    mcp_servers[server_id] = server
-    save_mcp_servers()
-    return JSONResponse(server.model_dump())
+    try:
+        data = await request.json()
+        server_id = data.get("id", str(uuid.uuid4()))
+        server = MCPServer(
+            id=server_id,
+            name=data.get("name", "未命名服务器"),
+            type=data.get("type", "stdio"),
+            command=data.get("command", ""),
+            args=data.get("args", []),
+            url=data.get("url", ""),
+            env=data.get("env", {}),
+            enabled=data.get("enabled", True),
+            icon=data.get("icon", "🔌"),
+        )
+        mcp_servers[server_id] = server
+        save_mcp_servers()
+        return JSONResponse(server.model_dump())
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"创建MCP服务器失败: {str(e)}")
 
 
 @app.get("/api/schema/{schema_type}")
 async def get_schema(schema_type: str):
+    if not re.match(r'^[a-zA-Z0-9_]+$', schema_type):
+        raise HTTPException(status_code=400, detail="无效的schema类型名称")
     schema_file = CONFIG_DIR / "schema" / f"{schema_type}_schema.json"
     if not schema_file.exists():
         raise HTTPException(status_code=404, detail="Schema不存在")
@@ -1036,27 +1227,32 @@ async def get_docker_images():
     try:
         import docker
 
-        client = docker.from_env()
-        images = client.images.list()
-        result = []
-        for img in images:
-            tags = img.tags
-            if tags:
-                full_tag = tags[0]
-                parts = full_tag.split(":")
-                name = parts[0] if len(parts) > 0 else "unknown"
-                tag = parts[1] if len(parts) > 1 else "latest"
-                result.append(
-                    {
-                        "name": name,
-                        "image": full_tag,
-                        "tag": tag,
-                        "size": img.attrs.get("Size", 0),
-                        "status": "installed",
-                        "created_at": img.attrs.get("Created", ""),
-                    }
-                )
-        return result
+        def _list_images():
+            client = docker.from_env()
+            try:
+                images = client.images.list()
+                result = []
+                for img in images:
+                    tags = img.tags
+                    if tags:
+                        full_tag = tags[0]
+                        parts = full_tag.split(":")
+                        name = parts[0] if len(parts) > 0 else "unknown"
+                        tag = parts[1] if len(parts) > 1 else "latest"
+                        result.append(
+                            {
+                                "name": name,
+                                "image": full_tag,
+                                "tag": tag,
+                                "size": img.attrs.get("Size", 0),
+                                "status": "installed",
+                                "created_at": img.attrs.get("Created", ""),
+                            }
+                        )
+                return result
+            finally:
+                client.close()
+        return await asyncio.to_thread(_list_images)
     except Exception as e:
         print(f"Error getting docker images: {e}")
         return []
@@ -1064,37 +1260,27 @@ async def get_docker_images():
 
 async def pull_docker_image(image_name: str):
     try:
-        import threading
-
         import docker
 
-        client = docker.from_env()
-
-        result = {"success": False, "error": "", "name": image_name}
-
-        def pull_thread():
+        def _pull_image():
+            client = docker.from_env()
             try:
                 client.images.pull(image_name)
-                result["success"] = True
+                img = client.images.get(image_name)
+                parts = image_name.split(":")
+                return {
+                    "success": True,
+                    "error": "",
+                    "name": parts[0] if len(parts) > 0 else image_name,
+                    "tag": parts[1] if len(parts) > 1 else "latest",
+                    "size": img.attrs.get("Size", 0),
+                }
             except Exception as e:
-                result["error"] = str(e)
+                return {"success": False, "error": str(e), "name": image_name}
+            finally:
+                client.close()
 
-        thread = threading.Thread(target=pull_thread)
-        thread.start()
-        thread.join(timeout=300)
-
-        if thread.is_alive():
-            result["error"] = "拉取超时"
-            return result
-
-        if result["success"]:
-            img = client.images.get(image_name)
-            parts = image_name.split(":")
-            result["name"] = parts[0] if len(parts) > 0 else image_name
-            result["tag"] = parts[1] if len(parts) > 1 else "latest"
-            result["size"] = img.attrs.get("Size", 0)
-
-        return result
+        return await asyncio.to_thread(_pull_image)
     except Exception as e:
         return {"success": False, "error": str(e), "name": image_name}
 
@@ -1103,9 +1289,17 @@ async def remove_docker_image(image_name: str):
     try:
         import docker
 
-        client = docker.from_env()
-        client.images.remove(image_name, force=True)
-        return {"success": True}
+        def _remove_image():
+            client = docker.from_env()
+            try:
+                client.images.remove(image_name, force=True)
+                return {"success": True}
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+            finally:
+                client.close()
+
+        return await asyncio.to_thread(_remove_image)
     except Exception as e:
         return {"success": False, "error": str(e)}
 
@@ -1165,71 +1359,460 @@ async def delete_sandbox_environment_post(request: Request):
 @app.get("/api/conversations")
 async def list_conversations():
     """获取所有对话列表"""
-    return JSONResponse(
-        sorted(conversations.values(), key=lambda x: x["updated_at"], reverse=True)
-    )
+    return JSONResponse(db_list_conversations())
+
+
+@app.get("/api/conversations/search")
+async def search_conversations(q: str = ""):
+    """搜索对话（标题+消息内容）"""
+    if not q:
+        return JSONResponse(db_list_conversations())
+    from app.storage import search_conversations as db_search
+    return JSONResponse(db_search(q))
 
 
 @app.post("/api/conversations")
 async def create_conversation(request: Request):
     """创建新对话"""
     data = await request.json()
-    conv_id = data.get("id", str(uuid.uuid4()))
-    conv = {
-        "id": conv_id,
-        "title": data.get("title", "新对话"),
-        "messages": [],
-        "created_at": datetime.datetime.now().isoformat(),
-        "updated_at": datetime.datetime.now().isoformat(),
-    }
-    conversations[conv_id] = conv
+    conv_id = data.get("id")
+    title = data.get("title", "新对话")
+    conv = db_create_conversation(conv_id=conv_id, title=title)
     return JSONResponse(conv)
 
 
 @app.get("/api/conversations/{conv_id}")
 async def get_conversation(conv_id: str):
     """获取单个对话详情"""
-    if conv_id not in conversations:
+    conv = db_get_conversation(conv_id)
+    if not conv:
         raise HTTPException(status_code=404, detail="对话不存在")
-    return JSONResponse(conversations[conv_id])
+    return JSONResponse(conv)
 
 
 @app.delete("/api/conversations/{conv_id}")
 async def delete_conversation(conv_id: str):
     """删除对话"""
-    if conv_id in conversations:
-        del conversations[conv_id]
+    db_delete_conversation(conv_id)
+    return JSONResponse({"success": True})
+
+
+@app.delete("/api/conversations/{conv_id}/messages")
+async def clear_conversation(conv_id: str):
+    """清空对话的所有消息"""
+    from app.storage import clear_conversation_messages
+    clear_conversation_messages(conv_id)
     return JSONResponse({"success": True})
 
 
 @app.post("/api/conversations/{conv_id}/messages")
 async def add_message(conv_id: str, request: Request):
     """向对话添加消息"""
-    if conv_id not in conversations:
-        raise HTTPException(status_code=404, detail="对话不存在")
     data = await request.json()
+    role = data.get("role", "user")
+    content = data.get("content", "")
+    # Validate role
+    if role not in ("user", "assistant", "system"):
+        raise HTTPException(status_code=400, detail=f"无效的角色: {role}")
+    if not content or not isinstance(content, str):
+        raise HTTPException(status_code=400, detail="消息内容不能为空")
+    if len(content) > 100000:
+        raise HTTPException(status_code=400, detail="消息内容过长")
+    success = db_add_message(conv_id, role, content)
+    if not success:
+        raise HTTPException(status_code=404, detail="对话不存在")
+    # 自动更新标题（用第一条用户消息）
+    if role == "user":
+        conv = db_get_conversation(conv_id)
+        if conv and conv.get("title") == "新对话":
+            db_update_conversation_title(conv_id, content[:20])
     msg = {
         "id": str(uuid.uuid4()),
-        "role": data.get("role", "user"),
-        "content": data.get("content", ""),
+        "role": role,
+        "content": content,
         "timestamp": datetime.datetime.now().isoformat(),
     }
-    conversations[conv_id]["messages"].append(msg)
-    conversations[conv_id]["updated_at"] = datetime.datetime.now().isoformat()
-    # 自动更新标题（用第一条用户消息）
-    if data.get("role") == "user" and conversations[conv_id]["title"] == "新对话":
-        conversations[conv_id]["title"] = data.get("content", "新对话")[:20]
     return JSONResponse(msg)
 
 
 @app.put("/api/conversations/{conv_id}/title")
 async def update_conversation_title(conv_id: str, request: Request):
     """更新对话标题"""
-    if conv_id not in conversations:
-        raise HTTPException(status_code=404, detail="对话不存在")
     data = await request.json()
-    conversations[conv_id]["title"] = data.get("title", "")
+    db_update_conversation_title(conv_id, data.get("title", ""))
     return JSONResponse({"success": True})
+
+
+# ==================== 用户反馈 ====================
+
+
+@app.post("/api/feedback")
+async def submit_feedback(request: Request):
+    """提交用户反馈"""
+    data = await request.json()
+    feedback_type = data.get("feedback_type", "up")
+    if feedback_type not in ("up", "down"):
+        raise HTTPException(status_code=400, detail=f"无效的反馈类型: {feedback_type}")
+    db_add_feedback(
+        message_id=data.get("message_id", ""),
+        feedback_type=feedback_type,
+        comment=data.get("comment", ""),
+        conversation_id=data.get("conversation_id", ""),
+    )
+    return JSONResponse({"success": True})
+
+
+@app.get("/api/feedback/stats")
+async def feedback_stats():
+    """获取反馈统计"""
+    return JSONResponse(db_get_feedback_stats())
+
+
+# ==================== 用户偏好设置 ====================
+
+
+@app.get("/api/preferences/{key}")
+async def get_preference_api(key: str):
+    """获取用户偏好设置"""
+    value = db_get_preference(key)
+    if value is None:
+        return JSONResponse({"exists": False, "value": None})
+    return JSONResponse({"exists": True, "value": value})
+
+
+@app.post("/api/preferences/{key}")
+async def set_preference_api(key: str, request: Request):
+    """设置用户偏好设置"""
+    data = await request.json()
+    db_set_preference(key, data.get("value", ""))
+    return JSONResponse({"success": True})
+
+
+@app.get("/api/preferences")
+async def list_preferences_api():
+    """获取所有用户偏好设置（用于前端初始化）"""
+    # 常用偏好键
+    keys = ["theme", "language", "auto_scroll", "font_size", "sidebar_collapsed"]
+    prefs = {}
+    for key in keys:
+        val = db_get_preference(key)
+        if val is not None:
+            prefs[key] = val
+    return JSONResponse(prefs)
+
+
+# ==================== 数据备份 ====================
+
+from app.storage import backup_database, export_to_json, import_from_json
+
+
+@app.post("/api/backup")
+async def create_backup():
+    """创建数据库备份"""
+    try:
+        backup_path = backup_database()
+        return JSONResponse({
+            "success": True,
+            "backup_path": str(backup_path.name),
+            "message": f"备份已创建: {backup_path.name}"
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"备份失败: {str(e)}")
+
+
+@app.get("/api/backup/export")
+async def export_data():
+    """导出数据为JSON"""
+    try:
+        export_path = export_to_json()
+        return JSONResponse({
+            "success": True,
+            "export_path": str(export_path.name),
+            "message": f"数据已导出: {export_path.name}"
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"导出失败: {str(e)}")
+
+
+@app.post("/api/backup/import")
+async def import_data(request: Request):
+    """从JSON导入数据"""
+    try:
+        data = await request.json()
+        import_path = Path(data.get("path", "")).resolve()
+        data_dir_resolved = DATA_DIR.resolve()
+        if not str(import_path).startswith(str(data_dir_resolved)):
+            raise HTTPException(status_code=400, detail="导入文件路径不在允许的目录范围内")
+        if not import_path.exists():
+            raise HTTPException(status_code=400, detail="导入文件不存在")
+        stats = import_from_json(import_path)
+        return JSONResponse({
+            "success": True,
+            "stats": stats,
+            "message": f"导入完成: {stats['conversations']}个对话, {stats['messages']}条消息"
+        })
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"导入失败: {str(e)}")
+
+
+# ==================== 使用统计 ====================
+
+from app.storage import get_usage_stats
+
+
+@app.get("/api/stats/usage")
+async def usage_stats():
+    """获取用户使用统计"""
+    return JSONResponse(get_usage_stats())
+
+
+# ==================== 搜索引擎设置 API ====================
+
+from app.storage import (
+    get_search_settings as db_get_search_settings,
+    update_search_settings as db_update_search_settings,
+    add_custom_search_engine as db_add_custom_search_engine,
+    remove_custom_search_engine as db_remove_custom_search_engine,
+)
+
+
+@app.get("/api/search/settings")
+async def get_search_settings_api():
+    """获取搜索引擎设置"""
+    settings = db_get_search_settings()
+    # 隐藏敏感的API Key
+    if settings.get("api_keys"):
+        masked_keys = {}
+        for key, value in settings["api_keys"].items():
+            if value and len(value) > 8:
+                masked_keys[key] = value[:4] + "****" + value[-4:]
+            elif value:
+                masked_keys[key] = "****"
+            else:
+                masked_keys[key] = ""
+        settings["api_keys_masked"] = masked_keys
+    return JSONResponse(settings)
+
+
+@app.post("/api/search/settings")
+async def update_search_settings_api(request: Request):
+    """更新搜索引擎设置"""
+    data = await request.json()
+    # 获取现有设置以保留API Keys（如果未提供）
+    existing = db_get_search_settings()
+    
+    # 如果提供了新的API Keys，更新它们
+    new_keys = data.get("api_keys", {})
+    if new_keys:
+        # 合并现有的keys（保留未提供的）
+        merged_keys = existing.get("api_keys", {})
+        merged_keys.update(new_keys)
+        data["api_keys"] = merged_keys
+    
+    updated = db_update_search_settings(data)
+    return JSONResponse({"success": True, "settings": updated})
+
+
+@app.post("/api/search/custom-engines")
+async def add_custom_engine_api(request: Request):
+    """添加自定义搜索引擎"""
+    data = await request.json()
+    engines = db_add_custom_search_engine(data)
+    return JSONResponse({"success": True, "custom_engines": engines})
+
+
+@app.delete("/api/search/custom-engines/{engine_id}")
+async def remove_custom_engine_api(engine_id: str):
+    """删除自定义搜索引擎"""
+    engines = db_remove_custom_search_engine(engine_id)
+    return JSONResponse({"success": True, "custom_engines": engines})
+
+
+@app.post("/api/search/test")
+async def test_search_api(request: Request):
+    """测试搜索功能"""
+    data = await request.json()
+    query = data.get("query", "test")
+    engine = data.get("engine", "duckduckgo")
+    num_results = data.get("num_results", 3)
+    
+    try:
+        from duckduckgo_search import DDGS
+        
+        def _do_search():
+            results = []
+            with DDGS() as ddgs:
+                for r in ddgs.text(query, max_results=num_results):
+                    results.append({
+                        "title": r.get("title", ""),
+                        "url": r.get("href", ""),
+                        "snippet": r.get("body", "")[:200] if r.get("body") else ""
+                    })
+            return results
+        
+        results = await asyncio.to_thread(_do_search)
+        return JSONResponse({"success": True, "results": results, "engine": engine})
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)})
+
+
+# ==================== 记忆系统 API ====================
+
+from app.storage import (
+    create_memory as db_create_memory,
+    get_memory as db_get_memory,
+    list_memories as db_list_memories,
+    update_memory as db_update_memory,
+    delete_memory as db_delete_memory,
+    search_memories as db_search_memories,
+    get_memory_stats as db_get_memory_stats,
+)
+
+
+@app.get("/api/memories")
+async def list_memories_api(type: str = None, key: str = None):
+    """获取记忆列表"""
+    memories = db_list_memories(memory_type=type, key=key)
+    return JSONResponse(memories)
+
+
+@app.post("/api/memories")
+async def create_memory_api(request: Request):
+    """创建新记忆"""
+    data = await request.json()
+    memory = db_create_memory(
+        memory_type=data.get("type", "long_term"),
+        key=data.get("key"),
+        content=data.get("content", ""),
+        metadata=data.get("metadata"),
+        expires_at=data.get("expires_at")
+    )
+    return JSONResponse(memory)
+
+
+@app.get("/api/memories/{memory_id}")
+async def get_memory_api(memory_id: str):
+    """获取单个记忆"""
+    memory = db_get_memory(memory_id)
+    if not memory:
+        raise HTTPException(status_code=404, detail="记忆不存在")
+    return JSONResponse(memory)
+
+
+@app.put("/api/memories/{memory_id}")
+async def update_memory_api(memory_id: str, request: Request):
+    """更新记忆"""
+    data = await request.json()
+    memory = db_update_memory(memory_id, content=data.get("content"), metadata=data.get("metadata"))
+    if not memory:
+        raise HTTPException(status_code=404, detail="记忆不存在")
+    return JSONResponse(memory)
+
+
+@app.delete("/api/memories/{memory_id}")
+async def delete_memory_api(memory_id: str):
+    """删除记忆"""
+    success = db_delete_memory(memory_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="记忆不存在")
+    return JSONResponse({"success": True})
+
+
+@app.get("/api/memories/search/{query}")
+async def search_memories_api(query: str, type: str = None):
+    """搜索记忆"""
+    memories = db_search_memories(query, memory_type=type)
+    return JSONResponse(memories)
+
+
+@app.get("/api/memories/stats")
+async def memory_stats_api():
+    """获取记忆统计"""
+    stats = db_get_memory_stats()
+    return JSONResponse(stats)
+
+
+# ==================== 系统日志 API ====================
+
+from app.storage import (
+    add_log as db_add_log,
+    get_logs as db_get_logs,
+    get_log_stats as db_get_log_stats,
+    clear_logs as db_clear_logs,
+)
+
+
+@app.get("/api/logs")
+async def list_logs_api(
+    level: str = None,
+    source: str = None,
+    conversation_id: str = None,
+    limit: int = 100,
+    offset: int = 0
+):
+    """获取日志列表"""
+    logs = db_get_logs(
+        level=level,
+        source=source,
+        conversation_id=conversation_id,
+        limit=min(limit, 1000),
+        offset=offset
+    )
+    return JSONResponse(logs)
+
+
+@app.post("/api/logs")
+async def add_log_api(request: Request):
+    """添加日志"""
+    data = await request.json()
+    log_id = db_add_log(
+        level=data.get("level", "info"),
+        source=data.get("source", "frontend"),
+        message=data.get("message", ""),
+        details=data.get("details"),
+        conversation_id=data.get("conversation_id")
+    )
+    return JSONResponse({"success": True, "id": log_id})
+
+
+@app.get("/api/logs/stats")
+async def log_stats_api():
+    """获取日志统计"""
+    stats = db_get_log_stats()
+    return JSONResponse(stats)
+
+
+@app.delete("/api/logs")
+async def clear_logs_api(before_date: str = None, level: str = None):
+    """清理日志"""
+    count = db_clear_logs(before_date=before_date, level=level)
+    return JSONResponse({"success": True, "deleted": count})
+
+
+# ==================== 分享功能 ====================
+
+from app.storage import create_share_link, get_shared_conversation
+
+
+@app.post("/api/conversations/{conv_id}/share")
+async def share_conversation(conv_id: str):
+    """创建分享链接"""
+    result = create_share_link(conv_id)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return JSONResponse(result)
+
+
+@app.get("/share/{share_id}")
+async def view_shared_conversation(share_id: str):
+    """查看分享的对话"""
+    conv = get_shared_conversation(share_id)
+    if not conv:
+        raise HTTPException(status_code=404, detail="分享链接不存在或已过期")
+    # 返回分享页面（简化版，实际应渲染 HTML）
+    return JSONResponse(conv)
 
 
 # ==================== 联网搜索 ====================
@@ -1240,13 +1823,16 @@ async def web_search(query: str, num_results: int = 5) -> str:
     try:
         from duckduckgo_search import DDGS
 
-        results = []
-        with DDGS() as ddgs:
-            for r in ddgs.text(query, max_results=num_results):
-                results.append(f"- {r['title']}: {r['href']}\n  {r['body']}")
-        if results:
-            return "\n".join(results)
-        return "未找到相关结果"
+        def _do_search():
+            results = []
+            with DDGS() as ddgs:
+                for r in ddgs.text(query, max_results=num_results):
+                    results.append(f"- {r['title']}: {r['href']}\n  {r['body']}")
+            if results:
+                return "\n".join(results)
+            return "未找到相关结果"
+
+        return await asyncio.to_thread(_do_search)
     except Exception as e:
         return f"搜索失败: {str(e)}"
 
@@ -1329,7 +1915,11 @@ def _detect_and_apply_skill(message: str) -> "Skill | None":
             continue
 
         # 检查技能关键词
-        keywords = skill.parameters.get("keywords", [])
+        keywords = []
+        for param in skill.parameters:
+            if isinstance(param, dict) and param.get("name") == "keywords":
+                keywords = param.get("value", [])
+                break
         if not isinstance(keywords, list):
             keywords = []
 
@@ -1441,7 +2031,11 @@ async def run_agent_task(
                 skill_prompt = matched_skill.prompts["system_prompt"] + "\n\n"
 
         # 5. 构建系统提示词
-        system_prompt = DATA_SYSTEM_PROMPT.format(directory=str(Path.cwd()))
+        custom_prompt = current_settings.system_prompt if hasattr(current_settings, 'system_prompt') and current_settings.system_prompt else ""
+        if custom_prompt and custom_prompt.strip():
+            system_prompt = custom_prompt.strip()
+        else:
+            system_prompt = DATA_SYSTEM_PROMPT.format(directory=str(Path.cwd()))
         if skill_prompt:
             system_prompt = skill_prompt + "\n" + system_prompt
 
@@ -1473,9 +2067,9 @@ async def run_agent_task(
 
         # 5. 构建对话历史
         memory = Memory()
-        if conversation_id and conversation_id in conversations:
-            history = conversations[conversation_id]["messages"]
-            for h_msg in history[-20:]:
+        if conversation_id:
+            history = db_get_conversation_messages(conversation_id, limit=20)
+            for h_msg in history:
                 role = h_msg["role"]
                 content = h_msg.get("content", "")
                 if role == "user":
@@ -1633,27 +2227,13 @@ async def run_agent_task(
         await send({"type": "stream_end"})
 
         # 11. 保存对话历史
-        if conversation_id and conversation_id in conversations:
-            user_msg = {
-                "id": str(uuid.uuid4()),
-                "role": "user",
-                "content": message,
-                "timestamp": datetime.datetime.now().isoformat(),
-            }
-            conversations[conversation_id]["messages"].append(user_msg)
-
-            assistant_msg = {
-                "id": str(uuid.uuid4()),
-                "role": "assistant",
-                "content": final_response,
-                "timestamp": datetime.datetime.now().isoformat(),
-            }
-            conversations[conversation_id]["messages"].append(assistant_msg)
-            conversations[conversation_id][
-                "updated_at"
-            ] = datetime.datetime.now().isoformat()
-            if conversations[conversation_id]["title"] == "新对话":
-                conversations[conversation_id]["title"] = message[:20]
+        if conversation_id:
+            db_add_message(conversation_id, "user", message)
+            db_add_message(conversation_id, "assistant", final_response)
+            # 自动更新标题
+            conv = db_get_conversation(conversation_id)
+            if conv and conv.get("title") == "新对话":
+                db_update_conversation_title(conversation_id, message[:20])
 
         # 12. 清理 Agent 资源
         try:
@@ -1718,11 +2298,11 @@ async def run_universal_agent(
 
         # 构建对话历史上下文
         context_prompt = ""
-        if conversation_id and conversation_id in conversations:
-            history = conversations[conversation_id]["messages"]
+        if conversation_id:
+            history = db_get_conversation_messages(conversation_id, limit=10)
             if history:
                 context_prompt = "\n\n以下是之前的对话历史：\n"
-                for h_msg in history[-10:]:  # 最近10条消息作为上下文
+                for h_msg in history:
                     role_label = "用户" if h_msg["role"] == "user" else "助手"
                     context_prompt += f"{role_label}: {h_msg['content']}\n"
                 context_prompt += "\n请基于以上对话历史继续回答。\n"
@@ -1879,20 +2459,12 @@ async def run_universal_agent(
             response = await call_llm(full_prompt, current_settings)
 
         # 保存用户消息到对话历史
-        if conversation_id and conversation_id in conversations:
-            user_msg = {
-                "id": str(uuid.uuid4()),
-                "role": "user",
-                "content": message,
-                "timestamp": datetime.datetime.now().isoformat(),
-            }
-            conversations[conversation_id]["messages"].append(user_msg)
-            conversations[conversation_id][
-                "updated_at"
-            ] = datetime.datetime.now().isoformat()
+        if conversation_id:
+            db_add_message(conversation_id, "user", message)
             # 自动更新标题
-            if conversations[conversation_id]["title"] == "新对话":
-                conversations[conversation_id]["title"] = message[:20]
+            conv = db_get_conversation(conversation_id)
+            if conv and conv.get("title") == "新对话":
+                db_update_conversation_title(conversation_id, message[:20])
 
         # 流式输出
         await websocket.send_json({"type": "stream_start"})
@@ -1906,22 +2478,12 @@ async def run_universal_agent(
         await websocket.send_json({"type": "stream_end"})
 
         # 保存助手回复到对话历史
-        if conversation_id and conversation_id in conversations:
-            assistant_msg = {
-                "id": str(uuid.uuid4()),
-                "role": "assistant",
-                "content": response,
-                "timestamp": datetime.datetime.now().isoformat(),
-            }
-            conversations[conversation_id]["messages"].append(assistant_msg)
-            conversations[conversation_id][
-                "updated_at"
-            ] = datetime.datetime.now().isoformat()
+        if conversation_id:
+            db_add_message(conversation_id, "assistant", response)
 
     except Exception as e:
         error_msg = f"❌ 处理失败: {str(e)[:300]}"
         await websocket.send_json({"type": "error", "content": error_msg})
-        import traceback
 
         print(f"Error in run_universal_agent: {traceback.format_exc()}")
 
@@ -1938,15 +2500,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 conversation_id = data.get("conversation_id")
                 options = data.get("options", {})
                 # 如果指定了 conversation_id 但对话不存在，自动创建
-                if conversation_id and conversation_id not in conversations:
-                    conv = {
-                        "id": conversation_id,
-                        "title": "新对话",
-                        "messages": [],
-                        "created_at": datetime.datetime.now().isoformat(),
-                        "updated_at": datetime.datetime.now().isoformat(),
-                    }
-                    conversations[conversation_id] = conv
+                if conversation_id and not db_get_conversation(conversation_id):
+                    db_create_conversation(conv_id=conversation_id, title="新对话")
 
                 # 优先使用 Agent 框架，失败时回退到旧的 run_universal_agent
                 if AGENT_FRAMEWORK_AVAILABLE:
@@ -1987,20 +2542,39 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 # 兼容旧格式：直接将 data 当作消息内容
                 message = data.get("content", str(data))
+                conversation_id = data.get("conversation_id")
+                options = data.get("options", {})
                 if AGENT_FRAMEWORK_AVAILABLE:
                     try:
                         await run_agent_task(
                             message=message,
                             send_func=websocket.send_json,
+                            conversation_id=conversation_id,
+                            options=options,
                         )
-                    except Exception:
-                        await run_universal_agent(websocket, message)
+                    except Exception as e:
+                        print(f"[Agent Task Error] {e}")
+                        await run_universal_agent(
+                            websocket,
+                            message,
+                            conversation_id=conversation_id,
+                            options=options,
+                        )
                 else:
-                    await run_universal_agent(websocket, message)
+                    await run_universal_agent(
+                        websocket,
+                        message,
+                        conversation_id=conversation_id,
+                        options=options,
+                    )
     except WebSocketDisconnect:
         pass
     except Exception as e:
         print(f"WebSocket error: {e}")
+        try:
+            await websocket.send_json({"type": "error", "content": f"服务器错误: {str(e)}"})
+        except:
+            pass
 
 
 @app.get("/")
@@ -2162,8 +2736,8 @@ async def test_model_connection(request: ModelTestRequest):
                     result["error"] = "Ollama服务未启动或连接失败"
 
         else:
-            result["success"] = True
-            result["error"] = ""
+            result["success"] = False
+            result["error"] = f"不支持的提供商: {provider}"
 
     except httpx.TimeoutException:
         result["error"] = "连接超时"

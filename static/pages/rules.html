@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>规则引擎 - DATA-AI</title>
+    <link rel="stylesheet" href="../css/pages.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- 页面头部 -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='../index.html'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="page-title">
+                    <i class="fas fa-gavel"></i>
+                    规则引擎
+                </h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" id="import-rules-btn">
+                    <i class="fas fa-file-import"></i>
+                    导入
+                </button>
+                <button class="btn btn-primary" id="add-rule-btn">
+                    <i class="fas fa-plus"></i>
+                    新建规则
+                </button>
+            </div>
+        </header>
+
+        <!-- 统计卡片 -->
+        <div class="rules-header">
+            <div class="rules-stats">
+                <div class="stat-card">
+                    <div class="value" id="total-rules">0</div>
+                    <div class="label">总规则数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="enabled-rules">0</div>
+                    <div class="label">已启用</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="trigger-count">0</div>
+                    <div class="label">今日触发</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-rules" placeholder="搜索规则名称或条件...">
+            </div>
+            <div class="filter-actions">
+                <select id="trigger-filter">
+                    <option value="all">全部触发类型</option>
+                    <option value="keyword">关键词匹配</option>
+                    <option value="regex">正则表达式</option>
+                    <option value="intent">意图识别</option>
+                    <option value="schedule">定时触发</option>
+                </select>
+                <select id="status-filter">
+                    <option value="all">全部状态</option>
+                    <option value="enabled">已启用</option>
+                    <option value="disabled">已禁用</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 页面内容 -->
+        <div class="page-content">
+            <div class="rules-grid" id="rules-grid">
+                <!-- 动态渲染 -->
+            </div>
+
+            <div class="empty-state hidden" id="rules-empty">
+                <i class="fas fa-gavel"></i>
+                <h3>暂无规则</h3>
+                <p>创建规则来自动化对话行为</p>
+                <button class="btn btn-primary" id="create-first-rule">
+                    <i class="fas fa-plus"></i>
+                    创建第一条规则
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑规则弹窗 -->
+    <div class="modal-overlay hidden" id="rule-modal-overlay">
+        <div class="modal rule-modal">
+            <div class="modal-header">
+                <h2 id="modal-title">新建规则</h2>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rule-form">
+                    <input type="hidden" id="rule-id">
+                    
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            基本信息
+                        </h3>
+                        <div class="form-group">
+                            <label for="rule-name">规则名称 *</label>
+                            <input type="text" id="rule-name" required placeholder="如：自动问候">
+                        </div>
+                        <div class="form-group">
+                            <label for="rule-description">描述</label>
+                            <textarea id="rule-description" rows="2" placeholder="规则用途说明"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="rule-trigger-type">触发类型 *</label>
+                                <select id="rule-trigger-type">
+                                    <option value="keyword">关键词匹配</option>
+                                    <option value="regex">正则表达式</option>
+                                    <option value="intent">意图识别</option>
+                                    <option value="schedule">定时触发</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="rule-priority">优先级</label>
+                                <select id="rule-priority">
+                                    <option value="high">高</option>
+                                    <option value="medium" selected>中</option>
+                                    <option value="low">低</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 触发条件 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-bolt"></i>
+                            触发条件
+                        </h3>
+                        
+                        <!-- 关键词匹配 -->
+                        <div class="condition-config" id="keyword-config">
+                            <div class="condition-logic">
+                                <button type="button" class="logic-btn active" data-logic="or">任意匹配</button>
+                                <button type="button" class="logic-btn" data-logic="and">全部匹配</button>
+                            </div>
+                            <div class="condition-builder" id="keyword-builder">
+                                <div class="condition-row">
+                                    <select class="condition-type">
+                                        <option value="contains">包含</option>
+                                        <option value="equals">等于</option>
+                                        <option value="starts">开头为</option>
+                                        <option value="ends">结尾为</option>
+                                    </select>
+                                    <input type="text" class="condition-value" placeholder="输入关键词">
+                                    <button type="button" class="btn btn-sm btn-secondary remove-condition">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary add-condition-btn" id="add-keyword">
+                                <i class="fas fa-plus"></i>
+                                添加条件
+                            </button>
+                        </div>
+
+                        <!-- 正则表达式 -->
+                        <div class="condition-config hidden" id="regex-config">
+                            <div class="form-group">
+                                <label>正则表达式</label>
+                                <input type="text" id="regex-pattern" placeholder="如：^你好|hello">
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="regex-case-insensitive">
+                                    <span>忽略大小写</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 意图识别 -->
+                        <div class="condition-config hidden" id="intent-config">
+                            <div class="form-group">
+                                <label>意图类型</label>
+                                <select id="intent-type">
+                                    <option value="greeting">问候</option>
+                                    <option value="question">提问</option>
+                                    <option value="request">请求</option>
+                                    <option value="complaint">投诉</option>
+                                    <option value="feedback">反馈</option>
+                                    <option value="booking">预约</option>
+                                    <option value="inquiry">咨询</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>置信度阈值</label>
+                                <input type="range" id="confidence-threshold" min="0" max="100" value="70">
+                                <span id="confidence-value">70%</span>
+                            </div>
+                        </div>
+
+                        <!-- 定时触发 -->
+                        <div class="condition-config hidden" id="schedule-config">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>触发时间</label>
+                                    <input type="time" id="schedule-time">
+                                </div>
+                                <div class="form-group">
+                                    <label>重复周期</label>
+                                    <select id="schedule-repeat">
+                                        <option value="daily">每天</option>
+                                        <option value="weekly">每周</option>
+                                        <option value="monthly">每月</option>
+                                        <option value="once">仅一次</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 执行动作 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-play"></i>
+                            执行动作
+                        </h3>
+                        <div class="action-builder">
+                            <div class="action-row">
+                                <select id="action-type">
+                                    <option value="reply">回复消息</option>
+                                    <option value="skill">调用技能</option>
+                                    <option value="agent">切换智能体</option>
+                                    <option value="api">调用API</option>
+                                    <option value="webhook">触发Webhook</option>
+                                </select>
+                                <input type="text" id="action-content" placeholder="输入回复内容或选择目标">
+                            </div>
+                        </div>
+                        
+                        <!-- 动作配置详情 -->
+                        <div class="action-detail hidden" id="reply-detail">
+                            <div class="form-group">
+                                <label>回复模板</label>
+                                <textarea id="reply-template" rows="3" placeholder="支持变量：{{user}}, {{time}}, {{date}}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="action-detail hidden" id="skill-detail">
+                            <div class="form-group">
+                                <label>选择技能</label>
+                                <select id="skill-select">
+                                    <option value="">请选择技能</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="action-detail hidden" id="agent-detail">
+                            <div class="form-group">
+                                <label>选择智能体</label>
+                                <select id="agent-select">
+                                    <option value="">请选择智能体</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高级设置 -->
+                    <div class="form-section collapsible">
+                        <h3 class="section-title clickable" id="advanced-toggle">
+                            <i class="fas fa-cog"></i>
+                            高级设置
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </h3>
+                        <div class="section-content collapsed" id="advanced-content">
+                            <div class="form-group">
+                                <label for="rule-cooldown">冷却时间 (秒)</label>
+                                <input type="number" id="rule-cooldown" value="0" min="0" placeholder="防止重复触发">
+                            </div>
+                            <div class="form-group">
+                                <label for="rule-max-trigger">最大触发次数</label>
+                                <input type="number" id="rule-max-trigger" value="0" min="0" placeholder="0表示无限制">
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="rule-stop-processing">
+                                    <span>触发后停止后续规则</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary" id="save-btn">
+                    <i class="fas fa-save"></i>
+                    保存规则
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/pages/rules.js"></script>
+</body>
+</html>

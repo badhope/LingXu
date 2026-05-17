@@ -1,7 +1,11 @@
 import json
 import threading
-import tomllib
 from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP工具 - DATA-AI</title>
+    <link rel="stylesheet" href="../css/pages.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- 页面头部 -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='../index.html'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="page-title">
+                    <i class="fas fa-plug"></i>
+                    MCP工具
+                </h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" id="add-mcp-btn">
+                    <i class="fas fa-plus"></i>
+                    添加工具
+                </button>
+            </div>
+        </header>
+
+        <!-- 标签切换 -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="installed">
+                <i class="fas fa-check-circle"></i>
+                已安装
+                <span class="tab-count" id="installed-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="market">
+                <i class="fas fa-store"></i>
+                工具市场
+            </button>
+        </div>
+
+        <!-- 页面内容 -->
+        <div class="page-content">
+            <!-- 已安装标签页 -->
+            <div class="tab-panel active" id="installed-panel">
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-installed" placeholder="搜索已安装工具...">
+                    </div>
+                    <div class="filter-actions">
+                        <select id="status-filter">
+                            <option value="all">全部状态</option>
+                            <option value="connected">已连接</option>
+                            <option value="disconnected">未连接</option>
+                            <option value="error">连接错误</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mcp-grid" id="installed-grid">
+                    <!-- 动态渲染 -->
+                </div>
+
+                <div class="empty-state hidden" id="installed-empty">
+                    <i class="fas fa-plug"></i>
+                    <h3>暂无已安装的MCP工具</h3>
+                    <p>从工具市场安装或添加自定义工具</p>
+                    <button class="btn btn-primary" onclick="switchTab('market')">
+                        浏览工具市场
+                    </button>
+                </div>
+            </div>
+
+            <!-- 工具市场标签页 -->
+            <div class="tab-panel" id="market-panel">
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-market" placeholder="搜索工具市场...">
+                    </div>
+                    <div class="filter-actions">
+                        <select id="category-filter">
+                            <option value="all">全部分类</option>
+                            <option value="database">数据库</option>
+                            <option value="api">API服务</option>
+                            <option value="file">文件处理</option>
+                            <option value="search">搜索工具</option>
+                            <option value="communication">通讯工具</option>
+                            <option value="development">开发工具</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mcp-grid" id="market-grid">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑MCP弹窗 -->
+    <div class="modal-overlay hidden" id="mcp-modal-overlay">
+        <div class="modal mcp-modal">
+            <div class="modal-header">
+                <h2 id="modal-title">添加MCP工具</h2>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="mcp-form">
+                    <input type="hidden" id="mcp-id">
+                    
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            基本信息
+                        </h3>
+                        <div class="form-group">
+                            <label for="mcp-name">工具名称 *</label>
+                            <input type="text" id="mcp-name" required placeholder="如：GitHub MCP">
+                        </div>
+                        <div class="form-group">
+                            <label for="mcp-description">描述</label>
+                            <textarea id="mcp-description" rows="2" placeholder="工具功能描述"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mcp-icon">图标</label>
+                                <div class="icon-selector">
+                                    <input type="text" id="mcp-icon" value="fas fa-plug" readonly>
+                                    <div class="icon-preview">
+                                        <i class="fas fa-plug" id="icon-preview"></i>
+                                    </div>
+                                    <button type="button" class="btn btn-sm" id="select-icon-btn">
+                                        选择
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="mcp-category">分类</label>
+                                <select id="mcp-category">
+                                    <option value="database">数据库</option>
+                                    <option value="api">API服务</option>
+                                    <option value="file">文件处理</option>
+                                    <option value="search">搜索工具</option>
+                                    <option value="communication">通讯工具</option>
+                                    <option value="development">开发工具</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 连接配置 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-link"></i>
+                            连接配置
+                        </h3>
+                        <div class="form-group">
+                            <label for="mcp-url">服务地址 *</label>
+                            <input type="url" id="mcp-url" required placeholder="https://api.example.com/mcp">
+                        </div>
+                        <div class="form-group">
+                            <label for="mcp-transport">传输协议</label>
+                            <select id="mcp-transport">
+                                <option value="http">HTTP/SSE</option>
+                                <option value="stdio">Stdio</option>
+                                <option value="websocket">WebSocket</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mcp-auth-type">认证方式</label>
+                            <select id="mcp-auth-type">
+                                <option value="none">无认证</option>
+                                <option value="api_key">API Key</option>
+                                <option value="bearer">Bearer Token</option>
+                                <option value="basic">Basic Auth</option>
+                                <option value="oauth">OAuth 2.0</option>
+                            </select>
+                        </div>
+                        <div class="form-group auth-config hidden" id="api-key-config">
+                            <label for="mcp-api-key">API Key</label>
+                            <div class="input-with-action">
+                                <input type="password" id="mcp-api-key" placeholder="输入API密钥">
+                                <button type="button" class="btn btn-sm" id="toggle-api-key">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group auth-config hidden" id="bearer-config">
+                            <label for="mcp-bearer-token">Bearer Token</label>
+                            <input type="password" id="mcp-bearer-token" placeholder="输入Bearer Token">
+                        </div>
+                        <div class="form-group auth-config hidden" id="basic-config">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="mcp-username">用户名</label>
+                                    <input type="text" id="mcp-username" placeholder="用户名">
+                                </div>
+                                <div class="form-group">
+                                    <label for="mcp-password">密码</label>
+                                    <input type="password" id="mcp-password" placeholder="密码">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高级配置 -->
+                    <div class="form-section collapsible">
+                        <h3 class="section-title clickable" id="advanced-toggle">
+                            <i class="fas fa-cog"></i>
+                            高级配置
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </h3>
+                        <div class="section-content collapsed" id="advanced-content">
+                            <div class="form-group">
+                                <label for="mcp-timeout">超时时间 (秒)</label>
+                                <input type="number" id="mcp-timeout" value="30" min="5" max="300">
+                            </div>
+                            <div class="form-group">
+                                <label for="mcp-retry">重试次数</label>
+                                <input type="number" id="mcp-retry" value="3" min="0" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="mcp-headers">自定义请求头 (JSON)</label>
+                                <textarea id="mcp-headers" rows="3" placeholder='{"X-Custom-Header": "value"}'></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="mcp-auto-start" checked>
+                                    <span>应用启动时自动连接</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="test-connection-btn">
+                    <i class="fas fa-plug"></i>
+                    测试连接
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary" id="save-btn">
+                    <i class="fas fa-save"></i>
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 市场工具详情弹窗 -->
+    <div class="modal-overlay hidden" id="detail-modal-overlay">
+        <div class="modal mcp-detail-modal">
+            <div class="modal-header">
+                <h2 id="detail-title">工具详情</h2>
+                <button class="modal-close" id="detail-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="detail-content">
+                <!-- 动态渲染 -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="detail-close-btn">关闭</button>
+                <button type="button" class="btn btn-primary" id="detail-install-btn">
+                    <i class="fas fa-download"></i>
+                    安装
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 已安装工具配置详情弹窗 -->
+    <div class="modal-overlay hidden" id="config-modal-overlay">
+        <div class="modal mcp-config-modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="config-title">配置详情</h2>
+                <button class="modal-close" id="config-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="config-content">
+                <!-- 动态渲染 -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="config-test-btn">
+                    <i class="fas fa-plug"></i> 测试连接
+                </button>
+                <button type="button" class="btn btn-secondary" id="config-edit-btn">
+                    <i class="fas fa-pen"></i> 编辑
+                </button>
+                <button type="button" class="btn btn-danger" id="config-delete-btn">
+                    <i class="fas fa-trash"></i> 删除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图标选择器弹窗 -->
+    <div class="modal-overlay hidden" id="icon-modal-overlay">
+        <div class="modal icon-modal">
+            <div class="modal-header">
+                <h2>选择图标</h2>
+                <button class="modal-close" id="icon-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="icon-grid" id="icon-grid">
+                    <!-- 动态渲染 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/pages/mcp.js"></script>
+</body>
+</html>

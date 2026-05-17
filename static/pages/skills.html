@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技能库 - DATA-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/pages.css" />
+    <style>
+        /* 技能库特定样式 */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .skill-card {
+            background: var(--bg-secondary, #1e1f22);
+            border: 1px solid var(--border-color, #3c4043);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .skill-card:hover {
+            border-color: var(--accent-primary, #8ab4f8);
+            transform: translateY(-2px);
+        }
+
+        .skill-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .skill-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #8ab4f8, #a8c7fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .skill-info {
+            flex: 1;
+        }
+
+        .skill-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+        }
+
+        .skill-category {
+            font-size: 12px;
+            color: var(--text-secondary, #9aa0a6);
+        }
+
+        .skill-desc {
+            font-size: 13px;
+            color: var(--text-secondary, #9aa0a6);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .skill-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color, #3c4043);
+        }
+
+        .skill-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted, #80868b);
+        }
+
+        .skill-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .use-skill-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--accent-primary, #8ab4f8);
+            background: transparent;
+            color: var(--accent-primary, #8ab4f8);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .use-skill-btn:hover {
+            background: var(--accent-primary, #8ab4f8);
+            color: #000;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color, #3c4043);
+            background: var(--bg-secondary, #1e1f22);
+            color: var(--text-primary, #e8eaed);
+        }
+
+        .filter-bar select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color, #3c4043);
+            background: var(--bg-secondary, #1e1f22);
+            color: var(--text-primary, #e8eaed);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color, #3c4043);
+            background: transparent;
+            color: var(--text-secondary, #9aa0a6);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-tab:hover {
+            background: var(--bg-hover, #2d2e31);
+        }
+
+        .category-tab.active {
+            background: var(--accent-primary, #8ab4f8);
+            color: #000;
+            border-color: var(--accent-primary, #8ab4f8);
+        }
+
+        /* 技能详情弹窗 */
+        .skill-detail-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color, #3c4043);
+        }
+
+        .skill-detail-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-primary, #8ab4f8), #c58af9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .skill-detail-info {
+            flex: 1;
+        }
+
+        .skill-detail-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary, #e8eaed);
+            margin: 0 0 6px 0;
+        }
+
+        .skill-detail-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .skill-detail-category {
+            padding: 2px 10px;
+            border-radius: 12px;
+            background: var(--accent-primary-bg, rgba(138, 180, 248, 0.15));
+            color: var(--accent-primary, #8ab4f8);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .skill-detail-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .skill-detail-tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--bg-tertiary, #2d2e31);
+            color: var(--text-secondary, #9aa0a6);
+            font-size: 11px;
+        }
+
+        .skill-detail-section {
+            margin-bottom: 20px;
+        }
+
+        .skill-detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .skill-detail-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary, #9aa0a6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .skill-detail-section-title i {
+            color: var(--accent-primary, #8ab4f8);
+            font-size: 12px;
+        }
+
+        .skill-detail-desc {
+            font-size: 14px;
+            color: var(--text-secondary, #9aa0a6);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .skill-detail-prompt {
+            background: var(--bg-tertiary, #2d2e31);
+            border: 1px solid var(--border-color, #3c4043);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            color: var(--text-primary, #e8eaed);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .skill-detail-params {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .skill-detail-param {
+            background: var(--bg-secondary, #1e1f22);
+            border: 1px solid var(--border-color, #3c4043);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .skill-detail-param-label {
+            font-size: 11px;
+            color: var(--text-secondary, #9aa0a6);
+            margin-bottom: 4px;
+        }
+
+        .skill-detail-param-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent-primary, #8ab4f8);
+        }
+
+        .skill-detail-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color, #3c4043);
+        }
+
+        .skill-detail-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary, #9aa0a6);
+        }
+
+        .skill-detail-stat i {
+            color: var(--accent-primary, #8ab4f8);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- 页面头部 -->
+        <header class="page-header">
+            <div class="page-header-left">
+                <button class="back-btn" onclick="history.back()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="page-title">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    技能库
+                </h1>
+            </div>
+            <div class="page-header-right">
+                <button class="btn btn-primary" id="create-skill-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    创建技能
+                </button>
+            </div>
+        </header>
+
+        <!-- 筛选栏 -->
+        <div class="page-content">
+            <div class="filter-bar">
+                <input type="text" id="skill-search" placeholder="搜索技能...">
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">全部</button>
+                    <button class="category-tab" data-category="writing">写作</button>
+                    <button class="category-tab" data-category="coding">编程</button>
+                    <button class="category-tab" data-category="analysis">分析</button>
+                    <button class="category-tab" data-category="creative">创意</button>
+                    <button class="category-tab" data-category="tools">工具</button>
+                </div>
+            </div>
+
+            <!-- 技能列表 -->
+            <div class="skill-grid" id="skill-grid">
+                <!-- 技能卡片将通过JS渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑技能模态框 -->
+    <div class="modal-overlay hidden" id="skill-modal-overlay">
+        <div class="modal" id="skill-modal" style="max-width: 720px;">
+            <div class="modal-header">
+                <h2 id="skill-modal-title">创建技能</h2>
+                <button class="modal-close-btn" id="skill-modal-close">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="skill-form">
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-info-circle"></i>
+                            基本信息
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="skill-name">技能名称 *</label>
+                                <input type="text" id="skill-name" name="name" 
+                                       placeholder="例如：代码审查专家" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="skill-category-select">分类</label>
+                                <select id="skill-category-select" name="category">
+                                    <option value="writing">写作</option>
+                                    <option value="coding" selected>编程</option>
+                                    <option value="analysis">分析</option>
+                                    <option value="creative">创意</option>
+                                    <option value="tools">工具</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="skill-icon-input">图标</label>
+                                <input type="text" id="skill-icon-input" name="icon" value="⚡" 
+                                       style="width: 80px; text-align: center; font-size: 24px;">
+                            </div>
+                            <div class="form-group">
+                                <label for="skill-tags">标签（逗号分隔）</label>
+                                <input type="text" id="skill-tags" name="tags" 
+                                       placeholder="例如：代码,审查,优化">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="skill-description">描述</label>
+                            <textarea id="skill-description" name="description" rows="2"
+                                      placeholder="简要描述这个技能的功能和用途"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 技能提示词 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-message"></i>
+                            技能提示词
+                        </h3>
+                        <div class="form-group">
+                            <label for="skill-prompt">提示词模板 *</label>
+                            <textarea id="skill-prompt" name="prompt" rows="8"
+                                      placeholder="定义技能的核心提示词，可以使用 {{input}} 作为用户输入的占位符..."
+                                      required></textarea>
+                            <div class="form-hint">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                使用 {{input}} 作为用户输入的占位符，{{context}} 作为上下文占位符
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 参数配置 -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fa-solid fa-sliders"></i>
+                            参数配置
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="skill-temperature">温度</label>
+                                <div class="range-input">
+                                    <input type="range" id="skill-temperature" name="temperature"
+                                           min="0" max="2" step="0.1" value="0.7">
+                                    <span class="range-value" id="skill-temp-value">0.7</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="skill-max-tokens">最大Token</label>
+                                <input type="number" id="skill-max-tokens" name="maxTokens"
+                                       value="2048" min="256" max="32000">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="skill-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary" id="skill-save-btn">
+                    <i class="fa-solid fa-check"></i>
+                    保存技能
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 技能详情弹窗 -->
+    <div class="modal-overlay hidden" id="skill-detail-overlay">
+        <div class="modal skill-detail-modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h2>技能详情</h2>
+                <button class="modal-close-btn" id="skill-detail-close">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="skill-detail-content">
+                <!-- 动态渲染 -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="skill-detail-edit-btn">
+                    <i class="fa-solid fa-pen"></i> 编辑
+                </button>
+                <button type="button" class="btn btn-primary" id="skill-detail-use-btn">
+                    <i class="fa-solid fa-play"></i> 使用技能
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="/static/js/pages/skills.js"></script>
+</body>
+</html>

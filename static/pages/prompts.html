@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提示词管理 - DATA-AI</title>
+    <link rel="stylesheet" href="../css/pages.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- 页面头部 -->
+        <header class="page-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='../index.html'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="page-title">
+                    <i class="fas fa-scroll"></i>
+                    提示词管理
+                </h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" id="import-btn">
+                    <i class="fas fa-file-import"></i>
+                    导入
+                </button>
+                <button class="btn btn-secondary" id="export-btn">
+                    <i class="fas fa-file-export"></i>
+                    导出
+                </button>
+                <button class="btn btn-primary" id="create-prompt-btn">
+                    <i class="fas fa-plus"></i>
+                    新建提示词
+                </button>
+            </div>
+        </header>
+
+        <!-- 标签切换 -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="templates">
+                <i class="fas fa-layer-group"></i>
+                模板库
+                <span class="tab-count" id="total-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="favorites">
+                <i class="fas fa-star"></i>
+                收藏
+                <span class="tab-count" id="fav-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="variables">
+                <i class="fas fa-code"></i>
+                变量参考
+            </button>
+        </div>
+
+        <!-- 页面内容 -->
+        <div class="page-content">
+            <!-- 模板库 -->
+            <div class="tab-panel active" id="templates-panel">
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-prompts" placeholder="搜索提示词模板...">
+                    </div>
+                    <div class="filter-actions">
+                        <select id="category-filter">
+                            <option value="all">全部分类</option>
+                            <option value="agent">智能体</option>
+                            <option value="skill">技能</option>
+                            <option value="rule">规则</option>
+                            <option value="system">系统</option>
+                            <option value="creative">创意写作</option>
+                            <option value="code">代码开发</option>
+                            <option value="analysis">数据分析</option>
+                        </select>
+                        <select id="sort-filter">
+                            <option value="updated">最近更新</option>
+                            <option value="created">最近创建</option>
+                            <option value="name">按名称</option>
+                            <option value="usage">按使用量</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="prompt-grid" id="prompt-grid">
+                    <!-- 动态渲染 -->
+                </div>
+
+                <div class="empty-state hidden" id="prompts-empty">
+                    <i class="fas fa-scroll"></i>
+                    <h3>暂无提示词模板</h3>
+                    <p>创建你的第一个提示词模板，提升AI输出质量</p>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <i class="fas fa-plus"></i>
+                        创建提示词
+                    </button>
+                </div>
+            </div>
+
+            <!-- 收藏 -->
+            <div class="tab-panel" id="favorites-panel">
+                <div class="prompt-grid" id="fav-grid">
+                    <!-- 动态渲染 -->
+                </div>
+                <div class="empty-state hidden" id="fav-empty">
+                    <i class="fas fa-star"></i>
+                    <h3>暂无收藏</h3>
+                    <p>点击模板卡片上的星标即可收藏</p>
+                </div>
+            </div>
+
+            <!-- 变量参考 -->
+            <div class="tab-panel" id="variables-panel">
+                <div class="variables-guide">
+                    <div class="variable-section">
+                        <h3><i class="fas fa-cube"></i> 内置变量</h3>
+                        <p class="variable-desc">在提示词中使用以下变量，运行时自动替换为实际值</p>
+                        <div class="variable-list">
+                            <div class="variable-item">
+                                <code>{{input}}</code>
+                                <span>用户输入的内容</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{context}}</code>
+                                <span>对话上下文（最近N轮）</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{date}}</code>
+                                <span>当前日期（YYYY-MM-DD）</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{time}}</code>
+                                <span>当前时间（HH:MM）</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{datetime}}</code>
+                                <span>当前日期时间</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{user}}</code>
+                                <span>用户名称</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{agent}}</code>
+                                <span>当前智能体名称</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{language}}</code>
+                                <span>用户语言偏好</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="variable-section">
+                        <h3><i class="fas fa-lightbulb"></i> 使用技巧</h3>
+                        <ul class="tips-list">
+                            <li><strong>角色定义</strong>：以"你是一个..."开头，明确AI的角色和专长</li>
+                            <li><strong>具体指令</strong>：给出清晰的步骤和要求，避免模糊描述</li>
+                            <li><strong>输出格式</strong>：指定期望的输出格式（表格、列表、JSON等）</li>
+                            <li><strong>约束条件</strong>：明确限制条件（字数、语言、风格等）</li>
+                            <li><strong>示例引导</strong>：提供输入输出示例，帮助AI理解期望</li>
+                            <li><strong>分步思考</strong>：复杂任务要求AI先分析再输出</li>
+                        </ul>
+                    </div>
+                    <div class="variable-section">
+                        <h3><i class="fas fa-magic"></i> 高级模式</h3>
+                        <div class="variable-list">
+                            <div class="variable-item">
+                                <code>{{#if condition}}...{{/if}}</code>
+                                <span>条件渲染（开发中）</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{#each items}}...{{/each}}</code>
+                                <span>循环渲染（开发中）</span>
+                            </div>
+                            <div class="variable-item">
+                                <code>{{&lt;system&gt;}}...{{&lt;/system&gt;}}</code>
+                                <span>系统级指令注入</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑提示词弹窗 -->
+    <div class="modal-overlay hidden" id="prompt-modal-overlay">
+        <div class="modal prompt-modal">
+            <div class="modal-header">
+                <h2 id="modal-title">新建提示词</h2>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="prompt-form">
+                    <input type="hidden" id="prompt-id">
+                    
+                    <!-- 基本信息 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            基本信息
+                        </h3>
+                        <div class="form-group">
+                            <label for="prompt-name">模板名称 *</label>
+                            <input type="text" id="prompt-name" required placeholder="如：代码审查专家">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prompt-category">分类 *</label>
+                                <select id="prompt-category">
+                                    <option value="agent">智能体</option>
+                                    <option value="skill">技能</option>
+                                    <option value="rule">规则</option>
+                                    <option value="system">系统</option>
+                                    <option value="creative">创意写作</option>
+                                    <option value="code">代码开发</option>
+                                    <option value="analysis">数据分析</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prompt-icon">图标</label>
+                                <input type="text" id="prompt-icon" value="📝" maxlength="2">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="prompt-description">描述</label>
+                            <textarea id="prompt-description" rows="2" placeholder="简要描述提示词的用途和适用场景"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="prompt-tags">标签</label>
+                            <input type="text" id="prompt-tags" placeholder="用逗号分隔，如：代码,审查,质量">
+                        </div>
+                    </div>
+
+                    <!-- 提示词内容 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-pen-fancy"></i>
+                            提示词内容
+                        </h3>
+                        <div class="prompt-editor">
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-insert="{{input}}" title="插入用户输入变量">
+                                    <i class="fas fa-user"></i> 输入
+                                </button>
+                                <button type="button" class="toolbar-btn" data-insert="{{context}}" title="插入上下文变量">
+                                    <i class="fas fa-comments"></i> 上下文
+                                </button>
+                                <button type="button" class="toolbar-btn" data-insert="{{date}}" title="插入日期变量">
+                                    <i class="fas fa-calendar"></i> 日期
+                                </button>
+                                <button type="button" class="toolbar-btn" data-insert="{{time}}" title="插入时间变量">
+                                    <i class="fas fa-clock"></i> 时间
+                                </button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" class="toolbar-btn" id="insert-role-btn" title="插入角色定义模板">
+                                    <i class="fas fa-user-tie"></i> 角色
+                                </button>
+                                <button type="button" class="toolbar-btn" id="insert-format-btn" title="插入输出格式模板">
+                                    <i class="fas fa-list-alt"></i> 格式
+                                </button>
+                                <button type="button" class="toolbar-btn" id="insert-example-btn" title="插入示例模板">
+                                    <i class="fas fa-book"></i> 示例
+                                </button>
+                            </div>
+                            <textarea id="prompt-content" class="prompt-textarea" rows="12" required
+                                placeholder="在这里编写你的提示词...&#10;&#10;提示：点击上方工具栏快速插入变量和模板"></textarea>
+                            <div class="editor-footer">
+                                <span class="char-count" id="char-count">0 字符</span>
+                                <span class="var-count" id="var-count">0 个变量</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 测试预览 -->
+                    <div class="form-section collapsible">
+                        <h3 class="section-title clickable" id="test-toggle">
+                            <i class="fas fa-flask"></i>
+                            测试预览
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                        </h3>
+                        <div class="section-content collapsed" id="test-content">
+                            <div class="form-group">
+                                <label>模拟输入</label>
+                                <input type="text" id="test-input" placeholder="输入模拟的用户消息...">
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="preview-btn" style="width:100%;margin-bottom:12px">
+                                <i class="fas fa-eye"></i>
+                                生成预览
+                            </button>
+                            <div class="preview-box hidden" id="preview-box">
+                                <div class="preview-header">
+                                    <span>预览结果</span>
+                                    <button type="button" class="btn btn-sm" id="copy-preview-btn">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <pre id="preview-content"></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 应用目标 -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-link"></i>
+                            应用到
+                        </h3>
+                        <div class="apply-targets">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="apply-agent">
+                                <span>智能体系统提示词</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="apply-skill">
+                                <span>技能提示词</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="apply-rule">
+                                <span>规则回复模板</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary" id="save-btn">
+                    <i class="fas fa-save"></i>
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入弹窗 -->
+    <div class="modal-overlay hidden" id="import-modal-overlay">
+        <div class="modal" style="max-width:500px">
+            <div class="modal-header">
+                <h2>导入提示词</h2>
+                <button class="modal-close" id="import-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>粘贴JSON数据</label>
+                    <textarea id="import-data" rows="8" placeholder='[{"name":"模板名","content":"提示词内容","category":"agent"}]'></textarea>
+                </div>
+                <p class="import-hint">支持从其他DATA-AI实例导出的JSON格式</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="import-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary" id="import-confirm-btn">
+                    <i class="fas fa-file-import"></i>
+                    导入
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/pages/prompts.js"></script>
+</body>
+</html>
