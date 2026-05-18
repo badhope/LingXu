@@ -1483,7 +1483,7 @@ input::placeholder, textarea::placeholder {
     }
 }
 
-.drawer.drawer-right {
+.drawer.drawer-right.open {
     animation: drawerSlideIn 0.3s ease-out;
 }
 

@@ -2,6 +2,7 @@
 <html lang="zh-CN" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DATA-AI - 万能智能助手</title>
     <link rel="stylesheet" href="/static/css/style.css" />
@@ -45,10 +46,10 @@
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 
     <!-- 文件上传 -->
-    <script src="https://cdn.jsdelivr.net/npm/dropzone@6.5.0/dist/dropzone-min.js"></script>
+    <script src="/static/js/dropzone-min.js"></script>
 
     <!-- PDF处理 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <!-- PPT生成 -->
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@4.0.1/dist/pptxgen.bundle.min.js"></script>
@@ -381,7 +382,7 @@
                       <i class="fa-solid fa-brain"></i>
                       <span>记忆</span>
                     </button>
-                    <button class="more-action-item" id="voice-btn" title="语音输入（开发中）" disabled>
+                    <button class="more-action-item" id="voice-btn" title="语音输入（开发中）" disabled style="display:none;">
                       <i class="fa-solid fa-microphone"></i>
                       <span>语音</span>
                     </button>
